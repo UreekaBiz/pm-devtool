@@ -6,11 +6,12 @@ import { NotebookSchemaType, NodeName } from 'common';
 import { computeRemovedNodeObjs, getNodesAffectedByStepMap, NodeFound } from 'notebookEditor/extension/util/node';
 import { ExtensionName, ExtensionPriority, NoOptions, NoStorage } from 'notebookEditor/model/type';
 
+
 // ********************************************************************************
 // the set of Node 'types' whose nodeViews are to be checked for and removed
 // when they no longer exist (the inclusion set). Like other extensions, the names
 // of nodes that require this functionality must be added here
-const nodesWithNodeView = new Set<NodeName>([/*currently nothing*/]);
+const nodesWithNodeView = new Set<NodeName>([NodeName.SVG]);
 
 // == Extension ===================================================================
 export const NodeViewRemoval = Extension.create<NoOptions, NoStorage>({

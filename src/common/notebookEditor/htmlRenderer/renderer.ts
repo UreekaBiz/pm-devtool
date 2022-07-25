@@ -6,6 +6,8 @@ import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
+import { RectangleNodeRendererSpec } from '../extension/rectangle';
+import { SVGNodeRendererSpec } from '../extension/svg';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
 import { JSONMark, MarkName } from '../mark';
@@ -18,6 +20,8 @@ import { getRenderTag, AttributeRenderer, HTMLString, MarkRendererSpec, NodeRend
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.DOC]: DocumentNodeRendererSpec,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.RECTANGLE]: RectangleNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.SVG]: SVGNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.PARAGRAPH]: ParagraphNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.TEXT]: TextNodeRendererSpec,
 };

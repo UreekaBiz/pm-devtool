@@ -25,6 +25,8 @@ export enum NodeName {
   DOC = 'document',
   HEADING = 'heading',
   PARAGRAPH = 'paragraph',
+  RECTANGLE = 'rectangle',
+  SVG = 'svg',
   TEXT = 'text',
 }
 export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;

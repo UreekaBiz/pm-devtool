@@ -4,6 +4,8 @@ import { BoldMarkSpec } from './extension/bold';
 import { DocumentNodeSpec } from './extension/document';
 import { HeadingNodeSpec } from './extension/heading';
 import { ParagraphNodeSpec } from './extension/paragraph';
+import { RectangleNodeSpec } from './extension/rectangle';
+import { SVGNodeSpec } from './extension/svg';
 import { TextNodeSpec } from './extension/text';
 import { TextStyleMarkSpec } from './extension/textStyle';
 import { MarkName } from './mark';
@@ -15,6 +17,8 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.DOC]: DocumentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
+  [NodeName.RECTANGLE]: RectangleNodeSpec,
+  [NodeName.SVG]: SVGNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,
 };
 

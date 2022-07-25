@@ -3,6 +3,8 @@ import { NodeName } from 'common';
 import { DocumentToolbar } from 'notebookEditor/extension/document/toolbar';
 import { HeadingToolbar } from 'notebookEditor/extension/heading/toolbar';
 import { ParagraphToolbar } from 'notebookEditor/extension/paragraph/toolbar';
+import { RectangleToolbar } from 'notebookEditor/extension/svg/shape/rectangle/toolbar';
+import { SVGToolbar } from 'notebookEditor/extension/svg/toolbar/toolbar';
 
 import { Toolbar } from './type';
 
@@ -11,9 +13,11 @@ import { Toolbar } from './type';
 // in the collection nothing will be shown.
 const TOOLBAR_MAP: Record<NodeName, Toolbar | null> = {
   [NodeName.DOC]: DocumentToolbar,
-  [NodeName.TEXT]: null/*none*/,
-  [NodeName.PARAGRAPH]: ParagraphToolbar,
   [NodeName.HEADING]: HeadingToolbar,
+  [NodeName.PARAGRAPH]: ParagraphToolbar,
+  [NodeName.RECTANGLE]: RectangleToolbar,
+  [NodeName.SVG]: SVGToolbar,
+  [NodeName.TEXT]: null/*none*/,
 };
 
 /**

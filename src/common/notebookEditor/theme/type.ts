@@ -66,6 +66,8 @@ export const DefaultTheme: Theme = {
       [AttributeType.TextColor]: '#000',
       [AttributeType.FontSize]: '16px',
     },
+    [NodeName.RECTANGLE]:{/*no defined value*/},
+    [NodeName.SVG]:{/*no defined value*/},
     [NodeName.TEXT]:{/*no defined value*/},
   },
 
@@ -101,6 +103,8 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.FontSize]: '11pt',
       [AttributeType.TextColor]: '#353744',
     },
+    [NodeName.RECTANGLE]:{/*no defined value*/},
+    [NodeName.SVG]:{/*no defined value*/},
     [NodeName.TEXT]:{/*no defined value*/},
   },
 

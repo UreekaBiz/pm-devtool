@@ -14,7 +14,8 @@ export const theme: Record<NodeName, Partial<Record<AttributeType, string>>> = {
   [NodeName.TEXT]: {},
 
   // Custom Nodes
-  // Currently nothing
+  [NodeName.SVG]: {},
+  [NodeName.RECTANGLE]: {},
 } as const;
 
 // == CSS =========================================================================

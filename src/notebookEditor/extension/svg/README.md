@@ -1,0 +1,7 @@
+# SVG-based Drawing Editor
+
+The SVG editor is comprised of a base SVG HTML element and contains a number of Shape elements (e.g. Rectangle, Ellipse). Tools are used to create and modify the Shapes within the SVG. Selection is used to identify the active Shape that is being created or modified.
+
+This extension is based off of the `svg-poc` and modified to fit ProseMirror's (PM) form. The product decision is that there is a *single* history (both text and drawing) in the editor. The challenge with translating the PoC into ProseMirror is deciding what goes into the history. For example, when creating a Rectangle within the editor, it is *not* desirable to have every mouse motion captured in the history. Only the final created state is to be preserved in the history. This dictates that there are effectively two states: a 'local' state which occurs while the user is performing some action and the 'document' state (which is the expected PM schema) which is the final *in situ* state of that action. This is best captured using ProseMirror's NodeViews where the view effectively becomes a 'nested' MVC the represent the 'local' state.
+
+In order to contend with this distinction between 'local' and 'document' state, a 'Node' suffix is added to all PM-specific entities (in keeping with PM's nomenclature).

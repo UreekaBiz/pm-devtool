@@ -4,7 +4,7 @@ import { GapCursor } from 'prosemirror-gapcursor';
 import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, NodeSelection, Selection, Transaction } from 'prosemirror-state';
 
-import { getNodeName, NodeIdentifier, NodeName, NotebookSchemaType } from 'common';
+import { getNodeName, NotebookSchemaType, NodeIdentifier, NodeName } from 'common';
 
 import { ExtensionName } from 'notebookEditor/model/type';
 

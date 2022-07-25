@@ -6,6 +6,8 @@ export * from './extension/bold';
 export * from './extension/document';
 export * from './extension/heading';
 export * from './extension/paragraph';
+export * from './extension/rectangle';
+export * from './extension/svg';
 export * from './extension/text';
 export * from './extension/textStyle';
 export * from './mark';

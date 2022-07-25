@@ -17,6 +17,13 @@ type GetAttrsReturnType = ((p: string | Node) => false | { [key: string]: any; }
 const isValidHTMLTag = (tag: string): boolean => document.createElement(tag).toString() !== '[object HTMLUnknownElement]';
 
 /**
+ * Validates that a string is a valid NS element
+ * @param tag The string whose NS-element-tag-validity will be validated
+ * @returns A boolean indicating whether or not the given string is a valid NS element tag
+ */
+const isValidNSElement = (tag: string): boolean => document.createElementNS('http://www.w3.org/2000/svg', tag).toString() !== '[object HTMLUnknownElement]';
+
+/**
  * Validates that an object is a valid {@link HTMLElement}
  *
  * @param object The object that will be validated
@@ -39,6 +46,18 @@ export const safeParseTag = (tagName: string) => {
 };
 
 /**
+ * Wrapper around {@link isValidNSElement} that throws if {@link isValidNSElement} fails or returns an object with the given tagName as its tag key
+ * @param tagName The NS element tag name to be passed to {@link isValidNSElement}
+ * @returns An object with an explicitly defined tag property whose value that matches the given tagName
+ */
+export const safeParseSVGTag = (tagName: string) => {
+  if(!isValidNSElement(tagName)) throw new Error(`Invalid svg tag name: ${tagName}`);
+  return { tag: tagName };
+};
+
+
+/**
+ * A wrapper function that allows parseHTML node getAttr calls to safely use node as an HTMLElement
  * A wrapper function that allows parseHTML node getAttr calls to safely use node
  * as an HTMLElement
  *
@@ -75,3 +94,7 @@ export const wrapGetStyleAttrs = (getAttrsCallback: (value: string) => boolean |
 
   return validatedGetAttrsFunction;
 };
+
+// == RegEx =======================================================================
+export const isHexColorRegex = (input: string) => /^(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$/.test(input);
+export const isNumericRegExp = /^[0-9\b]+$/;

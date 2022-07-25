@@ -10,6 +10,10 @@ export enum AttributeType {
   // CSS Styles
   Width = 'width',
   Height = 'height',
+  Fill = 'fill',
+  Stroke = 'stroke',
+  StrokeWidth = 'strokeWidth',
+  Opacity = 'opacity',
 
   MarginTop = 'marginTop',
   MarginBottom = 'marginBottom',
@@ -28,9 +32,17 @@ export enum AttributeType {
   VerticalAlign = 'verticalAlign',
 
   // Custom
+  Angle = 'angle',
+  CenterX = 'centerX',
+  CenterY = 'centerY',
+  FillStyle = 'fillStyle',
   Id = 'id',
-  Level = 'level',
   InitialMarksSet = 'initialMarksSet',
+  Level = 'level',
+  PreserveAspectRatio = 'preserveAspectRatio',
+  StrokeStyle = 'strokeStyle'/*in custom cause its rectangle-specific*/,
+  Roughness = 'roughness',
+  ViewBox = 'viewBox',
 }
 
 export type StyleAttributes = {
