@@ -4,8 +4,10 @@ import { isStyleAttribute, snakeCaseToKebabCase, HTMLAttributes } from '../attri
 import { NotebookDocumentContent } from '../document';
 import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
+import { DrawingNodeRendererSpec } from '../extension/drawing';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
+import { RectangleNodeRendererSpec } from '../extension/rectangle';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
 import { JSONMark, MarkName } from '../mark';
@@ -16,8 +18,10 @@ import { getRenderTag, AttributeRenderer, HTMLString, MarkRendererSpec, NodeRend
 // ********************************************************************************
 // == Type ========================================================================
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
+  [NodeName.DRAWING]: DrawingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DOC]: DocumentNodeRendererSpec,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.RECTANGLE]: RectangleNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.PARAGRAPH]: ParagraphNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.TEXT]: TextNodeRendererSpec,
 };

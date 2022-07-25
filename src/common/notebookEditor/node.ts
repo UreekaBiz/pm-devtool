@@ -23,7 +23,9 @@ export type JSONNode<A extends Attributes = {}> = {
 // --------------------------------------------------------------------------------
 export enum NodeName {
   DOC = 'document',
+  DRAWING = 'drawing',
   HEADING = 'heading',
+  RECTANGLE = 'rectangle',
   PARAGRAPH = 'paragraph',
   TEXT = 'text',
 }

@@ -2,11 +2,11 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { notebookRoutes } from 'core/routes';
 
-import { NotebookRouter } from './NotebookRouter';
 import { NotFoundPage } from '../NotFoundPage';
+import { NotebookRouter } from './NotebookRouter';
 
 // ********************************************************************************
-export const CoreRouter: React.FC = () =>
+export const CoreRouter = () =>
   <BrowserRouter>
     <Routes>
       <Route index element={<Navigate to={notebookRoutes.root} />} />

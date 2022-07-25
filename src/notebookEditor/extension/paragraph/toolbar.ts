@@ -4,6 +4,7 @@ import { markBold } from 'notebookEditor/extension/bold/toolbar';
 import { heading1, heading2, heading3 } from 'notebookEditor/extension/heading/toolbar';
 import { fontSizeToolItem, spacingToolItem, textColorToolItem } from 'notebookEditor/extension/textStyle/toolbar';
 import { Toolbar } from 'notebookEditor/toolbar/type';
+import { drawing } from 'notebookEditor/extension/drawing/drawing/toolbar';
 
 //*********************************************************************************
 // == Toolbar =====================================================================
@@ -12,6 +13,7 @@ export const ParagraphToolbar: Toolbar = {
 
   toolsCollections: [
     [
+      drawing,
       markBold,
       heading1,
       heading2,

@@ -11,8 +11,9 @@
 /* == Constant ================================================================= */
 /* NOTE: Must match theme variables. (SEE: core/theme) */
 :root {
-  --ACTIVE_BUTTON_COLOR: #E2E8F0;
-  --HOVER_BUTTON_COLOR: #EDF2F7/*currently only used through CSS file*/;
+  --LIGHT_GRAY: #E2E8F0;
+  --FOCUS_COLOR: #5E9ED6;
+  --HOVER_LIGHT_GRAY: #EDF2F7/*currently only used in this CSS file*/;
 }
 
 /* == Editor =================================================================== */
@@ -102,6 +103,7 @@
 .ProseMirror-focused .ProseMirror-gapcursor { display: block; }
 
 /* == Toolbar ================================================================== */
+/* -- IconButton --------------------------------------------------------------- */
 .iconButton {
   width: auto;
   height: auto;
@@ -111,5 +113,25 @@
 
   border-radius: 50%;
 }
-.iconButton.active { background-color: var(--ACTIVE_BUTTON_COLOR); }
-.iconButton:hover  { background-color: var(--HOVER_BUTTON_COLOR); }
+.iconButton.active { background-color: var(--LIGHT_GRAY); }
+.iconButton:hover  { background-color: var(--HOVER_LIGHT_GRAY); }
+
+/* == Drawing ================================================================== */
+.drawingCanvas { outline: 1px solid var(--LIGHT_GRAY); }
+.moveShape { cursor: all-scroll; }
+
+/* -- Selection ---------------------------------------------------------------- */
+.cursorAuto { cursor: auto; }
+.cursorCrosshair { cursor: crosshair; }
+.cursorMove { cursor: all-scroll; }
+.cursorGrab { cursor: grab; }
+
+.visible { visibility: visible; }
+.topLeft { cursor: nw-resize; }
+.topMiddle { cursor: n-resize; }
+.topRight { cursor: ne-resize; }
+.middleRight { cursor: e-resize; }
+.bottomRight { cursor: se-resize; }
+.bottomMiddle { cursor: s-resize; }
+.bottomLeft { cursor: sw-resize; }
+.middleLeft { cursor: w-resize; }

@@ -2,8 +2,10 @@ import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
 import { BoldMarkSpec } from './extension/bold';
 import { DocumentNodeSpec } from './extension/document';
+import { DrawingNodeSpec } from './extension/drawing';
 import { HeadingNodeSpec } from './extension/heading';
 import { ParagraphNodeSpec } from './extension/paragraph';
+import { RectangleNodeSpec } from './extension/rectangle';
 import { TextNodeSpec } from './extension/text';
 import { TextStyleMarkSpec } from './extension/textStyle';
 import { MarkName } from './mark';
@@ -12,8 +14,10 @@ import { NodeName } from './node';
 // ********************************************************************************
 // ================================================================================
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
+  [NodeName.DRAWING]: DrawingNodeSpec,
   [NodeName.DOC]: DocumentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
+  [NodeName.RECTANGLE]: RectangleNodeSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,
 };

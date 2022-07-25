@@ -38,10 +38,11 @@ This is the list of keyboard shortcuts that is built into the Notebook Editor.
 | <kbd>cmd</kbd><kbd>option</kbd><kbd>1</kbd>         | Toggle a Heading1 Node                                         |
 | <kbd>cmd</kbd><kbd>option</kbd><kbd>2</kbd>         | Toggle a Heading2 Node                                         |
 | <kbd>cmd</kbd><kbd>option</kbd><kbd>3</kbd>         | Toggle a Heading3 Node                                         |
-| <kbd>ctrl</kbd><kbd>option</kbd><kbd>,</kbd>        | Preview Published Notebook                                     |
+| <kbd>ctrl</kbd><kbd>option</kbd><kbd>,</kbd>        | Preview Published Notebook                                      |
 | <kbd>ctrl</kbd><kbd>option</kbd><kbd>,</kbd>        | Toggle Development Mode                                        |
-| <kbd>cmd</kbd><kbd>option</kbd><kbd>,</kbd>         | Focus the Notebook Editor                                      |
+| <kbd>cmd</kbd><kbd>option</kbd><kbd>,</kbd>         | Focus the Notebook Editor                                       |
 | <kbd>cmd</kbd><kbd>option</kbd><kbd>.</kbd>         | Focus the first available ToolItem in the toolbar              |
+
 
 ## Parse Rules
 This is the list of parse rules that are implemented in the editor
