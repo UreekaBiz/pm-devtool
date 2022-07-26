@@ -1,27 +1,13 @@
 import { Attribute, Editor } from '@tiptap/core';
 import { DOMOutputSpec, Mark as ProseMirrorMark, Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { getHeadingThemeValue, getMarkName, getNodeName, getRenderAttributes, getRenderTag, getThemeValue, isHeadingNode, isTextNode, mergeAttributes, AttributeType, AttributeValue, Attributes, MarkName, MarkRendererSpecs, MarkSpecs,  NodeRendererSpecs, NodeSpecs, SpacingAttribute, SetAttributeType, DATA_NODE_TYPE } from 'common';
+import { getHeadingThemeValue, getMarkName, getNodeName, getRenderAttributes, getRenderTag, getThemeValue, isHeadingNode, isTextNode, mergeAttributes, mergeAttributeValues, AttributeType, Attributes, InvalidMergedAttributeValue, MarkName, MarkRendererSpecs, MarkSpecs, MergedAttributeValue,  NodeRendererSpecs, NodeSpecs, SetAttributeType, DATA_NODE_TYPE } from 'common';
 
 import { getMarkValue } from './mark';
 import { getSelectedNode } from './node';
 
 // ********************************************************************************
 // == Util ========================================================================
-export const getOppositeSpacingAttribute = (attribute: SpacingAttribute) => {
-  switch(attribute){
-    case AttributeType.MarginBottom: return AttributeType.MarginTop;
-    case AttributeType.MarginTop: return AttributeType.MarginBottom;
-    case AttributeType.MarginLeft: return AttributeType.MarginRight;
-    case AttributeType.MarginRight: return AttributeType.MarginLeft;
-
-    case AttributeType.PaddingBottom: return AttributeType.PaddingTop;
-    case AttributeType.PaddingTop: return AttributeType.PaddingBottom;
-    case AttributeType.PaddingLeft: return AttributeType.PaddingRight;
-    case AttributeType.PaddingRight: return AttributeType.PaddingLeft;
-  }
-};
-
 /**
  * Sets the parsing behavior that will be used when parsing an {@link Attribute}
  *
@@ -165,37 +151,3 @@ export const getDOMNodeRenderedValue = (node: ProseMirrorNode, attributeType: At
   return themeValue;
 };
 
-// -- Merging ---------------------------------------------------------------------
-// Symbol that is used when the merged value of the given attributes is invalid.
-// This usually means that the values are not compatible in some way.
-export const InvalidMergedAttributeValue = Symbol('invalidMergedAttribute');
-export type MergedAttributeValue = AttributeValue | typeof InvalidMergedAttributeValue/*could not be merged*/ | undefined/*no value*/;
-
-// Merges the given AttributeValues into one MergedAttributeValue.
-const mergeAttributeValues = (a: MergedAttributeValue | undefined, b: MergedAttributeValue | undefined): MergedAttributeValue => {
-  // If one of the values is invalid it cannot be merged.
-  if(a === InvalidMergedAttributeValue || b === InvalidMergedAttributeValue) return InvalidMergedAttributeValue;
-
-  // If one of the values if not defined will default to the other value.
-  if(!a) return b;
-  if(!b) return a;
-
-  // If they are equal return either of those
-  if(a === b) return a;
-
-  // else -- the value is invalid.
-  return InvalidMergedAttributeValue;
-};
-
-// TODO: Find a home for this!
-// --------------------------------------------------------------------------------
-// CHECK: can this do better than Partial<T>?
-export const removeValue = <T extends Record<string, any>>(o: T, value: any): Partial<T> => {
-  const result: any = {};
-    Object.keys(o)
-      .forEach(key => { if(o[key] !== value) result[key] = o[key]; });
-  return result;
-};
-
-export const removeNull = <T>(o: T) => removeValue(o, null)/*for convenience*/;
-export const removeUndefined = <T>(o: T) => removeValue(o, undefined)/*for convenience*/;

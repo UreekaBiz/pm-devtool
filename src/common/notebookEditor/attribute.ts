@@ -98,6 +98,20 @@ export const isPaddingAttribute = (attribute: AttributeType) => attribute.includ
 export type SpacingType = 'margin' | 'padding';
 export type SpacingAttribute = MarginAttribute | PaddingAttribute;
 
+export const getOppositeSpacingAttribute = (attribute: SpacingAttribute) => {
+  switch(attribute){
+    case AttributeType.MarginBottom: return AttributeType.MarginTop;
+    case AttributeType.MarginTop: return AttributeType.MarginBottom;
+    case AttributeType.MarginLeft: return AttributeType.MarginRight;
+    case AttributeType.MarginRight: return AttributeType.MarginLeft;
+
+    case AttributeType.PaddingBottom: return AttributeType.PaddingTop;
+    case AttributeType.PaddingTop: return AttributeType.PaddingBottom;
+    case AttributeType.PaddingLeft: return AttributeType.PaddingRight;
+    case AttributeType.PaddingRight: return AttributeType.PaddingLeft;
+  }
+};
+
 // -- Alignment -------------------------------------------------------------------
 export enum TextAlign {
   left = 'left',
@@ -138,4 +152,26 @@ export type AttributesTypeFromNodeSpecAttributes<A extends NodeSpecAttributes> =
 export const snakeCaseToKebabCase = (str: string) => {
   const res = Array.from(str).reduce((acc, char) => `${acc}${char === char.toUpperCase() ? `-${char.toLowerCase()}` : char}`, '');
   return res;
+};
+
+// -- Merging ---------------------------------------------------------------------
+// Symbol that is used when the merged value of the given attributes is invalid.
+// This usually means that the values are not compatible in some way.
+export const InvalidMergedAttributeValue = Symbol('invalidMergedAttribute');
+export type MergedAttributeValue = AttributeValue | typeof InvalidMergedAttributeValue/*could not be merged*/ | undefined/*no value*/;
+
+// Merges the given AttributeValues into one MergedAttributeValue.
+export const mergeAttributeValues = (a: MergedAttributeValue | undefined, b: MergedAttributeValue | undefined): MergedAttributeValue => {
+  // If one of the values is invalid it cannot be merged.
+  if(a === InvalidMergedAttributeValue || b === InvalidMergedAttributeValue) return InvalidMergedAttributeValue;
+
+  // If one of the values if not defined will default to the other value.
+  if(!a) return b;
+  if(!b) return a;
+
+  // If they are equal return either of those
+  if(a === b) return a;
+
+  // else -- the value is invalid.
+  return InvalidMergedAttributeValue;
 };

@@ -1,6 +1,6 @@
-import { AttributeType, MarkName } from 'common';
+import { AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
 
-import { getTextDOMRenderedValue, InvalidMergedAttributeValue } from 'notebookEditor/extension/util/attribute';
+import { getTextDOMRenderedValue } from 'notebookEditor/extension/util/attribute';
 import { getSelectedNode } from 'notebookEditor/extension/util/node';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
