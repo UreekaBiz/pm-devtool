@@ -60,7 +60,7 @@ export const HeadingNodeRendererSpec: NodeRendererSpec<HeadingAttributes> = {
     }
   },
 
-  attributes: {},
+  attributes: {/*use the default renderer on all attributes*/},
 };
 
 // == Type ========================================================================

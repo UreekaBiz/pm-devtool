@@ -74,7 +74,7 @@ export const getNodeOutputSpec = (node: ProseMirrorNode, HTMLAttributes: Attribu
   const tag = getRenderTag(attributes, nodeRendererSpec);
   const merged = getRenderAttributes(nodeName, attributes, nodeRendererSpec, nodeSpec);
 
-  // Leaf nodes don't required to have a 'content hole'.
+  // Leaf nodes don't need a content hole
   if(isLeaf) return [tag, merged];
   return [tag, merged, 0/*content hole*/];
 };
