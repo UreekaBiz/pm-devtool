@@ -1,7 +1,6 @@
-import { Attributes, HeadingLevel } from 'common';
+import { generateNodeId, Attributes, HeadingLevel } from 'common';
 
 import { DEFAULT_NODE_ID } from 'notebookEditor/extension/uniqueNodeId/UniqueNodeId';
-import { generateNodeId } from 'notebookEditor/extension/util/node';
 
 // ********************************************************************************
 // == Type ========================================================================

@@ -2,9 +2,9 @@ import { Extension } from '@tiptap/core';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 
-import { NodeName } from 'common';
+import { generateNodeId, NodeName } from 'common';
 
-import { generateNodeId, resolveNewSelection } from 'notebookEditor/extension/util/node';
+import { resolveNewSelection } from 'notebookEditor/extension/util/node';
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model/type';
 
 // ********************************************************************************

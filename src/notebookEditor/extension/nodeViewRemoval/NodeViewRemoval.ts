@@ -1,9 +1,8 @@
 import { Extension } from '@tiptap/core';
 import { Transaction } from 'prosemirror-state';
 
-import { NotebookSchemaType, NodeName } from 'common';
+import { computeRemovedNodeObjs, getNodesAffectedByStepMap, NotebookSchemaType, NodeFound, NodeName } from 'common';
 
-import { computeRemovedNodeObjs, getNodesAffectedByStepMap, NodeFound } from 'notebookEditor/extension/util/node';
 import { ExtensionName, ExtensionPriority, NoOptions, NoStorage } from 'notebookEditor/model/type';
 
 // ********************************************************************************

@@ -1,9 +1,8 @@
 import { Extension } from '@tiptap/core';
 import { Plugin } from 'prosemirror-state';
 
-import { getNodeName, MarkName, NodeName } from 'common';
+import { findContentDifferencePositions, getNodeName, MarkName, NodeName } from 'common';
 
-import { findContentDifferencePositions } from 'notebookEditor/extension/util/node';
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model/type';
 
 // ********************************************************************************
