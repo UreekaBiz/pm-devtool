@@ -4,7 +4,7 @@ import { getTextDOMRenderedValue, InvalidMergedAttributeValue } from 'notebookEd
 import { getSelectedNode } from 'notebookEditor/extension/util/node';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { UnitPickerInput } from './UnitPickerInput.tsx';
+import { UnitPickerInput } from './UnitPickerInput';
 
 // ********************************************************************************
 interface Props extends EditorToolComponentProps {/*no additional*/}
