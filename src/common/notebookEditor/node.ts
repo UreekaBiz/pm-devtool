@@ -1,6 +1,6 @@
 import { customAlphabet } from 'nanoid';
 import { Fragment, Node as ProseMirrorNode, Schema } from 'prosemirror-model';
-import { Transaction } from 'prosemirror-state';
+import { Selection, Transaction } from 'prosemirror-state';
 
 import { Attributes } from './attribute';
 import { JSONMark } from './mark';
@@ -59,48 +59,8 @@ export const contentToNode = (schema: Schema, content?: NodeContent) => content 
 // -- Search ----------------------------------------------------------------------
 export type NodeFound = { node: ProseMirrorNode; position: number; };
 
-/**
- * Finds the last node whose id matches the given nodeId
- *
- * @param rootNode The node whose descendants will be looked for the node with the given nodeId
- * @param nodeId The nodeId that will be looked for in the {@link rootNode}'s descendants
- * @returns The {@link NodeFound} object that corresponds to the looked for nodeId, or null if it wasn't found
- */
- export const findLastNodeById = (rootNode: ProseMirrorNode, nodeId: NodeIdentifier): NodeFound | null => {
-  let nodeFound: NodeFound | null = null/*initially not found*/;
-
-  rootNode.descendants((node, position) => {
-    if(nodeFound !== null/*already found*/) return false/*don't look in descendants*/;
-    if(node.attrs.id !== nodeId) return/*continue searching*/;
-    // else -- node is found
-
-    nodeFound = { node, position };
-    return false;/*don't look in descendants*/
-  });
-
-  return nodeFound;
-};
-
-/**
- * Looks for the parent node of the given {@link node} in the {@link rootNode}'s descendants
- *
- * @param rootNode The node whose descendants will be looked for the given {@link node}
- * @param node The {@link node} that is being searched for in the {@link rootNode}'s descendants
- * @returns The {@link NodeFound} object that corresponds to the looked for {@link node}, or null if it wasn't found
- */
-export const getParentNode = (rootNode: ProseMirrorNode, node: ProseMirrorNode): NodeFound | null => {
-  let nodeFound: NodeFound | null = null;
-
-  rootNode.descendants((currentNode, position) => {
-    currentNode.content.forEach(child => {
-      if(child !== node) return/*continue searching*/;
-
-      nodeFound = { node: currentNode, position };
-    });
-  });
-
-  return nodeFound;
-};
+/** Returns the parent node of a {@link Selection} */
+export const getParentNode = (selection: Selection): ProseMirrorNode => selection.$anchor.parent;
 
 /**
  * Find the positions at which the differences between the content of two
@@ -275,5 +235,5 @@ export const generateNodeId = () => customNanoid();
  * Note that not all nodes require their view to have an ID, but all nodeViews
  * whose nodes make use of this functionality -must- have an ID attribute.
  */
- export const nodeToTagIi = (node: ProseMirrorNode) => `${node.type.name}-${node.attrs.id}`;
+ export const nodeToTagId = (node: ProseMirrorNode) => `${node.type.name}-${node.attrs.id}`;
 
