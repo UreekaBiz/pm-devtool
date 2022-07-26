@@ -1,7 +1,5 @@
 import { markInputRule as tiptapMarkInputRule, markPasteRule as tiptapMarkPasteRule, InputRule, PasteRule } from '@tiptap/core';
-import { MarkType, Node as ProseMirrorNode } from 'prosemirror-model';
-
-import { AttributeType, AttributeValue, MarkName } from 'common';
+import { MarkType } from 'prosemirror-model';
 
 // ********************************************************************************
 /**
@@ -23,23 +21,3 @@ export const markInputRule = (regExp: RegExp, type: MarkType): InputRule => tipt
  * REF: https://tiptap.dev/guide/custom-extensions
  */
 export const markPasteRule = (regExp: RegExp, type: MarkType): PasteRule => tiptapMarkPasteRule({ find: new RegExp(regExp.source, 'g'), type });
-
-// == Util ========================================================================
-/**
- * Gets the given mark from the given node. Returns undefined if the mark is not
- * found.
- */
-export const getMark = (node: ProseMirrorNode, markName: MarkName) => {
-  return node.marks.find(mark => mark.type.name === markName);
-};
-
-/**
- * Gets the value of the mark from the given node. Returns undefined if the mark is
- * not found or the mark has no value.
- */
-export const getMarkValue = (node: ProseMirrorNode, markName: MarkName, attributeType: AttributeType): AttributeValue | undefined=> {
-  const mark = getMark(node, markName);
-  const value = mark ? mark.attrs[attributeType] : undefined;
-
-  return value;
-};

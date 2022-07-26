@@ -1,9 +1,8 @@
 import { Attribute, Editor } from '@tiptap/core';
 import { DOMOutputSpec, Mark as ProseMirrorMark, Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { getHeadingThemeValue, getMarkName, getNodeName, getRenderAttributes, getRenderTag, getThemeValue, isHeadingNode, isTextNode, mergeAttributes, mergeAttributeValues, AttributeType, Attributes, InvalidMergedAttributeValue, MarkName, MarkRendererSpecs, MarkSpecs, MergedAttributeValue,  NodeRendererSpecs, NodeSpecs, SetAttributeType, DATA_NODE_TYPE } from 'common';
+import { getHeadingThemeValue, getMarkName, getMarkValue, getNodeName, getRenderAttributes, getRenderTag, getThemeValue, isHeadingNode, isTextNode, mergeAttributes, mergeAttributeValues, AttributeType, Attributes, InvalidMergedAttributeValue, MarkName, MarkRendererSpecs, MarkSpecs, MergedAttributeValue,  NodeRendererSpecs, NodeSpecs, SetAttributeType, DATA_NODE_TYPE } from 'common';
 
-import { getMarkValue } from './mark';
 import { getSelectedNode } from './node';
 
 // ********************************************************************************
