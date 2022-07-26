@@ -7,7 +7,7 @@ export type HTMLAttributes = Record<string, string>;
 // Is there any other type of attribute that is not a string? If so add it below.
 export type AttributeValue = string;
 export enum AttributeType {
-  // CSS Styles
+  // -- CSS Styles ----------------------------------------------------------------
   Width = 'width',
   Height = 'height',
 
@@ -21,16 +21,19 @@ export enum AttributeType {
   PaddingLeft = 'paddingLeft',
   PaddingRight = 'paddingRight',
 
-  // Text Style
+  // -- Text Style ----------------------------------------------------------------
   FontSize = 'fontSize',
   TextColor = 'color',
   TextAlign = 'textAlign',
   VerticalAlign = 'verticalAlign',
 
-  // Custom
+  // -- Custom --------------------------------------------------------------------
+  // .. General ...................................................................
   Id = 'id',
-  Level = 'level',
   InitialMarksSet = 'initialMarksSet',
+
+  // .. Heading ...................................................................
+  Level = 'level',
 }
 
 export type StyleAttributes = {
