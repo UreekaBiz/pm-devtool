@@ -1,7 +1,7 @@
 import { Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { NodeRendererSpec } from '../htmlRenderer/type';
-import { JSONNode, NodeName, NodeType } from '../node';
+import { JSONNode, NodeGroup, NodeName } from '../node';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
@@ -17,7 +17,7 @@ export const DocumentNodeSpec: NodeSpec = {
   //       is the top node.
   // SEE:  src/common/notebookEditor/schema.ts
   topNode: true/*it's the node that will be used as a root for the document*/,
-  content: `${NodeType.BLOCK}+`,
+  content: `${NodeGroup.BLOCK}+`,
 };
 
 // -- Render Spec -----------------------------------------------------------------

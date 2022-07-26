@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { NodeRendererSpec } from '../htmlRenderer/type';
-import { JSONNode, NodeIdentifier, NodeName, NodeType } from '../node';
+import { JSONNode, NodeGroup, NodeIdentifier, NodeName } from '../node';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
@@ -39,8 +39,8 @@ export type HeadingAttributes = AttributesTypeFromNodeSpecAttributes<typeof Head
 export const HeadingNodeSpec: NodeSpec = {
   name: NodeName.HEADING/*expected and guaranteed to be unique*/,
 
-  group: NodeType.BLOCK,
-  content: `${NodeType.INLINE}*`,
+  group: NodeGroup.BLOCK,
+  content: `${NodeGroup.INLINE}*`,
   defining: true,
 
   attrs: HeadingAttributesSpec,
@@ -66,13 +66,16 @@ export const HeadingNodeRendererSpec: NodeRendererSpec<HeadingAttributes> = {
 // == Type ========================================================================
 export enum HeadingLevel { One = 1, Two = 2, Three = 3 }
 export const isHeadingLevel = (level: number): level is HeadingLevel => level in HeadingLevel;
-// Gets the heading level from a H1, H2 or H3 tag. This tag is case insensitive.
+
+
+/** Gets the heading level from a H1, H2 or H3 tag. This tag is case insensitive. */
 export const getHeadingLevelFromTag = (tag: string): HeadingLevel | undefined => {
   const match = tag.match(/^h([1-3])$/i);
   if(!match) return undefined/*invalid heading level*/;
 
-  const level = parseInt(match[1]);
-  if(isHeadingLevel(level)) return level;
+  const level = parseInt(match[1]/*second element is the one in the group selection from the regex*/);
+  // Only return a valid value.
+  if(isHeadingLevel(level)) return level/*nothing else to do*/;
   return undefined;
 };
 

@@ -1,7 +1,7 @@
 import { Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { NodeRendererSpec } from '../htmlRenderer/type';
-import { JSONNode, NodeName, NodeType } from '../node';
+import { JSONNode, NodeGroup, NodeName } from '../node';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
@@ -13,7 +13,7 @@ export type TextAttributes = {/*no attributes*/};
 export const TextNodeSpec: NodeSpec = {
   name: NodeName.TEXT/*expected and guaranteed to be unique*/,
 
-  group: NodeType.INLINE,
+  group: NodeGroup.INLINE,
 };
 
 // -- Render Spec -----------------------------------------------------------------

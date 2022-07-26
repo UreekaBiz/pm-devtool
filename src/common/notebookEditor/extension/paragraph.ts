@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { NodeRendererSpec } from '../htmlRenderer/type';
-import { JSONNode, NodeName, NodeType } from '../node';
+import { JSONNode, NodeGroup, NodeName } from '../node';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
@@ -29,8 +29,8 @@ export type ParagraphAttributes = AttributesTypeFromNodeSpecAttributes<typeof Pa
 export const ParagraphNodeSpec: Readonly<NodeSpec> = {
   name: NodeName.PARAGRAPH/*expected and guaranteed to be unique*/,
 
-  group: NodeType.BLOCK,
-  content: `${NodeType.INLINE}*`,
+  group: NodeGroup.BLOCK,
+  content: `${NodeGroup.INLINE}*`,
 
   attrs: ParagraphAttributesSpec,
 };
