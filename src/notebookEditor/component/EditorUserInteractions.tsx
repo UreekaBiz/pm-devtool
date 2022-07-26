@@ -41,7 +41,7 @@ export const EditorUserInteractions = () => {
         case 'Comma': {
           if(!(event.altKey && event.metaKey)) return;
           isNodeSelection(editor.state.selection)
-            ? editor.commands.setNodeSelection(editor.state.selection.$anchor.pos)
+            ? editor.chain().focus().setNodeSelection(editor.state.selection.$anchor.pos)
             : editor.commands.focus();
           event.preventDefault();
           break;
