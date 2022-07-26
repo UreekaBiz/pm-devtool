@@ -1,9 +1,8 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { isMarginAttribute, AttributeType, Margin, Padding, SpacingAttribute, SpacingType, MarginAttribute, PaddingAttribute } from 'common';
+import { isMarginAttribute, getOppositeSpacingAttribute, AttributeType, Margin, MarginAttribute, Padding, PaddingAttribute, SpacingAttribute, SpacingType } from 'common';
 
-import { getOppositeSpacingAttribute } from 'notebookEditor/extension/util/attribute';
 import { getNumberValueFromUnitString, Unit } from 'notebookEditor/theme/type';
 
 import { DragControl } from './DragControl';
