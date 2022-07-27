@@ -1,8 +1,8 @@
 import { Select } from '@chakra-ui/react';
 import { useState, ChangeEventHandler } from 'react';
 
-import { notebookEditorTheme } from 'common/notebookEditor/theme/theme';
-import { ThemeName, Themes } from 'common/notebookEditor/theme/type';
+import { notebookEditorTheme, ThemeName, Themes } from 'common';
+
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
