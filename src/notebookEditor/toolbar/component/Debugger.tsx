@@ -5,7 +5,6 @@ import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 // ********************************************************************************
 export const Debugger = () => {
   const editor = useValidatedEditor();
-
   return (
     <>
       <Divider/>
@@ -29,5 +28,4 @@ export const Debugger = () => {
       </Box>
     </>
   );
-
 };
