@@ -19,12 +19,12 @@ class NotebookEditorTheme {
   }
 
   // == Public methods ============================================================
-  /** Gets the current theme */
+  /** Gets the current Theme */
   public getTheme() {
     return this.theme;
   }
 
-  /** Sets a new theme */
+  /** Sets a new Theme */
   public setTheme(theme: Theme) {
     this.theme = theme;
     this.setThemeStylesheet()/*sync stylesheet*/;
@@ -36,10 +36,10 @@ class NotebookEditorTheme {
   private setThemeStylesheet() {
     const stylesheet = this.getStylesheet();
 
-    // Get existing stylesheet
+    // get existing stylesheet
     let existingStyleSheet = document.querySelector('#theme-stylesheet');
 
-    // Create a new style elements and append it to the document head
+    // create a new style elements and append it to the document head
     if(!existingStyleSheet) {
       existingStyleSheet = document.createElement('style');
       existingStyleSheet.setAttribute('id', 'theme-stylesheet');
@@ -52,13 +52,13 @@ class NotebookEditorTheme {
   private getStylesheet() {
     const { nodes, marks, customSelectors } = this.theme;
 
-    // Create a class in the form of [DATA_NODE_TYPE="nodeName"] {} for each node.
+    // creates a CSS class in the form of [DATA_NODE_TYPE="nodeName"] {} for each Node
     const nodeStyles = Object.keys(nodes).map(nodeName => {
       const nodeTheme = nodes[nodeName as NodeName/*by definition*/];
 
+      // get "attribute: value;"
       const nodeAttributes = Object.keys(nodeTheme).map(attribute => {
         const value = nodeTheme[attribute as keyof typeof nodeTheme/*by definition*/];
-        // Get "attribute: value;"
         return `${camelToKebabCase(attribute)}: ${value};`;
       }).join('\n');
 
@@ -66,13 +66,13 @@ class NotebookEditorTheme {
       return CSSClass;
     }).join('\n');
 
-    // Create a class in the form of [data-mark-type="markName"] {} for each mark.
+    // creates a CSS class in the form of [data-mark-type="markName"] {} for each Mark
     const markStyles = Object.keys(marks).map(markName => {
       const markTheme = marks[markName as MarkName/*by definition*/];
 
+      // get "attribute: value;"
       const markAttributes = Object.keys(markTheme).map(attribute => {
         const value = markTheme[attribute as keyof typeof markTheme/*by definition*/];
-        // Get "attribute: value;"
         return `${camelToKebabCase(attribute)}: ${value};`;
       }).join('\n');
 
@@ -80,14 +80,14 @@ class NotebookEditorTheme {
       return CSSClass;
     }).join('\n');
 
-    // Create a class with the given custom selector for each entry of the
-    // customSelectors object.
+    // creates a CSS class with the given custom selector for each entry of the
+    // customSelectors object
     const customSelectorsStyles = Object.keys(customSelectors).map(customSelector => {
       const customTheme = customSelectors[customSelector as keyof typeof customSelectors/*by definition*/];
 
+      // get "attribute: value;"
       const customAttributes = Object.keys(customTheme).map(attribute => {
         const value = customTheme[attribute as keyof typeof customTheme/*by definition*/];
-        // Get "attribute: value;"
         return `${camelToKebabCase(attribute)}: ${value};`;
       }).join('\n');
 
@@ -98,7 +98,7 @@ class NotebookEditorTheme {
     return `${nodeStyles}\n${markStyles}\n${customSelectorsStyles}`;
   }
 }
-// Singleton class to manage the theme.
+// singleton class to manage the Theme
 export const notebookEditorTheme = new NotebookEditorTheme(DefaultTheme);
 
 // ================================================================================
@@ -108,16 +108,14 @@ export const getThemeElement = (nodeOrMarkName: NodeName | MarkName): ThemeEleme
 
   const nodeName = nodeOrMarkName as NodeName,
         markName = nodeOrMarkName as MarkName;
+  if(nodeOrMarkName in nodes) return nodes[nodeName]/*found*/;
+  else if(nodeOrMarkName in marks) return marks[markName]/*found*/;
 
-  if(nodeOrMarkName in nodes) { return nodes[nodeName]/*found*/; }
-  else if(nodeOrMarkName in marks) { return marks[markName]/*found*/; }
-  // else -- name was not found.
-
-  // empty theme element
-  return {};
+  return {/*empty*/};
 };
-// Gets the attribute value from the current theme based on the node name and
-// attribute type.
+
+// gets the attribute value from the current Theme based on the Node name and
+// Attribute type
 // NOTE: This function must only be used to get the actual render value that is a
 //       string (or undefined if not defined). If complex attributes are needed
 //       (e.g. Heading level) then the NodeTheme must be accessed directly. This
@@ -133,7 +131,7 @@ export const getThemeValue = (nodeOrMarkName: NodeName | MarkName, attribute: At
   return value;
 };
 
-// Gets the TextColor or FontSize for a Heading from the theme.
+// gets the TextColor or FontSize for a Heading from the Theme
 // NOTE: Heading nodes are a special case since the FontSize and TextColor are
 //       defined by its level, in this case a special CustomSelector is used and
 //       must be manually matched here.
