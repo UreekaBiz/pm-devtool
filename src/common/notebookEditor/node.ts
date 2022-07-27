@@ -52,7 +52,7 @@ export type NodeContent = string/*alias*/;
 
 // --------------------------------------------------------------------------------
 // the JSON as seen from Schema#nodeFromJSON() or Schema#markFromJSON()
-export type JSONContent = { [key: string]: any };
+export type JSONContent = { [key: string]: any; };
 
 // --------------------------------------------------------------------------------
 export const nodeToJSONNode = (node: ProseMirrorNode) => node.toJSON() as JSONNode;
