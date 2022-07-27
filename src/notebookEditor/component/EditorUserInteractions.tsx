@@ -6,10 +6,8 @@ import { isValidHTMLElement } from 'notebookEditor/extension/util/parse';
 import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
-/**
- * This component handles editor-related logic that requires the use of hooks
- * (and hence it must be a component)
- */
+// handles Editor-related logic that requires the use of hooks (and hence it must
+// be a component)
 export const EditorUserInteractions = () => {
   // == State =====================================================================
   const editor  = useValidatedEditor();
