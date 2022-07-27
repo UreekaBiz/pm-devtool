@@ -10,6 +10,7 @@ import { mapOldStartAndOldEndThroughHistory } from './step';
 // == Node definition =============================================================
 export type NodeIdentifier = string/*alias*/;
 
+// --------------------------------------------------------------------------------
 /**
  * The type of group that this node belongs to. This is used on the Content field
  * on a NodeSpec.
@@ -48,6 +49,10 @@ export type JSONNode<A extends Attributes = {}> = {
 };
 /**a stringified version of the content of the node */
 export type NodeContent = string/*alias*/;
+
+// --------------------------------------------------------------------------------
+// the JSON as seen from Schema#nodeFromJSON() or Schema#markFromJSON()
+export type JSONContent = { [key: string]: any };
 
 // --------------------------------------------------------------------------------
 export const nodeToJSONNode = (node: ProseMirrorNode) => node.toJSON() as JSONNode;
