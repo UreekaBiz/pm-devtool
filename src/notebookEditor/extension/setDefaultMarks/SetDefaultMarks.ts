@@ -19,7 +19,7 @@ const includedNodes = new Map<NodeName, MarkName[]>([[NodeName.HEADING, [MarkNam
  * the first textContent has been inserted into them)
  */
 export const SetDefaultMarks = Extension.create({
-  name: ExtensionName.SET_DEFAULT_MARKS/*Expected and guaranteed to be unique.*/,
+  name: ExtensionName.SET_DEFAULT_MARKS/*Expected and guaranteed to be unique*/,
   priority: ExtensionPriority.SET_DEFAULT_MARKS,
 
   // -- Plugin --------------------------------------------------------------------

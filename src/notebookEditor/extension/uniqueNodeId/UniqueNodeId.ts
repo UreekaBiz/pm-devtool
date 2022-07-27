@@ -28,9 +28,10 @@ const isUuidNode = (node: ProsemirrorNode<any>) =>
 // REF: https://github.com/ueberdosis/tiptap/issues/252
 // REF: https://github.com/ueberdosis/tiptap/blob/ed56337470efb4fd277128ab7ef792b37cfae992/packages/core/src/extensions/keymap.ts
 export const UniqueNodeId = Extension.create({
-  name: ExtensionName.UNIQUE_NODE_ID/*Expected and guaranteed to be unique.*/,
+  name: ExtensionName.UNIQUE_NODE_ID/*Expected and guaranteed to be unique*/,
   priority: ExtensionPriority.UNIQUE_NODE_ID,
 
+  // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins() {
     return [
       new Plugin({

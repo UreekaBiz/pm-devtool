@@ -13,7 +13,7 @@ const nodesWithNodeView = new Set<NodeName>([/*currently nothing*/]);
 
 // == Extension ===================================================================
 export const NodeViewRemoval = Extension.create<NoOptions, NoStorage>({
-  name: ExtensionName.NODEVIEW_REMOVAL/*Expected and guaranteed to be unique.*/,
+  name: ExtensionName.NODEVIEW_REMOVAL/*Expected and guaranteed to be unique*/,
   priority: ExtensionPriority.NODEVIEW_REMOVAL,
 
   // -- Transaction ---------------------------------------------------------------

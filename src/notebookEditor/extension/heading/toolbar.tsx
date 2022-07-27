@@ -33,7 +33,7 @@ export const heading3: ToolItem = createHeadingTool(HeadingLevel.Three, <BiHeadi
 
 // == Toolbar =====================================================================
 export const HeadingToolbar: Toolbar = {
-  nodeName: NodeName.HEADING/*Expected and guaranteed to be unique.*/,
+  nodeName: NodeName.HEADING/*Expected and guaranteed to be unique*/,
 
   toolsCollections: [
     [
