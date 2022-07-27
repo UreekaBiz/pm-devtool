@@ -24,11 +24,11 @@ export const MarkSpecs: Record<MarkName, MarkSpec> = {
 };
 
 // == Schema ======================================================================
-// NOTE: This schema must reflect the same schema that is being used in the editor
-//       itself, otherwise the editor will not be able to load the document.
+// NOTE: This schema must reflect the same Schema that is being used in the Editor
+//       itself, otherwise the Editor will not be able to load the Document.
 //
-//       When adding or removing nodes, the extensions that are used in the editor
-//       must also be updated to match the new schema
+//       When adding or removing Nodes, the extensions that are used in the Editor
+//       must also be updated to match the new Schema
 // SEE: NotebookProvider.ts
 export const SchemaV1 = new Schema({
   topNode: NodeName.DOC,

@@ -4,10 +4,6 @@ import { NotebookSchemaType } from 'common';
 
 // ********************************************************************************
 /**
- * Computes the right oldStart, oldEnd, newStart and newEnd for the ranges that
- * are modified by a step, taking into account undo and redo by mapping and
- * computing the positions of the ranges through the corresponding stepMapIndex
- *
  * @param transaction The transactions whose steps are being mapped
  * @param stepMapIndex The stepMapIndex of the step that is currently being mapped
  * @param unmappedOldStart The step's default (therefore non-mapped) oldStart

@@ -59,20 +59,17 @@ export const contentToNode = (schema: Schema, content?: NodeContent) => content 
 // -- Search ----------------------------------------------------------------------
 export type NodeFound = { node: ProseMirrorNode; position: number; };
 
-/** Returns the parent node of a {@link Selection} */
+/** @returns the parent node of a {@link Selection} */
 export const getParentNode = (selection: Selection): ProseMirrorNode => selection.$anchor.parent;
 
 /**
- * Find the positions at which the differences between the content of two
- * nodes start and differ
- *
  * @param node1 The first {@link ProseMirrorNode} whose content will be compared
  * @param node2 The second {@link ProseMirrorNode} whose content will be compared
  * @returns The position at which the differences between the contents of the two
- *          nodes start, and the object that contains the positions at which the
+ *          Nodes start, and the object that contains the positions at which the
  *          differences between the contents of the two nodes end. Since the end
- *          position may not be the same in both nodes, an object with the two
- *          positions is returned. If the content of the two nodes is the same,
+ *          position may not be the same in both Nodes, an object with the two
+ *          positions is returned. If the content of the two Nodes is the same,
  *          undefined is returned
  */
  export const findContentDifferencePositions = (node1: ProseMirrorNode, node2: ProseMirrorNode) => {
@@ -86,16 +83,14 @@ export const getParentNode = (selection: Selection): ProseMirrorNode => selectio
 };
 
 /**
- * Compute the nodes that were affected by the steps of the stepMapIndex of a transaction
- *
  * @param transaction The transaction whose affected ranges are being computed
- * @param stepMapIndex The stepMapIndex of the corresponding stepMap of the transaction
- * @param unmappedOldStart The default oldStart of the stepMap of the transaction
- * @param unmappedOldEnd The default oldEnd of the stepMap of the transaction
- * @param nodeNames The names of the nodes that are being looked for in the affected range
- * @returns The nodes of the specified types that existed in the affected range
- *          of the transaction before the steps were applied, and the nodes of the
- *          specified types that exist after the steps have been applied
+ * @param stepMapIndex The stepMapIndex of the corresponding stepMap of the Transaction
+ * @param unmappedOldStart The default oldStart of the stepMap of the Transaction
+ * @param unmappedOldEnd The default oldEnd of the stepMap of the Transaction
+ * @param nodeNames The names of the Nodes that are being looked for in the affected range
+ * @returns The Nodes of the specified types that existed in the affected range
+ *          of the Transaction before the steps were applied, and the Nodes of the
+ *          specified types that exist after the Steps have been applied
  */
 // NOTE: Separated into its own method since all logic that needs to check whether
 //       some node was deleted in a transaction uses this approach
@@ -129,8 +124,6 @@ export const getNodesAffectedByStepMap = (transaction: Transaction, stepMapIndex
 
 // -- Sizing ----------------------------------------------------------------------
 /**
- * Calculates how far inside a {@link childNode} is within its {@link parentNode}
- *
  * @param parentNode The parent node of the {@link childNode} whose offset is being calculated
  * @param childNode The {@link childNode} whose offset is being calculated
  * @returns The offset of the {@link childNode} into its {@link parentNode}
@@ -151,14 +144,11 @@ export const createFragmentWithAppendedContent = (node: ProseMirrorNode, appende
 
 // -- Transaction -----------------------------------------------------------------
 /**
- * Checks to see whether any of the steps in any of a transaction's stepMaps
- * affected nodes of a certain type
  * @param transaction The transaction that will be checked
- * @param nodeNameSet The set of node names that will be looked for in
- * the {@link NodeFound} array of nodes affected by the transaction's stepMaps
- * @returns A boolean indicating whether or not any of the stepMaps in
- * the transaction modified nodes whose type name is included
- * in the given nodeNameSet
+ * @param nodeNameSet The set of node names that will be looked for in the
+ *        {@link NodeFound} array of nodes affected by the Transaction's stepMaps
+ * @returns `true` if any of the stepMaps in the Transaction modified Nodes whose
+ *          type name is included in the given nodeNameSet. `false` otherwise
  */
 export const wereNodesAffectedByTransaction = (transaction: Transaction, nodeNameSet: Set<NodeName>) => {
   const { maps } = transaction.mapping;
@@ -189,12 +179,11 @@ const nodeFoundArrayContainsNodesOfType = (nodeObjs: NodeFound[], nodeNameSet: S
   nodeObjs.some(({ node }) => nodeNameSet.has(node.type.name as NodeName/*by definition*/));
 
 /**
- * Returns the nodes of a specific type that were removed by a transaction, if any
  * @param transaction The transaction whose stepMaps will be looked through
  * @param nodeNameSet The set of nodeNames that will be looked for deletions in
- * the transaction's stepMaps
- * @returns an array of {@link NodeFound} with the nodes of the specified types
- * that were deleted by the transaction
+ *        the Transaction's stepMaps
+ * @returns an array of {@link NodeFound} with the Nodes of the specified types
+ *          that were deleted by the Transaction if any
  */
 export const getRemovedNodesByTransaction = (transaction: Transaction, nodeNameSet: Set<NodeName>) => {
   const { maps } = transaction.mapping;
@@ -219,7 +208,7 @@ export const getRemovedNodesByTransaction = (transaction: Transaction, nodeNameS
   return removedNodeObjs;
 };
 
-/** get nodes that are no longer present in the newArray */
+/** Get nodes that are no longer present in the newArray */
 export const computeRemovedNodeObjs = (oldArray: NodeFound[], newArray: NodeFound[]) =>
   oldArray.filter(oldNodeObj => !newArray.some(newNodeObj => newNodeObj.node.attrs.id === oldNodeObj.node.attrs.id));
 
@@ -236,4 +225,3 @@ export const generateNodeId = () => customNanoid();
  * whose nodes make use of this functionality -must- have an ID attribute.
  */
  export const nodeToTagId = (node: ProseMirrorNode) => `${node.type.name}-${node.attrs.id}`;
-

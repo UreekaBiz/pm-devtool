@@ -18,18 +18,13 @@ export enum MarkName {
 export const getMarkName = (mark: ProseMirrorMark) => mark.type.name as MarkName;
 
 // == Util ========================================================================
-/**
- * Gets the given mark from the given node. Returns undefined if the mark is not
- * found.
- */
+// gets the given Mark from the given Node. Returns `undefined` if the Mark is not found.
 export const getMark = (node: ProseMirrorNode, markName: MarkName) => {
   return node.marks.find(mark => mark.type.name === markName);
 };
 
-/**
- * Gets the value of the mark from the given node. Returns undefined if the mark is
- * not found or the mark has no value.
- */
+// gets the value of the Mark from the given Node. Returns `undefined` if the Mark
+// is not found or the Mark has no value.
 export const getMarkValue = (node: ProseMirrorNode, markName: MarkName, attributeType: AttributeType): AttributeValue | undefined=> {
   const mark = getMark(node, markName);
   const value = mark ? mark.attrs[attributeType] : undefined;
