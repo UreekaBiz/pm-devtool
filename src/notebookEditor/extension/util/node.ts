@@ -3,7 +3,7 @@ import { GapCursor } from 'prosemirror-gapcursor';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, NodeSelection, Selection, Transaction } from 'prosemirror-state';
 
-import {  getNodeOffset, NodeName, NotebookSchemaType } from 'common';
+import { getNodeOffset, NodeName, NotebookSchemaType } from 'common';
 
 import { ExtensionName, SelectionDepth } from 'notebookEditor/model/type';
 
