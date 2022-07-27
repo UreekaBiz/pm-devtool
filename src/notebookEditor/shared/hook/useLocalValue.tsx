@@ -41,6 +41,5 @@ export function useLocalValue<T>(value: T, update: (newValue: T) => void) {
     setIsUpdating(false);
   }, [value]);
 
-
   return { localValue, isUpdating, updateLocalValue, commitChange, resetLocalValue };
 }
