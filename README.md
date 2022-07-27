@@ -8,12 +8,12 @@ Create a copy of `.env.template` whose name is `.env.local.<user>` in the root f
 
 Ensure the correct version of NodeJS (and corresponding NPM version)
 
-```
+```bash
 nvm install --latest-npm
 ```
 
 Set up dependencies
-```
+```bash
 npm install
 ```
 
@@ -26,6 +26,12 @@ Defaults to `localhost:3000`
 
 ### Clean
 
-```
+```bash
 rm -rf node_modules
+```
+
+#### Super Clean
+
+```bash
+rm -f package-lock.json
 ```
