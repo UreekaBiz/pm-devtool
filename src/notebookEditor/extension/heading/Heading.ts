@@ -5,8 +5,8 @@ import { AttributeType, getHeadingLevelFromTag, HeadingLevel, HeadingNodeSpec,  
 import { NoStorage } from 'notebookEditor/model/type';
 
 import { getNodeOutputSpec,  setAttributeParsingBehavior } from '../util/attribute';
-import { createDefaultHeadingAttributes, HeadingOptions, HEADING_ID } from './type';
 import { setHeadingCommand, toggleHeadingCommand } from './command';
+import { createDefaultHeadingAttributes, HeadingOptions, HEADING_ID } from './type';
 
 // NOTE: this Extension leverages the UniqueNodeId extension
 // ********************************************************************************
