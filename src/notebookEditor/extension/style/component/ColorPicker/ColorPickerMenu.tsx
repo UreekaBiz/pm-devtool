@@ -83,7 +83,7 @@ export const ColorPickerMenu: React.FC<Props> = ({ colors, closeOnSelect = true,
     <Popover placement='bottom' isOpen={isOpen}>
       <PopoverTrigger>
         <Box onClick={toggleIsOpen} onMouseDown={handlePopoverMouseDown}>
-          <Box backgroundColor={value} _hover={{ cursor: 'pointer', backgroundColor: value }} {...selectColorButtonProps}/>
+          <Box backgroundColor={value} _hover={{ cursor: 'pointer', backgroundColor: value }} {...selectColorButtonProps} />
         </Box>
       </PopoverTrigger>
 

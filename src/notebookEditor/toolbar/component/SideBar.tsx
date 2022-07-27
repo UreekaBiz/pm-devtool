@@ -48,7 +48,7 @@ export const SideBar = () => {
   return (
     <Flex flexDir='column' minH={0} width='100%' height='100%' background='#FCFCFC' borderLeft='1px solid' borderColor='gray.300' overflow='hidden'>
       <SideBarHeading background='#F3F3F3' />
-      <ToolbarBreadcrumbs onSelection={handleDepthSelection} selectedDepth={selectedDepth}/>
+      <ToolbarBreadcrumbs onSelection={handleDepthSelection} selectedDepth={selectedDepth} />
       <Flex flexDir='column' flex='1 1'>
         <VStack divider={<Divider />} spacing={0} flex='1 1 0' alignItems='stretch' overflowY='scroll'>
           {Toolbars}

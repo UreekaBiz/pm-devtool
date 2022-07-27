@@ -35,6 +35,6 @@ export const SpacingToolItem: React.FC<Props> = ({ depth, editor }) => {
 
   // == UI ========================================================================
   return (
-    <SpacingControls margin={margin} padding={padding} name='Spacing' onChange={handleChange}/>
+    <SpacingControls margin={margin} padding={padding} name='Spacing' onChange={handleChange} />
   );
 };

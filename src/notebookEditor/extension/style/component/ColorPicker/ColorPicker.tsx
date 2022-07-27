@@ -50,10 +50,10 @@ export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) 
   return (
     <ToolContainer name={name} width='auto'>
      <InputGroup size='sm' marginTop='5px' marginBottom='5px' gap={1} borderRadius='15px'>
-      <ColorPickerMenu value={localValue} colors={colors} onChange={handleColorPickerChange}/>
+      <ColorPickerMenu value={localValue} colors={colors} onChange={handleColorPickerChange} />
 
       <InputLeftAddon>{LEFT_ADDON_TEXT}</InputLeftAddon>
-      <Input type='text' value={removeColorAddon(localValue)} onBlur={saveChange} onChange={handleInputChange} onKeyDown={handleKeyDown}/>
+      <Input type='text' value={removeColorAddon(localValue)} onBlur={saveChange} onChange={handleInputChange} onKeyDown={handleKeyDown} />
      </InputGroup>
     </ToolContainer>
   );

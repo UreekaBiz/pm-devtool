@@ -52,7 +52,7 @@ export const Toolbar: React.FC<Props> = ({ depth, node, onSelection, selectedDep
         {toolbar.toolsCollections.map((tools, i) =>
           <Box key={`${node.type.name}-${i}`} paddingX={4} paddingY={1} width='100%'>
             {tools.map(tool =>
-              <ToolItemComponent key={`${node.type.name}-${tool.name}-${i}`} depth={depth} editor={editor} tool={tool}/>)}
+              <ToolItemComponent key={`${node.type.name}-${tool.name}-${i}`} depth={depth} editor={editor} tool={tool} />)}
           </Box>
           )}
       </VStack>
