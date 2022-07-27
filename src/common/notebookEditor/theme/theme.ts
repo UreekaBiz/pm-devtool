@@ -1,5 +1,4 @@
-import { camelToKebabCase } from 'common';
-
+import { camelToKebabCase } from '../../util/string';
 import { AttributeType } from '../attribute';
 import { HeadingLevel } from '../extension/heading';
 import { DATA_NODE_TYPE } from '../htmlRenderer/type';
