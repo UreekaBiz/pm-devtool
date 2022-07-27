@@ -1,8 +1,6 @@
 import { Command, getMarkAttributes } from '@tiptap/core';
 
-import { AttributeType, MarkName } from 'common';
-
-import { CommandFunctionType } from '../util/type';
+import { AttributeType, CommandFunctionType, MarkName } from 'common';
 
 // ********************************************************************************
 // NOTE: ambient module to ensure command is TypeScript-registered for TipTap
