@@ -122,7 +122,7 @@ export const getTextDOMRenderedValue = (editor: Editor, attributeType: Attribute
 
   // If no value was resolved and the selection is a single selection, the default
   // value of the TextNode at the position will be resolved to the parent node.
-  if(start === end && mergedValue === undefined){
+  if(start === end && mergedValue === undefined) {
     const node = getSelectedNode(state, selection.$anchor.depth/*parent node*/);
     if(node) { mergedValue = getDOMNodeRenderedValue(node, attributeType); }
   }

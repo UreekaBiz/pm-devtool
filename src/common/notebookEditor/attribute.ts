@@ -99,7 +99,7 @@ export type SpacingType = 'margin' | 'padding';
 export type SpacingAttribute = MarginAttribute | PaddingAttribute;
 
 export const getOppositeSpacingAttribute = (attribute: SpacingAttribute) => {
-  switch(attribute){
+  switch(attribute) {
     case AttributeType.MarginBottom: return AttributeType.MarginTop;
     case AttributeType.MarginTop: return AttributeType.MarginBottom;
     case AttributeType.MarginLeft: return AttributeType.MarginRight;

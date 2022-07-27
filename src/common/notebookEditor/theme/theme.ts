@@ -40,7 +40,7 @@ class NotebookEditorTheme {
     let existingStyleSheet = document.querySelector('#theme-stylesheet');
 
     // Create a new style elements and append it to the document head
-    if(!existingStyleSheet){
+    if(!existingStyleSheet) {
       existingStyleSheet = document.createElement('style');
       existingStyleSheet.setAttribute('id', 'theme-stylesheet');
       document.head.appendChild(existingStyleSheet);
@@ -49,7 +49,7 @@ class NotebookEditorTheme {
     existingStyleSheet.textContent = stylesheet;
   }
 
-  private getStylesheet(){
+  private getStylesheet() {
     const { nodes, marks, customSelectors } = this.theme;
 
     // Create a class in the form of [DATA_NODE_TYPE="nodeName"] {} for each node.
