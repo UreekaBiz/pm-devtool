@@ -32,7 +32,7 @@ export const handleBlockBackspace = (editor: Editor, nodeName: NodeName) => {
   if(!empty || $anchor.parent.type.name !== nodeName) return false/*do not delete block node*/;
   if(!$anchor.parent.textContent.length) {
     return editor.commands.clearNodes();
-  }/*else -- no need to delete blockNode */
+  }/* else -- no need to delete blockNode */
 
   return false/*do not delete*/;
 };
