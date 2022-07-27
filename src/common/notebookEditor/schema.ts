@@ -24,6 +24,12 @@ export const MarkSpecs: Record<MarkName, MarkSpec> = {
 };
 
 // == Schema ======================================================================
+// NOTE: must be updated when adding breaking changes to the Schema Notebook
+export enum NotebookSchemaVersion {
+  V1 = 'v1'/*initial version*/,
+}
+
+// ................................................................................
 // NOTE: This schema must reflect the same Schema that is being used in the Editor
 //       itself, otherwise the Editor will not be able to load the Document.
 //
@@ -38,3 +44,13 @@ export const SchemaV1 = new Schema({
   marks: MarkSpecs,
 });
 export type NotebookSchemaType = typeof SchemaV1;
+
+
+// ================================================================================
+export const getSchema = (schemaVersion: NotebookSchemaVersion): Schema => {
+  switch(schemaVersion) {
+    case NotebookSchemaVersion.V1: return SchemaV1;
+
+    default: throw new Error(`Notebook schema version '${schemaVersion}' doesn't have a corresponding schema.`)/*no version was found*/;
+  }
+};
