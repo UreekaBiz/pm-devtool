@@ -1,3 +1,4 @@
+
 // convenience functions for working with Strings
 // ********************************************************************************
 // REF: https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
@@ -19,7 +20,7 @@ export const defaultBlankString = <T>(s: string | null | undefined, defaultValue
 
 // --------------------------------------------------------------------------------
 // REF: https://stackoverflow.com/questions/175739/how-can-i-check-if-a-string-is-a-valid-number
-export const isNumber = (str: string) => {
+export const  isNumber = (str: string) => {
   return !isNaN(str as any) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
           !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
 };
@@ -37,6 +38,11 @@ export const splitTrim = <T extends string | null | undefined>(s: T, separator: 
       .map(split => split.trim());
 
 // ================================================================================
+// does the string contains a valid hexadecimal code?
+// REF: https://www.geeksforgeeks.org/how-to-validate-hexadecimal-color-code-using-regular-expression/#:~:text=regex%20%3D%20%22%5E%23(%5BA%2D,with%20a%20'%23'%20symbol.
+export const hexString = (string: string) => /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(string);
+
+// --------------------------------------------------------------------------------
 // CHECK: this doesn't cover 'UPPERlower' but that isn't traditional camel-case regardless
 export const camelToKebabCase = (s: string) =>
   s.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();

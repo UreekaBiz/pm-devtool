@@ -1,6 +1,60 @@
 // convenience methods for working with arrays
 // ********************************************************************************
 // ================================================================================
+// returns an array of values that exist in `previous` that do not exist in `final`.
+// If there are no values that have been removed in `final` then an *empty* array
+// is returned. Additional values in `final` that do not appear in `previous` (i.e.
+// 'new values') are *not* reported. The order of the two input arrays is irrelevant
+// and no assumptions can be made about the order of the resulting array. The
+// returned array is always a new array. Shallow copies of the arrays are made. If
+// there are duplicate values in `previous` that aren't in `final` then each duplicate
+// will be present in the resulting array.
+export const difference = <T>(previous: T[], final: T[]): T[] => {
+  if(final.length < 1) return previous.slice()/*clone*/;
+  const lookup = new Set(final);
+  const result: T[] = []/*initially empty*/;
+    previous.forEach(e => { if(!lookup.has(e)) result.push(e); })
+  return result;
+};
+export const differenceSet = <T>(previous: Set<T>, final: Set<T>): Set<T> => {
+  if(final.size < 1) return new Set(previous)/*clone*/;
+  const result = new Set<T>();
+    previous.forEach(e => { if(!final.has(e)) result.add(e); })
+  return result;
+};
+
+// returns an array of values that is the intersection of A of B (i.e. the set of
+// values contained in both A and B). The returned array is always a new array.
+// Shallow copies of the arrays are made. If there are duplicate values in A that
+// are contained in B then those duplicate values will be present in the resulting
+// array. (Duplicate values in B are irrelevant.)
+// SEE: https://en.wikipedia.org/wiki/Complement_(set_theory)#Relative_complement
+export const intersection = <T>(a: T[], b: T[]): T[] => {
+  const lookup = new Set(b);
+  const result: T[] = []/*initially empty*/;
+    a.forEach(e => { if(lookup.has(e)) result.push(e); })
+  return result;
+};
+export const intersectionSet = <T>(a: Set<T>, b: Set<T>): Set<T> => {
+  const result = new Set<T>();
+    a.forEach(e => { if(b.has(e)) result.add(e); })
+  return result;
+};
+
+// --------------------------------------------------------------------------------
+// returns `true` if and only if there is an element in A that is in B
+export const setOverlapsSet = <T>(a: Set<T>, b: Set<T>) => {
+  for(let element of a.values()) if(b.has(element)) return true/*by contract*/;
+  return false/*by contract*/;
+};
+
+// returns `true` if and only if there is an element in `list` that is in `set`
+export const listOverlapsSet = <T>(list: T[], set: Set<T>) => {
+  for(let element of list) if(set.has(element)) return true/*by contract*/;
+  return false/*by contract*/;
+};
+
+// ================================================================================
 export const groupBy = <I, T>(array: T[], key: (value: T) => I[] | I): Map<I, T[]> => {
   const map = new Map<I, T[]>();
   const addElement = (element: T, keyValue: I) => {
