@@ -44,7 +44,7 @@ class NotebookEditorTheme {
       existingStyleSheet = document.createElement('style');
       existingStyleSheet.setAttribute('id', 'theme-stylesheet');
       document.head.appendChild(existingStyleSheet);
-    }// else -- style element already exists
+    } /* else -- style element already exists */
 
     existingStyleSheet.textContent = stylesheet;
   }
