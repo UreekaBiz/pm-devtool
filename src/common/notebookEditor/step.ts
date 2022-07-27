@@ -1,6 +1,6 @@
 import { Transaction } from 'prosemirror-state';
 
-import { NotebookSchemaType } from 'common';
+import { NotebookSchemaType } from './schema';
 
 // ********************************************************************************
 /**
