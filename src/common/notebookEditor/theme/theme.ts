@@ -11,7 +11,7 @@ import { CustomSelector, DefaultTheme, Theme, ThemeElement } from './type';
 // == Class =======================================================================
 // A singleton that holds the themes used on the editor.
 class NotebookEditorTheme {
-  theme: Theme;
+  /*FIXME: explicit*/ theme: Theme;
 
   // == Constructor ===============================================================
   constructor(theme: Theme) {
@@ -32,10 +32,8 @@ class NotebookEditorTheme {
   }
 
   // == Private methods ===========================================================
-  /**
-   * Updates the theme stylesheet with the current theme. This function should be
-   * called whenever the theme is updated.
-   */
+  // updates the theme stylesheet with the current theme. This function should be
+  // called whenever the theme is updated.
   private setThemeStylesheet() {
     const stylesheet = this.getStylesheet();
 
@@ -125,12 +123,12 @@ export const getThemeElement = (nodeOrMarkName: NodeName | MarkName): ThemeEleme
 //       string (or undefined if not defined). If complex attributes are needed
 //       (e.g. Heading level) then the NodeTheme must be accessed directly. This
 //       is required to avoid Type conflicts.
-export const getThemeValue = (nodeOrMarkName: NodeName | MarkName, attribute: AttributeType): string | undefined => {
+export const getThemeValue = (nodeOrMarkName: NodeName | MarkName, attribute: AttributeType): string | undefined/*FIXME: document*/ => {
   const themeElement = getThemeElement(nodeOrMarkName);
   const value = themeElement[attribute];
 
-  if(typeof value === 'string') { return value; }
-  if(typeof value !== 'undefined')  { console.error(`Unexpected value type for (${nodeOrMarkName}) theme attribute (${attribute}): ${value}`); return undefined; }
+  if(typeof value === 'string') return value;
+  if(typeof value !== 'undefined') { console.error(`Unexpected value type for (${nodeOrMarkName}) theme attribute (${attribute}): ${value}`); return undefined/*FIXME: document*/; }
   // else -- value is valid but undefined.
 
   return value;
@@ -143,7 +141,7 @@ export const getThemeValue = (nodeOrMarkName: NodeName | MarkName, attribute: At
 export const getHeadingThemeValue = (attribute: AttributeType.FontSize | AttributeType.TextColor, level: HeadingLevel): string | undefined => {
   const theme = notebookEditorTheme.getTheme();
   const { customSelectors } = theme;
-  switch(level){
+  switch(level) {
     case HeadingLevel.One: return customSelectors[CustomSelector.HeadingLevelOne][attribute];
     case HeadingLevel.Two: return customSelectors[CustomSelector.HeadingLevelTwo][attribute];
     case HeadingLevel.Three: return customSelectors[CustomSelector.HeadingLevelThree][attribute];

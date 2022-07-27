@@ -6,11 +6,9 @@ import { NodeName } from '../node';
 
 // ********************************************************************************
 // == Element =====================================================================
-/**
- * Base type for all theme attributes. Each node can implement its own theme type
- * defining the attributes required by the theme.
- */
-// NOTE: The value for a given attribute could be any since there are complex
+// base type for all theme attributes. Each node can implement its own theme type
+// defining the attributes required by the theme.
+// NOTE: the value for a given attribute could be any since there are complex
 //       Nodes that requires render attributes based on an external value (e.g.
 //       Heading level).
 export type ThemeElement<ElementAttributes extends Attributes = Attributes> = Partial<Record<keyof ElementAttributes, any>>;
@@ -46,15 +44,13 @@ export interface Theme {
   nodes: NodeThemeElements;
   marks: MarkThemeElements;
 
-  /**
-   * custom selectors that style the Nodes with a complex selected (e.g. Heading
-   * levels).
-   * SEE: CustomSelector
-   */
+  /** custom selectors that style the Nodes with a complex selected (e.g. Heading
+   *  levels */
+  // SEE: CustomSelector
   customSelectors: CustomThemeElements;
 }
 
-// == Themes ======================================================================
+// == Theme =======================================================================
 export const DefaultTheme: Theme = {
   name: ThemeName.Default/*expected and guaranteed to be unique*/,
   displayName: 'Default',
@@ -130,4 +126,3 @@ export const Themes: Record<ThemeName, Theme> = {
   [ThemeName.Default]: DefaultTheme,
   [ThemeName.GoogleDocs]: GoogleDocsTheme,
 };
-
