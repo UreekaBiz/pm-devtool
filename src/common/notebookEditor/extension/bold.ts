@@ -34,4 +34,3 @@ export const isBoldMark = (mark: ProseMirrorMark<NotebookSchemaType>): mark is B
 // -- JSON Mark Type --------------------------------------------------------------
 export type BoldJSONMarkType = JSONMark<BoldAttributes> & { type: MarkName.BOLD; };
 export const isBoldJSONMark = (mark: JSONMark): mark is BoldJSONMarkType => mark.type === MarkName.BOLD;
-
