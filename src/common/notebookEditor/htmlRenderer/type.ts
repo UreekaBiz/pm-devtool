@@ -32,7 +32,7 @@ export type NotNodeViewRendererSpec = {
 };
 
 // --------------------------------------------------------------------------------
-// Defines how to render a Node.
+// Defines how to render a Node
 // SEE: ./renderer.ts
 export type NodeRendererSpec<A extends Attributes = {}> = {
   // Defines how to render the tag for this Node. If a string is provided, that
@@ -50,7 +50,6 @@ export type NodeRendererSpec<A extends Attributes = {}> = {
   attributes: Partial<{ [Attribute in keyof A]: AttributeRenderer<A> }>;
 } & ( NodeViewRendererSpec<A> | NotNodeViewRendererSpec );
 
-
 // == Mark ========================================================================
 export type MarkRendererSpec<A extends Attributes = {}> = {
   // Defines how to render the tag for this Mark. If a string is provided, that
@@ -66,11 +65,10 @@ export type MarkRendererSpec<A extends Attributes = {}> = {
   // together into a single HTMLAttributes object which is used to render the Mark.
   // If no value is provided all attributes use the default renderer.
   attributes: Partial<{ [Attribute in keyof A]: AttributeRenderer<A> }>;
-}
-
+};
 
 // --------------------------------------------------------------------------------
-// Gets the render tag for the given node. If the tag is not present the
+// gets the render tag for the given node. If the tag is not present the
 // DEFAULT_RENDER_TAG will be used for backwards / forwards compatibility.
 export const getRenderTag = (attributes: Partial<Attributes> = {}, rendererSpec: NodeRendererSpec | MarkRendererSpec | undefined): HTMLTag => {
   if(!rendererSpec || !rendererSpec.tag) return DEFAULT_RENDER_TAG;
@@ -78,10 +76,9 @@ export const getRenderTag = (attributes: Partial<Attributes> = {}, rendererSpec:
   return typeof rendererSpec.tag === 'string' ? rendererSpec.tag : rendererSpec.tag(attributes);
 };
 
-/**
- * Returns the string that gets added to the rendered tag, both for the renderer
- * and for the output spec of a node. This function or its constant must be used
- * for the getNodeOutputSpec, the renderer and AbstractNodeViews
- */
+// --------------------------------------------------------------------------------
+// Returns the string that gets added to the rendered tag, both for the Renderer
+// and for the output Spec of a Node. This function or its constant must be used
+// for the getNodeOutputSpec, the Renderer and AbstractNodeViews
 export const DATA_NODE_TYPE = 'data-node-type';
 export const createNodeDataTypeAttribute = (nodeName: NodeName) => `${DATA_NODE_TYPE}="${nodeName}"`;
