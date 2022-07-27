@@ -13,8 +13,8 @@ export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
-  const DOMRenderValue = getTextDOMRenderedValue(editor, AttributeType.TextColor, MarkName.TEXT_STYLE);
-  const inputValue = DOMRenderValue === InvalidMergedAttributeValue ? '' : DOMRenderValue;
+  const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.TextColor, MarkName.TEXT_STYLE);
+  const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
 
   // == Handlers ==================================================================
   const handleChange = (value: string) => {
