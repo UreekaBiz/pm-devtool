@@ -28,10 +28,9 @@ export const toggleBlockNode = (props: CommandProps, nodeName: NodeName) => {
 /** Ensures the block at the selection is deleted on backspace if its empty */
 export const handleBlockBackspace = (editor: Editor, nodeName: NodeName) => {
   const { empty, $anchor } = editor.state.selection;
-  const isAtStart = $anchor.pos === 1/*first position inside the node*/;
 
   if(!empty || $anchor.parent.type.name !== nodeName) return false/*do not delete block node*/;
-  if(isAtStart || !$anchor.parent.textContent.length) {
+  if(!$anchor.parent.textContent.length) {
     return editor.commands.clearNodes();
   }/*else -- no need to delete blockNode */
 
