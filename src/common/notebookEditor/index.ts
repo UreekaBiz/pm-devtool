@@ -11,6 +11,4 @@ export * from './extension/textStyle';
 export * from './mark';
 export * from './node';
 export * from './schema';
-export * from './theme/theme';
-export * from './theme/type';
 export * from './type';

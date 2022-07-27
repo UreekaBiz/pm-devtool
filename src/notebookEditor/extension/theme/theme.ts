@@ -1,11 +1,8 @@
-import { camelToKebabCase } from '../../util/string';
-import { AttributeType } from '../attribute';
-import { HeadingLevel } from '../extension/heading';
-import { DATA_NODE_TYPE } from '../htmlRenderer/type';
-import { MarkName } from '../mark';
-import { NodeName } from '../node';
+import { camelToKebabCase, AttributeType, HeadingLevel, MarkName, NodeName, DATA_NODE_TYPE } from 'common';
+
 import { CustomSelector, DefaultTheme, Theme, ThemeElement } from './type';
 
+// NOTE: cannot be 'common' since it relies on `document` (i.e. it is client-only)
 // ********************************************************************************
 // == Class =======================================================================
 // A singleton that holds the Themes used on the Editor
