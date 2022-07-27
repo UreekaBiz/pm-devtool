@@ -28,38 +28,34 @@ export const editorDefinition = {
   content: ''/*initially empty*/,
 };
 
+// NOTE: The following execution order goes from top-first to bottom-last
+//       (SEE: FeatureDoc, Changes section)
 //
-/**
- * NOTE: The following execution order goes from top-first to bottom-last
- *       (SEE: FeatureDoc, Changes section)
- *
- * Current Schema Execution Order (SEE: notebookEditor/model/type/ExtensionPriority)
- * appendedTransaction
- * 1. UniqueNodeId
- * 2. NodeViewRemoval
- * 3. SetDefaultMarks
- * 4. Paragraph
- * 5. all other extensions (in registration order, (SEE: Extension array above))
- *
- * onTransaction
- * 1. UniqueNodeId
- * 2. NodeViewRemoval
- * 3. SetDefaultMarks
- * 4. Paragraph
- * 5. all other extensions (in registration order, (SEE: Extension array above))
- *
- * onSelectionUpdate
- * 1. UniqueNodeId
- * 2. NodeViewRemoval
- * 3. SetDefaultMarks
- * 4. Paragraph
- * 5. all other extensions (in registration order, (SEE: Extension array above))
- *
- * onUpdate
- * 1. UniqueNodeId
- * 2. NodeViewRemoval
- * 3. SetDefaultMarks
- * 4. Paragraph
- * 5. all other extensions (in registration order, (SEE: Extension array above))
- *
- */
+// Current Schema Execution Order (SEE: notebookEditor/model/type/ExtensionPriority)
+// appendedTransaction
+// 1. UniqueNodeId
+// 2. NodeViewRemoval
+// 3. SetDefaultMarks
+// 4. Paragraph
+// 5. all other extensions (in registration order, (SEE: Extension array above))
+//
+// onTransaction
+// 1. UniqueNodeId
+// 2. NodeViewRemoval
+// 3. SetDefaultMarks
+// 4. Paragraph
+// 5. all other extensions (in registration order, (SEE: Extension array above))
+//
+// onSelectionUpdate
+// 1. UniqueNodeId
+// 2. NodeViewRemoval
+// 3. SetDefaultMarks
+// 4. Paragraph
+// 5. all other extensions (in registration order, (SEE: Extension array above))
+//
+// onUpdate
+// 1. UniqueNodeId
+// 2. NodeViewRemoval
+// 3. SetDefaultMarks
+// 4. Paragraph
+// 5. all other extensions (in registration order, (SEE: Extension array above))
