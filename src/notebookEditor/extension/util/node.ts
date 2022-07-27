@@ -25,49 +25,57 @@ export const toggleBlockNode = (props: CommandProps, nodeName: NodeName) => {
 
 // ================================================================================
 // -- Backspace --------------------------------------------------------------------
-/** Ensures the Node at the selection is deleted on backspace if its empty */
+/** Ensures the block at the selection is deleted on backspace if its empty */
 export const handleBlockBackspace = (editor: Editor, nodeName: NodeName) => {
   const { empty, $anchor } = editor.state.selection;
   const isAtStart = $anchor.pos === 1/*first position inside the node*/;
 
-  if(!empty || $anchor.parent.type.name !== nodeName) return false/*FIXME: document*/;
-  if(isAtStart || !$anchor.parent.textContent.length) return editor.commands.clearNodes();
+  if(!empty || $anchor.parent.type.name !== nodeName) return false/*do not delete block node*/;
+  if(isAtStart || !$anchor.parent.textContent.length) {
+    return editor.commands.clearNodes();
+  }/*else -- no need to delete blockNode */
 
-  return false/*FIXME: document*/;
+  return false/*do not delete*/;
 };
 
 // -- Cursor Behavior -------------------------------------------------------------
-/** Ensures correct arrow up behavior when inside a block Node with text content */
-export const handleBlockArrowUp = (editor: Editor, nodeName: NodeName) => {
+/**
+ * Ensures correct arrow up behavior when inside a block Node with text content
+ * by creating a new {@link GapCursor} selection when the arrowUp key is pressed
+ * if the selection is at the start of its
+ */
+ export const handleBlockArrowUp = (editor: Editor, nodeName: NodeName) => {
   const { view, state } = editor,
         { selection, tr } = state,
         { dispatch } = view;
-
-  if(selection.$anchor.parent.type.name !== nodeName) return false;
+  if(selection.$anchor.parent.type.name !== nodeName) return false/*node does not allow GapCursor*/;
 
   const isAtStart = selection.$anchor.pos === 1/*at the start of the doc*/;
-  if(!isAtStart) return false;
+  if(!isAtStart) return false/*no need to set GapCursor*/;
 
   tr.setSelection(new GapCursor(tr.doc.resolve(0/*at the start of the doc*/)));
   dispatch(tr);
-  return true;
+  return true/*created a GapCursor selection*/;
 };
 
-/** Ensures correct arrow down behavior when inside a block Node with text content */
+/**
+ * Ensures correct arrow down behavior when inside a block Node with text content
+ * by creating a new {@link GapCursor} selection when the arrowDown key is pressed
+ * if the selection is at the end of its content
+ */
 export const handleBlockArrowDown = (editor: Editor, nodeName: NodeName) => {
   const { view, state } = editor,
         { doc, selection, tr } = state,
         { dispatch } = view;
-
-  if(selection.toJSON().type === ExtensionName.GAP_CURSOR && (selection.$anchor.pos !== 0)) return true/*FIXME: document*/;
-  if(selection.$anchor.parent.type.name !== nodeName) return false/*FIXME: document*/;
+  if(selection.$anchor.parent.type.name !== nodeName) return false/*node does not allow GapCursor*/;
+  if(selection.toJSON().type === ExtensionName.GAP_CURSOR && (selection.$anchor.pos !== 0)) return false/*selection already a GapCursor*/;
 
   const isAtEnd = selection.$anchor.pos === doc.nodeSize - 3/*past the Node, including the doc tag*/;
-  if(!isAtEnd) return false/*FIXME: document*/;
+  if(!isAtEnd) return false/*no need to set GapCursor*/;
 
   tr.setSelection(new GapCursor(tr.doc.resolve(doc.nodeSize - 2/*past the Node*/)));
   dispatch(tr);
-  return true/*FIXME: document*/;
+  return true/*created a GapCursor selection*/;
 };
 
 // == Position ====================================================================
