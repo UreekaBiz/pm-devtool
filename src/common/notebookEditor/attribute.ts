@@ -138,7 +138,7 @@ export type NodeSpecAttributes = Partial<Record<AttributeType, NodeSpecAttribute
 //       this level which type of attribute is expected on the Extension itself
 //       and the HTML renderer.
 // SEE: node.ts
-export const noNodeSpecAttributeDefaultValue = <T>() => ({ default: undefined/*no default value*/ as unknown as T });
+export const noNodeOrMarkSpecAttributeDefaultValue = <T>() => ({ default: undefined/*no default value*/ as unknown as T });
 
 // Infers the types of the attributes from the NodeSpec using the default value
 // provided by noNodeSpecAttributeDefaultValue. This function should be used when
