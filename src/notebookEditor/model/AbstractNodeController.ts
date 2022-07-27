@@ -11,7 +11,6 @@ import { AbstractNodeView } from './AbstractNodeView';
 import { AbstractNodeModel } from './AbstractNodeModel';
 
 // ********************************************************************************
-// Controls the
 // == Class =======================================================================
 export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>> = any, NodeModel extends AbstractNodeModel<NodeType, any> = any, NodeView extends AbstractNodeView<NodeType, Storage, NodeModel> = any>implements ProseMirrorNodeView {
   // == ProseMirror NodeView ======================================================
@@ -19,11 +18,8 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
   public contentDOM?: Node | null | undefined;
 
   // ==============================================================================
-  // must be initialized by the subclass
-  readonly nodeView: NodeView;
-
-  // must be initialized by the subclass
-  readonly nodeModel: NodeModel;
+  readonly nodeView: NodeView/*initialized by the subclass*/;
+  readonly nodeModel: NodeModel/*initialized by the subclass*/;
 
   public readonly storage: Storage;
   public readonly editor: Editor;
@@ -42,7 +38,7 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     this.nodeModel = nodeModel;
     this.nodeView = nodeView;
 
-    // Hook up the nodeView to this controller
+    // hook up the nodeView to this controller
     this.dom = this.nodeView.dom;
     this.contentDOM = this.nodeView.contentDOM;
   }
@@ -53,11 +49,10 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
 
     // update both storage and our reference to the Node
     this.storage.addNodeView(this.node.attrs.id, this);
-    // Updates node in the model and view
+    // updates node in the model and view
     this.node = node as NodeType/*above check guarantees*/;
     this.nodeModel.node = node as NodeType/*above check guarantees*/;
     this.nodeView.node = node as NodeType/*above check guarantees*/;
-
 
     this.nodeView.updateView();
     return true/*as far as this implementation is concerned, an update occurred*/;

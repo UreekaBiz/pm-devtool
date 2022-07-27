@@ -5,10 +5,8 @@ import { NodeIdentifier, NodeName } from 'common';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 
 // ********************************************************************************
-/**
- * Returns the {@link NodeViewStorage} that manages all {@link AbstractNodeViews}
- * for a particular type of Node
- */
+// returns the NodeViewStorage that manages all AbstractNodeViews for a particular
+// type of Node (specified)
 export const getNodeViewStorage = <Storage extends NodeViewStorage<any>>(editor: Editor, nodeName: NodeName): Storage => {
   const storage = editor.storage[nodeName];
   if(!isNodeViewStorage<Storage>(storage)) throw new Error(`Invalid storage for Node (${nodeName}): ${JSON.stringify(storage)}`);
@@ -17,9 +15,7 @@ export const getNodeViewStorage = <Storage extends NodeViewStorage<any>>(editor:
 };
 
 // ********************************************************************************
-/**
- * Implements the common properties to all storage objects used by {@link AbstractNodeController}
- */
+// provides common properties to all storage objects used by AbstractNodeController
 export class NodeViewStorage<V extends AbstractNodeController<any>> {
   private readonly nodeViewMap = new Map<NodeIdentifier, V>();
 

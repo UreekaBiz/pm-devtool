@@ -6,13 +6,10 @@ import { getPosType, isGetPos } from 'notebookEditor/extension/util/node';
 import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeController } from './AbstractNodeController';
 
+// Abstract class that holds the model for a NodeController. The implementation of
+// the model is left to the subclasses.
+// SEE: AbstractNodeController
 // ********************************************************************************
-/**
- * Abstract class that holds the model for a NodeController. The implementation of
- * the model is left to the subclasses.
- * see: {@link AbstractNodeController}
- */
-// == Class =======================================================================
 export abstract class AbstractNodeModel<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>>> {
   public readonly editor: Editor;
   public readonly storage: Storage;

@@ -17,7 +17,7 @@ import { MarkName, NodeName } from 'common';
 export class DialogStorage {
   // -- Attribute -----------------------------------------------------------------
   // When set to true, a dialog prompting the user for the image URL appears
-  // (SEE: EditorUserInteractions.tsx)
+  // SEE: EditorUserInteractions.tsx
   private shouldInsertNodeOrMark: boolean;
 
   // -- Life Cycle ----------------------------------------------------------------

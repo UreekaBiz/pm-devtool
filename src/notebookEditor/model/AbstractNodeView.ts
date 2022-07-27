@@ -9,31 +9,22 @@ import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeController } from './AbstractNodeController';
 import { AbstractNodeModel } from './AbstractNodeModel';
 
+// Abstract class renders the corresponding DOM nodes for a NodeController
+// SEE: {@link AbstractNodeController}
 // ********************************************************************************
-/**
- * Abstract class renders the corresponding DOM nodes for a NodeController.
- * see: {@link AbstractNodeController}
- */
 export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>>, NodeModel extends AbstractNodeModel<NodeType, Storage>> {
   // == Abstract Node View ========================================================
-  /**
-   * The outer DOM node that represents the document node.
-   */
+  // the outer DOM node that represents the Document Node
   public readonly dom: HTMLElement;
 
-  /**
-   * The DOM node that should hold the node's content. Only meaningful if its node
-   * type is not a leaf node type. When this is present, ProseMirror will take
-   * care of rendering the node's children into it. When it is not present, the
-   * node view itself is responsible for rendering (or deciding not to render) its
-   * child nodes.
-   */
+  // the DOM node that holds the Node's content. Only meaningful if its Node is not
+  // a leaf Node type. When this is present, ProseMirror will take care of rendering
+  // the Node's children into it. When it is not present, the Node View itself is
+  // responsible for rendering (or deciding not to render) its child Nodes
   public contentDOM?: Node | null | undefined;
 
   // ------------------------------------------------------------------------------
-  /**
-   * The corresponding model for this view.
-   */
+  // the corresponding model for this view.
   readonly model: NodeModel;
 
   // ==============================================================================
@@ -57,13 +48,11 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
   }
 
   // == View ======================================================================
-  // Creates the outer DOM node that represents the document node.
-  // Must be implemented by subclasses.
+  // creates the outer DOM node that represents the Document Node
   protected abstract createDomElement(): HTMLElement;
 
-  // Updates the DOM node that represents the Node.
-  // Must be implemented by subclasses.
-  // NOTE: This method needs to be public since its render view could depend on
+  // updates the DOM node that represents the Node
+  // NOTE: this method needs to be public since its render view could depend on
   //       an external state (e.g. the visualId of the CodeBlockView) and thus
   //       needs to be called from outside the class.
   public abstract updateView(): void;
