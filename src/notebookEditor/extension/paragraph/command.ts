@@ -1,8 +1,6 @@
 import { CommandProps } from '@tiptap/core';
 
-import { NodeName } from 'common';
-
-import { CommandFunctionType } from '../util/type';
+import { CommandFunctionType, NodeName } from 'common';
 
 // ********************************************************************************
 // NOTE: ambient module to ensure command is TypeScript-registered for TipTap
