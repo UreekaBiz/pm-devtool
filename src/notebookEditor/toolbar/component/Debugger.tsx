@@ -12,7 +12,7 @@ export const Debugger = () => {
         <Text marginBottom={1} paddingTop={2} fontSize={15} fontWeight='bold' textTransform='capitalize'>
           Selection
         </Text>
-        <Box>
+        <Box overflow='auto' fontSize={12}>
           <pre>{JSON.stringify(editor.state.selection, null/*no replacer*/, 2)}</pre>
         </Box>
       </Box>
@@ -22,7 +22,7 @@ export const Debugger = () => {
         <Text marginBottom={1} paddingTop={2} fontSize={15} fontWeight='bold' textTransform='capitalize'>
           Document
         </Text>
-        <Box overflow='auto'>
+        <Box overflow='auto' fontSize={12}>
           <pre>{JSON.stringify(editor.state.doc, null/*no replacer*/, 2)}</pre>
         </Box>
       </Box>
