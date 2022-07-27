@@ -6,13 +6,14 @@ import { NotebookSchemaType } from 'common';
 
 import { getPosType, isGetPos } from 'notebookEditor/extension/util/node';
 
+import { NoStorage } from './type';
 import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeView } from './AbstractNodeView';
 import { AbstractNodeModel } from './AbstractNodeModel';
 
 // ********************************************************************************
 // == Class =======================================================================
-export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>> = any, NodeModel extends AbstractNodeModel<NodeType, any> = any, NodeView extends AbstractNodeView<NodeType, Storage, NodeModel> = any>implements ProseMirrorNodeView {
+export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>> | NoStorage = any, NodeModel extends AbstractNodeModel<NodeType, any> = any, NodeView extends AbstractNodeView<NodeType, Storage, NodeModel> = any>implements ProseMirrorNodeView {
   // == ProseMirror NodeView ======================================================
   public readonly dom: HTMLElement;
   public contentDOM?: Node | null | undefined;
@@ -33,7 +34,10 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     this.node = node;
     this.getPos = getPos;
     this.storage = storage;
-    this.storage.addNodeView(node.attrs.id, this);
+
+    // Storage could be an instance of NoStorage, in which case don't add this node
+    // to the storage.
+    if(storage) this.storage.addNodeView(node.attrs.id, this);
 
     this.nodeModel = nodeModel;
     this.nodeView = nodeView;
