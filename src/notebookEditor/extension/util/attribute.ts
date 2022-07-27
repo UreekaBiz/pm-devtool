@@ -151,4 +151,3 @@ export const getDOMNodeRenderedValue = (node: ProseMirrorNode, attributeType: At
   //        inherit the value from the parent but how do we know what the value is?
   return themeValue;
 };
-
