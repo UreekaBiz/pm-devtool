@@ -1,6 +1,6 @@
 import { BiStrikethrough } from 'react-icons/bi';
 
-import { isHeadingNode, isParagraphNode, MarkName } from 'common';
+import { MarkName } from 'common';
 
 import { isNodeSelection } from 'notebookEditor/extension/util/node';
 import { ToolItem } from 'notebookEditor/toolbar/type';
@@ -18,10 +18,8 @@ export const markStrikethrough: ToolItem = {
   shouldBeDisabled: (editor) => {
     const { selection } = editor.state;
     if(isNodeSelection(selection)) return true;
-    if(isParagraphNode(selection.$anchor.parent) || isHeadingNode(selection.$anchor.parent)) return false;
-    /* else -- selection somewhere that does not allow strikethrough */
 
-    return true;
+    return false;
   },
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
   onClick: (editor) => editor.chain().focus().toggleStrikethrough().run(),
