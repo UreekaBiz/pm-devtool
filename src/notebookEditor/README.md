@@ -29,6 +29,7 @@ This is the list of keyboard shortcuts that is built into the Notebook Editor.
 | Keyboard Shortcut                                   | Description                                                    |
 | --------------------------------------------------- | -------------------------------------------------------------- |
 | <kbd>cmd</kbd><kbd>B</kbd>                          | Toggle the **bold** Mark                                       |
+| <kbd>cmd</kbd><kbd>Shift</kbd><kbd>X</kbd>          | Toggle the ~~strikethrough~~ Mark                              |
 | <kbd>cmd</kbd><kbd>A</kbd>                          | Select all the text in the editor (when focused)               |
 | <kbd>cmd</kbd><kbd>C</kbd>                          | Copy the selected text or nodes to the clipboard               |
 | <kbd>cmd</kbd><kbd>V</kbd>                          | Paste the selected text or nodes to the editor                 |
@@ -46,8 +47,9 @@ This is the list of keyboard shortcuts that is built into the Notebook Editor.
 ## Parse Rules
 This is the list of parse rules that are implemented in the editor
 
-| Rule                                                             | Description                                           |
-| ---------------------------------------------------------------- | ----------------------------------------------------- |
-| Wrap text in between double * characters                         | Toggle the **bold** Mark for the corresponding text   |
-| Wrap text in between double _ characters                         | Toggle the **bold** Mark for the corresponding text   |
-| Type between 1 and 3 '#' characters at the start of a new line   | Toggle a Heading Node with the corresponding level    |
+| Rule                                                             | Description                                                    |
+| ---------------------------------------------------------------- | -------------------------------------------------------------- |
+| Wrap text in between double * characters                         | Toggle the **bold** Mark for the corresponding text            |
+| Wrap text in between double _ characters                         | Toggle the **bold** Mark for the corresponding text            |
+| Wrap text in between double ~ characters                         | Toggle the ~~strikethrough~~ Mark for the corresponding text   |
+| Type between 1 and 3 '#' characters at the start of a new line   | Toggle a Heading Node with the corresponding level             |
