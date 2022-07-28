@@ -7,7 +7,7 @@ import { markInputRule, markPasteRule } from 'notebookEditor/extension/util/mark
 import { safeParseTag } from 'notebookEditor/extension/util/parse';
 import { NoOptions, NoStorage } from 'notebookEditor/model/type';
 
-import { setStrikeCommand, toggleStrikeCommand, unsetStrikeCommand } from './command';
+import { setStrikethroughCommand, toggleStrikethroughCommand, unsetStrikethroughCommand } from './command';
 
 // ********************************************************************************
 // REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-bold/src/bold.ts
@@ -23,12 +23,12 @@ export const Strikethrough = Mark.create<NoOptions, NoStorage>({
   // -- Command -------------------------------------------------------------------
   addCommands() {
     return {
-      setStrike: setStrikeCommand,
-      unsetStrike: unsetStrikeCommand,
-      toggleStrike: toggleStrikeCommand,
+      setStrikethrough: setStrikethroughCommand,
+      unsetStrikethrough: unsetStrikethroughCommand,
+      toggleStrikethrough: toggleStrikethroughCommand,
     };
   },
-  addKeyboardShortcuts() { return { 'Mod-Shift-x': () => this.editor.commands.toggleStrike() }; },
+  addKeyboardShortcuts() { return { 'Mod-Shift-x': () => this.editor.commands.toggleStrikethrough() }; },
 
   // -- Input ---------------------------------------------------------------------
   // apply the strikethrough mark to any text that is typed or pasted in between

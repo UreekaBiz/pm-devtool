@@ -7,14 +7,14 @@ import { CommandFunctionType, MarkName } from 'common';
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     [MarkName.STRIKETHROUGH]: {
-      setStrike: CommandFunctionType<typeof setStrikeCommand, ReturnType>;
-      toggleStrike: CommandFunctionType<typeof toggleStrikeCommand, ReturnType>;
-      unsetStrike: CommandFunctionType<typeof unsetStrikeCommand, ReturnType>;
+      setStrikethrough: CommandFunctionType<typeof setStrikethroughCommand, ReturnType>;
+      toggleStrikethrough: CommandFunctionType<typeof toggleStrikethroughCommand, ReturnType>;
+      unsetStrikethrough: CommandFunctionType<typeof unsetStrikethroughCommand, ReturnType>;
     };
   }
 }
 
 // --------------------------------------------------------------------------------
-export const setStrikeCommand = () => ({ commands }: CommandProps) => commands.setMark(MarkName.STRIKETHROUGH);
-export const toggleStrikeCommand = () => ({ commands }: CommandProps) => commands.toggleMark(MarkName.STRIKETHROUGH);
-export const unsetStrikeCommand = () => ({ commands }: CommandProps) => commands.unsetMark(MarkName.STRIKETHROUGH);
+export const setStrikethroughCommand = () => ({ commands }: CommandProps) => commands.setMark(MarkName.STRIKETHROUGH);
+export const toggleStrikethroughCommand = () => ({ commands }: CommandProps) => commands.toggleMark(MarkName.STRIKETHROUGH);
+export const unsetStrikethroughCommand = () => ({ commands }: CommandProps) => commands.unsetMark(MarkName.STRIKETHROUGH);
