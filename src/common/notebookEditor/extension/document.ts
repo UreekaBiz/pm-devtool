@@ -1,7 +1,7 @@
 import { Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { NodeRendererSpec } from '../htmlRenderer/type';
-import { JSONNode, NodeGroup, NodeName } from '../node';
+import { JSONNode, NodeName, RootNodes } from '../node';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
@@ -10,6 +10,8 @@ export type DocumentAttributes = {/*no attributes*/};
 
 // == Spec ========================================================================
 // -- Node Spec -------------------------------------------------------------------
+// NOTE: Document must specify the allowed nodes that can be a direct child.
+export const documentContent = `(${RootNodes.join(' | ')})+`;
 export const DocumentNodeSpec: NodeSpec = {
   name: NodeName.DOC/*expected and guaranteed to be unique*/,
 
@@ -17,7 +19,7 @@ export const DocumentNodeSpec: NodeSpec = {
   //       is the top node.
   // SEE:  src/common/notebookEditor/schema.ts
   topNode: true/*it's the node that will be used as a root for the document*/,
-  content: `${NodeGroup.BLOCK}+`,
+  content: documentContent,
 };
 
 // -- Render Spec -----------------------------------------------------------------

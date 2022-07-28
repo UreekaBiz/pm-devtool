@@ -58,7 +58,9 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginRight]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },
-    [NodeName.PARAGRAPH]: {
+    [NodeName.PARAGRAPH]: {/*no defined value*/},
+    [NodeName.TEXT]:{/*no defined value*/},
+    [NodeName.TEXT_BLOCK]: {
       [AttributeType.TextColor]: '#000',
       [AttributeType.FontSize]: '16px',
       [AttributeType.MarginLeft]: '4px',
@@ -66,7 +68,6 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginTop]: '0.5rem',
       [AttributeType.MarginBottom]: '0.5rem',
     },
-    [NodeName.TEXT]:{/*no defined value*/},
   },
 
   marks: {
@@ -101,7 +102,9 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },
-    [NodeName.PARAGRAPH]: {
+    [NodeName.PARAGRAPH]: {/*no defined value*/},
+    [NodeName.TEXT]:{/*no defined value*/},
+    [NodeName.TEXT_BLOCK]: {
       [AttributeType.FontSize]: '11pt',
       [AttributeType.TextColor]: '#353744',
       [AttributeType.MarginLeft]: '4px',
@@ -109,7 +112,6 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.MarginTop]: '0.5rem',
       [AttributeType.MarginBottom]: '0.5rem',
     },
-    [NodeName.TEXT]:{/*no defined value*/},
   },
 
   marks: {

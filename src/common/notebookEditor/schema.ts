@@ -6,6 +6,7 @@ import { HeadingNodeSpec } from './extension/heading';
 import { ParagraphNodeSpec } from './extension/paragraph';
 import { StrikethroughMarkSpec } from './extension/strikethrough';
 import { TextNodeSpec } from './extension/text';
+import { TextBlockNodeSpec } from './extension/textBlock';
 import { TextStyleMarkSpec } from './extension/textStyle';
 import { MarkName } from './mark';
 import { NodeName } from './node';
@@ -17,6 +18,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,
+  [NodeName.TEXT_BLOCK]: TextBlockNodeSpec,
 };
 
 export const MarkSpecs: Record<MarkName, MarkSpec> = {

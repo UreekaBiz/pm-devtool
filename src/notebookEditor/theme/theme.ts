@@ -1,22 +1,3 @@
-import { AttributeType, NodeName } from 'common';
-
-// ********************************************************************************
-// == Theme =======================================================================
-export const theme: Record<NodeName, Partial<Record<AttributeType, string>>> = {
-  // ProseMirror Nodes
-  [NodeName.DOC]: {},
-  [NodeName.HEADING]: {},
-  [NodeName.PARAGRAPH]: {
-    [AttributeType.FontSize]: '16px',
-    [AttributeType.TextColor]: '#333',
-    [AttributeType.MarginLeft]: '4px',
-  },
-  [NodeName.TEXT]: {},
-
-  // Custom Nodes
-  // Currently nothing
-} as const;
-
 // == CSS =========================================================================
 // NOTE: All of these must match index.css
 // .. General .....................................................................

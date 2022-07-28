@@ -11,6 +11,16 @@ import { mapOldStartAndOldEndThroughHistory } from './step';
 export type NodeIdentifier = string/*alias*/;
 
 // --------------------------------------------------------------------------------
+/** Unique identifier for each Node on the schema */
+export enum NodeName {
+  DOC = 'document',
+  HEADING = 'heading',
+  PARAGRAPH = 'paragraph',
+  TEXT = 'text',
+  TEXT_BLOCK = 'textBlock',
+}
+export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
+
 /**
  * The type of group that this node belongs to. This is used on the Content field
  * on a NodeSpec.
@@ -24,14 +34,16 @@ export enum NodeGroup {
   INLINE = 'inline',
 }
 
-/** Unique identifier for each Node on the schema */
-export enum NodeName {
-  DOC = 'document',
-  HEADING = 'heading',
-  PARAGRAPH = 'paragraph',
-  TEXT = 'text',
-}
-export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
+/**
+ * A list of nodes that can be a direct child of the Document node. This is needed
+ * since not all code blocks can be a direct child of the Document node.
+ */
+// NOTE: The order matters, TextBlock must be the first element of the list to
+//       ensure that it is the default node when no other node is found.
+export const RootNodes = [
+  NodeName.TEXT_BLOCK,
+  NodeName.HEADING,
+];
 
 /** the HTML tag used when rendering the node to the DOM. */
 export type NodeTag = string/*alias*/;
