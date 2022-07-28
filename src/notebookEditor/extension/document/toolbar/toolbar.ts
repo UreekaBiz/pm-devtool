@@ -23,6 +23,7 @@ export const setThemeToolItem: ToolItem = {
 
 // == Toolbar =====================================================================
 export const DocumentToolbar: Toolbar = {
+  title: 'Document',
   nodeName: NodeName.DOC/*Expected and guaranteed to be unique*/,
 
   toolsCollections: [
