@@ -8,11 +8,8 @@ import { SelectionDepth } from 'notebookEditor/model/type';
 // ********************************************************************************
 // == Toolbar =====================================================================
 export type Toolbar = Readonly<{
-  /**
-   * Title that is being displayed on the toolbar. If not provided nodeName will
-   * be used instead.
-   */
-  title?: string;
+  /** Title that is being displayed on the Toolbar and in the Breadcrumb.*/
+  title: string;
   /**
    * Unique name of the toolbar, its must correspond to the specific Node that it
    * is associated with.
@@ -24,6 +21,12 @@ export type Toolbar = Readonly<{
 
   /** A collection of EditorToolItems that correspond to the toolbar. */
   toolsCollections: ToolItem[][];
+
+  /**
+   * Defaults to always show if not provided. This function is also used to
+   * determinate if the corresponding Breadcrumb should be shown.
+   */
+  shouldShow?: (editor: Editor, depth: SelectionDepth) => boolean;
 }>;
 
 // == Tool ========================================================================

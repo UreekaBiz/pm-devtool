@@ -23,6 +23,7 @@ export const Toolbar: React.FC<Props> = ({ depth, node, onSelection, selectedDep
   const editor = useValidatedEditor();
 
   if(!toolbar) return null/*nothing to render*/;
+  if(toolbar.shouldShow && !toolbar.shouldShow(editor, depth)) return null/*nothing to render*/;
 
   return (
     <Box>
