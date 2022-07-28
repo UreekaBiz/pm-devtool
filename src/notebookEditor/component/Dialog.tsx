@@ -60,7 +60,7 @@ export const Dialog: React.FC<Props> = ({ dialogTitle, inputPlaceholder, enterCa
               key={buttonIndex}
               variant='ghost'
               colorScheme='blue'
-              onClick={() => button.onClick(inputValue)}
+              onClick={() => { setInputValue(''); button.onClick(inputValue); }}
             >
               {button.text}
             </Button>
