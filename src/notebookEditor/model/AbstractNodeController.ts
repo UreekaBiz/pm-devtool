@@ -7,7 +7,7 @@ import { NotebookSchemaType } from 'common';
 import { getPosType, isGetPos } from 'notebookEditor/extension/util/node';
 
 import { NoStorage } from './type';
-import { NodeViewStorage } from './NodeViewStorage';
+import { isNodeViewStorage, NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeView } from './AbstractNodeView';
 import { AbstractNodeModel } from './AbstractNodeModel';
 
@@ -37,7 +37,7 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
 
     // Storage could be an instance of NoStorage, in which case don't add this node
     // to the storage.
-    if(storage) this.storage.addNodeView(node.attrs.id, this);
+    if(storage && isNodeViewStorage(storage)) this.storage.addNodeView(node.attrs.id, this);
 
     this.nodeModel = nodeModel;
     this.nodeView = nodeView;
