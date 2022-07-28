@@ -35,8 +35,7 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     this.getPos = getPos;
     this.storage = storage;
 
-    // Storage could be an instance of NoStorage, in which case don't add this node
-    // to the storage.
+    // only add the Storage if it is a NodeViewStorage (so NoStorage is not added)
     if(storage && isNodeViewStorage(storage)) this.storage.addNodeView(node.attrs.id, this);
 
     this.nodeModel = nodeModel;
