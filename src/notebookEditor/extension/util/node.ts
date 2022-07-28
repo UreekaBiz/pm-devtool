@@ -1,7 +1,7 @@
 import { CommandProps, Editor } from '@tiptap/core';
 import { GapCursor } from 'prosemirror-gapcursor';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
-import { EditorState, NodeSelection, Selection, Transaction } from 'prosemirror-state';
+import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 
 import { getNodeOffset, NodeName, NotebookSchemaType } from 'common';
 
@@ -153,12 +153,13 @@ export enum SelectionBias {
   RIGHT = 1
 }
 export const resolveNewSelection = (selection: Selection<NotebookSchemaType>, tr: Transaction<NotebookSchemaType>, bias?: SelectionBias) => {
-  let nodeSelection = false;
-  if(isNodeSelection(selection)) nodeSelection = true;
-
-  if(nodeSelection) {
+  if(isNodeSelection(selection)) {
     return new NodeSelection(tr.doc.resolve(selection.$anchor.pos));
-  } /* else -- textSelection */
+  }/* else -- a node is not selected */
+
+  if(!selection.empty) {
+    return new TextSelection(tr.doc.resolve(selection.$anchor.pos), tr.doc.resolve(selection.$head.pos));
+  }/* else -- selection is empty */
 
   return Selection.near(tr.doc.resolve(selection.$anchor.pos), bias ? bias : SelectionBias.LEFT/*default*/);
 };
