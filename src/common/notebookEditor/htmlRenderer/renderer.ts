@@ -40,12 +40,12 @@ export const convertJSONContentToHTML = (node: JSONNode): HTMLString => {
   const { type, content, text } = node;
   const nodeRendererSpec = NodeRendererSpecs[type];
 
-  // If the Node is text and don't have Attributes nor Narks render its content as
+  // if the Node is text and doesn't have Attributes nor Narks render its content as
   // plain text instead of adding a 'span' tag to wrap it. Mimics the functionality
   // of the Editor.
   if(isTextJSONNode(node) && !node.attrs && !node.marks) return node.text ?? '';
 
-  // Gets the direct children Nodes using the Node content. An empty string is
+  // gets the direct children Nodes using the Node content. An empty string is
   // equivalent to having no content when rendering the HTML.
   let children = content ? content.reduce((acc, child) => `${acc}${convertJSONContentToHTML(child)}`, '') : ''/*no children*/;
 
@@ -187,7 +187,7 @@ const mergeAttribute = (attribute: string, a: string | undefined, b: string | un
   // append the b to a
   // NOTE: if 'b' has Attributes that collide with 'a' then the value of b is used
   if(attribute === 'style') return `${a} ${b}`;
-  // else -- cannot be merged.
+  // else -- cannot be merged
 
   return b;
 };
