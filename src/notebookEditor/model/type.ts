@@ -26,7 +26,9 @@ export enum ExtensionName {
 
 // == Priority ====================================================================
 // NOTE: priority can affect extensions, nodes and marks
-// NOTE: if priority is left unspecified, it defaults to 100
+
+// -- Extension -------------------------------------------------------------------
+// NOTE: if extension priority is left unspecified, it defaults to 100
 // NOTE: names match extension, node or mark names for sanity.
 export enum ExtensionPriority {
   // -- Extension -----------------------------------------------------------------
@@ -53,6 +55,10 @@ export enum ExtensionPriority {
   // -- Mark ----------------------------------------------------------------------
   // Currently nothing
 }
+
+// NOTE: if parse rule priority is left unspecified, it defaults to 50
+// NOTE: names match extension, node or mark names for sanity.
+export enum ParseRulePriority {/*currently nothing*/}
 
 // == Selection ===================================================================
 // The depth of the selection from the current node.
