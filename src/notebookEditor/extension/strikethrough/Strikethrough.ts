@@ -1,6 +1,6 @@
 import { Mark } from '@tiptap/core';
 
-import { StrikethroughMarkRendererSpec } from 'common';
+import { StrikethroughMarkSpec } from 'common';
 
 import { getMarkOutputSpec } from 'notebookEditor/extension/util/attribute';
 import { markInputRule, markPasteRule } from 'notebookEditor/extension/util/mark';
@@ -18,7 +18,7 @@ const strikethroughPasteRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))/g;
 
 // == Mark ========================================================================
 export const Strikethrough = Mark.create<NoOptions, NoStorage>({
-  ...StrikethroughMarkRendererSpec,
+  ...StrikethroughMarkSpec,
 
   // -- Command -------------------------------------------------------------------
   addCommands() {
@@ -31,7 +31,8 @@ export const Strikethrough = Mark.create<NoOptions, NoStorage>({
   addKeyboardShortcuts() { return { 'Mod-Shift-x': () => this.editor.commands.toggleStrike() }; },
 
   // -- Input ---------------------------------------------------------------------
-  // TODO: Document
+  // apply the strikethrough mark to any text that is typed or pasted in between
+  // '~~' symbols, or when pasting text wrapped in them
   addInputRules() { return [ markInputRule(strikethroughInputRegEx, this.type ) ]; },
   addPasteRules() { return [ markPasteRule(strikethroughPasteRegEx, this.type ) ]; },
 
@@ -41,6 +42,11 @@ export const Strikethrough = Mark.create<NoOptions, NoStorage>({
       safeParseTag('s'),
       safeParseTag('del'),
       safeParseTag('strike'),
+      {
+        style: 'text-decoration',
+        consuming: false/*allow other rules to keep matching after this one matches*/,
+        getAttrs: (style) => (typeof style === 'string' && style.includes('line-through') ? {/*match, with no attributes*/} : false/*don't match rule*/),
+      },
     ];
   },
   renderHTML({ mark, HTMLAttributes }) { return getMarkOutputSpec(mark, HTMLAttributes); },
