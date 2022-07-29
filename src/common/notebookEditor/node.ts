@@ -22,7 +22,7 @@ export enum NodeName {
 export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
 
 /**
- * The type of group that this node belongs to. This is used on the Content field
+ * The type of group that this Node belongs to. This is used on the Content field
  * on a NodeSpec.
  */
 // NOTE: When using a custom group type it is expected to be defined here with a
@@ -35,21 +35,21 @@ export enum NodeGroup {
 }
 
 /**
- * A list of nodes that can be a direct child of the Document node. This is needed
- * since not all code blocks can be a direct child of the Document node.
+ * A list of Nodes that can be a direct child of the Document Node. This is needed
+ * since not all Code Blocks can be a direct child of the Document Node.
  */
-// NOTE: The order matters, TextBlock must be the first element of the list to
-//       ensure that it is the default node when no other node is found.
+// NOTE: order matters: TextBlock must be the first element of the list to
+//       ensure that it is the default Node when no other Node is found
 export const RootNodes = [
   NodeName.TEXT_BLOCK,
   NodeName.HEADING,
 ];
 
-/** the HTML tag used when rendering the node to the DOM. */
+/** the HTML tag used when rendering the node to the DOM */
 export type NodeTag = string/*alias*/;
 
 // == JSON ========================================================================
-/** a JSON representation of a ProseMirror Node */
+/** JSON representation of a ProseMirror Node */
 export type JSONNode<A extends Attributes = {}> = {
   type: NodeName;
   content?: JSONNode[];
@@ -59,11 +59,11 @@ export type JSONNode<A extends Attributes = {}> = {
   attrs?: Partial<A>;
   marks?: JSONMark[];
 };
-/**a stringified version of the content of the node */
+/** Stringified version of the content of the Node */
 export type NodeContent = string/*alias*/;
 
 // --------------------------------------------------------------------------------
-// the JSON as seen from Schema#nodeFromJSON() or Schema#markFromJSON()
+// JSON as seen from Schema#nodeFromJSON() or Schema#markFromJSON()
 export type JSONContent = { [key: string]: any; };
 
 // --------------------------------------------------------------------------------
@@ -122,10 +122,10 @@ export const getNodesAffectedByStepMap = (transaction: Transaction, stepMapIndex
 };
 
 /**
- * Create and return an array of {@link NodeFound} by looking at the nodes between
- * {@link #from} and {@link #to} in the given {@link #rootNode}, adding those nodes
+ * Creates and returns an array of {@link NodeFound} by looking at the Nodes between
+ * {@link #from} and {@link #to} in the given {@link #rootNode}, adding those Nodes
  * whose type name is included in the given {@link #nodeNames} set. Very similar to
- * doc.nodesBetween, but specifically for {@link NodeFound} objects
+ * doc.nodesBetween, but specifically for {@link NodeFound} objects.
  */
  export const getNodesBetween = (rootNode: ProseMirrorNode, from: number, to: number, nodeNames: Set<NodeName>) => {
   const nodesOfType: NodeFound[] = [];
@@ -141,7 +141,7 @@ export const getNodesAffectedByStepMap = (transaction: Transaction, stepMapIndex
 
 // -- Sizing ----------------------------------------------------------------------
 /**
- * @param parentNode The parent node of the {@link childNode} whose offset is being calculated
+ * @param parentNode The parent Node of the {@link childNode} whose offset is being calculated
  * @param childNode The {@link childNode} whose offset is being calculated
  * @returns The offset of the {@link childNode} into its {@link parentNode}
  */
@@ -155,7 +155,7 @@ export const getNodesAffectedByStepMap = (transaction: Transaction, stepMapIndex
 };
 
 // -- Creation --------------------------------------------------------------------
-/** Creates a {@link Fragment} with the content of the input node plus the given {@link appendedNode} */
+/** Creates a {@link Fragment} with the content of the input Node plus the given {@link appendedNode} */
 export const createFragmentWithAppendedContent = (node: ProseMirrorNode, appendedNode: ProseMirrorNode) =>
     node.content.append(Fragment.from(appendedNode));
 
@@ -163,7 +163,7 @@ export const createFragmentWithAppendedContent = (node: ProseMirrorNode, appende
 /**
  * @param transaction The transaction that will be checked
  * @param nodeNameSet The set of node names that will be looked for in the
- *        {@link NodeFound} array of nodes affected by the Transaction's stepMaps
+ *        {@link NodeFound} array of Nodes affected by the Transaction's stepMaps
  * @returns `true` if any of the stepMaps in the Transaction modified Nodes whose
  *          type name is included in the given nodeNameSet. `false` otherwise
  */
@@ -205,17 +205,17 @@ const nodeFoundArrayContainsNodesOfType = (nodeObjs: NodeFound[], nodeNameSet: S
 export const getRemovedNodesByTransaction = (transaction: Transaction, nodeNameSet: Set<NodeName>) => {
   const { maps } = transaction.mapping;
   let removedNodeObjs: NodeFound[] = [/*empty by default*/];
-  // NOTE: Since certain operations (e.g. dragging and dropping a node) occur
+  // NOTE: since certain operations (e.g. dragging and dropping a Node) occur
   //       throughout more than one stepMapIndex, returning as soon as possible
-  //       from this method can lead to incorrect behavior (e.g. the dragged node's
+  //       from this method can lead to incorrect behavior (e.g. the dragged Node's
   //       nodeView being deleted before the next stepMap adds it back). For this
-  //       reason the removed nodes are computed on each stepMap and the final
+  //       reason the removed Nodes are computed on each stepMap and the final
   //       removedNodeObjs array is what is returned
-  // NOTE: This is true for this method specifically given its intent
-  //       (checking to see if nodes of a specific type got deleted),
-  //       and does not mean that other extensions or plugins that use similar
-  //       functionality to see if nodes got deleted or added cannot return early,
-  //       as this will depend on their specific intent
+  // NOTE: this is true for this method specifically given its intent (checking to
+  //       see if Nodes of a specific type got deleted), and does not mean that
+  //       other extensions or plugins that use similar functionality to see if
+  //       Nodes got deleted or added cannot return early, as this will depend on
+  //       their specific intent
   for(let stepMapIndex=0; stepMapIndex < maps.length; stepMapIndex++) {
     maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
       const { oldNodeObjs, newNodeObjs } = getNodesAffectedByStepMap(transaction, stepMapIndex, unmappedOldStart, unmappedOldEnd, nodeNameSet);
@@ -225,7 +225,7 @@ export const getRemovedNodesByTransaction = (transaction: Transaction, nodeNameS
   return removedNodeObjs;
 };
 
-/** Get nodes that are no longer present in the newArray */
+/** Get Nodes that are no longer present in the newArray */
 export const computeRemovedNodeObjs = (oldArray: NodeFound[], newArray: NodeFound[]) =>
   oldArray.filter(oldNodeObj => !newArray.some(newNodeObj => newNodeObj.node.attrs.id === oldNodeObj.node.attrs.id));
 
@@ -237,7 +237,7 @@ const customNanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFG
 export const generateNodeId = () => customNanoid();
 
 /**
- * Computes the corresponding id that the tag for a node will receive if needed.
+ * Computes the corresponding id that the tag for a Node will receive if needed.
  * Note that not all nodes require their view to have an ID, but all nodeViews
  * whose nodes make use of this functionality -must- have an ID attribute.
  */
