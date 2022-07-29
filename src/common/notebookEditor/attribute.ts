@@ -77,21 +77,15 @@ const styleAttributeSet = new Set([
 export const isStyleAttribute = (property: any) => styleAttributeSet.has(property);
 
 // -- Spacing ---------------------------------------------------------------------
-export type Margin = {
-  [AttributeType.MarginTop]: string | undefined;
-  [AttributeType.MarginBottom]: string | undefined;
-  [AttributeType.MarginLeft]: string | undefined;
-  [AttributeType.MarginRight]: string | undefined;
-};
+/** record of margin attributes and merge attribute value */
+export type Margin = Record<AttributeType.MarginTop | AttributeType.MarginBottom | AttributeType.MarginLeft | AttributeType.MarginRight,
+                            MergedAttributeValue>;
 export type MarginAttribute = keyof Margin;
 export const isMarginAttribute = (attribute: AttributeType) => attribute.includes('margin');
 
-export type Padding = {
-  [AttributeType.PaddingTop]: string | undefined;
-  [AttributeType.PaddingBottom]: string | undefined;
-  [AttributeType.PaddingLeft]: string | undefined;
-  [AttributeType.PaddingRight]: string | undefined;
-};
+/** record of padding attributes and merge attribute value */
+export type Padding = Record<AttributeType.PaddingTop | AttributeType.PaddingBottom | AttributeType.PaddingLeft | AttributeType.PaddingRight,
+                            MergedAttributeValue>;
 export type PaddingAttribute = keyof Padding;
 export const isPaddingAttribute = (attribute: AttributeType) => attribute.includes('padding');
 
