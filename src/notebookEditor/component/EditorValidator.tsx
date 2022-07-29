@@ -1,10 +1,10 @@
 import { Loading } from 'core/component/Loading';
-import { useNotebook } from 'notebookEditor/hook/useNotebook';
+import { useNotebookEditor } from 'notebookEditor/hook/useNotebookEditor';
 
 // ********************************************************************************
 interface Props { children: React.ReactNode; }
 export const EditorValidator: React.FC<Props> = ({ children }) => {
-  const { editor } = useNotebook();
+  const { editor } = useNotebookEditor();
   if(!editor) return <Loading />/*not initialized yet*/;
 
   return <>{ children }</>;

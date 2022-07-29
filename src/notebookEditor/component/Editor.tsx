@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { EditorContent } from '@tiptap/react';
 
-import { useNotebook } from 'notebookEditor/hook/useNotebook';
+import { useNotebookEditor } from 'notebookEditor/hook/useNotebookEditor';
 
 import { EditorUserInteractions } from './EditorUserInteractions';
 
@@ -9,7 +9,7 @@ import { EditorUserInteractions } from './EditorUserInteractions';
 export const EDITOR_CONTAINER_ID = 'NotebookEditorContainerID';
 
 export const Editor: React.FC = () => {
-  const { editor } = useNotebook();
+  const { editor } = useNotebookEditor();
 
   // == Handlers ==================================================================
   const handleClick = () => {

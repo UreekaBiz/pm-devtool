@@ -2,11 +2,11 @@ import { Editor } from '@tiptap/react';
 import { createContext } from 'react';
 
 // ********************************************************************************
-export type NotebookState = Readonly<{
+export type NotebookEditorState = Readonly<{
   editor: Editor | null/*not initialized*/;
 }>;
 
-export const NotebookContext = createContext<NotebookState>({
+export const NotebookEditorContext = createContext<NotebookEditorState>({
   editor: null/*not initialized by default*/,
 });
-NotebookContext.displayName = 'NotebookContext';
+NotebookEditorContext.displayName = 'NotebookEditorContext';
