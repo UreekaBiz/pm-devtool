@@ -9,8 +9,7 @@ import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 // handles Editor-related logic that requires the use of hooks (and hence it must
 // be a component)
 export const EditorUserInteractions = () => {
-  // == State =====================================================================
-  const editor  = useValidatedEditor();
+  const editor = useValidatedEditor();
 
   // == Effects ===================================================================
   /**
