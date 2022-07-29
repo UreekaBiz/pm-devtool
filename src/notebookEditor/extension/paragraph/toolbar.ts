@@ -8,9 +8,9 @@ import { Toolbar } from 'notebookEditor/toolbar/type';
 
 //*********************************************************************************
 // == Toolbar =====================================================================
-export const TextBlockToolbar: Toolbar = {
-  title: 'Text Block',
-  nodeName: NodeName.TEXT_BLOCK/*Expected and guaranteed to be unique*/,
+export const ParagraphToolbar: Toolbar = {
+  title: 'Paragraph',
+  nodeName: NodeName.PARAGRAPH/*Expected and guaranteed to be unique*/,
 
   toolsCollections: [
     [

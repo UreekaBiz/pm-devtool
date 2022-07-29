@@ -17,7 +17,6 @@ export enum NodeName {
   HEADING = 'heading',
   PARAGRAPH = 'paragraph',
   TEXT = 'text',
-  TEXT_BLOCK = 'textBlock',
 }
 export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
 
@@ -33,17 +32,6 @@ export enum NodeGroup {
   BLOCK = 'block',
   INLINE = 'inline',
 }
-
-/**
- * A list of Nodes that can be a direct child of the Document Node. This is needed
- * since not all Code Blocks can be a direct child of the Document Node.
- */
-// NOTE: order matters: TextBlock must be the first element of the list to
-//       ensure that it is the default Node when no other Node is found
-export const RootNodes = [
-  NodeName.TEXT_BLOCK,
-  NodeName.HEADING,
-];
 
 /** the HTML tag used when rendering the node to the DOM */
 export type NodeTag = string/*alias*/;
