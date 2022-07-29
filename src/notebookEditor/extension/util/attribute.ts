@@ -104,7 +104,13 @@ export const getTextDOMRenderedValue = (editor: Editor, attributeType: Attribute
   // Merges the value of all different attributeType in the given range.
   state.doc.nodesBetween(start, end, (node, pos, parent) => {
     if(mergedValue === InvalidMergedAttributeValue) return false/*stop search*/;
-    if(!isTextNode(node))  return;/*nothing to do*/
+    // Is a node that have at leas one child. This is needed since nodes that have
+    // one child will take the attributes of the child.
+    if(!isTextNode(node)  )  {
+      if(node.childCount > 0) return/*nothing to do*/;
+      const attributeValue = getDOMNodeRenderedValue(node, attributeType);
+      mergedValue = mergeAttributeValues(mergedValue, attributeValue);
+    }
 
     // Marks are applied to TextNodes only, get the Attribute value form the Mark.
     const markValue = getMarkValue(node, markType, attributeType);
