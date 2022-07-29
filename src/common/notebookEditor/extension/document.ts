@@ -26,7 +26,7 @@ export const DocumentNodeSpec: NodeSpec = {
 export const DocumentNodeRendererSpec: NodeRendererSpec<DocumentAttributes> = {
   tag: 'div',
 
-  attributes: {/*no attributes*/},
+  attributes: {/*no Attributes*/},
 };
 
 // == Type ========================================================================

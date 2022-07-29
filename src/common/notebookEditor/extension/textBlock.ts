@@ -7,7 +7,7 @@ import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
 // == Attribute ===================================================================
-// NOTE: This values must have matching types the ones defined in the Extension.
+// NOTE: this value must have matching types -- the ones defined in the Extension
 const TextBlockAttributesSpec = {
   [AttributeType.FontSize]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
   [AttributeType.TextColor]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
@@ -39,13 +39,13 @@ export const TextBlockNodeSpec: Readonly<NodeSpec> = {
 export const TextBlockNodeRendererSpec: NodeRendererSpec<TextBlockAttributes> = {
   tag: 'div',
 
-  attributes: {/*use the default renderer on all attributes*/},
+  attributes: {/*use the default renderer on all Attributes*/},
 };
 
 // == Type ========================================================================
 // -- Node Type -------------------------------------------------------------------
 // NOTE: this is the only way since PM does not provide a way to specify the type
-//       of the attributes
+//       of the Attributes
 export type TextBlockNodeType = ProseMirrorNode<NotebookSchemaType> & { attrs: TextBlockAttributes; };
 export const isTextBlockNode = (node: ProseMirrorNode<NotebookSchemaType>): node is TextBlockNodeType => node.type.name === NodeName.TEXT_BLOCK;
 
