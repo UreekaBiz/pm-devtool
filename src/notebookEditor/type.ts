@@ -11,7 +11,6 @@ import { SetDefaultMarks } from 'notebookEditor/extension/setDefaultMarks/SetDef
 import { Strikethrough } from 'notebookEditor/extension/strikethrough/Strikethrough';
 import { Style } from 'notebookEditor/extension/style/Style';
 import { Text } from 'notebookEditor/extension/text/Text';
-import { TextBlock } from 'notebookEditor/extension/textBlock/TextBlock';
 import { TextStyle } from 'notebookEditor/extension/textStyle/TextStyle';
 import { UniqueNodeId } from 'notebookEditor/extension/uniqueNodeId/UniqueNodeId';
 
@@ -23,7 +22,7 @@ export const editorDefinition = {
   //       reflect the new changes. It is used to validate the document and perform
   //       operations on the server-side and must be always be in sync
   // SEE: /common/notebookEditor/prosemirror/schema.ts
-  extensions: [ Bold, DropCursor, Document, GapCursor, Heading, Highlight, History, NodeViewRemoval, Paragraph, SetDefaultMarks, Strikethrough, Style, Text, TextBlock, TextStyle, UniqueNodeId ],
+  extensions: [ Bold, DropCursor, Document, GapCursor, Heading, Highlight, History, NodeViewRemoval, Paragraph, SetDefaultMarks, Strikethrough, Style, Text, TextStyle, UniqueNodeId ],
   editorProps: { attributes: { class: 'Editor'/*SEE: /index.css*/ } },
 
   autofocus: true/*initially has focus*/,
@@ -41,7 +40,6 @@ export const editorDefinition = {
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
-// FIXME: not updated when TextBlock was added
 //
 // onTransaction
 // 1. UniqueNodeId
@@ -49,7 +47,6 @@ export const editorDefinition = {
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
-// FIXME: not updated when TextBlock was added
 //
 // onSelectionUpdate
 // 1. UniqueNodeId
@@ -57,7 +54,6 @@ export const editorDefinition = {
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
-// FIXME: not updated when TextBlock was added
 //
 // onUpdate
 // 1. UniqueNodeId
@@ -65,4 +61,3 @@ export const editorDefinition = {
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
-// FIXME: not updated when TextBlock was added

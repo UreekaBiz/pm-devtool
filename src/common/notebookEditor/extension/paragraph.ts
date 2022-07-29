@@ -1,6 +1,6 @@
 import { Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { AttributesTypeFromNodeSpecAttributes } from '../attribute';
+import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { NodeRendererSpec } from '../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName } from '../node';
 import { NotebookSchemaType } from '../schema';
@@ -8,7 +8,20 @@ import { NotebookSchemaType } from '../schema';
 // ********************************************************************************
 // == Attribute ===================================================================
 // NOTE: this value must have matching types -- the ones defined in the Extension
-const ParagraphAttributesSpec = {};
+const ParagraphAttributesSpec = {
+  [AttributeType.FontSize]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.TextColor]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+
+  [AttributeType.PaddingTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.PaddingBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.PaddingLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.PaddingRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+
+  [AttributeType.MarginTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.MarginBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.MarginLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.MarginRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+};
 export type ParagraphAttributes = AttributesTypeFromNodeSpecAttributes<typeof ParagraphAttributesSpec>
 
 // == Spec ========================================================================

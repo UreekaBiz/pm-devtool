@@ -8,7 +8,6 @@ import { HeadingNodeRendererSpec } from '../extension/heading';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
 import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
-import { TextBlockNodeRendererSpec } from '../extension/textBlock';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
 import { JSONMark, MarkName } from '../mark';
 import { contentToJSONNode, JSONNode, NodeName } from '../node';
@@ -22,7 +21,6 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.PARAGRAPH]: ParagraphNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.TEXT]: TextNodeRendererSpec,
-  [NodeName.TEXT_BLOCK]: TextBlockNodeRendererSpec as any/*FIXME!!!*/,
 };
 
 export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
