@@ -140,7 +140,7 @@ export const noNodeOrMarkSpecAttributeDefaultValue = <T>() => ({ default: undefi
 // the editor including the extension and the HTML renderer.
 // @ts-ignore: 'default' is not assignable to key of type A[key]. TS cannot infer
 //            that 'default' will always be present since defined on the Generic.
-export type AttributesTypeFromNodeSpecAttributes<A extends NodeSpecAttributes> = { [key in keyof A]: A[key]['default'] };
+export type AttributesTypeFromNodeSpecAttributes<A extends NodeSpecAttributes> = { [key in keyof A]: A[key]['default'] | undefined};
 
 // == Util ========================================================================
 export const snakeCaseToKebabCase = (str: string) => {

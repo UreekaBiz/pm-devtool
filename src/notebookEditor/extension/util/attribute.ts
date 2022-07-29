@@ -1,7 +1,7 @@
 import { Attribute, Editor } from '@tiptap/core';
 import { DOMOutputSpec, Mark as ProseMirrorMark, Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { getMarkName, getMarkValue, getNodeName, getRenderAttributes, getRenderTag, isHeadingNode, isTextNode, mergeAttributes, mergeAttributeValues, AttributeType, Attributes, InvalidMergedAttributeValue, MarkName, MarkRendererSpecs, MarkSpecs, MergedAttributeValue,  NodeRendererSpecs, NodeSpecs, SetAttributeType, DATA_NODE_TYPE } from 'common';
+import { getMarkName, getMarkValue, getNodeName, getRenderAttributes, getRenderTag, isHeadingNode, isTextNode, mergeAttributes, mergeAttributeValues, AttributeType, Attributes, InvalidMergedAttributeValue, MarkName, MarkRendererSpecs, MarkSpecs, MergedAttributeValue,  NodeRendererSpecs, NodeSpecs, SetAttributeType, DATA_NODE_TYPE, HeadingLevel } from 'common';
 
 import { getHeadingThemeValue, getThemeValue } from '../theme/theme';
 import { getSelectedNode } from './node';
@@ -146,7 +146,7 @@ export const getDOMNodeRenderedValue = (node: ProseMirrorNode, attributeType: At
 
   // Heading nodes are a special case since the FontSize and TextColor are defined
   // by its level
-  if(isHeadingNode(node) && (attributeType === AttributeType.FontSize || attributeType === AttributeType.TextColor)) return getHeadingThemeValue(attributeType, node.attrs[AttributeType.Level]);
+  if(isHeadingNode(node) && (attributeType === AttributeType.FontSize || attributeType === AttributeType.TextColor)) return getHeadingThemeValue(attributeType, node.attrs[AttributeType.Level] ?? HeadingLevel.One/*default level if not present*/);
 
   const nodeName = getNodeName(node);
 
