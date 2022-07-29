@@ -12,10 +12,8 @@ export const EditorUserInteractions = () => {
   const editor = useValidatedEditor();
 
   // == Effects ===================================================================
-  /**
-   * This effect handles shortcut listening for cases that are not specific to
-   * the editor itself (e.g. showing dialogs)
-   */
+  // handles shortcut listening for cases that are not specific to the Editor itself
+  // (e.g. showing dialogs)
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       switch(event.code) {
@@ -27,14 +25,14 @@ export const EditorUserInteractions = () => {
           if(!isValidHTMLElement(firstToolItem)) {
             console.warn('toolItem is not a valid HTML Element');
             return/*do nothing*/;
-          }/* else -- valid html element */
+          } /* else -- valid html element */
 
           event.preventDefault();
           firstToolItem.focus();
           break;
         }
 
-        // Focus editor on Cmd + Option + ,
+        // focus editor on Cmd + Option + ,
         case 'Comma': {
           if(!(event.altKey && event.metaKey)) return;
           isNodeSelection(editor.state.selection)
