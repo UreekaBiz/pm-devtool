@@ -17,9 +17,9 @@ export const markBold: ToolItem = {
 
   shouldBeDisabled: (editor) => {
     const { selection } = editor.state;
-    if(isNodeSelection(selection)) return true;
+    if(!isNodeSelection(selection)) return false;
 
-    return false;
+    return true;
   },
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
   onClick: (editor) => editor.chain().focus().toggleBold().run(),
