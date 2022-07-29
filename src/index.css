@@ -16,7 +16,16 @@
 }
 
 /* == Editor =================================================================== */
-.Editor { outline: 1px solid transparent; }
+.Editor {
+  outline: 1px solid transparent;
+  /* NOTE: This is needed to match the styles of ProseMirror editor. */
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  white-space: break-spaces;
+  -webkit-font-variant-ligatures: none;
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0;
+}
 .inlineNodeContainer { position: relative; display: inline-block; }
 
 /* -- Highlight ---------------------------------------------------------------- */
