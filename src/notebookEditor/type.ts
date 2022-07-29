@@ -19,10 +19,10 @@ import { UniqueNodeId } from 'notebookEditor/extension/uniqueNodeId/UniqueNodeId
 // defines the structure of the Editor
 // SEE: NotebookProvider
 export const editorDefinition = {
-  // NOTE: when adding or removing extensions you must also update the schema
-  //       to reflect the new changes. It is used to validate the document and
-  //       perform operations on the server-side and must be always be in sync.
-  // see: src/common/notebookEditor/prosemirror/schema.ts.
+  // NOTE: when adding or removing Extensions, the Schema must also be updated to
+  //       reflect the new changes. It is used to validate the document and perform
+  //       operations on the server-side and must be always be in sync
+  // SEE: /common/notebookEditor/prosemirror/schema.ts
   extensions: [ Bold, DropCursor, Document, GapCursor, Heading, Highlight, History, NodeViewRemoval, Paragraph, SetDefaultMarks, Strikethrough, Style, Text, TextBlock, TextStyle, UniqueNodeId ],
   editorProps: { attributes: { class: 'Editor'/*SEE: /index.css*/ } },
 
@@ -30,16 +30,18 @@ export const editorDefinition = {
   content: ''/*initially empty*/,
 };
 
-// NOTE: The following execution order goes from top-first to bottom-last
-//       (SEE: FeatureDoc, Changes section)
+// NOTE: the following execution order goes from top-first to bottom-last
+// SEE: FeatureDoc, Changes section
 //
-// Current Schema Execution Order (SEE: notebookEditor/model/type/ExtensionPriority)
+// Current Schema Execution Order
+// SEE: notebookEditor/model/type/ExtensionPriority
 // appendedTransaction
 // 1. UniqueNodeId
 // 2. NodeViewRemoval
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
+// FIXME: not updated when TextBlock was added
 //
 // onTransaction
 // 1. UniqueNodeId
@@ -47,6 +49,7 @@ export const editorDefinition = {
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
+// FIXME: not updated when TextBlock was added
 //
 // onSelectionUpdate
 // 1. UniqueNodeId
@@ -54,6 +57,7 @@ export const editorDefinition = {
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
+// FIXME: not updated when TextBlock was added
 //
 // onUpdate
 // 1. UniqueNodeId
@@ -61,3 +65,4 @@ export const editorDefinition = {
 // 3. SetDefaultMarks
 // 4. Paragraph
 // 5. all other extensions (in registration order, (SEE: Extension array above))
+// FIXME: not updated when TextBlock was added
