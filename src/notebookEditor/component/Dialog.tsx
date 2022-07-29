@@ -16,14 +16,9 @@ interface Props {
 }
 export const Dialog: React.FC<Props> = ({ dialogTitle, inputPlaceholder, enterCallback, buttons, isOpen, onClose }) => {
   // == State =====================================================================
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(''/*initially blank*/);
 
   // == Handler ===================================================================
-  const handleClose = () => {
-    setInputValue('');
-    onClose();
-  };
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if(event.key !== 'Enter') return;
     /* else -- enter pressed */
@@ -31,6 +26,11 @@ export const Dialog: React.FC<Props> = ({ dialogTitle, inputPlaceholder, enterCa
     event.preventDefault();
     enterCallback(inputValue);
     handleClose();
+  };
+
+  const handleClose = () => {
+    setInputValue(''/*clear on close for sanity*/);
+    onClose();
   };
 
   // == UI ========================================================================
@@ -60,7 +60,7 @@ export const Dialog: React.FC<Props> = ({ dialogTitle, inputPlaceholder, enterCa
               key={buttonIndex}
               variant='ghost'
               colorScheme='blue'
-              onClick={() => { setInputValue(''); button.onClick(inputValue); }}
+              onClick={() => { setInputValue(''/*clear*/); button.onClick(inputValue); }}
             >
               {button.text}
             </Button>
