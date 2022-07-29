@@ -5,12 +5,13 @@ import { useState } from 'react';
 interface DialogButton {
   text: string;
   onClick: (inputValue: string) => void;
+  loading: boolean;
 }
 interface Props {
   dialogTitle: string;
   inputPlaceholder: string;
   buttons: DialogButton[];
-  enterCallback: (inputValue: string) => void;
+  enterCallback: (inputValue: string) => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -19,19 +20,20 @@ export const Dialog: React.FC<Props> = ({ dialogTitle, inputPlaceholder, enterCa
   const [inputValue, setInputValue] = useState(''/*initially blank*/);
 
   // == Handler ===================================================================
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if(event.key !== 'Enter') return;
-    /* else -- enter pressed */
-
-    event.preventDefault();
-    enterCallback(inputValue);
-    handleClose();
-  };
-
   const handleClose = () => {
     setInputValue(''/*clear on close for sanity*/);
     onClose();
   };
+
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if(event.key !== 'Enter') return;
+    /* else -- enter pressed */
+
+    event.preventDefault();
+    await enterCallback(inputValue);
+    handleClose();
+  };
+
 
   // == UI ========================================================================
   return (
@@ -60,6 +62,7 @@ export const Dialog: React.FC<Props> = ({ dialogTitle, inputPlaceholder, enterCa
               key={buttonIndex}
               variant='ghost'
               colorScheme='blue'
+              isLoading={button.loading}
               onClick={() => { setInputValue(''/*clear*/); button.onClick(inputValue); }}
             >
               {button.text}
