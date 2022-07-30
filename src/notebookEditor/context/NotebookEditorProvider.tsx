@@ -11,10 +11,10 @@ interface Props { children: React.ReactNode; }
 export const NotebookEditorProvider: React.FC<Props> = ({ children }) => {
   const editor = useEditor(editorDefinition);
 
-  // sets the initial theme when the component mounts
+  // sets the initial Theme when the component mounts
   useEffect(() => {
     notebookEditorTheme.setThemeStylesheet()/*sync stylesheet*/;
-  }, []);
+  }, [/*only on mount/unmount*/]);
 
   return <NotebookEditorContext.Provider value={{ editor }}>{children}</NotebookEditorContext.Provider>;
 };
