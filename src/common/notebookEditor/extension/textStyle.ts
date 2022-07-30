@@ -18,6 +18,7 @@ export type TextStyleAttributes = AttributesTypeFromNodeSpecAttributes<typeof Te
 // -- Mark Spec -------------------------------------------------------------------
 export const TextStyleMarkSpec: MarkSpec = {
   name: MarkName.TEXT_STYLE/*expected and guaranteed to be unique*/,
+
   attrs: TextStyleAttributesSpec,
 };
 
