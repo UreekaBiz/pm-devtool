@@ -109,7 +109,6 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
     return localState[attribute] ?? editorValue ?? '';
   };
 
-
   // == UI ========================================================================
   return (
     <Box>
