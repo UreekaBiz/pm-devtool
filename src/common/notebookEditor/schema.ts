@@ -26,6 +26,8 @@ export const MarkSpecs: Record<MarkName, MarkSpec> = {
 };
 
 // == Schema ======================================================================
+/** the schema version of the {@link Notebook}
+  *  @see Notebook#schemaVersion */
 // NOTE: must be updated when adding breaking changes to the Schema Notebook
 export enum NotebookSchemaVersion {
   V1 = 'v1'/*initial version*/,
