@@ -1,5 +1,5 @@
 import { Extension } from '@tiptap/core';
-import { Plugin, EditorState } from 'prosemirror-state';
+import { EditorState, Plugin } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { ExtensionName } from 'notebookEditor/model/type';
