@@ -1,9 +1,9 @@
-import { Editor, Node } from '@tiptap/core';
-import { Slice } from 'prosemirror-model';
-import { Plugin, TextSelection } from 'prosemirror-state';
+import { ChainedCommands, Editor, Node } from '@tiptap/core';
+import { MarkType, Slice } from 'prosemirror-model';
+import { Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { getNodesAffectedByStepMap, isMarkHolderNode, AttributeType, MarkHolderNodeSpec, NodeName, NotebookSchemaType, SetAttributeType } from 'common';
+import { getNodesAffectedByStepMap, isMarkHolderNode, AttributeType, MarkHolderNodeSpec, MarkHolderNodeType, NodeName, NotebookSchemaType, SetAttributeType } from 'common';
 
 import { getNodeOutputSpec, setAttributeParsingBehavior } from 'notebookEditor/extension/util/attribute';
 import { NoOptions, NoStorage } from 'notebookEditor/model/type';
@@ -132,6 +132,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 });
 
 // == Util ========================================================================
+// TODO: Document
 export const isMarkHolderPresent = (editor: Editor) => {
   const { firstChild } = editor.state.selection.$anchor.parent;
   if(firstChild &&  isMarkHolderNode(firstChild)) {
@@ -141,7 +142,43 @@ export const isMarkHolderPresent = (editor: Editor) => {
   return false;
 };
 
+// TODO: Document
+// NOTE: the parameters of this function are as broad as they can be such that
+//       the function can be used both by ToolItems and commands
+export const handleMarkHolderPresence = (editorSelection: Selection, chain: () => ChainedCommands, markHolder: MarkHolderNodeType, appliedMarkType: MarkType): boolean => {
+  if(markHolder.attrs.storedMarks?.some(mark => mark.type.name === appliedMarkType.name)) {
+    // remove the mark since its already included
+    return chain().focus().command((props) => {
+      const { dispatch, tr } = props;
+      if(!dispatch) throw new Error('dispatch undefined when it should not');
 
+      const startOfParentNodePos = tr.doc.resolve(editorSelection.$anchor.pos - editorSelection.$anchor.parentOffset);
+      const { pos: startingPos } = tr.selection.$anchor;
+
+      tr.setSelection(new TextSelection(startOfParentNodePos, tr.doc.resolve(startOfParentNodePos.pos + markHolder.nodeSize)))
+        .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: [ ...markHolder.attrs.storedMarks!/*defined by contract*/.filter(mark => mark.type.name !== appliedMarkType.name)] })
+        .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
+      dispatch(tr);
+      return true;
+    }).run();
+  } /* else -- add the mark since its not included yet */
+
+  return chain().focus().command((props) => {
+    const { dispatch, tr } = props;
+    if(!dispatch) throw new Error('dispatch undefined when it should not');
+
+    const startOfParentNodePos = tr.doc.resolve(editorSelection.$anchor.pos - editorSelection.$anchor.parentOffset);
+    const { pos: startingPos } = tr.selection.$anchor;
+
+    tr.setSelection(new TextSelection(startOfParentNodePos, tr.doc.resolve(startOfParentNodePos.pos + markHolder.nodeSize)))
+      .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: [ ...markHolder.attrs.storedMarks!, appliedMarkType.create()] })
+      .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
+    dispatch(tr);
+    return true;
+  }).run();
+};
+
+// TODO: Document
 const getUtilsFromView = (view: EditorView) => {
   const { dispatch } = view,
   { tr } = view.state,
