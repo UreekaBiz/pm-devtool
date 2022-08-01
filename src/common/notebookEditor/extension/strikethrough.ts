@@ -1,13 +1,18 @@
-import { getMarkOutputSpec } from 'notebookEditor/extension/util/attribute';
 import { Mark as ProseMirrorMark, MarkSpec } from 'prosemirror-model';
 
+import { getMarkOutputSpec } from 'notebookEditor/extension/util/attribute';
+
+import { AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { MarkRendererSpec } from '../htmlRenderer/type';
 import { JSONMark, MarkName } from '../mark';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
 // == Attribute ===================================================================
-export type StrikethroughAttributes = {/*currently none*/};
+// NOTE: must be present on the MarkSpec below
+// NOTE: this value must have matching types -- the ones defined in the Extension
+const StrikethroughAttributesSpec = {/*no attributes*/};
+export type StrikethroughAttributes = AttributesTypeFromNodeSpecAttributes<typeof StrikethroughAttributesSpec>;
 
 // == Spec ========================================================================
 // -- Mark Spec -------------------------------------------------------------------
@@ -16,6 +21,8 @@ export const StrikethroughMarkSpec: MarkSpec = {
   // NOTE: toDOM must be defined so that the Schema knows how to create it
   //       (SEE: schema.ts)
   toDOM: (mark, inline) => getMarkOutputSpec(mark, mark.attrs ?? {/*empty object if attrs are undefined*/}),
+
+  attrs: StrikethroughAttributesSpec,
 };
 
 // -- Render Spec -----------------------------------------------------------------

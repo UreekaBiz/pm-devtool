@@ -8,6 +8,7 @@ import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
 // == Attribute ===================================================================
+// NOTE: must be present on the NodeSpec below
 // NOTE: this value must have matching types -- the ones defined in the Extension
 const TextStyleAttributesSpec = {
   [AttributeType.FontSize]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
