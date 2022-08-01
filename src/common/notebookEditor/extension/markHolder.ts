@@ -19,7 +19,7 @@ export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
   name: NodeName.MARK_HOLDER/*expected and guaranteed to be unique*/,
   group: NodeGroup.INLINE,
   inline: true,
-  selectable: true,
+  selectable: false,
   atom: true,
 
   attrs: MarkHolderAttributeSpec,

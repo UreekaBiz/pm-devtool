@@ -1,6 +1,6 @@
 import { Node } from '@tiptap/core';
 import { Slice } from 'prosemirror-model';
-import { NodeSelection, Plugin, TextSelection } from 'prosemirror-state';
+import { Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { getNodesAffectedByStepMap, AttributeType, NodeName, MarkHolderNodeSpec, SetAttributeType, NotebookSchemaType, isMarkHolderNode } from 'common';
@@ -86,7 +86,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             }/* else -- handle event */
 
             if(event.key === 'Backspace') {
-              const parentPos = pos - 1/*by contract*/;
+              const parentPos = pos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
               tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos + view.state.selection.$anchor.parent.nodeSize)))
                 .deleteSelection();
               dispatch(tr);
@@ -97,7 +97,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
               return false/*do not handle event*/;
             }/* else -- handle event */
 
-            tr.setSelection(new NodeSelection(tr.doc.resolve(pos)))
+            tr.setSelection(new TextSelection(tr.doc.resolve(pos), tr.doc.resolve(pos + markHolder.nodeSize)))
               .setStoredMarks(markHolder.attrs.storedMarks)
               .replaceSelectionWith(this.editor.schema.text(event.key));
             dispatch(tr);
@@ -115,7 +115,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
               return false/*let PM handle the event*/;
             }/* else -- handle event */
 
-            tr.setSelection(new NodeSelection(tr.doc.resolve(pos)))
+            tr.setSelection(new TextSelection(tr.doc.resolve(pos), tr.doc.resolve(pos + markHolder.nodeSize)))
               .replaceSelection(slice);
             markHolder.attrs.storedMarks?.forEach(storedMark => tr.addMark(pos, pos + slice.size, storedMark));
             dispatch(tr);
