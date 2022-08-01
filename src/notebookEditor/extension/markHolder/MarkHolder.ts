@@ -161,7 +161,7 @@ export const handleMarkHolderPresence = (editorSelection: Selection, chain: () =
     newMarksArray = [ ...markHolder.attrs.storedMarks!/*defined by contract*/.filter(mark => mark.type.name !== appliedMarkType.name)];
   } else {
     // mark not included yet, add it
-    newMarksArray = [ ...markHolder.attrs.storedMarks!, appliedMarkType.create()];
+    newMarksArray = [ ...markHolder.attrs.storedMarks!/*defined by contract*/, appliedMarkType.create()];
   }
 
   return chain().focus().command((props) => {
