@@ -34,7 +34,6 @@ export enum ExtensionPriority {
   // -- Extension -----------------------------------------------------------------
   UNIQUE_NODE_ID = 120/*T&E*/,
   NODEVIEW_REMOVAL = 119,
-  SET_DEFAULT_MARKS = 118,
 
   // -- Node ----------------------------------------------------------------------
   // NOTE: Paragraph must have a higher priority than other block Nodes since it
