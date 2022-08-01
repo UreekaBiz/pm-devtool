@@ -1,5 +1,5 @@
 import { ChainedCommands, Editor, Node } from '@tiptap/core';
-import { MarkType, Slice } from 'prosemirror-model';
+import { Mark, MarkType, Slice } from 'prosemirror-model';
 import { Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -132,7 +132,11 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 });
 
 // == Util ========================================================================
-// TODO: Document
+/**
+ * Checks to see whether or not the first child of the parent of the current
+ * Editor {@link Selection} is a MarkHolderNode. It returns it if it is, and
+ * otherwise it returns false
+ */
 export const isMarkHolderPresent = (editor: Editor) => {
   const { firstChild } = editor.state.selection.$anchor.parent;
   if(firstChild &&  isMarkHolderNode(firstChild)) {
@@ -142,26 +146,23 @@ export const isMarkHolderPresent = (editor: Editor) => {
   return false;
 };
 
-// TODO: Document
-// NOTE: the parameters of this function are as broad as they can be such that
-//       the function can be used both by ToolItems and commands
+/**
+ * Ensure that toggling of Marks whenever a MarkHolder is present on a BlockNode
+ * modifies the Marks that it has inside of it
+ */
+// NOTE: the parameters of this function are set specifically such that
+//       the function can be used both by ToolItems and commands.
+//       Since editor.chain is not of the same type as the chain returned by
+//       CommandProps, not doing this causes a 'MismatchedTransaction' error
 export const handleMarkHolderPresence = (editorSelection: Selection, chain: () => ChainedCommands, markHolder: MarkHolderNodeType, appliedMarkType: MarkType): boolean => {
+  let newMarksArray: Mark[] = [];
   if(markHolder.attrs.storedMarks?.some(mark => mark.type.name === appliedMarkType.name)) {
-    // remove the mark since its already included
-    return chain().focus().command((props) => {
-      const { dispatch, tr } = props;
-      if(!dispatch) throw new Error('dispatch undefined when it should not');
-
-      const startOfParentNodePos = tr.doc.resolve(editorSelection.$anchor.pos - editorSelection.$anchor.parentOffset);
-      const { pos: startingPos } = tr.selection.$anchor;
-
-      tr.setSelection(new TextSelection(startOfParentNodePos, tr.doc.resolve(startOfParentNodePos.pos + markHolder.nodeSize)))
-        .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: [ ...markHolder.attrs.storedMarks!/*defined by contract*/.filter(mark => mark.type.name !== appliedMarkType.name)] })
-        .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
-      dispatch(tr);
-      return true;
-    }).run();
-  } /* else -- add the mark since its not included yet */
+    // mark already included, remove it
+    newMarksArray = [ ...markHolder.attrs.storedMarks!/*defined by contract*/.filter(mark => mark.type.name !== appliedMarkType.name)];
+  } else {
+    // mark not included yet, add it
+    newMarksArray = [ ...markHolder.attrs.storedMarks!, appliedMarkType.create()];
+  }
 
   return chain().focus().command((props) => {
     const { dispatch, tr } = props;
@@ -171,14 +172,14 @@ export const handleMarkHolderPresence = (editorSelection: Selection, chain: () =
     const { pos: startingPos } = tr.selection.$anchor;
 
     tr.setSelection(new TextSelection(startOfParentNodePos, tr.doc.resolve(startOfParentNodePos.pos + markHolder.nodeSize)))
-      .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: [ ...markHolder.attrs.storedMarks!, appliedMarkType.create()] })
+      .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: newMarksArray })
       .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
     dispatch(tr);
     return true;
   }).run();
 };
 
-// TODO: Document
+// Utility function to return dispatch, tr and pos in the same object
 const getUtilsFromView = (view: EditorView) => {
   const { dispatch } = view,
   { tr } = view.state,
