@@ -27,9 +27,16 @@ export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
 
 // -- Render Spec -----------------------------------------------------------------
 export const MarkHolderNodeRendererSpec: NodeRendererSpec<MarkHolderAttributes> = {
-  tag: ''/*MarkHolders are not meant to be rendered*/,
+  tag: 'div'/*MarkHolders are not meant to be rendered*/,
 
-  attributes: {/*use the default renderer on all Attributes*/},
+  attributes: {
+    [AttributeType.StoredMarks]: (attributes) => {
+      const storedMarks = attributes[AttributeType.StoredMarks];
+      if(!storedMarks) { return { [AttributeType.StoredMarks]: ''/*no stored marks*/ }; }
+
+      return { [AttributeType.StoredMarks]: JSON.stringify(storedMarks) };
+    },
+  },
 };
 
 // == Type ========================================================================

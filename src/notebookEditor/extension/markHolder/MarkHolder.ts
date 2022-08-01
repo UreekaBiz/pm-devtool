@@ -3,10 +3,10 @@ import { Mark, MarkType, Slice } from 'prosemirror-model';
 import { Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { getNodesAffectedByStepMap, isMarkHolderNode, AttributeType, MarkHolderNodeSpec, MarkHolderNodeType, NodeName, NotebookSchemaType, SetAttributeType } from 'common';
+import { getNodesAffectedByStepMap, isMarkHolderNode, AttributeType, MarkHolderNodeSpec, MarkHolderNodeType, NodeName, NotebookSchemaType, JSONMark, SchemaV1 } from 'common';
 
-import { getNodeOutputSpec, setAttributeParsingBehavior } from 'notebookEditor/extension/util/attribute';
-import { NoOptions, NoStorage } from 'notebookEditor/model/type';
+import { getNodeOutputSpec } from 'notebookEditor/extension/util/attribute';
+import { NoOptions, NoStorage, ParseRulePriority } from 'notebookEditor/model/type';
 
 // ********************************************************************************
 // REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-paragraph/src/paragraph.ts
@@ -21,7 +21,23 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
   ...MarkHolderNodeSpec,
 
   // -- Attribute -----------------------------------------------------------------
-  addAttributes() { return { [AttributeType.StoredMarks]: setAttributeParsingBehavior(AttributeType.StoredMarks, SetAttributeType.ARRAY) }; },
+  // NOTE: custom parseHTML being used to correctly parse the Mark array of the
+  //       MarkHolder
+  addAttributes() {
+    return {
+      [AttributeType.StoredMarks]: {
+        default: [/*empty*/],
+        parseHTML: (element): Mark[] => {
+          const stringifiedArray = element.getAttribute(AttributeType.StoredMarks);
+          if(!stringifiedArray) return [/*default empty*/];
+          const JSONMarkArray = JSON.parse(stringifiedArray) as JSONMark[]/*by contract*/;
+
+          const markArray: Mark[] = JSONMarkArray.map(markName => Mark.fromJSON(SchemaV1, markName));
+          return markArray;
+        },
+      },
+    };
+  },
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins() {
@@ -96,7 +112,6 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             if(event.ctrlKey || event.altKey || event.metaKey || event.key.length > 1) {
               return false/*do not handle event*/;
             }/* else -- handle event */
-
             tr.setSelection(new TextSelection(tr.doc.resolve(pos), tr.doc.resolve(pos + markHolder.nodeSize)))
               .setStoredMarks(markHolder.attrs.storedMarks)
               .replaceSelectionWith(this.editor.schema.text(event.key));
@@ -127,7 +142,8 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
   },
 
   // -- View ----------------------------------------------------------------------
-  parseHTML() { return [{ tag: NodeName.MARK_HOLDER }]; },
+  parseHTML() { return [{ tag: `div[data-node-type="${NodeName.MARK_HOLDER}"]`, priority: ParseRulePriority.MARK_HOLDER/*(SEE: ParseRulePriority)*/ }];
+},
   renderHTML({ node, HTMLAttributes }) { return getNodeOutputSpec(node, HTMLAttributes, true/*not a Leaf node, but do -not- add a content hole (SEE: MarkHolderNodeSpec)*/); },
 });
 
@@ -139,7 +155,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
  */
 export const isMarkHolderPresent = (editor: Editor) => {
   const { firstChild } = editor.state.selection.$anchor.parent;
-  if(firstChild &&  isMarkHolderNode(firstChild)) {
+  if(firstChild && isMarkHolderNode(firstChild)) {
     return firstChild;
   }/* else -- firstChild does not exist or is not a MarkHolder */
 
@@ -158,10 +174,10 @@ export const handleMarkHolderPresence = (editorSelection: Selection, chain: () =
   let newMarksArray: Mark[] = [];
   if(markHolder.attrs.storedMarks?.some(mark => mark.type.name === appliedMarkType.name)) {
     // mark already included, remove it
-    newMarksArray = [ ...markHolder.attrs.storedMarks!/*defined by contract*/.filter(mark => mark.type.name !== appliedMarkType.name)];
+    newMarksArray = [...markHolder.attrs.storedMarks!/*defined by contract*/.filter(mark => mark.type.name !== appliedMarkType.name)];
   } else {
     // mark not included yet, add it
-    newMarksArray = [ ...markHolder.attrs.storedMarks!/*defined by contract*/, appliedMarkType.create()];
+    newMarksArray = [...markHolder.attrs.storedMarks!/*defined by contract*/, appliedMarkType.create()];
   }
 
   return chain().focus().command((props) => {
@@ -182,8 +198,8 @@ export const handleMarkHolderPresence = (editorSelection: Selection, chain: () =
 // Utility function to return dispatch, tr and pos in the same object
 const getUtilsFromView = (view: EditorView) => {
   const { dispatch } = view,
-  { tr } = view.state,
-  pos = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/;
+          { tr } = view.state,
+          pos = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/;
 
   return { dispatch, tr, pos };
 };
