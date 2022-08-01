@@ -58,6 +58,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginRight]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },
+    [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
       [AttributeType.TextColor]: '#000',
       [AttributeType.FontSize]: '16px',
@@ -101,6 +102,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },
+    [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
       [AttributeType.FontSize]: '11pt',
       [AttributeType.TextColor]: '#353744',

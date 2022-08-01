@@ -34,6 +34,9 @@ export enum AttributeType {
 
   // .. Heading ...................................................................
   Level = 'level',
+
+  // .. MarkHolder ................................................................
+  StoredMarks = 'storedMarks',
 }
 
 export type StyleAttributes = {
