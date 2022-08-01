@@ -1,3 +1,4 @@
+import { getMarkOutputSpec } from 'notebookEditor/extension/util/attribute';
 import { Mark as ProseMirrorMark, MarkSpec } from 'prosemirror-model';
 
 import { MarkRendererSpec } from '../htmlRenderer/type';
@@ -12,6 +13,10 @@ export type BoldAttributes = {/*currently none*/};
 // -- Mark Spec -------------------------------------------------------------------
 export const BoldMarkSpec: MarkSpec = {
   name: MarkName.BOLD/*expected and guaranteed to be unique*/,
+
+  // NOTE: toDOM must be defined so that the Schema knows how to create it
+  //       (SEE: schema.ts)
+  toDOM: (mark, inline) => getMarkOutputSpec(mark, mark.attrs ?? {/*empty object if attrs are undefined*/}),
 };
 
 // -- Render Spec -----------------------------------------------------------------
