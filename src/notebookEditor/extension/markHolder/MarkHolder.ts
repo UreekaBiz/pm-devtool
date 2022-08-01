@@ -1,9 +1,9 @@
-import { Node } from '@tiptap/core';
+import { Editor, Node } from '@tiptap/core';
 import { Slice } from 'prosemirror-model';
 import { Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { getNodesAffectedByStepMap, AttributeType, NodeName, MarkHolderNodeSpec, SetAttributeType, NotebookSchemaType, isMarkHolderNode } from 'common';
+import { getNodesAffectedByStepMap, isMarkHolderNode, AttributeType, MarkHolderNodeSpec, NodeName, NotebookSchemaType, SetAttributeType } from 'common';
 
 import { getNodeOutputSpec, setAttributeParsingBehavior } from 'notebookEditor/extension/util/attribute';
 import { NoOptions, NoStorage } from 'notebookEditor/model/type';
@@ -132,6 +132,16 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 });
 
 // == Util ========================================================================
+export const isMarkHolderPresent = (editor: Editor) => {
+  const { firstChild } = editor.state.selection.$anchor.parent;
+  if(firstChild &&  isMarkHolderNode(firstChild)) {
+    return firstChild;
+  }/* else -- firstChild does not exist or is not a MarkHolder */
+
+  return false;
+};
+
+
 const getUtilsFromView = (view: EditorView) => {
   const { dispatch } = view,
   { tr } = view.state,
