@@ -128,7 +128,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 
   // -- View ----------------------------------------------------------------------
   parseHTML() { return [{ tag: NodeName.MARK_HOLDER }]; },
-  renderHTML({ node, HTMLAttributes }) { return getNodeOutputSpec(node, HTMLAttributes); },
+  renderHTML({ node, HTMLAttributes }) { return getNodeOutputSpec(node, HTMLAttributes, true/*not a Leaf node, but do -not- add a content hole (SEE: MarkHolderNodeSpec)*/); },
 });
 
 // == Util ========================================================================
