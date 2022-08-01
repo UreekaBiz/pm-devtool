@@ -11,6 +11,11 @@ import { NoOptions, NoStorage } from 'notebookEditor/model/type';
 // ********************************************************************************
 // REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-paragraph/src/paragraph.ts
 
+// == Constant ====================================================================
+// the Inclusion Set of Nodes that must maintain marks after their Content was
+// deleted, if any marks were active when said Content was deleted
+const blockNodesThatPreserveMarks = new Set([NodeName.HEADING, NodeName.PARAGRAPH]);
+
 // == Node ========================================================================
 export const MarkHolder = Node.create<NoOptions, NoStorage>({
   ...MarkHolderNodeSpec,
@@ -23,15 +28,59 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
     return [
       new Plugin<NotebookSchemaType>({
         // -- Transaction ---------------------------------------------------------
-        props: {
-          // .. Handler ...............................................................
-          // When this returns true, the keyboard is manually handled (PM won't interfere)
-          handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
-            const { dispatch } = view,
-            { tr } = view.state,
-            pos = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/;
+        // when a BlockNode that must preserve Marks (SEE:
+        // blockNodesThatPreserveMarks Set above) gets its Content removed but
+        // the Node is not deleted (i.e., the Content's length was greater than
+        // zero and now its -exactly- zero), and there were activeMarks,
+        // insert a MarkHolder Node that contains the respective Marks
+        appendTransaction(transactions, oldState, newState) {
+          if(oldState === newState) return/*no changes*/;
+          const { tr } = newState;
+          let blockNodesDeletedOrAdded = false/*default*/;
 
-            const markHolder = view.state.doc.nodeAt(pos);
+          for(let i = 0; i < transactions.length; i++) {
+            if(blockNodesDeletedOrAdded) break/*no changes that matter to MarkHolder behavior were done by the transaction*/;
+
+            const { maps } = transactions[i].mapping;
+            for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
+              // NOTE: unfortunately StepMap does not expose an array interface so that a
+              //       for-loop-break construct could be used here for performance reasons
+              maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
+                const { oldNodeObjs, newNodeObjs } = getNodesAffectedByStepMap(transactions[i], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
+                if(oldNodeObjs.length !== newNodeObjs.length) {
+                  blockNodesDeletedOrAdded = true;
+                }/* else -- only the Content of the Nodes was modified, check its length */
+
+                for(let i = 0; i < newNodeObjs.length; i++) {
+                  if(blockNodesDeletedOrAdded) break/*no changes that matter to MarkHolder behavior were done by the transaction*/;
+
+                  if(oldNodeObjs[i].node.content.size > 0 && newNodeObjs[i].node.content.size < 1) {
+                    if(!transactions[i].storedMarks) {
+                      continue/*do not insert MarkHolder since there were no stored marks*/;
+                    }/* else -- there are stored marks, insert MarkHolder */
+
+                    tr.insert(newNodeObjs[i].position + 1/*inside the parent*/, newState.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks: transactions[i].storedMarks }));
+                  }/* else -- new content is greater than zero, no need to add MarkHolder */
+                }
+              });
+              if(blockNodesDeletedOrAdded) break/*no changes that matter to MarkHolder behavior were done by the transaction*/;
+            }
+          }
+
+          return tr;
+        },
+
+        // -- Props ---------------------------------------------------------------
+        props: {
+          // When these return true, the event is manually handled (PM won't interfere)
+
+          // .. Handler ...............................................................
+          // when the User types something and the cursor is currently past a
+          // MarkHolder, delete the MarkHolder and ensure the User's input gets the
+          // MarkHolder marks applied to it
+          handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
+            const { dispatch, tr, pos } = getUtilsFromView(view),
+                  markHolder = view.state.doc.nodeAt(pos);
             if(!markHolder || !isMarkHolderNode(markHolder)) {
               return false/*let PM handle the event*/;
             }/* else -- handle event */
@@ -55,21 +104,20 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             return true/*event handled*/;
           },
 
+          // ..........................................................................
+          // when the User pastes something and the cursor is currently past a
+          // MarkHolder, delete the MarkHolder and ensure the pasted slice gets the
+          // MarkHolder marks applied to it
           handlePaste: (view: EditorView, event: ClipboardEvent, slice: Slice) => {
-            const { dispatch } = view,
-                  { tr } = view.state,
-            pos = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/;
-
-            const markHolder = view.state.doc.nodeAt(pos);
+            const { dispatch, tr, pos } = getUtilsFromView(view),
+                  markHolder = view.state.doc.nodeAt(pos);
             if(!markHolder || !isMarkHolderNode(markHolder)) {
               return false/*let PM handle the event*/;
             }/* else -- handle event */
 
             tr.setSelection(new NodeSelection(tr.doc.resolve(pos)))
               .replaceSelection(slice);
-            markHolder.attrs.storedMarks?.forEach(storedMark => {
-              tr.addMark(pos, pos + slice.size, storedMark);
-            });
+            markHolder.attrs.storedMarks?.forEach(storedMark => tr.addMark(pos, pos + slice.size, storedMark));
             dispatch(tr);
             return true/*event handled*/;
           },
@@ -78,36 +126,16 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
     ];
   },
 
-  // -- Transaction ---------------------------------------------------------------
-  // TODO: Document
-  onTransaction({ transaction }) {
-    const { maps } = transaction.mapping;
-    for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
-      maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
-        const { oldNodeObjs, newNodeObjs } = getNodesAffectedByStepMap(transaction, stepMapIndex, unmappedOldStart, unmappedOldEnd, new Set([NodeName.HEADING, NodeName.PARAGRAPH]));
-        if(oldNodeObjs.length !== newNodeObjs.length) return;
-
-        for(let i = 0; i < newNodeObjs.length; i++) {
-          if(oldNodeObjs[i].node.content.size > 0 && newNodeObjs[i].node.content.size < 1) {
-            if(!transaction.storedMarks) {
-              continue/*do not insert MarkHolder*/;
-            }/* else -- there are stored marks, insert MarkHolder */
-
-            this.editor.chain().command((props) => {
-              const { tr, dispatch } = props;
-              if(!dispatch) throw new Error('dispatch undefined when it should not');
-
-              tr.insert(newNodeObjs[i].position + 1/*inside the parent*/, this.type.create({ storedMarks: transaction.storedMarks }));
-              dispatch(tr);
-              return true;
-            }).run();
-          }
-        }
-      });
-    }
-  },
-
   // -- View ----------------------------------------------------------------------
   parseHTML() { return [{ tag: NodeName.MARK_HOLDER }]; },
   renderHTML({ node, HTMLAttributes }) { return getNodeOutputSpec(node, HTMLAttributes); },
 });
+
+// == Util ========================================================================
+const getUtilsFromView = (view: EditorView) => {
+  const { dispatch } = view,
+  { tr } = view.state,
+  pos = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/;
+
+  return { dispatch, tr, pos };
+};
