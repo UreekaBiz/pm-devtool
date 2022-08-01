@@ -1,6 +1,6 @@
 import { BiBold } from 'react-icons/bi';
 
-import { MarkName } from 'common';
+import { isBoldMark, MarkName } from 'common';
 
 import { handleMarkHolderPresence, isMarkHolderPresent } from 'notebookEditor/extension/markHolder/MarkHolder';
 import { isNodeSelection } from 'notebookEditor/extension/util/node';
@@ -34,7 +34,7 @@ export const markBold: ToolItem = {
 
   isActive: (editor) => {
     const markHolder = isMarkHolderPresent(editor);
-    if(markHolder && markHolder.attrs.storedMarks?.some(mark => mark.type.name === MarkName.BOLD)) {
+    if(markHolder && markHolder.attrs.storedMarks?.some(mark => isBoldMark(mark))) {
       return true;
     }/* else -- return default check */
 
