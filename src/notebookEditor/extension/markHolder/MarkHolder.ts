@@ -52,25 +52,19 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
         appendTransaction(transactions, oldState, newState) {
           if(oldState === newState) return/*no changes*/;
           const { tr } = newState;
-          let blockNodesDeletedOrAdded = false/*default*/;
 
+          // NOTE: this transaction has to step through all stepMaps without leaving
+          //       early since any of them can leave a Block Node of the inclusion
+          //       Set empty, and none should be missed, regardless of whether or not
+          //       they had Content before (i.e. what matters is that there are Marks
+          //       to store in the MarkHolder)
           for(let i = 0; i < transactions.length; i++) {
-            if(blockNodesDeletedOrAdded) break/*no changes that matter to MarkHolder behavior were done by the transaction*/;
-
             const { maps } = transactions[i].mapping;
             for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
-              // NOTE: unfortunately StepMap does not expose an array interface so that a
-              //       for-loop-break construct could be used here for performance reasons
               maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
-                const { oldNodeObjs, newNodeObjs } = getNodesAffectedByStepMap(transactions[i], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
-                if(oldNodeObjs.length !== newNodeObjs.length) {
-                  blockNodesDeletedOrAdded = true;
-                }/* else -- only the Content of the Nodes was modified, check its length */
-
+                const { newNodeObjs } = getNodesAffectedByStepMap(transactions[i], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
                 for(let i = 0; i < newNodeObjs.length; i++) {
-                  if(blockNodesDeletedOrAdded) break/*no changes that matter to MarkHolder behavior were done by the transaction*/;
-
-                  if(oldNodeObjs[i].node.content.size > 0 && newNodeObjs[i].node.content.size < 1) {
+                  if(newNodeObjs[i].node.content.size < 1) {
                     if(!transactions[i].storedMarks) {
                       continue/*do not insert MarkHolder since there were no stored marks*/;
                     }/* else -- there are stored marks, insert MarkHolder */
@@ -79,7 +73,6 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
                   }/* else -- new content is greater than zero, no need to add MarkHolder */
                 }
               });
-              if(blockNodesDeletedOrAdded) break/*no changes that matter to MarkHolder behavior were done by the transaction*/;
             }
           }
 
