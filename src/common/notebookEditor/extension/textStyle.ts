@@ -1,7 +1,7 @@
-import { getMarkOutputSpec } from 'notebookEditor/extension/util/attribute';
 import { Mark as ProseMirrorMark, MarkSpec } from 'prosemirror-model';
 
-import { noNodeOrMarkSpecAttributeDefaultValue, AttributesTypeFromNodeSpecAttributes, AttributeType } from '../attribute';
+import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
+import { getMarkOutputSpec } from '../htmlRenderer/renderer';
 import { MarkRendererSpec } from '../htmlRenderer/type';
 import { JSONMark, MarkName } from '../mark';
 import { NotebookSchemaType } from '../schema';

@@ -1,8 +1,7 @@
 import { Mark } from '@tiptap/core';
 
-import { AttributeType, TextStyleMarkSpec } from 'common';
+import { getMarkOutputSpec, AttributeType, TextStyleMarkSpec } from 'common';
 
-import { getMarkOutputSpec } from 'notebookEditor/extension/util/attribute';
 import { isValidHTMLElement, safeParseTag } from 'notebookEditor/extension/util/parse';
 import { NoStorage } from 'notebookEditor/model/type';
 
