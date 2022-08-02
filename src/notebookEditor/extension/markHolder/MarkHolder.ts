@@ -1,5 +1,5 @@
 import { ChainedCommands, Editor, Node } from '@tiptap/core';
-import { Mark, MarkType, Slice } from 'prosemirror-model';
+import { Fragment, Mark, MarkType, Node as ProseMirrorNode, Slice } from 'prosemirror-model';
 import { Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
@@ -67,7 +67,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 
                 for(let j = 0; j < newNodeObjs.length; j++) {
                   if(newNodeObjs[j].node.content.size < 1) {
-                    if(transactions[i].storedMarks) {
+                    if(!transactions[i].storedMarks) {
                       continue/*do not insert MarkHolder since there were no stored marks*/;
                     }/* else -- there are stored marks, insert MarkHolder */
 
@@ -130,6 +130,30 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             markHolder.attrs.storedMarks?.forEach(storedMark => tr.addMark(pos, pos + slice.size, storedMark));
             dispatch(tr);
             return true/*event handled*/;
+          },
+
+          // ensure no MarkHolders ever get pasted in places they should not be
+          transformPasted(slice: Slice) {
+            slice.content.descendants(descendantBlockNode => {
+              if(!descendantBlockNode.isBlock) {
+                return/*nothing to do*/;
+              }/* else -- Node can have MarkHolders */
+
+              const canHaveMarkHolder = descendantBlockNode.content.size < 1/*pasted Node is empty*/;
+              if(canHaveMarkHolder) {
+                return/*nothing to do*/;
+              }/* else -- ensure there are no MarkHolders present in the Block Node */
+
+              const filteredContent: ProseMirrorNode<NotebookSchemaType>[] = [];
+              descendantBlockNode.content.descendants(descendantInlineNode => {
+                if(!isMarkHolderNode(descendantInlineNode)) {
+                  filteredContent.push(descendantInlineNode);
+                }/* else -- do not add to filteredContent */
+              });
+
+              descendantBlockNode.content = Fragment.fromArray(filteredContent);
+            });
+            return slice;
           },
         },
       }),
