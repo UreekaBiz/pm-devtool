@@ -8,8 +8,6 @@ import { getNodesAffectedByStepMap, getNodeOutputSpec, isMarkHolderNode, Attribu
 import { NoOptions, NoStorage, ParseRulePriority } from 'notebookEditor/model/type';
 
 // ********************************************************************************
-// REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-paragraph/src/paragraph.ts
-
 // == Constant ====================================================================
 // the Inclusion Set of Nodes that must maintain marks after their Content was
 // deleted, if any marks were active when said Content was deleted
@@ -193,7 +191,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
   // -- View ----------------------------------------------------------------------
   parseHTML() { return [{ tag: `div[data-node-type="${NodeName.MARK_HOLDER}"]`, priority: ParseRulePriority.MARK_HOLDER/*(SEE: ParseRulePriority)*/ }];
 },
-  renderHTML({ node, HTMLAttributes }) { return getNodeOutputSpec(node, HTMLAttributes, true/*not a Leaf node, but do -not- add a content hole (SEE: MarkHolderNodeSpec)*/); },
+  renderHTML({ node, HTMLAttributes }) { return getNodeOutputSpec(node, HTMLAttributes, true/*is Leaf Node*/); },
 });
 
 // == Util ========================================================================

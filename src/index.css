@@ -28,6 +28,16 @@
 }
 .inlineNodeContainer { position: relative; display: inline-block; }
 
+/* -- MarkHolder --------------------------------------------------------------- */
+[data-node-type="markHolder"] {
+  /*
+    prevent the User from ever setting a Selection with the Cursor that sets
+    it behind a MarkHolder. This is also checked by an appendTransaction
+    (SEE: MarkHolder.ts)
+   */
+  display: none/* do not add to PM View */;
+}
+
 /* -- Highlight ---------------------------------------------------------------- */
 .ProseMirror-focused .selected_text {
   /*only show background when editor is no longer focused*/

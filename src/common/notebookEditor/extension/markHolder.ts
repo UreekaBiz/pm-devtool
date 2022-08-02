@@ -21,7 +21,8 @@ export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
   group: NodeGroup.INLINE,
   inline: true,
   selectable: false/*do not allow this Node to be set as a NodeSelection*/,
-  atom: true/*MarkHolder has no editable Content*/,
+  atom: true/*MarkHolder should be treated as a single unit in the View*/,
+  leaf: true/*MarkHolder has no Content*/,
 
   attrs: MarkHolderAttributeSpec,
 };
