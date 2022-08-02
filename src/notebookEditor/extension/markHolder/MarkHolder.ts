@@ -64,21 +64,21 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
           //       Set empty, and none should be missed, regardless of whether or not
           //       they had Content before (i.e. what matters is that there are Marks
           //       to store in the MarkHolder)
-          for(let i = 0; i < transactions.length; i++) {
-            const { maps } = transactions[i].mapping;
+          for(let transactionIndex = 0; transactionIndex < transactions.length; transactionIndex++) {
+            const { maps } = transactions[transactionIndex].mapping;
 
             for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
               // NOTE: see NOTE above
               maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
-                const { newNodeObjs } = getNodesAffectedByStepMap(transactions[i], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
+                const { newNodeObjs } = getNodesAffectedByStepMap(transactions[transactionIndex], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
 
                 for(let j = 0; j < newNodeObjs.length; j++) {
                   if(newNodeObjs[j].node.content.size < 1) {
-                    if(!transactions[i].storedMarks) {
+                    if(!transactions[transactionIndex].storedMarks) {
                       continue/*do not insert MarkHolder since there were no stored marks*/;
                     }/* else -- there are stored marks, insert MarkHolder */
 
-                    tr.insert(newNodeObjs[i].position + 1/*inside the parent*/, newState.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks: transactions[i].storedMarks }));
+                    tr.insert(newNodeObjs[j].position + 1/*inside the parent*/, newState.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks: transactions[transactionIndex].storedMarks }));
                   }/* else -- new content is greater than zero, no need to add MarkHolder */
                 }
               });
