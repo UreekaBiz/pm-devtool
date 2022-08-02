@@ -1,6 +1,6 @@
-import { MarkSpec, NodeSpec } from 'prosemirror-model';
+import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { isStyleAttribute, snakeCaseToKebabCase, HTMLAttributes } from '../attribute';
+import { isStyleAttribute, snakeCaseToKebabCase, Attributes, HTMLAttributes } from '../attribute';
 import { NotebookDocumentContent } from '../document';
 import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
@@ -10,8 +10,8 @@ import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/par
 import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
-import { JSONMark, MarkName } from '../mark';
-import { contentToJSONNode, JSONNode, NodeName } from '../node';
+import { getMarkName, JSONMark, MarkName } from '../mark';
+import { contentToJSONNode, getNodeName, JSONNode, NodeName } from '../node';
 import { MarkSpecs, NodeSpecs } from '../schema';
 import { getRenderTag, AttributeRenderer, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_NODE_TYPE } from './type';
 
@@ -134,6 +134,37 @@ export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs: 
 
   return renderAttributes;
 }
+
+// == Output Spec =================================================================
+// -- Output spec -----------------------------------------------------------------
+export const getNodeOutputSpec = (node: ProseMirrorNode, HTMLAttributes: Attributes, isLeaf: boolean = false): DOMOutputSpec => {
+  const nodeName = getNodeName(node);
+  const nodeRendererSpec = NodeRendererSpecs[nodeName],
+        nodeSpec = NodeSpecs[nodeName];
+
+  // All nodes require to have 'DATA_NODE_TYPE' attribute to be able to identify
+  // the Node.
+  const attributes = mergeAttributes(HTMLAttributes, { [DATA_NODE_TYPE]: node.type.name });
+  const tag = getRenderTag(attributes, nodeRendererSpec);
+  const merged = getRenderAttributes(nodeName, attributes, nodeRendererSpec, nodeSpec);
+
+  // Leaf nodes don't need a content hole
+  if(isLeaf) return [tag, merged];
+  return [tag, merged, 0/*content hole*/];
+};
+
+export const getMarkOutputSpec = (mark: ProseMirrorMark, HTMLAttributes: Attributes): DOMOutputSpec => {
+  const markName = getMarkName(mark);
+  const markRendererSpec = MarkRendererSpecs[markName],
+        markSpec = MarkSpecs[markName];
+
+  // All marks require to have 'data-mark-type' attribute to be able to identify
+  // the mark.
+  const attributes = mergeAttributes(HTMLAttributes, { 'data-mark-type': mark.type.name });
+  const tag = getRenderTag(attributes, markRendererSpec);
+  const merged = getRenderAttributes(markName, attributes, markRendererSpec, markSpec);
+  return [tag, merged];
+};
 
 // -- Util ------------------------------------------------------------------------
 // parse an object of Attributes into a string in the form of key="value"

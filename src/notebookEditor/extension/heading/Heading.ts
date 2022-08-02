@@ -1,10 +1,10 @@
 import { textblockTypeInputRule, Node } from '@tiptap/core';
 
-import { AttributeType, getHeadingLevelFromTag, HeadingLevel, HeadingNodeSpec,  SetAttributeType } from 'common';
+import { getNodeOutputSpec, getHeadingLevelFromTag, AttributeType, HeadingLevel, HeadingNodeSpec, SetAttributeType } from 'common';
 
+import { setAttributeParsingBehavior } from 'notebookEditor/extension/util/attribute';
 import { NoStorage } from 'notebookEditor/model/type';
 
-import { getNodeOutputSpec,  setAttributeParsingBehavior } from '../util/attribute';
 import { setHeadingCommand, toggleHeadingCommand } from './command';
 import { createDefaultHeadingAttributes, HeadingOptions, HEADING_ID } from './type';
 

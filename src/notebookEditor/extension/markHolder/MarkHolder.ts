@@ -3,9 +3,8 @@ import { Mark, MarkType, Slice } from 'prosemirror-model';
 import { Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { getNodesAffectedByStepMap, isMarkHolderNode, AttributeType, MarkHolderNodeSpec, MarkHolderNodeType, NodeName, NotebookSchemaType, JSONMark, SchemaV1 } from 'common';
+import { getNodesAffectedByStepMap, getNodeOutputSpec, isMarkHolderNode, AttributeType, JSONMark, MarkHolderNodeSpec, MarkHolderNodeType, NodeName, NotebookSchemaType, SchemaV1 } from 'common';
 
-import { getNodeOutputSpec } from 'notebookEditor/extension/util/attribute';
 import { NoOptions, NoStorage, ParseRulePriority } from 'notebookEditor/model/type';
 
 // ********************************************************************************
