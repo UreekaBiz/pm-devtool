@@ -1,6 +1,9 @@
 import { Divider, Flex, VStack } from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { getMarkName, getNodeName } from 'common';
+
+import { getAllMarksFromSelection } from 'notebookEditor/extension/util/mark';
 import { getAllAscendantsFromSelection } from 'notebookEditor/extension/util/node';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { SelectionDepth } from 'notebookEditor/model/type';
@@ -37,12 +40,43 @@ export const SideBar = () => {
   // == UI ========================================================================
  // Create a toolbar for each ascendant node on the current selection.
   const Toolbars = useMemo(() => {
-    const ascendantsNodes = getAllAscendantsFromSelection(editor.state);
-    return ascendantsNodes.map((node, i) => {
-      if(!node) return undefined;
-      const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
-      return (<Toolbar key={i} depth={depth} node={node} onSelection={handleDepthSelection} selectedDepth={selectedDepth} />);
+    const toolbars: JSX.Element[] = [];
+
+    // Create a toolbar for each mark on the current selection
+    // NOTE: Order matters.
+    const marks = getAllMarksFromSelection(editor.state);
+    marks.forEach((mark, i) => {
+      if(!mark) return undefined/*nothing to do*/;
+
+      const markName = getMarkName(mark);
+      toolbars.push(<Toolbar
+                      key={i}
+                      depth={undefined}
+                      nodeOrMarkName={markName}
+                      onSelection={handleDepthSelection}
+                      selectedDepth={selectedDepth}
+                    />);
+      return;
     });
+
+    const ascendantsNodes = getAllAscendantsFromSelection(editor.state);
+
+    // Create a toolbar for each ascendant node.
+    ascendantsNodes.forEach((node, i) => {
+      if(!node) return undefined/*nothing to do*/;
+
+      const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
+      const nodeName = getNodeName(node);
+      toolbars.push(<Toolbar
+                      key={i}
+                      depth={depth}
+                      nodeOrMarkName={nodeName}
+                      onSelection={handleDepthSelection}
+                      selectedDepth={selectedDepth}
+                    />);
+      return/*nothing else to do*/;
+    });
+    return toolbars;
   }, [editor.state, handleDepthSelection, selectedDepth]);
 
   return (
