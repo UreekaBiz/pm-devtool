@@ -52,6 +52,16 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
           if(oldState === newState) return/*no changes*/;
           const { tr } = newState;
 
+          // do not allow cursor to be set behind a MarkHolder
+          // NOTE: (this case is handled in the keyDown handler when Enter is
+          //       pressed for expected behavior, i.e. inserting a Paragraph)
+          //       above (SEE: handleKeyDown below)
+          const nodeAfterPos = newState.doc.nodeAt(newState.selection.$anchor.pos);
+          if(nodeAfterPos && isMarkHolderNode(nodeAfterPos)) {
+            console.log(newState.selection.$anchor.pos + 1);
+            tr.setSelection(new TextSelection(tr.doc.resolve(newState.selection.$anchor.pos + 1)));
+          }/* else -- no need to modify selection */
+
           // NOTE: this transaction has to step through all stepMaps without leaving
           //       early since any of them can leave a Block Node of the inclusion
           //       Set empty, and none should be missed, regardless of whether or not
@@ -95,6 +105,19 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             if(!markHolder || !isMarkHolderNode(markHolder)) {
               return false/*let PM handle the event*/;
             }/* else -- handle event */
+
+            // NOTE: since the selection is not allowed to be behind a MarkHolder
+            //       but expected behavior must be maintained on an Enter keypress,
+            //       set TextSelection behind MarkHolder on purpose and do not
+            //       handle Enter event (so that right behavior occurs)
+            if(event.key === 'Enter') {
+              // tr.doc.descendants((desc, pos) => console.log(desc.type.name, pos))
+              // console.log(tr.selection.$anchor.pos)
+              const posBehindMarkHolder = pos - 1;
+              tr.setSelection(new TextSelection(tr.doc.resolve(posBehindMarkHolder), tr.doc.resolve(posBehindMarkHolder)))
+              dispatch(tr);
+              return false/*let PM insert Paragraph above*/;
+            }/* else -- not handling Enter */
 
             if(event.key === 'Backspace') {
               const parentPos = pos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
