@@ -24,7 +24,7 @@ export const setHeadingCommand = (attributes: { level: HeadingLevel; }) => ({ ed
     return chain().setNode(NodeName.HEADING, attributes)
                   .insertContent(createMarkHolderJSONNode(editor, [MarkName.BOLD]))
                   .run();
-  }/* else -- no need to add markHolder */
+  }/* else -- no need to add MarkHolder */
 
   return chain().setNode(NodeName.HEADING, attributes)
                 .command(applyBoldToHeadingContent)
@@ -46,7 +46,7 @@ export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({
     return chain().toggleNode(NodeName.HEADING, NodeName.PARAGRAPH, attributes)
                   .insertContent(createMarkHolderJSONNode(editor, [MarkName.BOLD]))
                   .run();
-  }/* else -- no need to add markHolder */
+  }/* else -- no need to add MarkHolder */
 
   return chain().toggleNode(NodeName.HEADING, NodeName.PARAGRAPH, attributes)
                 .command(applyBoldToHeadingContent)
