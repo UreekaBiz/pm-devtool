@@ -11,41 +11,38 @@ import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 export const EditorUserInteractions = () => {
   const editor = useValidatedEditor();
 
-  // == Effects ===================================================================
-  // handles shortcut listening for cases that are not specific to the Editor itself
-  // (e.g. showing dialogs)
+ // == Effects ===================================================================
+  // Handles shortcuts with the editor that requires interaction with a React state.
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      switch(event.code) {
-        // Focus Sidebar on Cmd + Option + .
-        case 'Period': {
-          if(!(event.altKey && event.metaKey)) return/*nothing to do*/;
+      if(!editor) return/*nothing to do*/;
 
-          const firstToolItem = [...document.querySelectorAll(`[datatype=${TOOL_ITEM_DATA_TYPE}]`)][0/*first one*/]/*necessary for type-guard below*/;
-          if(!isValidHTMLElement(firstToolItem)) {
-            console.warn('toolItem is not a valid HTML Element');
-            return/*do nothing*/;
-          } /* else -- valid html element */
+      if(event.code === 'Period' && event.altKey && event.metaKey) {
+        // Selects the first item in the toolbar
+        event.preventDefault();
 
-          event.preventDefault();
-          firstToolItem.focus();
-          break;
-        }
+        const toolItems = [...document.querySelectorAll(`[datatype=${TOOL_ITEM_DATA_TYPE}]`)];
+        if(toolItems.length < 1) return/*nothing to do*/;
 
-        // focus editor on Cmd + Option + ,
-        case 'Comma': {
-          if(!(event.altKey && event.metaKey)) return;
-          isNodeSelection(editor.state.selection)
-            ? editor.chain().focus().setNodeSelection(editor.state.selection.$anchor.pos)
-            : editor.commands.focus();
-          event.preventDefault();
-          break;
-        }
+        const firstToolItem = toolItems[0];
+        if(!isValidHTMLElement(firstToolItem)) { console.warn('toolItem is not a valid HTML Element'); return/*do nothing*/;}
+        /* else -- valid html element */
+
+        firstToolItem.focus();
+      }
+
+      if(event.code === 'Comma' && event.altKey && event.metaKey) {
+        event.preventDefault();
+
+        // Focus the last focused item. If none select the editor.
+        if(isNodeSelection(editor.state.selection)) editor.chain().focus().setNodeSelection(editor.state.selection.$anchor.pos);
+        else editor.commands.focus();
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [editor]);
+
 
   // == UI ========================================================================
   if(!editor) return null/*nothing to do*/;
