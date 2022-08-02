@@ -139,7 +139,12 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
                 return/*nothing to do*/;
               }/* else -- Node can have MarkHolders */
 
-              const canHaveMarkHolder = descendantBlockNode.content.size < 1/*pasted Node is empty*/;
+              // MarkHolders can only exist on empty BlockNodes as their only child
+              const { firstChild } = descendantBlockNode,
+                    canHaveMarkHolder = descendantBlockNode.content.size === 1/*pasted Node is empty*/ &&
+                    firstChild/*firstChild exists*/ &&
+                    isMarkHolderNode(firstChild)/*firstChild is a MarkHolder*/;
+
               if(canHaveMarkHolder) {
                 return/*nothing to do*/;
               }/* else -- ensure there are no MarkHolders present in the Block Node */
