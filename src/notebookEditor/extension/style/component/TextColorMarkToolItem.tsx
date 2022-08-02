@@ -1,4 +1,4 @@
-import { AttributeType, InvalidMergedAttributeValue } from 'common';
+import { AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
 
 import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
@@ -7,21 +7,21 @@ import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
-// NOTE: This component update the TextColor attribute of the selected Node. This
-//       should not be confused with TextColorMarkToolItem that adds a TextStyle
-//       mark around the selected text that adds the color to the text.
+// NOTE: This component adds a TextStyle mark in the selected text that adds the
+//       color to the text. This don't update the TextColor attribute of the Node.
+//       if that's the use case you should use TextColorToolItem instead.
 interface Props extends EditorToolComponentProps {/*no additional*/}
-export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
+export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
   const { state } = editor;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
-  const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.TextColor);
+  const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.TextColor, MarkName.TEXT_STYLE);
   const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
 
   // == Handlers ==================================================================
   const handleChange = (value: string, focusEditor?: boolean) => {
-    editor.commands.setStyle(AttributeType.TextColor, value, depth);
+    editor.commands.setTextStyle(AttributeType.TextColor, value);
 
     // Focus the editor again
     if(focusEditor) editor.commands.focus();
