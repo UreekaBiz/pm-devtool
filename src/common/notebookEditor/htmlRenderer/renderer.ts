@@ -13,7 +13,7 @@ import { TextStyleMarkRendererSpec } from '../extension/textStyle';
 import { getMarkName, JSONMark, MarkName } from '../mark';
 import { contentToJSONNode, getNodeName, JSONNode, NodeName } from '../node';
 import { MarkSpecs, NodeSpecs } from '../schema';
-import { getRenderTag, AttributeRenderer, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_NODE_TYPE } from './type';
+import { getRenderTag, AttributeRenderer, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK_TYPE, DATA_NODE_TYPE } from './type';
 
 // ********************************************************************************
 // == Type ========================================================================
@@ -35,10 +35,10 @@ export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
 export const convertContentToHTML = (content: NotebookDocumentContent): HTMLString => {
   const rootNode = contentToJSONNode(content);
 
-  return convertJSONContentToHTML(rootNode);
+  return convertJSONNodeToHTML(rootNode);
 };
 
-export const convertJSONContentToHTML = (node: JSONNode): HTMLString => {
+export const convertJSONNodeToHTML = (node: JSONNode): HTMLString => {
   const { type, content, text } = node;
   const nodeRendererSpec = NodeRendererSpecs[type];
 
@@ -49,7 +49,7 @@ export const convertJSONContentToHTML = (node: JSONNode): HTMLString => {
 
   // gets the direct children Nodes using the Node content. An empty string is
   // equivalent to having no content when rendering the HTML.
-  let children = content ? content.reduce((acc, child) => `${acc}${convertJSONContentToHTML(child)}`, '') : ''/*no children*/;
+  let children = content ? content.reduce((acc, child) => `${acc}${convertJSONNodeToHTML(child)}`, '') : ''/*no children*/;
 
   // in the case that the Node is a Node View Renderer let the Node renderer use
   // its own render function to render the Node and its children
@@ -62,12 +62,27 @@ export const convertJSONContentToHTML = (node: JSONNode): HTMLString => {
 
   const tag = getRenderTag(node.attrs, nodeRendererSpec);
   const nodeSpec = NodeSpecs[node.type];
-  const nodeRenderAttributes = getNodeRenderAttributes(node, nodeRendererSpec, nodeSpec),
-        markRenderAttributes = getMarksRenderAttributes(node),
-        attributes = mergeAttributes(nodeRenderAttributes, markRenderAttributes);
-  const stringAttributes = renderAttributesToString(attributes);
+  const nodeRenderAttributes = getNodeRenderAttributes(node, nodeRendererSpec, nodeSpec);
+  const stringAttributes = renderAttributesToString(nodeRenderAttributes);
 
-  return `<${tag} ${DATA_NODE_TYPE}="${node.type}" ${stringAttributes}>${text ?? ''}${children}</${tag}>`;
+  const nodeContent = `<${tag} ${DATA_NODE_TYPE}="${node.type}" ${stringAttributes}>${text ?? ''}${children}</${tag}>`;
+
+  // Wraps the Node Content in the given wraps if the Node has any.
+  if(!node.marks) return nodeContent/*nothing else to do*/;
+  return node.marks.reduce((acc, mark) => convertJSONMarkToHTML(mark, acc), nodeContent/*children to wrap*/);
+
+};
+
+// Converts the Mark into a HTMLString and  wraps the given children in it
+const convertJSONMarkToHTML = (mark: JSONMark, children: HTMLString): HTMLString => {
+  const markRendererSpec = MarkRendererSpecs[mark.type];
+  const tag = getRenderTag(mark.attrs, markRendererSpec);
+
+  const markRenderAttributes = getMarksRenderAttributes(mark);
+  const stringAttributes = renderAttributesToString(markRenderAttributes);
+
+
+  return `<${tag} ${DATA_MARK_TYPE}="${mark.type}" ${stringAttributes}>${children}</${tag}>`;
 };
 
 // == Attributes ==================================================================
@@ -79,18 +94,13 @@ const getNodeRenderAttributes = (node: JSONNode, nodeRendererSpec: NodeRendererS
 };
 
 // -- Mark ------------------------------------------------------------------------
-const getMarksRenderAttributes = (node: JSONNode): HTMLAttributes => {
-  if(!node.marks) return {}/*no marks to parse*/;
+const getMarksRenderAttributes = (mark: JSONMark): HTMLAttributes => {
+  const markSpec = MarkSpecs[mark.type],
+        markRendererSpec = MarkRendererSpecs[mark.type];
 
-  // merges all Attributes from the Marks of the given Node
-  const renderAttributes = node.marks.reduce<HTMLAttributes>((acc, mark) => {
-    const markSpec = MarkSpecs[mark.type],
-          markRendererSpec = MarkRendererSpecs[mark.type];
-    const markRenderAttributes = getMarkRenderAttributes(mark, markRendererSpec, markSpec);
-    return mergeAttributes(acc, markRenderAttributes);
-  }, {});
+  const markRenderAttributes = getMarkRenderAttributes(mark, markRendererSpec, markSpec);
+  return markRenderAttributes;
 
-  return renderAttributes;
 };
 const getMarkRenderAttributes = (mark: JSONMark, markRendererSpec: MarkRendererSpec | undefined, markSpec: MarkSpec | undefined): HTMLAttributes=> {
   const attrs = mark.attrs as Record<string, string | undefined/*attribute could be not defined*/> | undefined/*none*/;
