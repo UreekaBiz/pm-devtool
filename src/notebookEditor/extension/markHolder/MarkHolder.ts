@@ -3,7 +3,7 @@ import { Mark, MarkType, Slice } from 'prosemirror-model';
 import { Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { getNodesAffectedByStepMap, getNodeOutputSpec, isMarkHolderNode, AttributeType, JSONMark, MarkHolderNodeSpec, MarkHolderNodeType, NodeName, NotebookSchemaType, SchemaV1 } from 'common';
+import { getNodesAffectedByStepMap, getNodeOutputSpec, isMarkHolderNode, AttributeType, JSONMark, MarkHolderNodeSpec, MarkHolderNodeType, MarkName, NodeName, NotebookSchemaType, SchemaV1 } from 'common';
 
 import { NoOptions, NoStorage, ParseRulePriority } from 'notebookEditor/model/type';
 
@@ -140,6 +140,10 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 });
 
 // == Util ========================================================================
+// creates a MarkHolder Node holding the Marks corresponding to the given MarkNames
+export const createMarkHolder = (editor: Editor, markNames: MarkName[]) =>
+  editor.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks: markNames.map(markName => editor.schema.marks[markName].create()) }).toJSON();
+
 /**
  * Checks to see whether or not the first child of the parent of the current
  * Editor {@link Selection} is a MarkHolderNode. It returns it if it is, and

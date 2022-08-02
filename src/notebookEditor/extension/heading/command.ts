@@ -2,6 +2,8 @@ import { CommandProps } from '@tiptap/core';
 
 import { isHeadingLevel, CommandFunctionType, HeadingLevel, NodeName, MarkName } from 'common';
 
+import { createMarkHolder } from 'notebookEditor/extension/markHolder/MarkHolder';
+
 // ********************************************************************************
 // NOTE: ambient module to ensure command is TypeScript-registered for TipTap
 declare module '@tiptap/core' {
@@ -20,7 +22,7 @@ export const setHeadingCommand = (attributes: { level: HeadingLevel; }) => ({ ed
   let shouldInsertMarkHolder = editor.state.selection.$anchor.parent.content.size < 1;
   if(shouldInsertMarkHolder) {
     return chain().setNode(NodeName.HEADING, attributes)
-                  .insertContent(editor.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks: [editor.schema.marks[MarkName.BOLD].create()] }).toJSON())
+                  .insertContent(createMarkHolder(editor, [MarkName.BOLD]))
                   .run();
   }/* else -- no need to add markHolder */
 
@@ -42,7 +44,7 @@ export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({
   let shouldInsertMarkHolder = editor.state.selection.$anchor.parent.content.size < 1;
   if(shouldInsertMarkHolder) {
     return chain().toggleNode(NodeName.HEADING, NodeName.PARAGRAPH, attributes)
-                  .insertContent(editor.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks: [editor.schema.marks[MarkName.BOLD].create()] }).toJSON())
+                  .insertContent(createMarkHolder(editor, [MarkName.BOLD]))
                   .run();
   }/* else -- no need to add markHolder */
 
