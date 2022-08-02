@@ -41,7 +41,7 @@ export enum ExtensionPriority {
   //       unspecified, the default block Node on document creation will be the
   //       first block Node encountered in the editor Extension array
   // SEE: notebookEditor/type.ts
-  PARAGRAPH = 117,
+  PARAGRAPH = 118,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when

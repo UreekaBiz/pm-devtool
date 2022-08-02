@@ -59,7 +59,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             tr.setSelection(new TextSelection(tr.doc.resolve(newState.selection.$anchor.pos + 1)));
           }/* else -- no need to modify selection */
 
-          // NOTE: this transaction has to step through all stepMaps without leaving
+          // NOTE: this Transaction has to step through all stepMaps without leaving
           //       early since any of them can leave a Block Node of the inclusion
           //       Set empty, and none should be missed, regardless of whether or not
           //       they had Content before (i.e. what matters is that there are Marks
@@ -68,18 +68,20 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             const { maps } = transactions[transactionIndex].mapping;
 
             for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
-              // NOTE: see NOTE above
+              // (SEE: NOTE above)
               maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
-                const { newNodeObjs } = getNodesAffectedByStepMap(transactions[transactionIndex], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
+                const { oldNodeObjs, newNodeObjs } = getNodesAffectedByStepMap(transactions[transactionIndex], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
 
+                if(oldNodeObjs.length < newNodeObjs.length) {
+                  return/*Nodes were added, they should not have MarkHolders*/;
+                }/* else -- Nodes were removed or modified, see if MarkHolders must be added*/
+
+                const { storedMarks } = transactions[transactionIndex];
                 for(let j = 0; j < newNodeObjs.length; j++) {
-                  if(newNodeObjs[j].node.content.size < 1) {
-                    if(!transactions[transactionIndex].storedMarks) {
-                      continue/*do not insert MarkHolder since there were no stored marks*/;
-                    }/* else -- there are stored marks, insert MarkHolder */
-
-                    tr.insert(newNodeObjs[j].position + 1/*inside the parent*/, newState.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks: transactions[transactionIndex].storedMarks }));
-                  }/* else -- new content is greater than zero, no need to add MarkHolder */
+                  if(newNodeObjs[j].node.content.size < 1/*Node is empty*/ &&
+                    storedMarks /*there are storedMarks*/) {
+                    tr.insert(newNodeObjs[j].position + 1/*inside the parent*/, newState.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks }));
+                  }/* else -- new content is greater than zero, there are no stored Marks, or the Node did not exist before. No need to add MarkHolder */
                 }
               });
             }
@@ -139,12 +141,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             if(event.key === 'Backspace') {
               tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos + view.state.selection.$anchor.parent.nodeSize)))
                 .deleteSelection();
-
-              if(tr.selection.$anchor.pos > 2/*performing the following operation wont select position 0*/) {
-                // ensure expected Selection after Backspace by also removing
-                // 1 from the selection (expected from Backspace)
-                tr.setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1)));
-              }/* else -- backspacing at the start of the doc, do not set Selection back*/
+                tr.setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos)));
 
               dispatch(tr);
               return true/*let PM handle the rest of the event*/;
