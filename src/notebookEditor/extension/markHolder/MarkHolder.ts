@@ -111,10 +111,13 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             //       the resulting Selection has the wrong Cursor (in the new Paragraph
             //       instead of the Block Node where Enter was pressed)
             if(event.key === 'Enter') {
-              const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
+              const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/,
+                    parentEndPos = parentPos + view.state.selection.$anchor.parent.nodeSize;
 
-              tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos)))
-                .insert(tr.selection.$anchor.pos, view.state.schema.nodes[NodeName.PARAGRAPH].create());
+              // insert Paragraph below and then set Selection back
+              tr.setSelection(new TextSelection(tr.doc.resolve(parentEndPos), tr.doc.resolve(parentEndPos)))
+                .insert(tr.selection.$anchor.pos, view.state.schema.nodes[NodeName.PARAGRAPH].create())
+                .setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1)));
               dispatch(tr);
               return true/*event handled*/;
             }/* else -- not handling Enter */
