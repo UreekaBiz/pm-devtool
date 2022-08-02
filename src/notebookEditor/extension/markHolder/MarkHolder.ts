@@ -27,7 +27,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
         parseHTML: (element): Mark[] => {
           const stringifiedArray = element.getAttribute(AttributeType.StoredMarks);
           if(!stringifiedArray) return [/*default empty*/];
-          const JSONMarkArray = JSON.parse(stringifiedArray) as JSONMark[]/*by contract*/;
+          const JSONMarkArray = JSON.parse(stringifiedArray.replaceAll("'", "\"")/*(SEE: markHolder.ts)*/) as JSONMark[]/*by contract*/;
 
           const markArray: Mark[] = JSONMarkArray.map(markName => Mark.fromJSON(SchemaV1, markName));
           return markArray;
