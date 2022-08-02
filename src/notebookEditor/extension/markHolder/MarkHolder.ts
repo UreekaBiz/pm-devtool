@@ -108,7 +108,10 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 
             // NOTE: since the selection is not allowed to be behind a MarkHolder
             //       but expected behavior must be maintained on an Enter keypress,
-            //       manually insert a Paragraph before the current node
+            //       manually insert a Paragraph before the current node. If not done
+            //       this way (i.e. letting PM insert the Paragraph by returning false),
+            //       the resulting Selection has the wrong Cursor (in the new Paragraph
+            //       instead of the Block Node where Enter was pressed)
             if(event.key === 'Enter') {
               const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
 
@@ -124,7 +127,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
                 .deleteSelection();
               dispatch(tr);
               return true/*event handling done*/;
-            }/* else -- not handling backspace */
+            }/* else -- not handling Backspace */
 
             if(event.ctrlKey || event.altKey || event.metaKey || event.key.length > 1) {
               return false/*do not handle event*/;
