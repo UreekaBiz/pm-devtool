@@ -36,7 +36,10 @@ export const MarkHolderNodeRendererSpec: NodeRendererSpec<MarkHolderAttributes> 
       const storedMarks = attributes[AttributeType.StoredMarks];
       if(!storedMarks) { return { [AttributeType.StoredMarks]: ''/*no stored marks*/ }; }
 
-      return { [AttributeType.StoredMarks]: JSON.stringify(storedMarks) };
+      // NOTE: to prevent any issues with the renderer, the marks get stringified
+      //       with single quotes. When they are parsed back, they MUST replaced
+      //       back with double quotes (SEE: MarkHolder.ts)
+      return { [AttributeType.StoredMarks]: JSON.stringify(storedMarks).replaceAll("\"", "'") };
     },
   },
 };
