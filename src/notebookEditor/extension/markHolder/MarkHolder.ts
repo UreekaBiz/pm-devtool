@@ -52,16 +52,6 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
           if(oldState === newState) return/*no changes*/;
           const { tr } = newState;
 
-          // do not allow cursor to be set behind a MarkHolder
-          // NOTE: (this case is handled in the keyDown handler when Enter is
-          //       pressed for expected behavior, i.e. inserting a Paragraph)
-          //       above (SEE: handleKeyDown below)
-          const nodeAfterPos = newState.doc.nodeAt(newState.selection.$anchor.pos);
-          if(nodeAfterPos && isMarkHolderNode(nodeAfterPos)) {
-            console.log(newState.selection.$anchor.pos + 1);
-            tr.setSelection(new TextSelection(tr.doc.resolve(newState.selection.$anchor.pos + 1)));
-          }/* else -- no need to modify selection */
-
           // NOTE: this transaction has to step through all stepMaps without leaving
           //       early since any of them can leave a Block Node of the inclusion
           //       Set empty, and none should be missed, regardless of whether or not
@@ -96,64 +86,73 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
           // When these return true, the event is manually handled (PM won't interfere)
 
           // .. Handler ...............................................................
-          // when the User types something and the cursor is currently past a
-          // MarkHolder, delete the MarkHolder and ensure the User's input gets the
+          // when the User types something and the cursor is currently before or after
+          // a MarkHolder, delete the MarkHolder and ensure the User's input gets the
           // MarkHolder marks applied to it
           handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
-            const { dispatch, tr, pos } = getUtilsFromView(view),
-                  markHolder = view.state.doc.nodeAt(pos);
-            if(!markHolder || !isMarkHolderNode(markHolder)) {
+            // NOTE: because of the way the selections work and the fact that the
+            //       MarkHolder cannot be selected (SEE: markHolder.ts), when nodeAtPos
+            //       is a MarkHolder, the cursor is behind it. Handling the event takes
+            //       this into account
+            const { dispatch, tr, posBefore, pos, parentPos, parentSize } = getUtilsFromView(view),
+                  nodeBefore = view.state.doc.nodeAt(posBefore),
+                  nodeAtPos = view.state.doc.nodeAt(pos);
+
+            // if neither the nodeBefore nor the nodeAtPos are MarkHolders then there is nothing to do
+            if( !((nodeBefore && isMarkHolderNode(nodeBefore)) || (nodeAtPos && isMarkHolderNode(nodeAtPos))) ) {
               return false/*let PM handle the event*/;
-            }/* else -- handle event */
+            }/* else -- there is a MarkHolder before or after the current cursor position */
 
-            // NOTE: since the selection is not allowed to be behind a MarkHolder
-            //       but expected behavior must be maintained on an Enter keypress,
-            //       set TextSelection behind MarkHolder on purpose and do not
-            //       handle Enter event (so that right behavior occurs)
-            if(event.key === 'Enter') {
-              // tr.doc.descendants((desc, pos) => console.log(desc.type.name, pos))
-              // console.log(tr.selection.$anchor.pos)
-              const posBehindMarkHolder = pos - 1;
-              tr.setSelection(new TextSelection(tr.doc.resolve(posBehindMarkHolder), tr.doc.resolve(posBehindMarkHolder)))
-              dispatch(tr);
-              return false/*let PM insert Paragraph above*/;
-            }/* else -- not handling Enter */
+            const markHolderBefore = nodeBefore && isMarkHolderNode(nodeBefore),
+                  markHolderAtPos = nodeAtPos && isMarkHolderNode(nodeAtPos);
 
-            if(event.key === 'Backspace') {
-              const parentPos = pos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
-              tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos + view.state.selection.$anchor.parent.nodeSize)))
+            if(event.key === 'Backspace' && ((markHolderBefore) || (markHolderAtPos))) {
+              // both cases receive the same handling
+              tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos + parentSize)))
                 .deleteSelection();
               dispatch(tr);
               return true/*event handling done*/;
-            }/* else -- not handling backspace */
+            }/* else -- not handling a Backspace */
 
             if(event.ctrlKey || event.altKey || event.metaKey || event.key.length > 1) {
               return false/*do not handle event*/;
             }/* else -- handle event */
-            tr.setSelection(new TextSelection(tr.doc.resolve(pos), tr.doc.resolve(pos + markHolder.nodeSize)))
-              .setStoredMarks(markHolder.attrs.storedMarks)
-              .replaceSelectionWith(this.editor.schema.text(event.key));
-            dispatch(tr);
-            return true/*event handled*/;
+
+            if(markHolderBefore) {
+              const markHolderPos = pos - 1;
+              tr.setSelection(new TextSelection(tr.doc.resolve(markHolderPos), tr.doc.resolve((markHolderPos) + nodeBefore.nodeSize)))
+                .setStoredMarks(nodeBefore.attrs.storedMarks)
+                .replaceSelectionWith(this.editor.schema.text(event.key));
+              dispatch(tr);
+              return true/*event handled*/;
+            } else if(markHolderAtPos) {
+              tr.setSelection(new TextSelection(tr.doc.resolve(pos), tr.doc.resolve((pos) + nodeAtPos.nodeSize)))
+                .setStoredMarks(nodeAtPos.attrs.storedMarks)
+                .replaceSelectionWith(this.editor.schema.text(event.key));
+              dispatch(tr);
+              return true/*event handled*/;
+            }/* else -- do not handle the event */
+
+            return false;
           },
 
           // ..........................................................................
           // when the User pastes something and the cursor is currently past a
           // MarkHolder, delete the MarkHolder and ensure the pasted slice gets the
           // MarkHolder marks applied to it
-          handlePaste: (view: EditorView, event: ClipboardEvent, slice: Slice) => {
-            const { dispatch, tr, pos } = getUtilsFromView(view),
-                  markHolder = view.state.doc.nodeAt(pos);
-            if(!markHolder || !isMarkHolderNode(markHolder)) {
-              return false/*let PM handle the event*/;
-            }/* else -- handle event */
+          // handlePaste: (view: EditorView, event: ClipboardEvent, slice: Slice) => {
+          //   const { dispatch, tr, pos } = getUtilsFromView(view),
+          //         markHolder = view.state.doc.nodeAt(pos);
+          //   if(!markHolder || !isMarkHolderNode(markHolder)) {
+          //     return false/*let PM handle the event*/;
+          //   }/* else -- handle event */
 
-            tr.setSelection(new TextSelection(tr.doc.resolve(pos), tr.doc.resolve(pos + markHolder.nodeSize)))
-              .replaceSelection(slice);
-            markHolder.attrs.storedMarks?.forEach(storedMark => tr.addMark(pos, pos + slice.size, storedMark));
-            dispatch(tr);
-            return true/*event handled*/;
-          },
+          //   tr.setSelection(new TextSelection(tr.doc.resolve(pos), tr.doc.resolve(pos + markHolder.nodeSize)))
+          //     .replaceSelection(slice);
+          //   markHolder.attrs.storedMarks?.forEach(storedMark => tr.addMark(pos, pos + slice.size, storedMark));
+          //   dispatch(tr);
+          //   return true/*event handled*/;
+          // },
 
           // ensure no MarkHolders ever get pasted in places they should not be
           transformPasted(slice: Slice) {
@@ -250,7 +249,11 @@ export const handleMarkHolderPresence = (editorSelection: Selection, chain: () =
 const getUtilsFromView = (view: EditorView) => {
   const { dispatch } = view,
           { tr } = view.state,
-          pos = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/;
+          posBefore = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/,
+          pos = view.state.selection.$anchor.pos,
+          { parentOffset } = view.state.selection.$anchor,
+          parentPos = pos - parentOffset - 1/*account for the start of the node*/,
+          parentSize = view.state.selection.$anchor.parent.nodeSize;
 
-  return { dispatch, tr, pos };
+  return { dispatch, tr, posBefore, pos, parentPos, parentSize };
 };
