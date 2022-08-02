@@ -102,7 +102,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             if(!markHolder || !isMarkHolderNode(markHolder)) {
               return false/*let PM handle the event*/;
             }/* else -- handle event */
-
+            const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
 
             // NOTE: since the selection is not allowed to be behind a MarkHolder
             //       but expected behavior must be maintained on an Enter keypress,
@@ -111,13 +111,13 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             //       the resulting Selection has the wrong Cursor (in the new Paragraph
             //       instead of the Block Node where Enter was pressed)
             if(event.key === 'Enter') {
-              const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/,
-                    parentEndPos = parentPos + view.state.selection.$anchor.parent.nodeSize;
+                const parentEndPos = parentPos + view.state.selection.$anchor.parent.nodeSize;
 
-              // insert Paragraph below and then set Selection back
+              // insert Paragraph below and then set Selection
+              // back to the start of the inserted Paragraph
               tr.setSelection(new TextSelection(tr.doc.resolve(parentEndPos), tr.doc.resolve(parentEndPos)))
                 .insert(tr.selection.$anchor.pos, view.state.schema.nodes[NodeName.PARAGRAPH].create())
-                .setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1)));
+                .setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1/*start of inserted Paragraph*/)));
               dispatch(tr);
               return true/*event handled*/;
             }/* else -- not handling Enter */
@@ -137,7 +137,6 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
             // if Backspace is pressed and a MarkHolder is present, delete it, set
             // the Selection accordingly and let PM handle the rest of the event
             if(event.key === 'Backspace') {
-              const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
               tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos + view.state.selection.$anchor.parent.nodeSize)))
                 .deleteSelection();
 
