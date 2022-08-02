@@ -11,6 +11,9 @@ interface Props {
   dialogTitle: string;
   inputPlaceholder: string;
   buttons: DialogButton[];
+  // FIXME: This cannot be a promise, if this prop needs to change then create a new
+  //        component or handle all the async status in the component (taking into
+  //        account all previous components that are already using this component).
   enterCallback: (inputValue: string) => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
