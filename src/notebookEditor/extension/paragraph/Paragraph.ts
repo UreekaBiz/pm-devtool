@@ -1,7 +1,6 @@
 import { Node } from '@tiptap/core';
-import { Plugin } from 'prosemirror-state';
 
-import { getNodeOutputSpec, Attributes, AttributeType, NotebookSchemaType, ParagraphNodeSpec, SetAttributeType } from 'common';
+import { getNodeOutputSpec, Attributes, AttributeType, ParagraphNodeSpec, SetAttributeType } from 'common';
 
 import { setAttributeParsingBehavior } from 'notebookEditor/extension/util/attribute';
 import { safeParseTag } from 'notebookEditor/extension/util/parse';
@@ -40,26 +39,6 @@ export const Paragraph = Node.create<ParagraphOptions, NoStorage>({
   // -- Command -------------------------------------------------------------------
   addCommands() { return { setParagraph: setParagraphCommand }; },
   addKeyboardShortcuts() { return { 'Mod-Alt-0': () => this.editor.commands.setParagraph() }; },
-
-  // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins() {
-    return [
-      new Plugin<NotebookSchemaType>({
-        // -- Transaction ---------------------------------------------------------
-        // ensure paragraphs do not have Marks carried from headings other Nodes
-        appendTransaction: (_transactions, oldState, newState) => {
-          if(newState.doc === oldState.doc) return/*no changes*/;
-          const { tr } = newState;
-
-          if(newState.selection.$anchor.parent.type.name !== oldState.selection.$anchor.parent.type.name) {
-            tr.setStoredMarks([/*remove stored Marks for new paragraph*/]);
-          } /* else -- no Marks active, do nothing */
-
-          return tr;
-        },
-      }),
-    ];
-  },
 
   // -- View ----------------------------------------------------------------------
   parseHTML() { return [safeParseTag('div')]; },
