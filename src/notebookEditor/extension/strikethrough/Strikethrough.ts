@@ -9,7 +9,7 @@ import { NoOptions, NoStorage } from 'notebookEditor/model/type';
 import { setStrikethroughCommand, toggleStrikethroughCommand, unsetStrikethroughCommand } from './command';
 
 // ********************************************************************************
-// REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-bold/src/bold.ts
+// REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-strike/src/strike.ts
 
 // == RegEx =======================================================================
 const strikethroughInputRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))$/;
