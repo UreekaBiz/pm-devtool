@@ -131,12 +131,21 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
               return false/*let PM set the right Selection*/;
             }/* else -- not handling ArrowLeft */
 
+            // if Backspace is pressed and a MarkHolder is present, delete it, set
+            // the Selection accordingly and let PM handle the rest of the event
             if(event.key === 'Backspace') {
               const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
               tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos + view.state.selection.$anchor.parent.nodeSize)))
                 .deleteSelection();
+
+              if(tr.selection.$anchor.pos > 2/*performing the following operation wont select position 0*/) {
+                // ensure expected Selection after Backspace by also removing
+                // 1 from the selection (expected from Backspace)
+                tr.setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1)));
+              }/* else -- backspacing at the start of the doc, do not set Selection back*/
+
               dispatch(tr);
-              return true/*event handling done*/;
+              return true/*let PM handle the rest of the event*/;
             }/* else -- not handling Backspace */
 
             if(event.ctrlKey || event.altKey || event.metaKey || event.key.length > 1) {
