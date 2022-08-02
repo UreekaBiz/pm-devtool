@@ -27,21 +27,15 @@ export const getMarkHolder = (editor: Editor) => {
   return undefined/*not found*/;
 };
 
-/**
- * Ensure that toggling of Marks whenever a MarkHolder is present on a BlockNode
- * modifies the Marks that it has inside of it
- */
-// NOTE: the parameters of this function are set specifically such that the function
-//       can be used both by ToolItems and commands. Since editor.chain is not of
-//       the same type as the chain returned by CommandProps, not doing this causes
-//       a 'MismatchedTransaction' error
-export const handleMarkHolderPresence = (selection: Selection, chain: () => ChainedCommands, markHolder: MarkHolderNodeType, appliedMarkType: MarkType): boolean => {
+/** Toggles a mark in the mark holder. This should be used when a mark is added to
+ *  an empty node. */
+export const toggleMarkInMarkHolder = (selection: Selection, chain: () => ChainedCommands, markHolder: MarkHolderNodeType, appliedMarkType: MarkType): boolean => {
   let newMarksArray: Mark[] = [];
   if(markHolder.attrs.storedMarks?.some(mark => mark.type.name === appliedMarkType.name)) {
-    // mark already included, remove it
+    // already included, remove it
     newMarksArray = [...markHolder.attrs.storedMarks!/*defined by contract*/.filter(mark => mark.type.name !== appliedMarkType.name)];
   } else {
-    // mark not included yet, add it
+    // not included yet, add it
     newMarksArray = [...markHolder.attrs.storedMarks!/*defined by contract*/, appliedMarkType.create()];
   }
 

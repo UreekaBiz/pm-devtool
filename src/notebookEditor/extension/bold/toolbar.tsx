@@ -2,7 +2,7 @@ import { BiBold } from 'react-icons/bi';
 
 import { isBoldMark, MarkName } from 'common';
 
-import { handleMarkHolderPresence, getMarkHolder } from 'notebookEditor/extension/markHolder/util';
+import { toggleMarkInMarkHolder, getMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { isNodeSelection } from 'notebookEditor/extension/util/node';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
@@ -26,7 +26,7 @@ export const markBold: ToolItem = {
   onClick: (editor) => {
     const markHolder = getMarkHolder(editor);
     if(markHolder) {
-      return handleMarkHolderPresence(editor.state.selection, editor.chain, markHolder, editor.schema.marks[MarkName.BOLD]);
+      return toggleMarkInMarkHolder(editor.state.selection, editor.chain, markHolder, editor.schema.marks[MarkName.BOLD]);
     }/* else -- MarkHolder not present, return default action */
 
     return editor.chain().focus().toggleBold().run();

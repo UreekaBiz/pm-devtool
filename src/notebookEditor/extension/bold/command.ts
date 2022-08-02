@@ -2,7 +2,7 @@ import { CommandProps } from '@tiptap/core';
 
 import { CommandFunctionType, MarkName } from 'common';
 
-import { handleMarkHolderPresence, getMarkHolder } from 'notebookEditor/extension/markHolder/util';
+import { toggleMarkInMarkHolder, getMarkHolder } from 'notebookEditor/extension/markHolder/util';
 
 // ********************************************************************************
 // NOTE: ambient module to ensure command is TypeScript-registered for TipTap
@@ -22,7 +22,7 @@ export const unsetBoldCommand = () => ({ commands }: CommandProps) => commands.u
 export const toggleBoldCommand = () => ({ editor, chain, commands }: CommandProps) => {
   const markHolder = getMarkHolder(editor);
   if(markHolder) {
-    return handleMarkHolderPresence(editor.state.selection, chain, markHolder, editor.schema.marks[MarkName.BOLD]);
+    return toggleMarkInMarkHolder(editor.state.selection, chain, markHolder, editor.schema.marks[MarkName.BOLD]);
   }/* else -- return default command */
 
   return commands.toggleMark(MarkName.BOLD);

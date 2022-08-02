@@ -2,7 +2,7 @@ import { CommandProps } from '@tiptap/core';
 
 import { CommandFunctionType, MarkName } from 'common';
 
-import { handleMarkHolderPresence, getMarkHolder } from 'notebookEditor/extension/markHolder/util';
+import { toggleMarkInMarkHolder, getMarkHolder } from 'notebookEditor/extension/markHolder/util';
 
 // ********************************************************************************
 // NOTE: ambient module to ensure command is TypeScript-registered for TipTap
@@ -22,7 +22,7 @@ export const unsetStrikethroughCommand = () => ({ commands }: CommandProps) => c
 export const toggleStrikethroughCommand = () => ({ editor, chain, commands }: CommandProps) => {
   const markHolder = getMarkHolder(editor);
   if(markHolder) {
-    return handleMarkHolderPresence(editor.state.selection, chain, markHolder, editor.schema.marks[MarkName.STRIKETHROUGH]);
+    return toggleMarkInMarkHolder(editor.state.selection, chain, markHolder, editor.schema.marks[MarkName.STRIKETHROUGH]);
   }/* else -- return default command */
 
   return commands.toggleMark(MarkName.STRIKETHROUGH);
