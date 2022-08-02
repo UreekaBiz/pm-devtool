@@ -59,12 +59,15 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
           //       to store in the MarkHolder)
           for(let i = 0; i < transactions.length; i++) {
             const { maps } = transactions[i].mapping;
+
             for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
+              // NOTE: see NOTE above
               maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
                 const { newNodeObjs } = getNodesAffectedByStepMap(transactions[i], stepMapIndex, unmappedOldStart, unmappedOldEnd, blockNodesThatPreserveMarks);
-                for(let i = 0; i < newNodeObjs.length; i++) {
-                  if(newNodeObjs[i].node.content.size < 1) {
-                    if(!transactions[i].storedMarks) {
+
+                for(let j = 0; j < newNodeObjs.length; j++) {
+                  if(newNodeObjs[j].node.content.size < 1) {
+                    if(transactions[i].storedMarks) {
                       continue/*do not insert MarkHolder since there were no stored marks*/;
                     }/* else -- there are stored marks, insert MarkHolder */
 
