@@ -8,7 +8,7 @@ import { HeadingLevel, NodeName } from 'common';
 
 import { markBold } from 'notebookEditor/extension/bold/toolbar';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough/toolbar';
-import { fontSizeToolItem, spacingToolItem, textColorToolItem } from 'notebookEditor/extension/textStyle/toolbar';
+import { fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle/toolbar';
 import { Toolbar, ToolItem } from 'notebookEditor/toolbar/type';
 
 import { createDefaultHeadingAttributes } from './type';
@@ -47,7 +47,7 @@ export const HeadingToolbar: Toolbar = {
     ],
     [
       fontSizeToolItem,
-      textColorToolItem,
+      textColorMarkToolItem,
     ],
     [
       spacingToolItem,
