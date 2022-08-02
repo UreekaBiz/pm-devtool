@@ -14,7 +14,7 @@ similar to this are:
 2. How should the Node be parsed?
 3. What happens if the Selection is set behind the Node?
 4. When should and should not ProseMirror handle an event (e.g. KeyDown
-or Paste)
+or Paste). How should Arrow interactions be handled?
 5. Ensure all other functionality (e.g. Marks being active in the Toolbar)
 is taken into account
 6. What happens if Nodes of this type (that aren't meant to be editable

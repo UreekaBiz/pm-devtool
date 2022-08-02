@@ -119,6 +119,18 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
               return true/*event handled*/;
             }/* else -- not handling Enter */
 
+            // when pressing ArrowLeft, ensure expected behavior by setting the
+            // selection behind the MarkHolder (manually) and then letting PM
+            // handle the event. This only has to be done for ArrowLeft since
+            // Cursor is maintained past the MarkHolder (i.e. to its right) by
+            // default (SEE: appendedTransaction above)
+            if(event.key === 'ArrowLeft' && (posBeforeAnchorPos > 1/*not pressing ArrowLeft at the start of the document*/)) {
+              const posBeforeMarkHolder = posBeforeAnchorPos - 1;
+              tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeMarkHolder), tr.doc.resolve(posBeforeMarkHolder)));
+              dispatch(tr);
+              return false/*let PM set the right Selection*/;
+            }/* else -- not handling ArrowLeft */
+
             if(event.key === 'Backspace') {
               const parentPos = posBeforeAnchorPos - 1/*by contract since MarkHolder gets inserted at start of parent Node*/;
               tr.setSelection(new TextSelection(tr.doc.resolve(parentPos), tr.doc.resolve(parentPos + view.state.selection.$anchor.parent.nodeSize)))
