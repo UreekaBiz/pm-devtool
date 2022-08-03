@@ -1,6 +1,6 @@
 import { CommandProps } from '@tiptap/core';
 
-import { isHeadingLevel, CommandFunctionType, HeadingLevel, NodeName, MarkName } from 'common';
+import { createBoldMark, isHeadingLevel, CommandFunctionType, HeadingLevel, NodeName, MarkName, SchemaV1 } from 'common';
 
 import { createMarkHolderJSONNode } from 'notebookEditor/extension/markHolder/util';
 
@@ -56,12 +56,12 @@ export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({
 // == Util ========================================================================
 // applies the Bold Mark to the whole content of the parent of the selection
 const applyBoldToHeadingContent = (props: CommandProps) => {
-  const { editor, dispatch,  tr } = props;
+  const { dispatch,  tr } = props;
   if(!dispatch) throw new Error('dispatch undefined when it should not');
   const currentPos = tr.selection.$anchor.pos,
         offset = tr.selection.$anchor.parentOffset,
         parentPos = currentPos - offset;
-  tr.addMark(parentPos, parentPos + tr.selection.$anchor.parent.nodeSize - 2/*account for the start and end of the parent Node*/, editor.schema.marks[MarkName.BOLD].create());
+  tr.addMark(parentPos, parentPos + tr.selection.$anchor.parent.nodeSize - 2/*account for the start and end of the parent Node*/, createBoldMark(SchemaV1));
   dispatch(tr);
   return true;
 };

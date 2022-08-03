@@ -43,6 +43,9 @@ export const BoldMarkRendererSpec: MarkRendererSpec<BoldAttributes> = {
 export type BoldMarkType = ProseMirrorMark<NotebookSchemaType> & { attrs: BoldAttributes; };
 export const isBoldMark = (mark: ProseMirrorMark<NotebookSchemaType>): mark is BoldMarkType => mark.type.name === MarkName.BOLD;
 
+export const getBoldMarkType = (schema: NotebookSchemaType) => schema.marks[MarkName.BOLD];
+export const createBoldMark = (schema: NotebookSchemaType) => getBoldMarkType(schema).create();
+
 // -- JSON Mark Type --------------------------------------------------------------
 export type BoldJSONMarkType = JSONMark<BoldAttributes> & { type: MarkName.BOLD; };
 export const isBoldJSONMark = (mark: JSONMark): mark is BoldJSONMarkType => mark.type === MarkName.BOLD;
