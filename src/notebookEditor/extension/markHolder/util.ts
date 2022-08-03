@@ -40,16 +40,17 @@ export const toggleMarkInMarkHolder = (selection: Selection, chain: () => Chaine
 
   return chain().focus().command((props) => {
     const { dispatch, tr } = props;
-    if(!dispatch) return false/*transaction not dispatched*/;
+    if(!isMarkHolderNode(selection.$anchor.parent)) return false/*Selection parent is not a MarkHolder Node*/;
 
     const startOfParentNodePos = tr.doc.resolve(selection.$anchor.pos - selection.$anchor.parentOffset);
     const { pos: startingPos } = tr.selection.$anchor;
 
-    tr.setSelection(new TextSelection(startOfParentNodePos, tr.doc.resolve(startOfParentNodePos.pos + markHolder.nodeSize)))
-      .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: newMarksArray })
-      .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
+    if(dispatch) {
+      tr.setSelection(new TextSelection(startOfParentNodePos, tr.doc.resolve(startOfParentNodePos.pos + markHolder.nodeSize)))
+        .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: newMarksArray })
+        .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
+    }/* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
 
-    dispatch(tr);
-    return true/*transaction dispatched*/;
+    return true/*command can be executed*/;
   }).run();
 };

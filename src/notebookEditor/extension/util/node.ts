@@ -182,19 +182,19 @@ export const getResolvedParentSelectionByAnchorOffset = (selection: NodeSelectio
 };
 
 // ................................................................................
-/** Replaces the node at the {@link Selection} of the given {@link Transaction} and
- *  selects the new, replaced Node */
+/**
+ * Replaces the node at the {@link Selection} of the given {@link Transaction} and
+ *  selects the new, replaced Node
+ */
 export const replaceAndSelectNode = (node: ProseMirrorNode<NotebookSchemaType>, tr: Transaction<NotebookSchemaType>, dispatch: ((args?: any) => any) | undefined) => {
-  if(!dispatch) return false/*transaction not dispatched*/;
+  if(dispatch) {
+    tr.replaceSelectionWith(node);
 
-  tr.replaceSelectionWith(node);
+    const nodeBefore = getNodeBefore(tr.selection),
+          nodeBeforeSize = nodeBefore?.nodeSize ?? 0/*no node before -- no size*/;
+    const resolvedPos = tr.doc.resolve(tr.selection.anchor - nodeBeforeSize);
+    tr.setSelection(new NodeSelection(resolvedPos));
+  }/* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
 
-  const nodeBefore = getNodeBefore(tr.selection),
-        nodeBeforeSize = nodeBefore?.nodeSize ?? 0/*no node before -- no size*/;
-  const resolvedPos = tr.doc.resolve(tr.selection.anchor - nodeBeforeSize);
-  tr.setSelection(new NodeSelection(resolvedPos));
-
-  dispatch(tr);
-
-  return true/*transaction dispatched*/;
+  return true/*command can be executed, selection can always be replaced*/;
 };
