@@ -147,10 +147,13 @@ export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs: 
 
 // == Output Spec =================================================================
 // -- Output spec -----------------------------------------------------------------
-export const getNodeOutputSpec = (node: ProseMirrorNode, HTMLAttributes: Attributes, isLeaf: boolean = false): DOMOutputSpec => {
+// NOTE: NodeRendererSpec and NodeSpec can be passes as props directly instead of
+//       using the corresponding Records to avoid circular dependencies. If no value
+//       is provided the Records will be used.
+export const getNodeOutputSpec = (node: ProseMirrorNode, HTMLAttributes: Attributes, isLeaf: boolean = false, nodeRendererSpec?: NodeRendererSpec, nodeSpec?: NodeSpec): DOMOutputSpec => {
   const nodeName = getNodeName(node);
-  const nodeRendererSpec = NodeRendererSpecs[nodeName],
-        nodeSpec = NodeSpecs[nodeName];
+  nodeRendererSpec ??= NodeRendererSpecs[nodeName];
+  nodeSpec ??= NodeSpecs[nodeName];
 
   // All nodes require to have 'DATA_NODE_TYPE' attribute to be able to identify
   // the Node.
@@ -163,10 +166,13 @@ export const getNodeOutputSpec = (node: ProseMirrorNode, HTMLAttributes: Attribu
   return [tag, merged, 0/*content hole*/];
 };
 
-export const getMarkOutputSpec = (mark: ProseMirrorMark, HTMLAttributes: Attributes): DOMOutputSpec => {
+// NOTE: MarkRendererSpec and MarkSpec can be passes as props directly instead of
+//       using the corresponding Records to avoid circular dependencies. If no value
+//       is provided the Records will be used.
+export const getMarkOutputSpec = (mark: ProseMirrorMark, HTMLAttributes: Attributes, markRendererSpec?: MarkRendererSpec, markSpec?: MarkSpec): DOMOutputSpec => {
   const markName = getMarkName(mark);
-  const markRendererSpec = MarkRendererSpecs[markName],
-        markSpec = MarkSpecs[markName];
+  markRendererSpec ??= MarkRendererSpecs[markName];
+  markSpec ??= MarkSpecs[markName];
 
   // All marks require to have 'data-mark-type' attribute to be able to identify
   // the mark.
