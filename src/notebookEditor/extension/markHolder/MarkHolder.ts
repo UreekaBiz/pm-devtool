@@ -36,7 +36,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
   },
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins() { return [ MarkHolderPlugin(this.editor) ];},
+  addProseMirrorPlugins() { return [ MarkHolderPlugin() ]; },
 
   // -- View ----------------------------------------------------------------------
   parseHTML() { return [{

@@ -1,9 +1,8 @@
-import { Editor } from '@tiptap/core';
 import { Fragment, Node as ProseMirrorNode, Slice } from 'prosemirror-model';
 import { Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { createMarkHolderNode, createParagraphNode, createTextNode, getNodesAffectedByStepMap, isMarkHolderNode, NodeName, NotebookSchemaType, SchemaV1 } from 'common';
+import { createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isMarkHolderNode, NodeName, NotebookSchemaType } from 'common';
 
 // == Constant ====================================================================
 // the Inclusion Set of Nodes that must maintain marks after their Content was
@@ -11,7 +10,7 @@ import { createMarkHolderNode, createParagraphNode, createTextNode, getNodesAffe
 const blockNodesThatPreserveMarks = new Set([NodeName.HEADING, NodeName.PARAGRAPH]);
 
 // == Plugin ======================================================================
-export const MarkHolderPlugin = (editor: Editor) => new Plugin<NotebookSchemaType>({
+export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
   // -- Transaction ---------------------------------------------------------------
   // when a BlockNode that must preserve Marks (SEE: blockNodesThatPreserveMarks Set
   // above) gets its Content removed but the Node is not deleted (i.e., the
@@ -50,8 +49,7 @@ export const MarkHolderPlugin = (editor: Editor) => new Plugin<NotebookSchemaTyp
           const { storedMarks } = transactions[i];
           for(let j=0;j<newNodeObjs.length;j++) {
             if(newNodeObjs[j].node.content.size > 0/*has content*/ || !storedMarks /*no storedMarks*/) continue/*nothing to do*/;
-
-            tr.insert(newNodeObjs[j].position + 1/*inside the parent*/, createMarkHolderNode(SchemaV1, { storedMarks }));
+            tr.insert(newNodeObjs[j].position + 1/*inside the parent*/, createMarkHolderNode(newState.schema, { storedMarks }));
           }
         });
       }
@@ -84,7 +82,7 @@ export const MarkHolderPlugin = (editor: Editor) => new Plugin<NotebookSchemaTyp
         // insert Paragraph below and set the Selection to the start of the inserted
         // Paragraph
         tr.setSelection(new TextSelection(tr.doc.resolve(parentEndPos), tr.doc.resolve(parentEndPos)))
-          .insert(tr.selection.$anchor.pos, createParagraphNode(SchemaV1))
+          .insert(tr.selection.$anchor.pos, createParagraphNode(view.state.schema))
           .setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1/*start of inserted Paragraph*/)));
         dispatch(tr);
         return true/*event handled*/;
@@ -122,7 +120,7 @@ export const MarkHolderPlugin = (editor: Editor) => new Plugin<NotebookSchemaTyp
 
       tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeAnchorPos), tr.doc.resolve(posBeforeAnchorPos + markHolder.nodeSize)))
         .setStoredMarks(markHolder.attrs.storedMarks)
-        .replaceSelectionWith(createTextNode(SchemaV1, event.key));
+        .replaceSelectionWith(view.state.schema.text(event.key));
       dispatch(tr);
       return true/*event handled*/;
     },

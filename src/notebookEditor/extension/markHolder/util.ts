@@ -2,13 +2,13 @@ import { ChainedCommands, Editor } from '@tiptap/core';
 import { Mark, MarkType } from 'prosemirror-model';
 import { Selection, TextSelection } from 'prosemirror-state';
 
-import { createMarkHolderNode, isMarkHolderNode, JSONNode, MarkHolderNodeType, MarkName, SchemaV1 } from 'common';
+import { createMarkHolderNode, isMarkHolderNode, JSONNode, MarkHolderNodeType, MarkName } from 'common';
 
 // ********************************************************************************
 // creates a MarkHolder Node holding the Marks corresponding to the given MarkNames
 export const createMarkHolderJSONNode = (editor: Editor, markNames: MarkName[]): JSONNode => {
-  const storedMarks = markNames.map(markName => SchemaV1.marks[markName].create());
-  const markHolder = createMarkHolderNode(SchemaV1, { storedMarks });
+  const storedMarks = markNames.map(markName => editor.schema.marks[markName].create());
+  const markHolder = createMarkHolderNode(editor.schema, { storedMarks });
 
   return markHolder.toJSON() as JSONNode;
 };
