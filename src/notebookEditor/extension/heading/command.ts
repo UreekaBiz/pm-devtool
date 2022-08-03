@@ -24,7 +24,7 @@ export const setHeadingCommand = (attributes: { level: HeadingLevel; }) => ({ ed
     return chain().setNode(NodeName.HEADING, attributes)
                   .insertContent(createMarkHolderJSONNode(editor, [MarkName.BOLD]))
                   .run();
-  }/* else -- no need to add MarkHolder */
+   } /* else -- no need to add MarkHolder */
 
   return chain().setNode(NodeName.HEADING, attributes)
                 .command(applyBoldToHeadingContent)
@@ -35,7 +35,7 @@ export const setHeadingCommand = (attributes: { level: HeadingLevel; }) => ({ ed
 export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({ editor, chain }: CommandProps) => {
   if(!isHeadingLevel(attributes.level)) {
     return false/*invalid command, level for heading not supported*/;
-  }/* else -- valid level */
+  } /* else -- valid level */
 
   if(editor.isActive(NodeName.HEADING) && editor.state.selection.$anchor.parent.attrs.level === attributes.level/*is the same heading -- toggle*/) {
     return chain().toggleNode(NodeName.PARAGRAPH, NodeName.HEADING, attributes).run();
@@ -46,7 +46,7 @@ export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({
     return chain().toggleNode(NodeName.HEADING, NodeName.PARAGRAPH, attributes)
                   .insertContent(createMarkHolderJSONNode(editor, [MarkName.BOLD]))
                   .run();
-  }/* else -- no need to add MarkHolder */
+  } /* else -- no need to add MarkHolder */
 
   return chain().toggleNode(NodeName.HEADING, NodeName.PARAGRAPH, attributes)
                 .command(applyBoldToHeadingContent)
@@ -62,10 +62,9 @@ const applyBoldToHeadingContent = (props: CommandProps) => {
   const currentPos = tr.selection.$anchor.pos,
         offset = tr.selection.$anchor.parentOffset,
         parentPos = currentPos - offset;
-
   if(dispatch) {
     tr.addMark(parentPos, parentPos + tr.selection.$anchor.parent.nodeSize - 2/*account for the start and end of the parent Node*/, createBoldMark(editor.schema));
-  }/* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
+  } /* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
 
   return true/*command can be executed*/;
 };

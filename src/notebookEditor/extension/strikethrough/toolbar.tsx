@@ -24,7 +24,7 @@ export const markStrikethrough: ToolItem = {
   },
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
   onClick: (editor) => {
-    // If MarkHolder is defined toggle the mark inside it.
+    // if MarkHolder is defined toggle the Mark inside it
     const markHolder = getMarkHolder(editor);
     if(markHolder) return toggleMarkInMarkHolder(editor.state.selection, () => editor.chain(), markHolder, getStrikethroughMarkType(editor.schema))/*nothing else to do*/;
     /* else -- MarkHolder is not present */
@@ -34,9 +34,7 @@ export const markStrikethrough: ToolItem = {
 
   isActive: (editor) => {
     const markHolder = getMarkHolder(editor);
-    if(markHolder && markHolder.attrs.storedMarks?.some(mark => mark.type.name === MarkName.STRIKETHROUGH)) {
-      return true;
-    }/* else -- return default check */
+    if(markHolder && markHolder.attrs.storedMarks?.some(mark => mark.type.name === MarkName.STRIKETHROUGH)) return true/*is active*/;
 
     return editor.isActive(MarkName.STRIKETHROUGH);
   },

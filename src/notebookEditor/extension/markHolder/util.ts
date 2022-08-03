@@ -44,12 +44,11 @@ export const toggleMarkInMarkHolder = (selection: Selection, chain: () => Chaine
 
     const startOfParentNodePos = tr.doc.resolve(selection.$anchor.pos - selection.$anchor.parentOffset);
     const { pos: startingPos } = tr.selection.$anchor;
-
     if(dispatch) {
       tr.setSelection(new TextSelection(startOfParentNodePos, tr.doc.resolve(startOfParentNodePos.pos + markHolder.nodeSize)))
         .setNodeMarkup(tr.selection.$anchor.pos, undefined/*maintain type*/, { storedMarks: newMarksArray })
         .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
-    }/* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
+    } /* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
 
     return true/*command can be executed*/;
   }).run();

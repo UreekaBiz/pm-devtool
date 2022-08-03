@@ -27,7 +27,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
     const nodeAfterPos = newState.doc.nodeAt(newState.selection.$anchor.pos);
     if(nodeAfterPos && isMarkHolderNode(nodeAfterPos)) {
       tr.setSelection(new TextSelection(tr.doc.resolve(newState.selection.$anchor.pos + 1)));
-    }/* else -- no need to modify selection */
+    } /* else -- no need to modify selection */
 
     // NOTE: this Transaction has to step through all stepMaps without leaving
     //       early since any of them can leave a Block Node of the inclusion
@@ -86,7 +86,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
           .setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1/*start of inserted Paragraph*/)));
         dispatch(tr);
         return true/*event handled*/;
-      }/* else -- not handling Enter */
+      } /* else -- not handling Enter */
 
       // when pressing ArrowLeft, ensure expected behavior by setting the selection
       // behind the MarkHolder (manually) and then letting PM handle the event.
@@ -98,7 +98,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
         tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeMarkHolder), tr.doc.resolve(posBeforeMarkHolder)));
         dispatch(tr);
         return false/*PM handles default selection*/;
-      }/* else -- not handling ArrowLeft */
+      } /* else -- not handling ArrowLeft */
 
       // if Backspace is pressed and a MarkHolder is present, delete it, set the
       // Selection accordingly and let PM handle the rest of the event
@@ -109,14 +109,14 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
 
         dispatch(tr);
         return true/*event handled*/;
-      }/* else -- not handling Backspace */
+      } /* else -- not handling Backspace */
 
       // NOTE: events that involve these keys are left to PM to handle. The only
       //       special case is a Paste operation, which is handled below
       //       (SEE: handlePaste, transformPasted)
       if(event.ctrlKey || event.altKey || event.metaKey || event.key.length > 1) {
         return false/*do not handle event*/;
-      }/* else -- handle event */
+      } /* else -- handle event */
 
       tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeAnchorPos), tr.doc.resolve(posBeforeAnchorPos + markHolder.nodeSize)))
         .setStoredMarks(markHolder.attrs.storedMarks)
