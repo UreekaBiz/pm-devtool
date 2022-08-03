@@ -1,6 +1,6 @@
 import { BiStrikethrough } from 'react-icons/bi';
 
-import { getStrikethroughMarkType, MarkName } from 'common';
+import { getStrikethroughMarkType, isStrikethroughMark, MarkName } from 'common';
 
 import { toggleMarkInMarkHolder, getMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { isNodeSelection } from 'notebookEditor/extension/util/node';
@@ -34,7 +34,7 @@ export const markStrikethrough: ToolItem = {
 
   isActive: (editor) => {
     const markHolder = getMarkHolder(editor);
-    if(markHolder && markHolder.attrs.storedMarks?.some(mark => mark.type.name === MarkName.STRIKETHROUGH)) return true/*is active*/;
+    if(markHolder && markHolder.attrs.storedMarks?.some(mark => isStrikethroughMark(mark))) return true/*is active*/;
 
     return editor.isActive(MarkName.STRIKETHROUGH);
   },
