@@ -52,7 +52,7 @@ export type JSONNode<A extends Attributes = {}> = {
 /** Stringified version of the content of the Node */
 export type NodeContent = string/*alias*/;
 
-/** Type of PM's content when creating Nodes or Marks from a Node or Mark type */
+/** Type of ProseMirror Node Content when creating Nodes or Marks from a Node or Mark type */
 export type ProseMirrorNodeContent = Fragment<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType>[];
 
 // --------------------------------------------------------------------------------
