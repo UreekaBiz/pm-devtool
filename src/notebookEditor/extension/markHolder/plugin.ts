@@ -3,7 +3,7 @@ import { Fragment, Node as ProseMirrorNode, Slice } from 'prosemirror-model';
 import { Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { getNodesAffectedByStepMap, isMarkHolderNode, NodeName, NotebookSchemaType } from 'common';
+import { createMarkHolderNode, createParagraphNode, createTextNode, getNodesAffectedByStepMap, isMarkHolderNode, NodeName, NotebookSchemaType, SchemaV1 } from 'common';
 
 // == Constant ====================================================================
 // the Inclusion Set of Nodes that must maintain marks after their Content was
@@ -51,7 +51,7 @@ export const MarkHolderPlugin = (editor: Editor) => new Plugin<NotebookSchemaTyp
           for(let j=0;j<newNodeObjs.length;j++) {
             if(newNodeObjs[j].node.content.size > 0/*has content*/ || !storedMarks /*no storedMarks*/) continue/*nothing to do*/;
 
-            tr.insert(newNodeObjs[j].position + 1/*inside the parent*/, newState.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks }));
+            tr.insert(newNodeObjs[j].position + 1/*inside the parent*/, createMarkHolderNode(SchemaV1, { storedMarks }));
           }
         });
       }
@@ -84,7 +84,7 @@ export const MarkHolderPlugin = (editor: Editor) => new Plugin<NotebookSchemaTyp
         // insert Paragraph below and set the Selection to the start of the inserted
         // Paragraph
         tr.setSelection(new TextSelection(tr.doc.resolve(parentEndPos), tr.doc.resolve(parentEndPos)))
-          .insert(tr.selection.$anchor.pos, view.state.schema.nodes[NodeName.PARAGRAPH].create())
+          .insert(tr.selection.$anchor.pos, createParagraphNode(SchemaV1))
           .setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1/*start of inserted Paragraph*/)));
         dispatch(tr);
         return true/*event handled*/;
@@ -113,13 +113,16 @@ export const MarkHolderPlugin = (editor: Editor) => new Plugin<NotebookSchemaTyp
         return true/*event handled*/;
       }/* else -- not handling Backspace */
 
-      // FIXME: Wha does this mean? Why would this event not be handled?
+      // NOTE: events that involve these keys are left to PM to handle. The only
+      //       special case is a Paste operation, which is handled below
+      //       (SEE: handlePaste, transformPasted)
       if(event.ctrlKey || event.altKey || event.metaKey || event.key.length > 1) {
         return false/*do not handle event*/;
       }/* else -- handle event */
+
       tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeAnchorPos), tr.doc.resolve(posBeforeAnchorPos + markHolder.nodeSize)))
         .setStoredMarks(markHolder.attrs.storedMarks)
-        .replaceSelectionWith(editor.schema.text(event.key));
+        .replaceSelectionWith(createTextNode(SchemaV1, event.key));
       dispatch(tr);
       return true/*event handled*/;
     },

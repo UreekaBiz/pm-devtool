@@ -19,7 +19,7 @@ declare module '@tiptap/core' {
 
 // --------------------------------------------------------------------------------
 export const setStyleCommand = (attribute: AttributeType, value: string, depth: SelectionDepth) => ({ tr, state, dispatch }: CommandProps): boolean => {
-  if(!dispatch) throw new Error('Dispatch is unexpectedly undefined.');
+  if(!dispatch) return false/*transaction not dispatched*/;
   tr.setSelection(state.selection);
   const { from, to } = tr.selection;
 
@@ -50,7 +50,7 @@ export const setStyleCommand = (attribute: AttributeType, value: string, depth: 
   if(!tr.docChanged) return false/*nothing to do*/;
 
   dispatch(tr);
-  return true;
+  return true/*transaction dispatched*/;
 };
 
 // == Util ========================================================================

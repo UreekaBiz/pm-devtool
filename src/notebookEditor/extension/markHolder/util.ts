@@ -2,16 +2,15 @@ import { ChainedCommands, Editor } from '@tiptap/core';
 import { Mark, MarkType } from 'prosemirror-model';
 import { Selection, TextSelection } from 'prosemirror-state';
 
-import { isMarkHolderNode, JSONNode, MarkHolderNodeType, MarkName, NodeName } from 'common';
-
+import { createMarkHolderNode, isMarkHolderNode, JSONNode, MarkHolderNodeType, MarkName, SchemaV1 } from 'common';
 
 // ********************************************************************************
 // creates a MarkHolder Node holding the Marks corresponding to the given MarkNames
 export const createMarkHolderJSONNode = (editor: Editor, markNames: MarkName[]): JSONNode => {
-  const storedMarks = markNames.map(markName => editor.schema.marks[markName].create());
-  const node = editor.schema.nodes[NodeName.MARK_HOLDER].create({ storedMarks });
+  const storedMarks = markNames.map(markName => SchemaV1.marks[markName].create());
+  const markHolder = createMarkHolderNode(SchemaV1, { storedMarks });
 
-  return node.toJSON() as JSONNode;
+  return markHolder.toJSON() as JSONNode;
 };
 
 /**
@@ -41,8 +40,7 @@ export const toggleMarkInMarkHolder = (selection: Selection, chain: () => Chaine
 
   return chain().focus().command((props) => {
     const { dispatch, tr } = props;
-    // FIXME: throws?
-    if(!dispatch) throw new Error('dispatch undefined when it should not');
+    if(!dispatch) return false/*transaction not dispatched*/;
 
     const startOfParentNodePos = tr.doc.resolve(selection.$anchor.pos - selection.$anchor.parentOffset);
     const { pos: startingPos } = tr.selection.$anchor;
@@ -52,6 +50,6 @@ export const toggleMarkInMarkHolder = (selection: Selection, chain: () => Chaine
       .setSelection(new TextSelection(tr.doc.resolve(startingPos)));
 
     dispatch(tr);
-    return true/*FIXME: What does true means?*/;
+    return true/*transaction dispatched*/;
   }).run();
 };
