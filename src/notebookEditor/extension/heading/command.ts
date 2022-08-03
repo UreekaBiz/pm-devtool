@@ -57,11 +57,15 @@ export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({
 // applies the Bold Mark to the whole content of the parent of the selection
 const applyBoldToHeadingContent = (props: CommandProps) => {
   const { editor, dispatch,  tr } = props;
-  if(!dispatch) return false/*transaction not dispatched*/;
+  if(tr.selection.$anchor.parent.content.size < 0) return false/*the Heading has no content to apply the Bold Mark*/;
+
   const currentPos = tr.selection.$anchor.pos,
         offset = tr.selection.$anchor.parentOffset,
         parentPos = currentPos - offset;
-  tr.addMark(parentPos, parentPos + tr.selection.$anchor.parent.nodeSize - 2/*account for the start and end of the parent Node*/, createBoldMark(editor.schema));
-  dispatch(tr);
-  return true/*transaction dispatched*/;
+
+  if(dispatch) {
+    tr.addMark(parentPos, parentPos + tr.selection.$anchor.parent.nodeSize - 2/*account for the start and end of the parent Node*/, createBoldMark(editor.schema));
+  }/* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
+
+  return true/*command can be executed*/;
 };
