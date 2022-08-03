@@ -4,6 +4,7 @@ import { Selection, Transaction } from 'prosemirror-state';
 
 import { Attributes } from './attribute';
 import { JSONMark } from './mark';
+import { NotebookSchemaType } from './schema';
 import { mapOldStartAndOldEndThroughHistory } from './step';
 
 // ********************************************************************************
@@ -50,6 +51,9 @@ export type JSONNode<A extends Attributes = {}> = {
 };
 /** Stringified version of the content of the Node */
 export type NodeContent = string/*alias*/;
+
+/** Type of PM's content when creating Nodes or Marks from a Node or Mark type */
+export type NotebookNodeContent = Fragment<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType>[];
 
 // --------------------------------------------------------------------------------
 // JSON as seen from Schema#nodeFromJSON() or Schema#markFromJSON()
