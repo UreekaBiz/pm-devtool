@@ -40,7 +40,7 @@ export const toggleMarkInMarkHolder = (selection: Selection, chain: () => Chaine
 
   return chain().focus().command((props) => {
     const { dispatch, tr } = props;
-    if(!isMarkHolderNode(selection.$anchor.parent)) return false/*Selection parent is not a MarkHolder Node*/;
+    if(!isMarkHolderNode(selection.$anchor.parent)) return false/*command cannot be executed, Selection parent is not a MarkHolder Node*/;
 
     const startOfParentNodePos = tr.doc.resolve(selection.$anchor.pos - selection.$anchor.parentOffset);
     const { pos: startingPos } = tr.selection.$anchor;

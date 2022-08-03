@@ -57,7 +57,7 @@ export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({
 // applies the Bold Mark to the whole content of the parent of the selection
 const applyBoldToHeadingContent = (props: CommandProps) => {
   const { editor, dispatch,  tr } = props;
-  if(tr.selection.$anchor.parent.content.size < 0) return false/*the Heading has no content to apply the Bold Mark*/;
+  if(tr.selection.$anchor.parent.content.size < 0) return false/*command cannot be executed, the Heading has no content to apply the Bold Mark*/;
 
   const currentPos = tr.selection.$anchor.pos,
         offset = tr.selection.$anchor.parentOffset,
