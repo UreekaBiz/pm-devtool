@@ -53,7 +53,7 @@ export type JSONNode<A extends Attributes = {}> = {
 export type NodeContent = string/*alias*/;
 
 /** Type of PM's content when creating Nodes or Marks from a Node or Mark type */
-export type NotebookNodeContent = Fragment<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType>[];
+export type ProseMirrorNodeContent = Fragment<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType>[];
 
 // --------------------------------------------------------------------------------
 // JSON as seen from Schema#nodeFromJSON() or Schema#markFromJSON()

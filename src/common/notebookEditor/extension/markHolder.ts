@@ -2,7 +2,7 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { NodeRendererSpec } from '../htmlRenderer/type';
-import { JSONNode, NodeGroup, NodeName, NotebookNodeContent } from '../node';
+import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../node';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
@@ -53,7 +53,7 @@ export type MarkHolderNodeType = ProseMirrorNode<NotebookSchemaType> & { attrs: 
 export const isMarkHolderNode = (node: ProseMirrorNode<NotebookSchemaType>): node is MarkHolderNodeType => node.type.name === NodeName.MARK_HOLDER;
 
 export const getMarkHolderNodeType = (schema: NotebookSchemaType) => schema.nodes[NodeName.MARK_HOLDER];
-export const createMarkHolderNode = (schema: NotebookSchemaType, attributes?: MarkHolderAttributes, content?: NotebookNodeContent, marks?: Mark<NotebookSchemaType>[]) =>
+export const createMarkHolderNode = (schema: NotebookSchemaType, attributes?: MarkHolderAttributes, content?: ProseMirrorNodeContent, marks?: Mark<NotebookSchemaType>[]) =>
   getMarkHolderNodeType(schema).create(attributes, content, marks);
 
 // -- JSON Node Type --------------------------------------------------------------
