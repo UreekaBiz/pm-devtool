@@ -20,7 +20,7 @@ declare module '@tiptap/core' {
 export const setStrikethroughCommand = () => ({ commands }: CommandProps) => commands.setMark(MarkName.STRIKETHROUGH);
 export const unsetStrikethroughCommand = () => ({ commands }: CommandProps) => commands.unsetMark(MarkName.STRIKETHROUGH);
 export const toggleStrikethroughCommand = () => ({ editor, chain, commands }: CommandProps) => {
-  // If MarkHolder is defined toggle the mark inside it.
+  // if MarkHolder is defined toggle the mark inside it
   const markHolder = getMarkHolder(editor);
   if(markHolder) return toggleMarkInMarkHolder(editor.state.selection, chain, markHolder, getStrikethroughMarkType(editor.schema))/*nothing else to do*/;
   /* else -- MarkHolder is not present */
