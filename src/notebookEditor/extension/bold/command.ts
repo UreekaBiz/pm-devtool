@@ -22,8 +22,7 @@ export const unsetBoldCommand = () => ({ commands }: CommandProps) => commands.u
 export const toggleBoldCommand = () => ({ editor, chain, commands }: CommandProps) => {
   // if MarkHolder is defined toggle the mark inside it
   const markHolder = getMarkHolder(editor);
-  if(markHolder) return toggleMarkInMarkHolder(editor.state.selection, chain, markHolder, getBoldMarkType(editor.schema))/*nothing else to do*/;
-  // else -- MarkHolder is not present
 
+  if(markHolder) return toggleMarkInMarkHolder(editor.state.selection, chain, markHolder, getBoldMarkType(editor.schema))/*nothing else to do*/;
   return commands.toggleMark(MarkName.BOLD);
 };

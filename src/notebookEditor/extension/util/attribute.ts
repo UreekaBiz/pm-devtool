@@ -16,7 +16,7 @@ import { getSelectedNode } from './node';
  * @param defaultValue The default value of the {@link Attribute} to be parsed
  * @returns The {@link Attribute} spec object that defines the parsing behavior of the {@link Attribute}
  */
-export const setAttributeParsingBehavior = (name: string, type: SetAttributeType,  defaultValue?: string | string[] | boolean | number | undefined): Attribute => {
+export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | undefined): Attribute => {
   let parseHTML: (element: HTMLElement) => string | string[] | boolean | number | null = (element: HTMLElement) => element.getAttribute(name);
 
   switch(type) {

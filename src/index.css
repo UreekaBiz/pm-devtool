@@ -28,7 +28,8 @@
 }
 .inlineNodeContainer { position: relative; display: inline-block; }
 
-/* -- MarkHolder --------------------------------------------------------------- */
+/* -- Node styles -------------------------------------------------------------- */
+/* .. MarkHolder ............................................................... */
 [data-node-type="markHolder"] {
   /*
     prevent the User from ever setting a Selection with the Cursor that sets
@@ -38,7 +39,7 @@
   display: none/* do not add to PM View */;
 }
 
-/* -- Highlight ---------------------------------------------------------------- */
+/* .. Highlight ................................................................ */
 .ProseMirror-focused .selected_text {
   /*only show background when editor is no longer focused*/
   background-color: transparent !important;
@@ -47,15 +48,12 @@
   background-color: rgba(0,0,0,0.1);
 }
 
-/* -- Link --------------------------------------------------------------------- */
-.link {
-  color: #0000EE;
-  text-decoration: underline;
-  cursor: inherit;
-}
+/* .. Link ..................................................................... */
+[data-node-type="link"] { cursor: 'inherit'; }
+[data-node-type="link"].clickable { cursor: pointer; }
 .clickable { cursor: pointer; }
 
-/* -- AsyncNode ---------------------------------------------------------------- */
+/* .. AsyncNode ................................................................ */
 [data-asyncnodestate]::after {
   content: '';
   display: inline-block;
@@ -66,6 +64,36 @@
   background-color: var(--status-color);
 }
 
+/* .. VisualId ................................................................. */
+[data-visualid]::after {
+  content: attr(data-visualid);
+}
+
+/* .. Gap Cursor ............................................................... */
+.ProseMirror-gapcursor {
+  display: none;
+  position: absolute;
+  pointer-events: none;
+}
+
+.ProseMirror-gapcursor:after {
+  position: absolute;
+  display: block;
+  top: -2px;
+  width: 20px;
+  margin-top: 0.25em;
+  animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
+  border-top: 1px solid black;
+  content: '';
+}
+
+@keyframes ProseMirror-cursor-blink {
+  to { visibility: hidden; }
+}
+
+.ProseMirror-focused .ProseMirror-gapcursor { display: block; }
+
+/* ============================================================================= */
 /* .. Chip ..................................................................... */
 .chip {
   display: inline-block;
@@ -89,35 +117,6 @@
   font-weight: bold;
 }
 .chipCloseButton:hover { color: red; }
-
-/* -- VisualID ----------------------------------------------------------------- */
-[data-visualid]::after {
-  content: attr(data-visualid);
-}
-
-/* -- Gap Cursor --------------------------------------------------------------- */
-.ProseMirror-gapcursor {
-  display: none;
-  position: absolute;
-  pointer-events: none;
-}
-
-.ProseMirror-gapcursor:after {
-  position: absolute;
-  display: block;
-  top: -2px;
-  width: 20px;
-  margin-top: 0.25em;
-  animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
-  border-top: 1px solid black;
-  content: '';
-}
-
-@keyframes ProseMirror-cursor-blink {
-  to { visibility: hidden; }
-}
-
-.ProseMirror-focused .ProseMirror-gapcursor { display: block; }
 
 /* == Toolbar ================================================================== */
 .iconButton {
