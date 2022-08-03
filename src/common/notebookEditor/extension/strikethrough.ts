@@ -17,6 +17,7 @@ export type StrikethroughAttributes = AttributesTypeFromNodeSpecAttributes<typeo
 // -- Mark Spec -------------------------------------------------------------------
 export const StrikethroughMarkSpec: MarkSpec = {
   name: MarkName.STRIKETHROUGH/*expected and guaranteed to be unique*/,
+
   // NOTE: toDOM must be defined so that the Schema knows how to create it
   //       (SEE: schema.ts)
   toDOM: (mark, inline) => getMarkOutputSpec(mark, mark.attrs ?? {/*empty object if attrs are undefined*/}),
