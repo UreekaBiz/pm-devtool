@@ -169,7 +169,7 @@ export const getNodeOutputSpec = (node: ProseMirrorNode, HTMLAttributes: Attribu
 // NOTE: MarkRendererSpec and MarkSpec can be passes as props directly instead of
 //       using the corresponding Records to avoid circular dependencies. If no value
 //       is provided the Records will be used.
-export const getMarkOutputSpec = (mark: ProseMirrorMark, HTMLAttributes: Attributes, markRendererSpec?: MarkRendererSpec, markSpec?: MarkSpec): DOMOutputSpec => {
+export const getMarkOutputSpec = (mark: ProseMirrorMark, HTMLAttributes: Attributes, markRendererSpec?: MarkRendererSpec<any>, markSpec?: MarkSpec): DOMOutputSpec => {
   const markName = getMarkName(mark);
   markRendererSpec ??= MarkRendererSpecs[markName];
   markSpec ??= MarkSpecs[markName];
