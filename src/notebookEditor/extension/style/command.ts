@@ -52,6 +52,8 @@ export const setStyleCommand = (attribute: AttributeType, value: string, depth: 
 
     tr.setNodeMarkup(pos, undefined/*preserve type*/, nodeAttrs);
   }
+
+  return true/*command executed, (SEE: NOTE above)*/;
 };
 
 // == Util ========================================================================
