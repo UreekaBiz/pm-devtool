@@ -24,11 +24,10 @@ export const markBold: ToolItem = {
   },
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
   onClick: (editor) => {
-    // If MarkHolder is defined toggle the mark inside it.
+    // if MarkHolder is defined toggle the mark inside it
     const markHolder = getMarkHolder(editor);
-    if(markHolder) return toggleMarkInMarkHolder(editor.state.selection, editor.chain, markHolder, getBoldMarkType(editor.schema))/*nothing else to do*/;
-    // else -- MarkHolder is not present
 
+    if(markHolder) return toggleMarkInMarkHolder(editor.state.selection, editor.chain, markHolder, getBoldMarkType(editor.schema))/*nothing else to do*/;
     return editor.chain().focus().toggleBold().run();
   },
 
