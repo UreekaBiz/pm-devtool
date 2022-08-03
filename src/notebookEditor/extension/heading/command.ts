@@ -56,7 +56,7 @@ export const toggleHeadingCommand = (attributes: { level: HeadingLevel; }) => ({
 // == Util ========================================================================
 // applies the Bold Mark to the whole content of the parent of the selection
 const applyBoldToHeadingContent = (props: CommandProps) => {
-  const { editor, dispatch,  tr } = props;
+  const { editor, dispatch, tr } = props;
   if(!dispatch) return false/*transaction not dispatched*/;
   const currentPos = tr.selection.$anchor.pos,
         offset = tr.selection.$anchor.parentOffset,
