@@ -2,6 +2,7 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { NodeRendererSpec } from '../htmlRenderer/type';
+import { getAllowedMarks } from '../mark';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../node';
 import { NotebookSchemaType } from '../schema';
 
@@ -23,6 +24,7 @@ export type MarkHolderAttributes = AttributesTypeFromNodeSpecAttributes<typeof M
 export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
   name: NodeName.MARK_HOLDER/*expected and guaranteed to be unique*/,
   group: NodeGroup.INLINE,
+  marks: getAllowedMarks([/*no Marks allowed for MarkHolder Node*/]),
   inline: true,
   selectable: false/*do not allow this Node to be set as a NodeSelection*/,
   atom: true/*MarkHolder should be treated as a single unit in the View*/,
