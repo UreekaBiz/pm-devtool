@@ -23,8 +23,10 @@ export type MarkHolderAttributes = AttributesTypeFromNodeSpecAttributes<typeof M
 // -- Node Spec -------------------------------------------------------------------
 export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
   name: NodeName.MARK_HOLDER/*expected and guaranteed to be unique*/,
-  group: NodeGroup.INLINE,
+  
   marks: getAllowedMarks([/*no Marks allowed for MarkHolder Node*/]),
+
+  group: NodeGroup.INLINE,
   inline: true,
   selectable: false/*do not allow this Node to be set as a NodeSelection*/,
   atom: true/*MarkHolder should be treated as a single unit in the View*/,

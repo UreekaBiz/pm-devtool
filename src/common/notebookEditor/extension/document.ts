@@ -22,6 +22,7 @@ export const DocumentNodeSpec: NodeSpec = {
   //       is the top Node
   // SEE:  /common/notebookEditor/schema.ts
   topNode: true/*it's the Node that will be used as a root for the Document*/,
+
   content: `${NodeGroup.BLOCK}+`,
   marks: getAllowedMarks([/*no Marks allowed for Doc Node*/]),
 
