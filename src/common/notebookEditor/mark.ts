@@ -34,4 +34,4 @@ export const getMarkValue = (node: ProseMirrorNode, markName: MarkName, attribut
 };
 
 // returns a string with the names of all allowed Marks for a Node
-export const getAllowedMarks = (allowedMarks: MarkName[]) => Object.values(MarkName).filter(markName => allowedMarks.includes(markName)).join(' ');
+export const getAllowedMarks = (allowedMarks: MarkName[]) => allowedMarks.join(' ');
