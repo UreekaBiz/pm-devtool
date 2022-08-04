@@ -1,6 +1,6 @@
 import { Node, InputRule } from '@tiptap/core';
 
-import { createMarkHolderNode, getBoldMarkType, getHeadingLevelFromTag, getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, SetAttributeType } from 'common';
+import { createBoldMark, createMarkHolderNode, getHeadingLevelFromTag, getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, SetAttributeType } from 'common';
 
 import { setAttributeParsingBehavior } from 'notebookEditor/extension/util/attribute';
 import { NoStorage } from 'notebookEditor/model/type';
@@ -71,7 +71,7 @@ export const Heading = Node.create<HeadingOptions, NoStorage>({
           }/* else -- the resulting Node Content is valid, set Heading Block Type */
 
           const { tr } = state;
-          const storedMarks = JSON.stringify([getBoldMarkType(state.schema).create()]);
+          const storedMarks = JSON.stringify([createBoldMark(state.schema)]);
 
           tr.delete(range.from, range.to)
             .setBlockType(range.from, range.from, this.type, { level })
