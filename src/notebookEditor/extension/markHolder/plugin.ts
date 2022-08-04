@@ -70,7 +70,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
             markHolder = view.state.doc.nodeAt(posBeforeAnchorPos);
       if(!markHolder || !isMarkHolderNode(markHolder)) return false/*let PM handle the event*/;
 
-      const parentPos = posBeforeAnchorPos - 1/*by contract --  MarkHolder gets inserted at start of parent Node*/;
+      const parentPos = Math.max(0/*don't go outside limits*/, posBeforeAnchorPos - 1)/*by contract --  MarkHolder gets inserted at start of parent Node*/;
 
       // NOTE: since the selection is not allowed to be behind a MarkHolder but
       //       expected behavior must be maintained on an Enter keypress, manually
@@ -85,7 +85,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
         // Paragraph
         tr.setSelection(new TextSelection(tr.doc.resolve(parentEndPos), tr.doc.resolve(parentEndPos)))
           .insert(tr.selection.$anchor.pos, createParagraphNode(view.state.schema))
-          .setSelection(new TextSelection(tr.doc.resolve(tr.selection.$anchor.pos - 1/*start of inserted Paragraph*/)));
+          .setSelection(new TextSelection(tr.doc.resolve(Math.max(0/*don't go outside limits*/, tr.selection.$anchor.pos - 1/*start of inserted Paragraph*/))));
         dispatch(tr);
         return true/*event handled*/;
       } /* else -- not handling Enter */
@@ -96,7 +96,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
       // MarkHolder (i.e. to its right) by default.
       // (SEE: appendedTransaction above).
       if(event.key === 'ArrowLeft' && (posBeforeAnchorPos > 1/*not pressing ArrowLeft at the start of the document*/)) {
-        const posBeforeMarkHolder = posBeforeAnchorPos - 1;
+        const posBeforeMarkHolder = Math.max(0/*don't go outside limits*/, posBeforeAnchorPos - 1);
         tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeMarkHolder), tr.doc.resolve(posBeforeMarkHolder)));
         dispatch(tr);
         return false/*PM handles default selection*/;
@@ -181,7 +181,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
 const getUtilsFromView = (view: EditorView) => {
   const { dispatch } = view;
   const { tr } = view.state;
-  const posBeforeAnchorPos = view.state.selection.$anchor.pos - 1/*selection will be past the MarkHolder*/;
+  const posBeforeAnchorPos = Math.max(0/*don't go outside limits*/, view.state.selection.$anchor.pos - 1)/*selection will be past the MarkHolder*/;
 
   return { dispatch, tr, posBeforeAnchorPos };
 };
