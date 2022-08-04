@@ -40,6 +40,7 @@ export const InputTool: React.FC<Props> = ({ name, initialInputValue, inputPlace
       setInputColor('green');
       setTimeout(() => {
         if(!isMounted()) return/*nothing to do*/;
+
         setInputColor('#000')/*default*/;
       }, 1000/*ms*/);
     } /* else -- ignore */
