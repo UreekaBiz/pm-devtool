@@ -154,7 +154,7 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
 
       tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeAnchorPos), tr.doc.resolve(posBeforeAnchorPos + markHolder.nodeSize)))
         .replaceSelection(slice);
-      parseStoredMarks(storedMarks).forEach(storedMark => tr.addMark(posBeforeAnchorPos, posBeforeAnchorPos + slice.size, storedMark));
+      parseStoredMarks(view.state.schema, storedMarks).forEach(storedMark => tr.addMark(posBeforeAnchorPos, posBeforeAnchorPos + slice.size, storedMark));
       dispatch(tr);
       return true/*event handled*/;
     },
