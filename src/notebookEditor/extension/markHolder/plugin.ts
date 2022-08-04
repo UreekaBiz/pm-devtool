@@ -1,8 +1,8 @@
-import { Fragment, Node as ProseMirrorNode, Slice } from 'prosemirror-model';
+import { Fragment, Mark, Node as ProseMirrorNode, Slice } from 'prosemirror-model';
 import { Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { AttributeType, createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isMarkHolderNode, NodeName, NotebookSchemaType } from 'common';
+import { AttributeType, createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isMarkHolderNode, JSONMark, NodeName, NotebookSchemaType } from 'common';
 
 import { parseStoredMarks } from './util';
 
@@ -120,13 +120,22 @@ export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
         return false/*do not handle event*/;
       } /* else -- handle event */
 
-
+      // Apply the stored marks to the current selection
       const storedMarks = markHolder.attrs[AttributeType.StoredMarks];
       if(!storedMarks) return false/*nothing to do, do not handle event*/;
 
-      tr.setSelection(new TextSelection(tr.doc.resolve(posBeforeAnchorPos), tr.doc.resolve(posBeforeAnchorPos + markHolder.nodeSize)))
-        .setStoredMarks(parseStoredMarks(storedMarks))
-        .replaceSelectionWith(view.state.schema.text(event.key));
+      // Range to insert text and marks
+      const from = tr.doc.resolve(posBeforeAnchorPos).pos,
+            to = tr.doc.resolve(posBeforeAnchorPos + markHolder.nodeSize).pos;
+
+      // Create marks from the stored marks attribute
+      const JSONMarks = JSON.parse(storedMarks) as JSONMark[]/*by contract*/;
+      const marks = JSONMarks.map(markName => Mark.fromJSON(view.state.schema, markName));
+
+      // Insert the text and apply every stored mark into it
+      tr.insertText(event.key, from, to);
+      marks.forEach(mark => tr.addMark(from, to + 1/*exclusive selection -- add one to wrap whole text*/, mark));
+
       dispatch(tr);
       return true/*event handled*/;
     },
