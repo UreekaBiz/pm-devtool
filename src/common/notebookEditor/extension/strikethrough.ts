@@ -1,7 +1,6 @@
 import { Mark as ProseMirrorMark, MarkSpec } from 'prosemirror-model';
 
 import { AttributesTypeFromNodeSpecAttributes } from '../attribute';
-import { getMarkOutputSpec } from '../htmlRenderer/renderer';
 import { MarkRendererSpec } from '../htmlRenderer/type';
 import { JSONMark, MarkName } from '../mark';
 import { NotebookSchemaType } from '../schema';
@@ -20,7 +19,8 @@ export const StrikethroughMarkSpec: MarkSpec = {
 
   // NOTE: toDOM must be defined so that the Schema knows how to create it
   //       (SEE: schema.ts)
-  toDOM: (mark, inline) => getMarkOutputSpec(mark, mark.attrs ?? {/*empty object if attrs are undefined*/}, StrikethroughMarkRendererSpec, StrikethroughMarkSpec),
+  // NOTE: toDOM tag must match renderer tag
+  toDOM: (mark, inline) => ['s', StrikethroughMarkSpec],
 
   attrs: StrikethroughAttributesSpec,
 };
@@ -30,6 +30,7 @@ export const StrikethroughMarkRendererSpec: MarkRendererSpec<StrikethroughAttrib
   // NOTE: the tag is only used for the Editor. The HTML renderer uses the tag of
   //       the TextNode instead
   // SEE: ./renderer.ts
+  // NOTE: renderer tag must match toDOM tag
   tag: 's',
   render: { style: 'text-decoration: line-through;' },
 
