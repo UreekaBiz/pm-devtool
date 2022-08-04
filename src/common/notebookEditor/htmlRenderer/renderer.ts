@@ -120,9 +120,9 @@ const getMarkRenderAttributes = (mark: JSONMark, markRendererSpec: MarkRendererS
 //    compatibility problems. In this case a default rendered is used.
 // NOTE: it's defined as function to use function overloads.
 // SEE: https://www.typescriptlang.org/docs/handbook/declaration-files/by-example.html#overloaded-functions
-export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs?: Record<string, string | undefined>, rendererSpec?: NodeRendererSpec, nodeOrMarkSpec?: NodeSpec): HTMLAttributes;
-export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs?: Record<string, string | undefined>, rendererSpec?: MarkRendererSpec, nodeOrMarkSpec?: MarkSpec): HTMLAttributes;
-export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs: Record<string, string | undefined> = {}, rendererSpec?: NodeRendererSpec | MarkRendererSpec, nodeOrMarkSpec?: NodeSpec | MarkSpec): HTMLAttributes {
+export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs?: Record<string, string | undefined>, rendererSpec?: NodeRendererSpec<any>, nodeOrMarkSpec?: NodeSpec): HTMLAttributes;
+export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs?: Record<string, string | undefined>, rendererSpec?: MarkRendererSpec<any>, nodeOrMarkSpec?: MarkSpec): HTMLAttributes;
+export function getRenderAttributes(nodeOrMarkName: NodeName | MarkName, attrs: Record<string, string | undefined> = {}, rendererSpec?: NodeRendererSpec<any> | MarkRendererSpec, nodeOrMarkSpec?: NodeSpec | MarkSpec): HTMLAttributes {
   // If the renderer spec doesn't any default attributes to render use and empty
   // object.
   let renderAttributes = rendererSpec?.render ??  {};
@@ -177,7 +177,7 @@ export const getMarkOutputSpec = (mark: ProseMirrorMark, HTMLAttributes: Attribu
 
 // -- Util ------------------------------------------------------------------------
 // parse an object of Attributes into a string in the form of key="value"
-const renderAttributesToString = (attributes: HTMLAttributes) => Object.entries(attributes).reduce((acc, [key, value]) => `${acc} ${key}="${value}" `, '');
+export const renderAttributesToString = (attributes: HTMLAttributes) => Object.entries(attributes).reduce((acc, [key, value]) => `${acc} ${key}="${value}" `, '');
 
 // ................................................................................
 // gets the render Attributes for the given Attribute. It uses the corresponding
