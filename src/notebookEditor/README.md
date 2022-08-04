@@ -82,4 +82,6 @@ Thus, the Dispatch function in TipTap's command() method only has a
 semantic meaning relating to whether or not a can() was used previously.
 It will always end up passing the transaction to PM and thus be dispatched, which
 means that any changes to the Transaction should be made within the body of the
-if(dispatch) {/**/} block.
+if(dispatch) {/**/} block. In order to be consistent with the way ProseMirror uses
+commands, however, commands do dispatch(tr) at their end (as if they were
+ProseMirror commands)

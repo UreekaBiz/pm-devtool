@@ -194,6 +194,7 @@ export const replaceAndSelectNode = (node: ProseMirrorNode<NotebookSchemaType>, 
           nodeBeforeSize = nodeBefore?.nodeSize ?? 0/*no node before -- no size*/;
     const resolvedPos = tr.doc.resolve(tr.selection.anchor - nodeBeforeSize);
     tr.setSelection(new NodeSelection(resolvedPos));
+    dispatch(tr);
   } /* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
 
   return true/*command can be executed, selection can always be replaced*/;
