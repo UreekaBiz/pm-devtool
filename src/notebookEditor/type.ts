@@ -12,7 +12,6 @@ import { Strikethrough } from 'notebookEditor/extension/strikethrough/Strikethro
 import { Style } from 'notebookEditor/extension/style/Style';
 import { Text } from 'notebookEditor/extension/text/Text';
 import { TextStyle } from 'notebookEditor/extension/textStyle/TextStyle';
-import { UniqueNodeId } from 'notebookEditor/extension/uniqueNodeId/UniqueNodeId';
 
 // ********************************************************************************
 // defines the structure of the Editor
@@ -22,7 +21,22 @@ export const editorDefinition = {
   //       reflect the new changes. It is used to validate the document and perform
   //       operations on the server-side and must be always be in sync
   // SEE: /common/notebookEditor/prosemirror/schema.ts
-  extensions: [ Bold, DropCursor, Document, GapCursor, Heading, Highlight, History, NodeViewRemoval, MarkHolder, Paragraph, Strikethrough, Style, Text, TextStyle, UniqueNodeId ],
+  extensions: [
+    Bold,
+    DropCursor,
+    Document,
+    GapCursor,
+    Heading,
+    Highlight,
+    History,
+    NodeViewRemoval,
+    MarkHolder,
+    Paragraph,
+    Strikethrough,
+    Style,
+    Text,
+    TextStyle,
+  ],
   editorProps: { attributes: { class: 'Editor'/*SEE: /index.css*/ } },
 
   autofocus: true/*initially has focus*/,
