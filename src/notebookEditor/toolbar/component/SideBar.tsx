@@ -38,7 +38,7 @@ export const SideBar = () => {
   const handleDepthSelection = useCallback((depth: SelectionDepth) => { setSelectedDepth(depth); }, []);
 
   // == UI ========================================================================
- // Create a toolbar for each ascendant node on the current selection.
+  // Create a toolbar for each ascendant node on the current selection.
   const Toolbars = useMemo(() => {
     const toolbars: JSX.Element[] = [];
 
@@ -50,7 +50,7 @@ export const SideBar = () => {
 
       const markName = getMarkName(mark);
       toolbars.push(<Toolbar
-                      key={i}
+                      key={`mark-toolbar-${i}`}
                       depth={undefined}
                       nodeOrMarkName={markName}
                       onSelection={handleDepthSelection}
@@ -68,7 +68,7 @@ export const SideBar = () => {
       const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
       const nodeName = getNodeName(node);
       toolbars.push(<Toolbar
-                      key={i}
+                      key={`node-toolbar-${i}`}
                       depth={depth}
                       nodeOrMarkName={nodeName}
                       onSelection={handleDepthSelection}
