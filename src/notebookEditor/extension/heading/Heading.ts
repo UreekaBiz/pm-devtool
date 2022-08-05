@@ -1,12 +1,13 @@
 import { Node, InputRule } from '@tiptap/core';
 
-import { createBoldMark, createMarkHolderNode, getHeadingLevelFromTag, getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, SetAttributeType } from 'common';
+import { createBoldMark, createMarkHolderNode, getHeadingLevelFromTag, getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, SetAttributeType, generateNodeId } from 'common';
 
 import { setAttributeParsingBehavior } from 'notebookEditor/extension/util/attribute';
 import { NoStorage } from 'notebookEditor/model/type';
 
 import { setHeadingCommand, toggleHeadingCommand } from './command';
-import { createDefaultHeadingAttributes, HeadingOptions, HEADING_ID } from './type';
+import { HeadingPlugin } from './plugin';
+import { createDefaultHeadingAttributes, HeadingOptions } from './type';
 
 // NOTE: this Extension leverages the UniqueNodeId extension
 // ********************************************************************************
@@ -17,7 +18,8 @@ export const Heading = Node.create<HeadingOptions, NoStorage>({
   // -- Attribute -----------------------------------------------------------------
   addAttributes() {
     return {
-      [AttributeType.Id]: setAttributeParsingBehavior(AttributeType.Id, SetAttributeType.STRING, HEADING_ID),
+      // Creates a new id for the node when it is created.
+      [AttributeType.Id]: { parseHTML: () => generateNodeId() },
       [AttributeType.Level]: { default: HeadingLevel.One, parseHTML: element => getHeadingLevelFromTag(element.tagName) },
 
       [AttributeType.FontSize]: setAttributeParsingBehavior(AttributeType.FontSize, SetAttributeType.STRING),
@@ -53,6 +55,9 @@ export const Heading = Node.create<HeadingOptions, NoStorage>({
       ...items, ...{ [`Mod-Alt-${level}`]: () => this.editor.commands.setHeading(createDefaultHeadingAttributes(level)) },
     }), {});
   },
+
+  // -- Plugin --------------------------------------------------------------------
+  addProseMirrorPlugins() { return [ HeadingPlugin()]; },
 
   // -- Input ---------------------------------------------------------------------
   // Create a Heading Node if the user types '#' a certain amount of times and
