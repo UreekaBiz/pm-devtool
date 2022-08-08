@@ -19,7 +19,7 @@ export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.TextColor);
   const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
 
-  // == Handlers ==================================================================
+  // == Handler ===================================================================
   const handleChange = (value: string, focusEditor?: boolean) => {
     editor.commands.setStyle(AttributeType.TextColor, value, depth);
 

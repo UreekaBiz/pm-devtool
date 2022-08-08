@@ -35,7 +35,7 @@ export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) =>
     return () => { document.removeEventListener('keydown', handleKeyDown); };
   }, [isOpen]);
 
-  // == Handlers ==================================================================
+  // == Handler ===================================================================
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 

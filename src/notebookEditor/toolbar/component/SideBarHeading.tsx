@@ -12,7 +12,7 @@ export const SideBarHeading: React.FC<Props> = ({ background }) => {
   // == State =====================================================================
   const isLoading = false/*Temporary placeholder*/;
 
-  // == Handlers ==================================================================
+  // == Handler ===================================================================
   const handleGoToNotebookPage = () => {/*currently nothing*/};
   const handleCreateNewNotebook = () => {/*currently nothing*/};
   const handleLogOut = () => {/*currently nothing*/};
