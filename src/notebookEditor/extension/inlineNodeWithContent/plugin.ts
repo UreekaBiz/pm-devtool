@@ -31,7 +31,7 @@ class InlineNodeWithContent {
 // == Plugin ======================================================================
 const inlineNodeWithContentKey = new PluginKey<InlineNodeWithContent, NotebookSchemaType>('inlineNodeWithContentKey');
 export const InlineNodeWithContentPlugin = () => {
-  let composingInput = false;
+  let composingInput = false/*default*/;
 
   const plugin = new Plugin<InlineNodeWithContent, NotebookSchemaType>({
     // -- Setup -------------------------------------------------------------------
@@ -56,6 +56,7 @@ export const InlineNodeWithContentPlugin = () => {
             composingInput = true;
           } /* else -- not in between inline Nodes with Content, let PM handle the event */
 
+          composingInput = false/*by definition*/;
           return false/*let PM handle the event*/;
         },
 
@@ -66,6 +67,9 @@ export const InlineNodeWithContentPlugin = () => {
         compositionend: (view: EditorView, event: CompositionEvent) => {
           try {
             if(composingInput) {
+
+              // REF: https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+              // insert text before next browser repaint
               requestAnimationFrame(() => {
                 const state = getInlineNodeWithContentState(view.state);
                 if(state.inBetweenInlineNodes) {
@@ -74,7 +78,7 @@ export const InlineNodeWithContentPlugin = () => {
                 } /* else -- not in between inline Nodes with Content, do nothing */
               });
 
-              return true;
+              return true/*event handled*/;
             } /* else -- not composing an input, let PM handle the event */
           } catch(error) {
             console.warn(`Something went wrong while inserting composed input: ${error}`);
@@ -84,15 +88,16 @@ export const InlineNodeWithContentPlugin = () => {
           return false/*let PM handle the event*/;
         },
 
-        // ensure that the resulting input from a composition gets inserted into
-        // the editor correctly
+        // REF: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event
+        // ensure that typing in between inline Nodes with Content gets
+        // the input inserted correctly into the editor
         beforeinput: (view: EditorView, event: InputEvent) => {
           const state = getInlineNodeWithContentState(view.state);
-          if(state.inBetweenInlineNodes && event.data && !composingInput) {
+          if(state.inBetweenInlineNodes && event.data && !composingInput/*if input is being composed, handlers above deal with it*/) {
             event.preventDefault();
             view.dispatch(view.state.tr.insertText(event.data, view.state.selection.from));
 
-            return true;
+            return true/*event handled*/;
           } /* else -- not in between inline Nodes with Content, event has no data, or not composing an input */
 
           return false/*let PM handle the event*/;
@@ -107,7 +112,7 @@ export const InlineNodeWithContentPlugin = () => {
           const { pos: anchorPos } = state.selection.$anchor;
 
           const leftSpan = document.createElement('span'),
-                leftDecoration = Decoration.widget(anchorPos, leftSpan, { side: -1/*appear before the next decoration*/ });
+                leftDecoration = Decoration.widget(anchorPos, leftSpan, { side: -1/*appear before the next Decoration*/ });
 
           const rightSpan = document.createElement('span'),
                 rightDecoration = Decoration.widget(anchorPos, rightSpan);
@@ -119,9 +124,9 @@ export const InlineNodeWithContentPlugin = () => {
           });
 
           return DecorationSet.create(state.doc, [leftDecoration, rightDecoration]);
-        } /* else -- not in between inline Nodes with Content, do not add any extra decorations */
+        } /* else -- not in between inline Nodes with Content, do not add any extra Decorations */
 
-        return DecorationSet.empty;
+        return DecorationSet.empty/*no Decorations to add*/;
       },
 
     },
