@@ -12,7 +12,6 @@ export const CLICKABLE_CLASS = 'clickable';
 export const ICON_BUTTON_CLASS = 'iconButton';
 
 // .. Node ........................................................................
-export const INLINE_NODE_CONTAINER_CLASS = 'inlineNodeContainer';
 export const SELECTED_TEXT_CLASS = 'selected_text';
 
 // .. Chip ........................................................................

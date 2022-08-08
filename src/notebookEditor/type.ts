@@ -5,6 +5,7 @@ import { GapCursor } from 'notebookEditor/extension/gapcursor/GapCursor';
 import { Heading } from 'notebookEditor/extension/heading/Heading';
 import { Highlight } from 'notebookEditor/extension/highlight/Highlight';
 import { History } from 'notebookEditor/extension/history/History';
+import { InlineNodeWithContent } from 'notebookEditor/extension/inlineNodeWithContent/InlineNodeWithContent';
 import { NodeViewRemoval } from 'notebookEditor/extension/nodeViewRemoval/NodeViewRemoval';
 import { MarkHolder } from 'notebookEditor/extension/markHolder/MarkHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph/Paragraph';
@@ -29,6 +30,7 @@ export const editorDefinition = {
     Heading,
     Highlight,
     History,
+    InlineNodeWithContent,
     NodeViewRemoval,
     MarkHolder,
     Paragraph,

@@ -6,6 +6,7 @@ export * from './htmlRenderer/type';
 export * from './extension/bold';
 export * from './extension/document';
 export * from './extension/heading';
+export * from './extension/inlineNodeWithContent';
 export * from './extension/markHolder';
 export * from './extension/paragraph';
 export * from './extension/strikethrough';
