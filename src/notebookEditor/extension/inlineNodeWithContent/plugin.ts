@@ -1,5 +1,5 @@
-import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 
@@ -7,6 +7,7 @@ import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 // == Class =======================================================================
 class InlineNodeWithContent {
   constructor(public inBetweenInlineNodes: boolean) {
+    // whether the selection is currently in between two inline Nodes with Content
     this.inBetweenInlineNodes = inBetweenInlineNodes;
   }
 
