@@ -11,7 +11,7 @@ import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 export const EditorUserInteractions = () => {
   const editor = useValidatedEditor();
 
- // == Effects ===================================================================
+ // == Effect ====================================================================
   // Handles shortcuts with the editor that requires interaction with a React state.
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {

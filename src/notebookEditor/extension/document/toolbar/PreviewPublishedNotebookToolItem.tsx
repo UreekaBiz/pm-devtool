@@ -15,7 +15,7 @@ export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) =>
   // == State =====================================================================
   const [isOpen, setIsOpen] = useState(false/*by contract*/);
 
-  // == Effects ===================================================================
+  // == Effect ====================================================================
   // Adds a listener to the window to toggle the modal state based on the key
   // pressed. A Special sequence of keys is used to toggle the state of isOpen. It
   // consists on CTRL + ALT/Option + ,
