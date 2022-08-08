@@ -53,10 +53,11 @@ export const InlineNodeWithContentPlugin = () => {
           const state = getInlineNodeWithContentState(view.state);
 
           if(state.inBetweenInlineNodes) {
-            composingInput = true;
+            composingInput = true/*an input is being composed in between inline Nodes with Content*/;
           } /* else -- not in between inline Nodes with Content, let PM handle the event */
 
-          composingInput = false/*by definition*/;
+          // NOTE: the compositionend event will set the flag back to false by contract
+          //       (SEE: compositionend below)
           return false/*let PM handle the event*/;
         },
 
@@ -64,10 +65,9 @@ export const InlineNodeWithContentPlugin = () => {
         //      ensure there are no duplicate inputs when the composition event
         //      ends, (i.e. the right input is set, and it is only set once into
         //      the editor)
-        compositionend: (view: EditorView, event: CompositionEvent) => {
+        compositionend: (view: EditorView, event: any) => {
           try {
             if(composingInput) {
-
               // REF: https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
               // insert text before next browser repaint
               requestAnimationFrame(() => {
