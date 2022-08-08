@@ -23,8 +23,8 @@ class InlineNodeWithContent {
       return this;
     } /* else -- not in the middle of two inline Nodes with Content */
 
-    this.inBetweenInlineNodes = false;
-    return this;
+    this.inBetweenInlineNodes = false/*default*/;
+    return this/*default*/;
   }
 }
 
