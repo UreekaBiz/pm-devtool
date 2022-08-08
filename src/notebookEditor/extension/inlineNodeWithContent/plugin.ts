@@ -5,6 +5,7 @@ import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 
 // ********************************************************************************
 // == Class =======================================================================
+// FIXME: Explain the purpose of this plugin
 class InlineNodeWithContent {
   constructor(public inBetweenInlineNodes: boolean) {
     this.inBetweenInlineNodes = inBetweenInlineNodes;
@@ -31,6 +32,7 @@ class InlineNodeWithContent {
 // == Plugin ======================================================================
 const inlineNodeWithContentKey = new PluginKey<InlineNodeWithContent, NotebookSchemaType>('inlineNodeWithContentKey');
 export const InlineNodeWithContentPlugin = () => {
+  // FIXME: What does this flag represent?
   let composingInput = false;
 
   const plugin = new Plugin<InlineNodeWithContent, NotebookSchemaType>({
@@ -66,6 +68,7 @@ export const InlineNodeWithContentPlugin = () => {
         compositionend: (view: EditorView, event: CompositionEvent) => {
           try {
             if(composingInput) {
+              // FIXME: Why are we using requestAnimationFrame?
               requestAnimationFrame(() => {
                 const state = getInlineNodeWithContentState(view.state);
                 if(state.inBetweenInlineNodes) {
@@ -74,12 +77,12 @@ export const InlineNodeWithContentPlugin = () => {
                 } /* else -- not in between inline Nodes with Content, do nothing */
               });
 
-              return true;
+              return true/*handled*/;
             } /* else -- not composing an input, let PM handle the event */
           } catch(error) {
             console.warn(`Something went wrong while inserting composed input: ${error}`);
           } finally {
-            composingInput = false/*default*/;
+            composingInput = false/*by definition*/;
           }
           return false/*let PM handle the event*/;
         },
@@ -88,11 +91,12 @@ export const InlineNodeWithContentPlugin = () => {
         // the editor correctly
         beforeinput: (view: EditorView, event: InputEvent) => {
           const state = getInlineNodeWithContentState(view.state);
+
           if(state.inBetweenInlineNodes && event.data && !composingInput) {
             event.preventDefault();
             view.dispatch(view.state.tr.insertText(event.data, view.state.selection.from));
 
-            return true;
+            return true/*handled*/;
           } /* else -- not in between inline Nodes with Content, event has no data, or not composing an input */
 
           return false/*let PM handle the event*/;
@@ -103,6 +107,7 @@ export const InlineNodeWithContentPlugin = () => {
       // Content so that the Cursor does not get displayed incorrectly
       decorations(state: EditorState) {
         const pluginState = getInlineNodeWithContentState(state);
+
         if(pluginState.inBetweenInlineNodes) {
           const { pos: anchorPos } = state.selection.$anchor;
 
@@ -112,7 +117,7 @@ export const InlineNodeWithContentPlugin = () => {
           const rightSpan = document.createElement('span'),
                 rightDecoration = Decoration.widget(anchorPos, rightSpan);
 
-          // make spans non editable right after the view is updated
+          // NOTE: Using setTimeout to make the change happen after the view is updated
           setTimeout(() => {
             leftSpan.setAttribute('contenteditable', 'true');
             rightSpan.setAttribute('contenteditable', 'true');

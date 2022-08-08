@@ -5,7 +5,7 @@ import { ExtensionName, NoOptions, NoStorage } from 'notebookEditor/model/type';
 import { InlineNodeWithContentPlugin } from './plugin';
 
 // ********************************************************************************
-// NOTE: this Extension implements common behavior to all inline Nodes with Content
+// implements common behavior to all inline Nodes with Content
 // NOTE: All common attributes and methods shared across inline Nodes with Content
 //       are defined in its corresponding common file
 //       (SEE: src/common/notebookEditor/extension/inlineNodeWithContent.ts)
