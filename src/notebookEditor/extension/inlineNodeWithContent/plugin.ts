@@ -1,5 +1,5 @@
-import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
+import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 
@@ -8,6 +8,7 @@ import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 // FIXME: Explain the purpose of this plugin
 class InlineNodeWithContent {
   constructor(public inBetweenInlineNodes: boolean) {
+    // whether the selection is currently in between two inline Nodes with Content
     this.inBetweenInlineNodes = inBetweenInlineNodes;
   }
 
@@ -24,8 +25,8 @@ class InlineNodeWithContent {
       return this;
     } /* else -- not in the middle of two inline Nodes with Content */
 
-    this.inBetweenInlineNodes = false;
-    return this;
+    this.inBetweenInlineNodes = false/*default*/;
+    return this/*default*/;
   }
 }
 
@@ -33,7 +34,7 @@ class InlineNodeWithContent {
 const inlineNodeWithContentKey = new PluginKey<InlineNodeWithContent, NotebookSchemaType>('inlineNodeWithContentKey');
 export const InlineNodeWithContentPlugin = () => {
   // FIXME: What does this flag represent?
-  let composingInput = false;
+  let composingInput = false/*default*/;
 
   const plugin = new Plugin<InlineNodeWithContent, NotebookSchemaType>({
     // -- Setup -------------------------------------------------------------------
@@ -55,9 +56,11 @@ export const InlineNodeWithContentPlugin = () => {
           const state = getInlineNodeWithContentState(view.state);
 
           if(state.inBetweenInlineNodes) {
-            composingInput = true;
+            composingInput = true/*an input is being composed in between inline Nodes with Content*/;
           } /* else -- not in between inline Nodes with Content, let PM handle the event */
 
+          // NOTE: the compositionend event will set the flag back to false by contract
+          //       (SEE: compositionend below)
           return false/*let PM handle the event*/;
         },
 
@@ -65,10 +68,11 @@ export const InlineNodeWithContentPlugin = () => {
         //      ensure there are no duplicate inputs when the composition event
         //      ends, (i.e. the right input is set, and it is only set once into
         //      the editor)
-        compositionend: (view: EditorView, event: CompositionEvent) => {
+        compositionend: (view: EditorView, event: any) => {
           try {
             if(composingInput) {
-              // FIXME: Why are we using requestAnimationFrame?
+              // REF: https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+              // insert text before next browser repaint
               requestAnimationFrame(() => {
                 const state = getInlineNodeWithContentState(view.state);
                 if(state.inBetweenInlineNodes) {
@@ -77,7 +81,7 @@ export const InlineNodeWithContentPlugin = () => {
                 } /* else -- not in between inline Nodes with Content, do nothing */
               });
 
-              return true/*handled*/;
+              return true/*event handled*/;
             } /* else -- not composing an input, let PM handle the event */
           } catch(error) {
             console.warn(`Something went wrong while inserting composed input: ${error}`);
@@ -87,16 +91,17 @@ export const InlineNodeWithContentPlugin = () => {
           return false/*let PM handle the event*/;
         },
 
-        // ensure that the resulting input from a composition gets inserted into
-        // the editor correctly
+        // REF: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/beforeinput_event
+        // ensure that typing in between inline Nodes with Content gets
+        // the input inserted correctly into the editor
         beforeinput: (view: EditorView, event: InputEvent) => {
           const state = getInlineNodeWithContentState(view.state);
 
-          if(state.inBetweenInlineNodes && event.data && !composingInput) {
+          if(state.inBetweenInlineNodes && event.data && !composingInput/*if input is being composed, handlers above deal with it*/) {
             event.preventDefault();
             view.dispatch(view.state.tr.insertText(event.data, view.state.selection.from));
 
-            return true/*handled*/;
+            return true/*event handled*/;
           } /* else -- not in between inline Nodes with Content, event has no data, or not composing an input */
 
           return false/*let PM handle the event*/;
@@ -112,7 +117,7 @@ export const InlineNodeWithContentPlugin = () => {
           const { pos: anchorPos } = state.selection.$anchor;
 
           const leftSpan = document.createElement('span'),
-                leftDecoration = Decoration.widget(anchorPos, leftSpan, { side: -1/*appear before the next decoration*/ });
+                leftDecoration = Decoration.widget(anchorPos, leftSpan, { side: -1/*appear before the next Decoration*/ });
 
           const rightSpan = document.createElement('span'),
                 rightDecoration = Decoration.widget(anchorPos, rightSpan);
@@ -124,9 +129,9 @@ export const InlineNodeWithContentPlugin = () => {
           });
 
           return DecorationSet.create(state.doc, [leftDecoration, rightDecoration]);
-        } /* else -- not in between inline Nodes with Content, do not add any extra decorations */
+        } /* else -- not in between inline Nodes with Content, do not add any extra Decorations */
 
-        return DecorationSet.empty;
+        return DecorationSet.empty/*no Decorations to add*/;
       },
 
     },

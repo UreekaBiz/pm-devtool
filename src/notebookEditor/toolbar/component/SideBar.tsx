@@ -8,8 +8,8 @@ import { getAllAscendantsFromSelection } from 'notebookEditor/extension/util/nod
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { SelectionDepth } from 'notebookEditor/model/type';
 
+import { getToolbar } from '../toolbar';
 import { Debugger } from './Debugger';
-import { SideBarHeading } from './SideBarHeading';
 import { Toolbar } from './Toolbar';
 import { ToolbarBreadcrumbs } from './ToolbarBreadcrumbs';
 
@@ -49,12 +49,17 @@ export const SideBar = () => {
       if(!mark) return undefined/*nothing to do*/;
 
       const markName = getMarkName(mark);
+      const toolbar = getToolbar(markName);
+      // Only render toolbar if it exists and allows it with shouldShow
+      if(!toolbar || (toolbar.shouldShow && !toolbar.shouldShow(editor, undefined))) return/*nothing to do*/;
+
       toolbars.push(<Toolbar
                       key={`mark-toolbar-${i}`}
                       depth={undefined}
                       nodeOrMarkName={markName}
-                      onSelection={handleDepthSelection}
                       selectedDepth={selectedDepth}
+                      toolbar={toolbar}
+                      onSelection={handleDepthSelection}
                     />);
       return;
     });
@@ -67,21 +72,28 @@ export const SideBar = () => {
 
       const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
       const nodeName = getNodeName(node);
+      const toolbar = getToolbar(nodeName);
+      // Only render toolbar if it exists and allows it with shouldShow
+      if(!toolbar || (toolbar.shouldShow && !toolbar.shouldShow(editor, undefined))) return/*nothing to do*/;
+
       toolbars.push(<Toolbar
                       key={`node-toolbar-${i}`}
                       depth={depth}
                       nodeOrMarkName={nodeName}
-                      onSelection={handleDepthSelection}
                       selectedDepth={selectedDepth}
+                      toolbar={toolbar}
+                      onSelection={handleDepthSelection}
                     />);
       return/*nothing else to do*/;
     });
     return toolbars;
-  }, [editor.state, handleDepthSelection, selectedDepth]);
+    // NOTE: This value depend on the editor state but it's not being explicitly
+    //       used.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, editor.state, handleDepthSelection, selectedDepth]);
 
   return (
     <Flex flexDir='column' minH={0} width='100%' height='100%' background='#FCFCFC' borderLeft='1px solid' borderColor='gray.300' overflow='hidden'>
-      <SideBarHeading background='#F3F3F3' />
       <ToolbarBreadcrumbs onSelection={handleDepthSelection} selectedDepth={selectedDepth} />
       <Flex flexDir='column' flex='1 1'>
         <VStack divider={<Divider />} spacing={0} flex='1 1 0' alignItems='stretch' overflowY='scroll'>
