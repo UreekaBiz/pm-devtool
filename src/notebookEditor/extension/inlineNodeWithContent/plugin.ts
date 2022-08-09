@@ -4,8 +4,13 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 
 // ********************************************************************************
+// REF: https://discuss.prosemirror.net/t/cursor-appears-in-the-wrong-position-in-chrome-98/4409
+// this Plugin prevents wrong cursor position when the Selection is between two
+// inline Nodes with Content, which is a bug that happens on Chrome
+// (SEE: REF above) by adding two empty span tags in between them through Node
+//  Decorations, and also managing the behavior of typing in between them
+
 // == Class =======================================================================
-// FIXME: Explain the purpose of this plugin
 class InlineNodeWithContent {
   constructor(public inBetweenInlineNodes: boolean) {
     // whether the selection is currently in between two inline Nodes with Content
@@ -33,7 +38,8 @@ class InlineNodeWithContent {
 // == Plugin ======================================================================
 const inlineNodeWithContentKey = new PluginKey<InlineNodeWithContent, NotebookSchemaType>('inlineNodeWithContentKey');
 export const InlineNodeWithContentPlugin = () => {
-  // FIXME: What does this flag represent?
+  // differentiate between the state where the User is composing an input
+  // (e.g. inserting a special character after inserting a '~' symbol)
   let composingInput = false/*default*/;
 
   const plugin = new Plugin<InlineNodeWithContent, NotebookSchemaType>({
@@ -86,7 +92,7 @@ export const InlineNodeWithContentPlugin = () => {
           } catch(error) {
             console.warn(`Something went wrong while inserting composed input: ${error}`);
           } finally {
-            composingInput = false/*by definition*/;
+            composingInput = false/*default*/;
           }
           return false/*let PM handle the event*/;
         },
