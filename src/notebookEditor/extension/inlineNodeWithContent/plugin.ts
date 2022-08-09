@@ -14,9 +14,8 @@ import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 class InlineNodeWithContent {
   public inBetweenInlineNodes: boolean;
 
-  constructor(inBetweenInlineNodes: boolean) {
-    // whether the selection is currently in between two inline Nodes with Content
-    this.inBetweenInlineNodes = inBetweenInlineNodes;
+  constructor() {
+    this.inBetweenInlineNodes = false;
   }
 
   apply(tr: Transaction, thisPluginState: InlineNodeWithContent, oldEditorState: EditorState, newEditorState: EditorState) { /*produce a new plugin state*/
@@ -50,7 +49,7 @@ export const InlineNodeWithContentPlugin = () => {
 
     // -- State -------------------------------------------------------------------
     state: {
-      init(_, state) { return new InlineNodeWithContent(false/*default not in between inline Nodes with Content */); },
+      init(_, state) { return new InlineNodeWithContent(/*default not in between inline Nodes with Content*/); },
       apply(transaction, thisPluginState, oldState, newState) { return thisPluginState.apply(transaction, thisPluginState, oldState, newState); },
     },
 
