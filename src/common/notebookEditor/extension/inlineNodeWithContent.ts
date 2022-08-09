@@ -12,18 +12,5 @@ import { NotebookSchemaType } from '../schema';
 // -- Node Type -------------------------------------------------------------------
 export const isInlineNodeWithContent = (node: ProseMirrorNode<NotebookSchemaType>): boolean => node.isInline && !node.isText;
 
-// == Util ========================================================================
-/**
- * Creates an inline {@link HTMLSpanElement} with the required
- * attributes that enable it to correctly display an inline node with content
- */
- export const createInlineNodeContainer = (): HTMLSpanElement => {
-  const inlineContainer = document.createElement('span');
-        inlineContainer.classList.add(INLINE_NODE_CONTAINER_CLASS);
-        inlineContainer.setAttribute('contentEditable', 'false');
-
-  return inlineContainer;
-};
-
 // == CSS =========================================================================
-const INLINE_NODE_CONTAINER_CLASS = 'inlineNodeContainer';
+export const INLINE_NODE_CONTAINER_CLASS = 'inlineNodeContainer';
