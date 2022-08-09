@@ -12,7 +12,9 @@ import { isInlineNodeWithContent, NotebookSchemaType } from 'common';
 
 // == Class =======================================================================
 class InlineNodeWithContent {
-  constructor(public inBetweenInlineNodes: boolean) {
+  public inBetweenInlineNodes: boolean;
+
+  constructor(inBetweenInlineNodes: boolean) {
     // whether the selection is currently in between two inline Nodes with Content
     this.inBetweenInlineNodes = inBetweenInlineNodes;
   }
