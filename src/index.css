@@ -26,6 +26,13 @@
   font-variant-ligatures: none;
   font-feature-settings: "liga" 0;
 }
+
+/* -- Actionable Node -------------------------------------------------------------- */
+.Editor-actionable [actionable-node]:hover {
+  cursor: pointer;
+}
+
+/* -- Inline Node ----------------------------------------------------------------- */
 .inlineNodeContainer { position: relative; display: inline-block; }
 .ProseMirror-selectednode > span/*target inline nodes with content (e.g. asyncNodes)*/{
   outline: 1px solid #666;
