@@ -14,7 +14,7 @@ export const Editor: React.FC = () => {
   const { editor } = useNotebookEditor();
 
   // == State =====================================================================
-  const [isActionModifierPressed, setIsActionModifierPressed] = useState(false);
+  const [isActionModifierPressed, setIsActionModifierPressed] = useState(false/*by contract*/);
 
   // == Effect ====================================================================
   // add the actionable class to the Editor if the CMD or the CTRL keys are
