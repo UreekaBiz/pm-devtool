@@ -1,7 +1,6 @@
 import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { Attributes, HTMLAttributes } from '../attribute';
-import { NotebookDocumentContent } from '../document';
 import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
@@ -11,7 +10,7 @@ import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
 import { getMarkName, JSONMark, MarkName } from '../mark';
-import { contentToJSONNode, getNodeName, JSONNode, NodeName } from '../node';
+import { getNodeName, JSONNode, NodeName } from '../node';
 import { MarkSpecs, NodeSpecs } from '../schema';
 import { getRenderAttributes, mergeAttributes } from './attribute';
 import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK_TYPE, DATA_NODE_TYPE } from './type';
@@ -33,13 +32,7 @@ export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
 };
 
 // ================================================================================
-export const convertContentToHTML = (content: NotebookDocumentContent): HTMLString => {
-  const rootNode = contentToJSONNode(content);
-
-  return convertJSONContentToHTML(rootNode);
-};
-
-export const convertJSONContentToHTML = (node: JSONNode): HTMLString => {
+export const convertJSONContentToHTML = (node: JSONNode, lastChild: boolean): HTMLString => {
   const { type, content, text } = node;
   const nodeRendererSpec = NodeRendererSpecs[type];
 
@@ -52,35 +45,37 @@ export const convertJSONContentToHTML = (node: JSONNode): HTMLString => {
     // Replace last newline with a br tag. This tag is used to mimic the
     // functionality of ProseMirror, this includes the same class name as the <br>
     // in ProseMirror
-    if(text.at(text.length - 1) === '\n') return `${text}<br class="ProseMirror-trailingBreak">`;
+    if(text.at(text.length - 1) === '\n' && lastChild/*only add break line if it's last child*/) return `${text}<br class="ProseMirror-trailingBreak">`;
 
     return text;
   } // else -- is not text node
 
   // gets the direct children Nodes using the Node content. An empty string is
   // equivalent to having no content when rendering the HTML.
-  let children = content ? content.reduce((acc, child) => `${acc}${convertJSONContentToHTML(child)}`, '') : ''/*no children*/;
+  let children = content ? content.reduce((acc, child, index) => `${acc}${convertJSONContentToHTML(child, index === content.length - 1)}`, '') : ''/*no children*/;
 
+  let nodeContent;
   // in the case that the Node is a Node View Renderer let the Node renderer use
   // its own render function to render the Node and its children.
-  if(nodeRendererSpec.isNodeViewRenderer) return nodeRendererSpec.renderNodeView(node.attrs ?? {/*empty attributes*/}, children)/*nothing else to do*/;
+  if(nodeRendererSpec.isNodeViewRenderer){
+    nodeContent = nodeRendererSpec.renderNodeView(node.attrs ?? {/*empty attributes*/}, children);
+  } else {
+    // NOTE: in the Editor, a paragraph with no content is displayed as having a
+    //       br node as it only child, this is an attempt to mimic that functionality
+    //       and keep the HTML output consistent
+    if(isParagraphJSONNode(node) && children.length < 1) children = `<br />`;
 
-  // NOTE: in the Editor, a paragraph with no content is displayed as having a
-  //       br node as it only child, this is an attempt to mimic that functionality
-  //       and keep the HTML output consistent
-  if(isParagraphJSONNode(node) && children.length < 1) children = `<br />`;
+    const tag = getRenderTag(node.attrs, nodeRendererSpec);
+    const nodeSpec = NodeSpecs[node.type];
+    const nodeRenderAttributes = getNodeRenderAttributes(node, nodeRendererSpec, nodeSpec);
+    const stringAttributes = renderAttributesToString(nodeRenderAttributes);
 
-  const tag = getRenderTag(node.attrs, nodeRendererSpec);
-  const nodeSpec = NodeSpecs[node.type];
-  const nodeRenderAttributes = getNodeRenderAttributes(node, nodeRendererSpec, nodeSpec);
-  const stringAttributes = renderAttributesToString(nodeRenderAttributes);
-
-  const nodeContent = `<${tag} ${DATA_NODE_TYPE}="${node.type}" ${stringAttributes}>${text ?? ''}${children}</${tag}>`;
+    nodeContent = `<${tag} ${DATA_NODE_TYPE}="${node.type}" ${stringAttributes}>${text ?? ''}${children}</${tag}>`;
+  }
 
   // Wraps the Node Content in the given wraps if the Node has any.
   if(!node.marks) return nodeContent/*nothing else to do*/;
   return node.marks.reduce((acc, mark) => convertJSONMarkToHTML(mark, acc), nodeContent/*children to wrap*/);
-
 };
 
 // Converts the Mark into a HTMLString and  wraps the given children in it
