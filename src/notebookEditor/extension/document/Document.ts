@@ -27,7 +27,7 @@ export const Document = Node.create<NoOptions, NoStorage>({
 
             return false/*allow regular event handling*/;
           },
-        }
+        },
       }),
     ];
   },
