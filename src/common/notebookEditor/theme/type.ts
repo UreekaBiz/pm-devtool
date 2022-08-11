@@ -1,4 +1,8 @@
-import { Attributes, AttributeType, HeadingLevel, MarkName, NodeName, DATA_NODE_TYPE } from 'common';
+import { Attributes, AttributeType } from '../attribute';
+import { HeadingLevel } from '../extension/heading';
+import { DATA_NODE_TYPE } from '../htmlRenderer/type';
+import { MarkName } from '../mark';
+import { NodeName } from '../node';
 
 // ********************************************************************************
 // == Element =====================================================================

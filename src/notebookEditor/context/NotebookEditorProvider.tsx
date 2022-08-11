@@ -1,7 +1,7 @@
 import { useEditor } from '@tiptap/react';
 import { useEffect } from 'react';
 
-import { notebookEditorTheme } from 'notebookEditor/extension/theme/theme';
+import { setThemeStylesheet } from 'notebookEditor/theme/theme';
 import { editorDefinition } from 'notebookEditor/type';
 
 import { NotebookEditorContext } from './NotebookEditorContext';
@@ -13,7 +13,7 @@ export const NotebookEditorProvider: React.FC<Props> = ({ children }) => {
 
   // sets the initial Theme when the component mounts
   useEffect(() => {
-    notebookEditorTheme.setThemeStylesheet()/*sync stylesheet*/;
+    setThemeStylesheet()/*sync stylesheet*/;
   }, [/*only on mount/unmount*/]);
 
   return <NotebookEditorContext.Provider value={{ editor }}>{children}</NotebookEditorContext.Provider>;

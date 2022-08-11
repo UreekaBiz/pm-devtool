@@ -1,8 +1,11 @@
-import { camelToKebabCase, AttributeType, HeadingLevel, MarkName, NodeName, DATA_NODE_TYPE } from 'common';
-
+import { camelToKebabCase } from '../../util';
+import { AttributeType } from '../attribute';
+import { HeadingLevel } from '../extension/heading';
+import { DATA_NODE_TYPE } from '../htmlRenderer/type';
+import { MarkName } from '../mark';
+import { NodeName } from '../node';
 import { CustomSelector, DefaultTheme, Theme, ThemeElement } from './type';
 
-// NOTE: cannot be 'common' since it relies on `document` (i.e. it is client-only)
 // ********************************************************************************
 // == Class =======================================================================
 // A singleton that holds the Themes used on the Editor
@@ -23,29 +26,9 @@ class NotebookEditorTheme {
   /** Sets a new Theme */
   public setTheme(theme: Theme) {
     this.theme = theme;
-    this.setThemeStylesheet()/*sync stylesheet*/;
   }
 
-  // updates the theme stylesheet with the current Theme. This function must be
-  // called whenever the Theme is updated
-  public setThemeStylesheet() {
-    const stylesheet = this.getStylesheet();
-
-    // get existing stylesheet
-    let existingStyleSheet = document.querySelector('#theme-stylesheet');
-
-    // create a new style elements and append it to the document head
-    if(!existingStyleSheet) {
-      existingStyleSheet = document.createElement('style');
-      existingStyleSheet.setAttribute('id', 'theme-stylesheet');
-      document.head.appendChild(existingStyleSheet);
-    } /* else -- style element already exists */
-
-    existingStyleSheet.textContent = stylesheet;
-  }
-
-  // ==============================================================================
-  private getStylesheet() {
+  public getStylesheet() {
     const { nodes, marks, customSelectors } = this.theme;
 
     // creates a CSS class in the form of [DATA_NODE_TYPE="nodeName"] {} for each Node

@@ -1,8 +1,9 @@
 import { Select } from '@chakra-ui/react';
 import { useState, ChangeEventHandler } from 'react';
 
-import { notebookEditorTheme } from 'notebookEditor/extension/theme/theme';
-import { ThemeName, Themes } from 'notebookEditor/extension/theme/type';
+import { notebookEditorTheme, ThemeName, Themes } from 'common';
+
+import { setThemeStylesheet } from 'notebookEditor/theme/theme';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -17,6 +18,8 @@ export const SetThemeToolItem: React.FC<Props> = ({ editor }) => {
 
     const theme = Themes[value];
     notebookEditorTheme.setTheme(theme);
+    // sync stylesheet
+    setThemeStylesheet();
   };
 
   // == UI ========================================================================

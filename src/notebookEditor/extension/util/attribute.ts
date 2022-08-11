@@ -1,9 +1,8 @@
 import { Attribute, Editor } from '@tiptap/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { getMarkValue, getNodeName, isHeadingNode, isTextNode, mergeAttributeValues, AttributeType, HeadingLevel, InvalidMergedAttributeValue, MarkName, MergedAttributeValue, SetAttributeType } from 'common';
+import { getHeadingThemeValue, getMarkValue, getNodeName, getThemeValue, isHeadingNode, isTextNode, mergeAttributeValues, AttributeType, HeadingLevel, InvalidMergedAttributeValue, MarkName, MergedAttributeValue, SetAttributeType } from 'common';
 
-import { getHeadingThemeValue, getThemeValue } from '../theme/theme';
 import { getSelectedNode } from './node';
 
 // ********************************************************************************
