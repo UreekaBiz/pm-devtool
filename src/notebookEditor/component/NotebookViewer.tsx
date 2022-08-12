@@ -1,5 +1,7 @@
 import { convertContentToHTML, NotebookDocumentContent } from 'common';
 
+import { EDITOR_CLASS_NAME, EDITOR_PREVIEW_CLASS_NAME } from 'notebookEditor/theme/theme';
+
 // ********************************************************************************
 interface Props {
   // The content of a Notebook stringified
@@ -11,6 +13,6 @@ export const NotebookViewer: React.FC<Props>= ({ content }) => {
   // Notebook at the moment.
   const htmlContent = convertContentToHTML(content);
   return (
-    <div className='Editor'/*SEE: /index.css*/ dangerouslySetInnerHTML={{ __html: htmlContent ?? '' }} />
+    <div className={`${EDITOR_CLASS_NAME} ${EDITOR_PREVIEW_CLASS_NAME}`}/*SEE: /index.css*/ dangerouslySetInnerHTML={{ __html: htmlContent ?? '' }} />
   );
 };

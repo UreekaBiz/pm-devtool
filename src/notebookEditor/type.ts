@@ -14,6 +14,8 @@ import { Style } from 'notebookEditor/extension/style/Style';
 import { Text } from 'notebookEditor/extension/text/Text';
 import { TextStyle } from 'notebookEditor/extension/textStyle/TextStyle';
 
+import { EDITOR_CLASS_NAME, EDITOR_EDITABLE_CLASS_NAME } from './theme/theme';
+
 // ********************************************************************************
 // defines the structure of the Editor
 // SEE: NotebookProvider
@@ -39,7 +41,7 @@ export const editorDefinition = {
     Text,
     TextStyle,
   ],
-  editorProps: { attributes: { class: 'Editor'/*SEE: /index.css*/ } },
+  editorProps: { attributes: { class: `${EDITOR_CLASS_NAME} ${EDITOR_EDITABLE_CLASS_NAME}`/*SEE: /index.css*/ } },
 
   autofocus: true/*initially has focus*/,
   content: ''/*initially empty*/,

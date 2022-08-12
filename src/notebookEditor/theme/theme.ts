@@ -1,6 +1,11 @@
 import { notebookEditorTheme } from 'common';
 
 // ********************************************************************************
+// == Editor ======================================================================
+export const EDITOR_CLASS_NAME = 'Editor';
+export const EDITOR_EDITABLE_CLASS_NAME = 'Editor--editable';
+export const EDITOR_PREVIEW_CLASS_NAME = 'Editor--preview';
+
 // == CSS =========================================================================
 // NOTE: all of these must match index.css
 // .. General .....................................................................
