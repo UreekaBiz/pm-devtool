@@ -59,15 +59,23 @@ const applyBoldToHeadingContent = (props: CommandProps) => {
   if(tr.selection.$anchor.parent.content.size < 0) return false/*command cannot be executed, the Heading has no content to apply the Bold Mark*/;
 
   if(dispatch) {
-    const currentAnchorPos = tr.selection.$anchor.pos,
-          anchorOffset = tr.selection.$anchor.parentOffset,
+    // apply Bold Mark to anchor parent Content
+    const currentAnchorPos = tr.selection.$anchor.pos;
+    const anchorOffset = tr.selection.$anchor.parentOffset,
           anchorParentOffset = currentAnchorPos - anchorOffset;
     tr.addMark(anchorParentOffset, anchorParentOffset + tr.selection.$anchor.parent.nodeSize - 2/*account for the start and end of the parent Node*/, createBoldMark(editor.schema));
 
-    const currentHeadPos = tr.selection.$head.pos,
-          headOffset = tr.selection.$head.parentOffset,
+    // apply Bold Mark to head parent Content
+    const currentHeadPos = tr.selection.$head.pos;
+    const headOffset = tr.selection.$head.parentOffset,
           headParentOffset = currentHeadPos - headOffset;
     tr.addMark(headParentOffset, headParentOffset + tr.selection.$head.parent.nodeSize - 2/*account for the start and end of the parent Node*/, createBoldMark(editor.schema));
+
+    // apply Bold Mark to any nodes in between anchor and head
+    currentHeadPos > currentAnchorPos/*check which position is bigger to add Mark correctly*/
+      ? tr.addMark(currentAnchorPos, currentHeadPos, createBoldMark(editor.schema))
+      : tr.addMark(currentHeadPos, currentAnchorPos, createBoldMark(editor.schema));
+
     dispatch(tr);
   } /* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
 
