@@ -1,9 +1,8 @@
 import { BiStrikethrough } from 'react-icons/bi';
 
-import { getStrikethroughMarkType, MarkName } from 'common';
+import { getStrikethroughMarkType, isNodeSelection, MarkName } from 'common';
 
 import { getMarkHolder, inMarkHolder, toggleMarkInMarkHolder } from 'notebookEditor/extension/markHolder/util';
-import { isNodeSelection } from 'notebookEditor/extension/util/node';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************

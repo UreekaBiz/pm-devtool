@@ -2,9 +2,7 @@ import { Editor } from '@tiptap/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { NodeView as ProseMirrorNodeView } from 'prosemirror-view';
 
-import { AttributeType, NotebookSchemaType } from 'common';
-
-import { getPosType, isGetPos } from 'notebookEditor/extension/util/node';
+import { getPosType, isGetPos, AttributeType, NotebookSchemaType } from 'common';
 
 import { NoStorage } from './type';
 import { isNodeViewStorage, NodeViewStorage } from './NodeViewStorage';

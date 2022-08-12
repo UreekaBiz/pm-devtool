@@ -1,9 +1,7 @@
 import { Editor } from '@tiptap/core';
 import { ReactNode } from 'react';
 
-import { MarkName, NodeName } from 'common';
-
-import { SelectionDepth } from 'notebookEditor/model/type';
+import { MarkName, NodeName, SelectionDepth } from 'common';
 
 // ********************************************************************************
 // == Toolbar =====================================================================

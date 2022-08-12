@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 
+import { isNodeSelection } from 'common';
+
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
-import { isNodeSelection } from 'notebookEditor/extension/util/node';
 import { isValidHTMLElement } from 'notebookEditor/extension/util/parse';
 import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 

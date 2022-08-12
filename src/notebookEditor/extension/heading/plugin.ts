@@ -1,9 +1,7 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { generateNodeId, isHeadingNode, AttributeType, HeadingAttributes, NotebookSchemaType, getParagraphNodeType } from 'common';
-
-import { getSelectedNode } from '../util/node';
+import { generateNodeId, getSelectedNode, isHeadingNode, AttributeType, HeadingAttributes, NotebookSchemaType, getParagraphNodeType } from 'common';
 
 // ********************************************************************************
 export const HeadingPlugin = () => new Plugin<NotebookSchemaType>({

@@ -1,9 +1,8 @@
 import { BiBold } from 'react-icons/bi';
 
-import { getBoldMarkType, MarkName } from 'common';
+import { getBoldMarkType, isNodeSelection, MarkName } from 'common';
 
 import { getMarkHolder, inMarkHolder, toggleMarkInMarkHolder } from 'notebookEditor/extension/markHolder/util';
-import { isNodeSelection } from 'notebookEditor/extension/util/node';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************

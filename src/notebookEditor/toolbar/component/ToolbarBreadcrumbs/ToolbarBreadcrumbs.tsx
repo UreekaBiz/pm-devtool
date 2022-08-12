@@ -1,11 +1,9 @@
 import { Flex } from '@chakra-ui/react';
 
-import { getMarkName, getNodeName, isTextNode } from 'common';
+import { getAllAscendantsFromSelection, getMarkName, getNodeName, isTextNode, SelectionDepth } from 'common';
 import { getAllMarksFromSelection } from 'notebookEditor/extension/util/mark';
 
-import { getAllAscendantsFromSelection } from 'notebookEditor/extension/util/node';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
-import { SelectionDepth } from 'notebookEditor/model/type';
 import { getToolbar } from 'notebookEditor/toolbar/toolbar';
 
 import { ToolbarBreadcrumbItem } from './ToolbarBreadcrumbItem';

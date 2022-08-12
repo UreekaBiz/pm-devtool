@@ -1,9 +1,8 @@
 import { CommandProps, Editor } from '@tiptap/core';
 
-import { isTextNode, AttributeType, CommandFunctionType } from 'common';
+import { getSelectedNode, isTextNode, AttributeType, CommandFunctionType, SelectionDepth } from 'common';
 
-import { getSelectedNode } from 'notebookEditor/extension/util/node';
-import { ExtensionName, SelectionDepth } from 'notebookEditor/model/type';
+import { ExtensionName  } from 'notebookEditor/model/type';
 
 // ********************************************************************************
 // == Command =====================================================================

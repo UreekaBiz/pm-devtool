@@ -1,9 +1,7 @@
 import { Editor } from '@tiptap/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { DATA_NODE_TYPE } from 'common';
-
-import { getPosType } from 'notebookEditor/extension/util/node';
+import { getPosType, DATA_NODE_TYPE } from 'common';
 
 import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeController } from './AbstractNodeController';
