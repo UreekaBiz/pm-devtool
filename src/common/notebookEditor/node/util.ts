@@ -1,93 +1,36 @@
-import { customAlphabet } from 'nanoid';
-import { Fragment, Node as ProseMirrorNode, Schema } from 'prosemirror-model';
+import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 import { Selection, TextSelection, Transaction } from 'prosemirror-state';
 
-import { Attributes, AttributeType } from './attribute';
-import { Command } from './command';
-import { DocumentNodeType } from './extension/document';
-import { JSONMark } from './mark';
-import { NotebookSchemaType } from './schema';
-import { getBlockNodeRange } from './selection';
-import { mapOldStartAndOldEndThroughHistory } from './step';
+import { Attributes, AttributeType } from '../attribute';
+import { Command } from '../command';
+import { DocumentNodeType } from '../extension/document';
+import { NotebookSchemaType } from '../schema';
+import { getBlockNodeRange } from '../selection';
+import { mapOldStartAndOldEndThroughHistory } from '../step';
+import { getNodeName, NodeIdentifier, NodeName } from './type';
 
 // ********************************************************************************
-// == Node definition =============================================================
-export type NodeIdentifier = string/*alias*/;
-
-// --------------------------------------------------------------------------------
-/** Unique identifier for each Node on the schema */
-export enum NodeName {
-  DOC = 'document',
-  HEADING = 'heading',
-  MARK_HOLDER = 'markHolder',
-  PARAGRAPH = 'paragraph',
-  TEXT = 'text',
-}
-export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
-
-/**
- * The type of group that this Node belongs to. This is used on the Content field
- * on a NodeSpec.
- */
-// NOTE: When using a custom group type it is expected to be defined here with a
-//       explicit description on where and why it is used. This is done to help
-//       prevent inconsistencies between the content of a node and the Group it
-//       belongs to.
-export enum NodeGroup {
-  BLOCK = 'block',
-  INLINE = 'inline',
-}
-
-/** the HTML tag used when rendering the node to the DOM */
-export type NodeTag = string/*alias*/;
-
-// == JSON ========================================================================
-/** JSON representation of a ProseMirror Node */
-export type JSONNode<A extends Attributes = {}> = {
-  type: NodeName;
-  content?: JSONNode[];
-  text?: string;
-
-  // Attributes are not required in a node and potentially not be present.
-  attrs?: Partial<A>;
-  marks?: JSONMark[];
-};
-/** Stringified version of the content of the Node */
-export type NodeContent = string/*alias*/;
-
-/** Type of ProseMirror Node Content when creating Nodes or Marks from a Node or Mark type */
-export type ProseMirrorNodeContent = Fragment<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType> | ProseMirrorNode<NotebookSchemaType>[];
-
-// --------------------------------------------------------------------------------
-// JSON as seen from Schema#nodeFromJSON() or Schema#markFromJSON()
-export type JSONContent = { [key: string]: any; };
-
-// --------------------------------------------------------------------------------
-export const nodeToJSONNode = (node: ProseMirrorNode) => node.toJSON() as JSONNode;
-export const nodeToContent = (node: ProseMirrorNode<Schema>) => JSON.stringify(nodeToJSONNode(node)) as NodeContent;
-export const contentToJSONNode = (content: NodeContent) => JSON.parse(content) as JSONNode;
-export const contentToNode = (schema: Schema, content?: NodeContent) => content ? ProseMirrorNode.fromJSON(schema, contentToJSONNode(content)) : undefined/*none*/;
-
 // == Manipulation ================================================================
-// -- Search ----------------------------------------------------------------------
-export type NodePosition = { node: ProseMirrorNode; position: number; };
-
 /** @returns the parent node of a {@link Selection} */
 export const getParentNode = (selection: Selection): ProseMirrorNode => selection.$anchor.parent;
 
-/** @returns the first Node (as a {@link NodeFound}) with the specified identifier */
+// -- Search ----------------------------------------------------------------------
+export type NodePosition = Readonly<{ node: ProseMirrorNode; position: number; }>;
+
+/** @returns the first Node (as a {@link NodePosition}) with the specified identifier */
 export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier): NodePosition | null/*not found*/ => {
-  let nodePosition: NodePosition | null/*not found*/ = null/*not found*/;
+  let nodeFound: NodePosition | null/*not found*/ = null/*not found*/;
   document.descendants((node, position) => {
-    if(nodePosition) return false/*don't bother to descend since already found*/;
+    if(nodeFound) return false/*don't bother to descend since already found*/;
     if(node.attrs[AttributeType.Id] !== nodeId) return true/*not a match but descendants might be so descend*/;
 
-    nodePosition = { node, position };
+    nodeFound = { node, position };
     return false/*don't bother to descend since already found*/;
   });
-  return nodePosition;
+  return nodeFound;
 };
 
+// ................................................................................
 /**
  * @param node1 The first {@link ProseMirrorNode} whose content will be compared
  * @param node2 The second {@link ProseMirrorNode} whose content will be compared
@@ -122,21 +65,19 @@ export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier)
 //       some node was deleted in a transaction uses this approach
 export const getNodesAffectedByStepMap = (transaction: Transaction, stepMapIndex: number, unmappedOldStart: number, unmappedOldEnd: number, nodeNames: Set<NodeName>) => {
   // map to get the oldStart, oldEnd that account for history
-  const { mappedOldStart, mappedOldEnd, mappedNewStart, mappedNewEnd } = mapOldStartAndOldEndThroughHistory(transaction, stepMapIndex, unmappedOldStart, unmappedOldEnd),
+  const { mappedOldStart, mappedOldEnd, mappedNewStart, mappedNewEnd } = mapOldStartAndOldEndThroughHistory(transaction, stepMapIndex, unmappedOldStart, unmappedOldEnd);
 
-  oldNodePositions = getNodesBetween(transaction.before, mappedOldStart, mappedOldEnd, nodeNames),
-  newNodePositions = getNodesBetween(transaction.doc, mappedNewStart, mappedNewEnd, nodeNames);
+  const oldNodePositions = getNodesBetween(transaction.before, mappedOldStart, mappedOldEnd, nodeNames),
+        newNodePositions = getNodesBetween(transaction.doc, mappedNewStart, mappedNewEnd, nodeNames);
 
   return { oldNodePositions, newNodePositions };
 };
 
-/**
 // Creates and returns an array of {@link NodePosition}s by looking at the Nodes between
 // {@link #from} and {@link #to} in the given {@link #rootNode}, adding those Nodes
 // whose type name is included in the given {@link #nodeNames} set. Very similar to
 // doc.nodesBetween, but specifically for {@link NodePosition} objects.
- */
- export const getNodesBetween = (rootNode: ProseMirrorNode, from: number, to: number, nodeNames: Set<NodeName>) => {
+const getNodesBetween = (rootNode: ProseMirrorNode, from: number, to: number, nodeNames: Set<NodeName>) => {
   const nodesOfType: NodePosition[] = [];
   rootNode.nodesBetween(from, to, (node, position) => {
     const nodeName = getNodeName(node);
@@ -151,14 +92,14 @@ export const getNodesAffectedByStepMap = (transaction: Transaction, stepMapIndex
 // -- Creation --------------------------------------------------------------------
 /** Creates a {@link Fragment} with the content of the input Node plus the given {@link appendedNode} */
 export const createFragmentWithAppendedContent = (node: ProseMirrorNode, appendedNode: ProseMirrorNode) =>
-    node.content.append(Fragment.from(appendedNode));
+  node.content.append(Fragment.from(appendedNode));
 
 // -- Setter ----------------------------------------------------------------------
 /**
  * Sets a Block Node across the range covered by the entirety
  * of the current selection
  */
- export const setBlockNodeAcrossNodes = (schema: NotebookSchemaType, blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (tr, dispatch) => {
+export const setBlockNodeAcrossNodes = (schema: NotebookSchemaType, blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (tr, dispatch) => {
   const { from, to } = getBlockNodeRange(tr.selection);
   const textContent = tr.doc.textBetween(from, to, '\n'/*insert for every Block Node*/);
 
@@ -235,20 +176,6 @@ export const getRemovedNodesByTransaction = (transaction: Transaction, nodeNameS
   return removedNodeObjs;
 };
 
-/** Get Nodes that are no longer present in the newArray */
+/** Get Node-Positions that are no longer present in the newArray */
 export const computeRemovedNodePositions = (oldArray: NodePosition[], newArray: NodePosition[]) =>
   oldArray.filter(oldNodeObj => !newArray.some(newNodeObj => newNodeObj.node.attrs[AttributeType.Id] === oldNodeObj.node.attrs[AttributeType.Id]));
-
-// == Unique Node Id ==============================================================
-// NOTE: at a minimum the id must be URL-safe (i.e. without the need to URL encode)
-// NOTE: this is expected to be used within a given context (e.g. within a document)
-//       and therefore does not need to have as much randomness as, say, UUIDv4
-const customNanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 10/*T&E*/);
-export const generateNodeId = () => customNanoid();
-
-/**
- * Computes the corresponding id that the tag for a Node will receive if needed.
- * Note that not all nodes require their view to have an ID, but all nodeViews
- * whose nodes make use of this functionality -must- have an ID attribute.
- */
- export const nodeToTagId = (node: ProseMirrorNode) => `${node.type.name}-${node.attrs[AttributeType.Id]}`;
