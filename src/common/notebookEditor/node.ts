@@ -4,7 +4,6 @@ import { Selection, TextSelection, Transaction } from 'prosemirror-state';
 
 import { Attributes, AttributeType } from './attribute';
 import { Command } from './command';
-import { createTextNode } from './extension/text';
 import { JSONMark } from './mark';
 import { NotebookSchemaType } from './schema';
 import { getBlockNodeRange } from './selection';
@@ -150,7 +149,7 @@ export const createFragmentWithAppendedContent = (node: ProseMirrorNode, appende
   const textContent = tr.doc.textBetween(from, to, '\n'/*insert for every Block Node*/);
 
   tr.setSelection(new TextSelection(tr.doc.resolve(from - 1/*account for start of parent at from*/), tr.doc.resolve(to)))
-    .replaceSelectionWith(schema.nodes[blockNodeName].create(attributes, createTextNode(schema, textContent)));
+    .replaceSelectionWith(schema.nodes[blockNodeName].create(attributes, schema.text(textContent)));
 
   if(dispatch) dispatch(tr);
   return true/*can be done*/;
