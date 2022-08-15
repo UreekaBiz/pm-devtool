@@ -4,6 +4,7 @@ import { Selection, TextSelection, Transaction } from 'prosemirror-state';
 
 import { Attributes, AttributeType } from './attribute';
 import { Command } from './command';
+import { DocumentNodeType } from './extension/document';
 import { JSONMark } from './mark';
 import { NotebookSchemaType } from './schema';
 import { getBlockNodeRange } from './selection';
@@ -69,10 +70,24 @@ export const contentToNode = (schema: Schema, content?: NodeContent) => content 
 
 // == Manipulation ================================================================
 // -- Search ----------------------------------------------------------------------
+// FIXME: rename to 'NodePosition'
 export type NodeFound = { node: ProseMirrorNode; position: number; };
 
 /** @returns the parent node of a {@link Selection} */
 export const getParentNode = (selection: Selection): ProseMirrorNode => selection.$anchor.parent;
+
+/** @returns the first Node (as a {@link NodeFound}) with the specified identifier */
+export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier): NodeFound | null/*not found*/ => {
+  let nodeFound: NodeFound | null/*not found*/ = null/*not found*/;
+  document.descendants((node, position) => {
+    if(nodeFound) return false/*don't bother to descend since already found*/;
+    if(node.attrs[AttributeType.Id] !== nodeId) return true/*not a match but descendants might be so descend*/;
+
+    nodeFound = { node, position };
+    return false/*don't bother to descend since already found*/;
+  });
+  return nodeFound;
+};
 
 /**
  * @param node1 The first {@link ProseMirrorNode} whose content will be compared
