@@ -3,9 +3,9 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { getPosType, DATA_NODE_TYPE } from 'common';
 
-import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeController } from './AbstractNodeController';
 import { AbstractNodeModel } from './AbstractNodeModel';
+import { NodeViewStorage } from './NodeViewStorage';
 import { NoStorage } from './type';
 
 // Abstract class renders the corresponding DOM nodes for a NodeController

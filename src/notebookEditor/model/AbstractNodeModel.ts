@@ -3,8 +3,8 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { getPosType, isGetPos } from 'common';
 
-import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeController } from './AbstractNodeController';
+import { NodeViewStorage } from './NodeViewStorage';
 import { NoStorage } from './type';
 
 // Abstract class that holds the model for a NodeController. The implementation of
