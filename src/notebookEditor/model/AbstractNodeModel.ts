@@ -5,12 +5,13 @@ import { getPosType, isGetPos } from 'common';
 
 import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeController } from './AbstractNodeController';
+import { NoStorage } from './type';
 
 // Abstract class that holds the model for a NodeController. The implementation of
 // the model is left to the subclasses.
 // SEE: AbstractNodeController
 // ********************************************************************************
-export abstract class AbstractNodeModel<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>>> {
+export abstract class AbstractNodeModel<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>> | NoStorage> {
   public readonly editor: Editor;
   public readonly storage: Storage;
   public node: NodeType;

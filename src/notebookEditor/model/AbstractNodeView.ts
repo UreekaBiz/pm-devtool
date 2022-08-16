@@ -6,12 +6,12 @@ import { getPosType, DATA_NODE_TYPE } from 'common';
 import { NodeViewStorage } from './NodeViewStorage';
 import { AbstractNodeController } from './AbstractNodeController';
 import { AbstractNodeModel } from './AbstractNodeModel';
+import { NoStorage } from './type';
 
 // Abstract class renders the corresponding DOM nodes for a NodeController
 // SEE: {@link AbstractNodeController}
 // ********************************************************************************
-export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>>, NodeModel extends AbstractNodeModel<NodeType, Storage>> {
-  // == Abstract Node View ========================================================
+export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage extends NodeViewStorage<AbstractNodeController<NodeType, any, any, any>> | NoStorage, NodeModel extends AbstractNodeModel<NodeType, Storage>> {
   // the outer DOM node that represents the Document Node
   public readonly dom: HTMLElement;
 
