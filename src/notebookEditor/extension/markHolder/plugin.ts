@@ -2,7 +2,7 @@ import { Fragment, Mark, Node as ProseMirrorNode, Slice } from 'prosemirror-mode
 import { Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { AttributeType, createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isHeadingNode, isMarkHolderNode, isParagraphNode, JSONMark, MarkName, NodeIdentifier, NodeName, NotebookSchemaType } from 'common';
+import { createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isHeadingNode, isMarkHolderNode, isParagraphNode, AttributeType, JSONMark, MarkName, NodeIdentifier, NodeName, NotebookSchemaType } from 'common';
 
 import { parseStoredMarks } from './util';
 
