@@ -36,10 +36,6 @@ export const setParagraphCommand = () => ({ tr, dispatch, view }: CommandProps) 
       : new TextSelection(tr.doc.resolve(startingSelection.$anchor.pos), tr.doc.resolve(startingSelection.$head.pos))
     );
 
-  // if(!isParagraphNode(tr.selection.$anchor.parent/*guaranteed to be same pos as head by replaceSelectionWith call above*/)) {
-  //   const insertedParagraphPos = Math.max(1/*do not go behind start of doc*/, tr.selection.$anchor.pos - 2/*at the end of the new Paragraph*/);
-  // }
-
   if(dispatch) dispatch(tr);
   return true/*can be executed*/;
 })(tr, dispatch, view);
