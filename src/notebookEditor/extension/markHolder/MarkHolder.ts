@@ -1,6 +1,6 @@
 import { Node } from '@tiptap/core';
 
-import { getNodeOutputSpec, storedMarksFromDOM, AttributeType, MarkHolderNodeSpec, NodeName } from 'common';
+import { getNodeOutputSpec, storedMarksFromDOM, AttributeType, MarkHolderNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { NoOptions, NoStorage, ParseRulePriority } from 'notebookEditor/model/type';
 import { MarkHolderPlugin } from './plugin';
@@ -36,7 +36,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
 
   // -- View ----------------------------------------------------------------------
   parseHTML() { return [{
-    tag: `div[data-node-type="${NodeName.MARK_HOLDER}"]`,
+    tag: `div[${DATA_NODE_TYPE}="${NodeName.MARK_HOLDER}"]`,
     priority: ParseRulePriority.MARK_HOLDER, /*(SEE: ParseRulePriority)*/
   }];
 },
