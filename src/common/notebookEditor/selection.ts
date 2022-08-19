@@ -1,5 +1,5 @@
 import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
-import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
 
 import { isObject } from '../util';
 import { NotebookSchemaType } from './schema';
@@ -12,10 +12,26 @@ import { NotebookSchemaType } from './schema';
 // * `selection.depth` is the parent Node
 export type SelectionDepth = number | undefined/*current Node*/;
 
+// .. Search ......................................................................
+// type of the object that can passed to look for a ResolvedPos
+export type LookInsideOf = EditorState | Selection | ResolvedPos;
+
+// type of function used to check if a Node has a certain condition
+export type NodePredicate = (node: ProseMirrorNode, pos: number) => boolean;
+
 // .. Position ....................................................................
 // type of the function that is used to compute the position of a NodeView in the
 // current Document
 export type getPosType = boolean | (() => number);
+
+// return type of findParentNode (SEE: ./node/util.ts)
+export type ParentNodePosition = {
+  posBeforeNode: number/*position directly before the Node*/;
+  depth: number/*the depth of the Node. Equal to 0 is the Node is the root*/;
+  nodeStart: number/*the start position of the Node*/;
+  node: ProseMirrorNode/*the looked for Node*/;
+  nodeEnd: number/*the end position of the Node*/;
+}
 
 // ................................................................................
 /** Checks to see whether an object is a getPos function */
