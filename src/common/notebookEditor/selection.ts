@@ -1,6 +1,7 @@
 import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
+import { isObject } from '../util';
 import { NotebookSchemaType } from './schema';
 
 // ********************************************************************************
@@ -19,6 +20,11 @@ export type getPosType = boolean | (() => number);
 // ................................................................................
 /** Checks to see whether an object is a getPos function */
 export const isGetPos = (object: any): object is (() => number) => typeof object === 'function';
+
+/** Type guard that defines if a value is a {@link Selection} */
+export const isSelection = (value: unknown): value is Selection => {
+  return isObject(value) && value instanceof Selection;
+};
 
 /** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */
 export const isNodeSelection = (selection: Selection<NotebookSchemaType>): selection is NodeSelection<NotebookSchemaType> => 'node' in selection;
