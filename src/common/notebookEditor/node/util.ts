@@ -1,11 +1,11 @@
 import { Fragment, Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
-import { EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
+import { EditorState, Selection, Transaction } from 'prosemirror-state';
 
 import { Attributes, AttributeType } from '../attribute';
 import { Command } from '../command';
 import { DocumentNodeType } from '../extension/document';
 import { NotebookSchemaType } from '../schema';
-import { getBlockNodeRange, isSelection, LookInsideOf, NodePredicate, ParentNodePosition } from '../selection';
+import { isSelection, LookInsideOf, NodePredicate, ParentNodePosition } from '../selection';
 import { isEditorState } from '../state';
 import { mapOldStartAndOldEndThroughHistory } from '../step';
 import { getNodeName, NodeIdentifier, NodeName } from './type';
@@ -150,22 +150,6 @@ export const createBlockNodeBelow = (schema: NotebookSchemaType, blockNodeName: 
   }
 
   return true/*command can be executed*/;
-};
-
-// -- Setter ----------------------------------------------------------------------
-/**
- * Sets a Block Node across the range covered by the entirety
- * of the current selection
- */
-export const setBlockNodeAcrossNodes = (schema: NotebookSchemaType, blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (tr, dispatch) => {
-  const { from, to } = getBlockNodeRange(tr.selection);
-  const textContent = tr.doc.textBetween(from, to, '\n'/*insert for every Block Node*/);
-
-  tr.setSelection(new TextSelection(tr.doc.resolve(from - 1/*account for start of parent at from*/), tr.doc.resolve(to)))
-    .replaceSelectionWith(schema.nodes[blockNodeName].create(attributes, textContent.length > 0 ? schema.text(textContent) : undefined/*no content*/));
-
-  if(dispatch) dispatch(tr);
-  return true/*can be done*/;
 };
 
 // -- Transaction -----------------------------------------------------------------
