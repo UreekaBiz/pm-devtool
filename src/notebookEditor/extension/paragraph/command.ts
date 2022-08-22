@@ -1,6 +1,4 @@
-import { CommandProps } from '@tiptap/core';
-
-import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, CommandFunctionType, NodeName } from 'common';
+import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, Command, CommandFunctionType, NodeName } from 'common';
 
 // ********************************************************************************
 // NOTE: ambient module to ensure command is TypeScript-registered for TipTap
@@ -18,7 +16,8 @@ declare module '@tiptap/core' {
 //       1. Paragraphs set through this Command should not inherit any marks
 //       2. Paragraphs set through this Command should not have MarkHolders,
 //          because of 1, but they should (as expected) keep the remaining content
-export const setParagraphCommand = () => ({ tr, dispatch, view }: CommandProps) => ((tr, dispatch, view) => {
+export const setParagraphCommand: Command = (state, dispatch, view) => {
+  const { tr } = state;
   const { from, to } = getBlockNodeRange(tr.selection);
 
   // NOTE: removing MarkHolders before changing NodeType to ensure final
@@ -34,4 +33,4 @@ export const setParagraphCommand = () => ({ tr, dispatch, view }: CommandProps) 
 
   if(dispatch) dispatch(tr);
   return true/*can be executed*/;
-})(tr, dispatch, view);
+};
