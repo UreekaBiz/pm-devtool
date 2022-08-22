@@ -1,16 +1,6 @@
-import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, Command, CommandFunctionType, NodeName } from 'common';
+import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, Command } from 'common';
 
 // ********************************************************************************
-// NOTE: ambient module to ensure command is TypeScript-registered for TipTap
-declare module '@tiptap/core' {
-  interface Commands<ReturnType> {
-    [NodeName.PARAGRAPH/*Expected and guaranteed to be unique. (SEE: /notebookEditor/model/node)*/]: {
-      /** Toggle a paragraph */
-      setParagraph: CommandFunctionType<typeof setParagraphCommand, ReturnType>;
-    };
-  }
-}
-
 // --------------------------------------------------------------------------------
 // NOTE: this Command has to take into account the following constraints:
 //       1. Paragraphs set through this Command should not inherit any marks
