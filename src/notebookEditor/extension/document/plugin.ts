@@ -29,7 +29,7 @@ export const DocumentPlugin = () => {
           } /* else -- do not modify state */
         },
         keyup: (view: EditorView, event: KeyboardEvent) => {
-          if(!event.shiftKey) {
+          if(!(event.shiftKey && (event.ctrlKey || event.metaKey))) {
             textOnlyPaste = false/*by definition*/;
           } /* else -- do not modify state*/
         },
