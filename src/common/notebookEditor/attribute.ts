@@ -36,6 +36,10 @@ export enum AttributeType {
   // .. General ...................................................................
   Id = 'id',
 
+  // NOTE: this attribute is used by paste handlers whenever Nodes that have no
+  //       whose Content is managed by their NodeView are parsed for their content
+  Text = 'text',
+
   // .. Heading ...................................................................
   Level = 'level',
 
