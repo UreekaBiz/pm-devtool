@@ -1,12 +1,15 @@
 import { Editor } from '@tiptap/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { ReactElement } from 'react';
+import * as ReactDOM from 'react-dom/client';
 
-import { getPosType, DATA_NODE_TYPE } from 'common';
+import { getPosType, HTMLAttributes } from 'common';
 
+import { NoStorage } from './type';
 import { AbstractNodeController } from './AbstractNodeController';
 import { AbstractNodeModel } from './AbstractNodeModel';
 import { NodeViewStorage } from './NodeViewStorage';
-import { NoStorage } from './type';
+import { ReactNodeViewComponentProps, ReactNodeViewProps } from './ReactNodeView';
 
 // Abstract class renders the corresponding DOM nodes for a NodeController
 // SEE: {@link AbstractNodeController}
@@ -20,6 +23,14 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
   // the Node's children into it. When it is not present, the Node View itself is
   // responsible for rendering (or deciding not to render) its child Nodes
   public contentDOM?: HTMLElement | null | undefined;
+
+  // container that renderers the specified reactComponent. The specified root is
+  // the same as the #dom property.
+  public ReactRoot: ReactDOM.Root;
+  // a react component that will be used to render the view of the Node. This
+  // component is meant to be used wrapped inside a WrapReactNodeView.
+  // SEE: ReactNodeView.ts
+  public reactNodeView?: <A extends HTMLAttributes>(props: ReactNodeViewProps<A, NodeType, NodeModel, any/*FIXME: types*/>) => ReactElement<ReactNodeViewComponentProps<A, NodeType, NodeModel, typeof this>>;
 
   // ------------------------------------------------------------------------------
   // the corresponding model for this view.
@@ -42,7 +53,9 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
 
     // Creates the outer DOM node.
     this.dom = this.createDomElement();
-    this.dom.setAttribute(DATA_NODE_TYPE, node.type.name);
+
+    // Creates the React root.
+    this.ReactRoot = ReactDOM.createRoot(this.dom);
   }
 
   // Sync getPos and node when prosemirror updates it.
@@ -62,8 +75,30 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
   protected abstract createDomElement(): HTMLElement;
 
   // updates the DOM node that represents the Node
+  // NOTE: sub classes implementing this method should call super.update() since it
+  //       update the reactNodeView.
   // NOTE: this method needs to be public since its render view could depend on
   //       an external state (e.g. the visualId of the CodeBlockView) and thus
   //       needs to be called from outside the class.
-  public abstract updateView(): void;
+  public updateView() {
+    if(this.reactNodeView){
+      this.model;
+      const props: ReactNodeViewProps<any/*cannot know attributes at this level*/, NodeType, NodeModel, typeof this> = {
+        attrs: this.node.attrs,
+        editor: this.editor,
+        node: this.node,
+        nodeModel: this.model,
+        nodeView: this,
+      };
+
+      // Update React View
+      // NOTE: A react component is meant to be rendered using JSX instead of
+      //       calling the function directly since this mess ups the order of the
+      //       hooks causing the problem "React has detected a change in the order
+      //       of Hooks". To avoid this a valid component is created from the same
+      //       function.
+      const ReactNodeViewComponent = this.reactNodeView;
+      this.ReactRoot.render(<ReactNodeViewComponent {...props} />);
+    }
+  }
 }
