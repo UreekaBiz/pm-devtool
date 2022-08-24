@@ -1,7 +1,6 @@
 import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
-import { Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
+import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { isObject } from '../util';
 import { NotebookSchemaType } from './schema';
 
 // ********************************************************************************
@@ -12,35 +11,14 @@ import { NotebookSchemaType } from './schema';
 // * `selection.depth` is the parent Node
 export type SelectionDepth = number | undefined/*current Node*/;
 
-// .. Search ......................................................................
-// type of the object that can passed to look for a ResolvedPos
-export type LookInsideOf = EditorState | Selection | ResolvedPos;
-
-// type of function used to check if a Node has a certain condition
-export type NodePredicate = (node: ProseMirrorNode, pos: number) => boolean;
-
 // .. Position ....................................................................
 // type of the function that is used to compute the position of a NodeView in the
 // current Document
 export type getPosType = boolean | (() => number);
 
-// return type of findParentNode (SEE: ./node/util.ts)
-export type ParentNodePosition = {
-  posBeforeNode: number/*position directly before the Node*/;
-  depth: number/*the depth of the Node. Equal to 0 is the Node is the root*/;
-  nodeStart: number/*the start position of the Node*/;
-  node: ProseMirrorNode/*the looked for Node*/;
-  nodeEnd: number/*the end position of the Node*/;
-}
-
 // ................................................................................
 /** Checks to see whether an object is a getPos function */
 export const isGetPos = (object: any): object is (() => number) => typeof object === 'function';
-
-/** Type guard that defines if a value is a {@link Selection} */
-export const isSelection = (value: unknown): value is Selection => {
-  return isObject(value) && value instanceof Selection;
-};
 
 /** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */
 export const isNodeSelection = (selection: Selection<NotebookSchemaType>): selection is NodeSelection<NotebookSchemaType> => 'node' in selection;
@@ -126,23 +104,9 @@ const getNodeBefore = (selection: Selection) => {
 // == Range =======================================================================
 /**
  * computes the Range that holds all Nodes in between the start and end of the
- * Blocks located at the anchor and head of the given {@link Selection},
- * regardless of where the anchor and head are located in those Blocks
+ * Blocks located at the anchor and head of the given {@link Selection}
  */
-export const getBlockNodeRange = (selection: Selection) => {
-  const { pos: anchorPos } = selection.$anchor,
-        { pos: headPos } = selection.$head;
-
-  if(anchorPos < headPos) {
-    return {
-      from: anchorPos - selection.$anchor.parentOffset,
-      to: (headPos - selection.$head.parentOffset) + selection.$head.parent.nodeSize - 2/*account for the start and end of the parent Node*/,
-    };
-  } /* else -- head is past anchor */
-
-  // return the right range by inverting from and to
-  return {
-    from: headPos - selection.$head.parentOffset,
-    to: (anchorPos - selection.$anchor.parentOffset) + selection.$anchor.parent.nodeSize - 2/*account for the start and end of the parent Node*/,
-  };
-};
+ export const getBlockNodeRange = (selection: Selection) => ({
+  from: selection.from - selection.$from.parentOffset,
+  to: (selection.to - selection.$to.parentOffset) + selection.$to.parent.nodeSize - 2/*account for the start and end of the parent Node*/,
+});
