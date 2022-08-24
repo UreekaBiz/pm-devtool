@@ -82,7 +82,6 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
   //       needs to be called from outside the class.
   public updateView() {
     if(this.reactNodeView){
-      this.model;
       const props: ReactNodeViewProps<any/*cannot know attributes at this level*/, NodeType, NodeModel, typeof this> = {
         attrs: this.node.attrs,
         editor: this.editor,
