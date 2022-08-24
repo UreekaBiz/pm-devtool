@@ -36,7 +36,7 @@ export const EditorUserInteractions = () => {
         event.preventDefault();
 
         // Focus the last focused item. If none select the editor.
-        if(isNodeSelection(editor.state.selection)) editor.chain().focus().setNodeSelection(editor.state.selection.$anchor.pos);
+        if(isNodeSelection(editor.state.selection)) editor.chain().focus().setNodeSelection(editor.state.selection.anchor);
         else editor.commands.focus();
       }
     };
