@@ -65,7 +65,7 @@ export const convertJSONContentToHTML = (node: JSONNode, state: RendererState, l
 
   // in the case that the Node is a Node View Renderer let the Node renderer use
   // its own render function to render the Node and its children.
-  if(nodeRendererSpec.isNodeViewRenderer) return nodeRendererSpec.renderNodeView(node.attrs ?? {/*empty attributes*/}, children)/*nothing else to do*/;
+  if(nodeRendererSpec.isNodeViewRenderer) return nodeRendererSpec.renderNodeView(node.attrs ?? {/*empty attributes*/}, children, state)/*nothing else to do*/;
 
   // NOTE: in the Editor, a paragraph with no content is displayed as having a
   //       br node as it only child, this is an attempt to mimic that functionality
@@ -93,8 +93,20 @@ const convertJSONMarkToHTML = (mark: JSONMark, children: HTMLString): HTMLString
   const markRenderAttributes = getMarksRenderAttributes(mark);
   const stringAttributes = renderAttributesToString(markRenderAttributes);
 
-
   return `<${tag} ${DATA_MARK_TYPE}="${mark.type}" ${stringAttributes}>${children}</${tag}>`;
+};
+
+// == JSX =========================================================================
+// wraps the given content in the given tag and then parses the result into a valid
+// JSX element.
+// NOTE: The Tag should match the Tag used to wrap the ContentDOMWrapper in the
+//       NodeView for consistency.
+export const getReactNodeFromJSX = (content: string, Tag: React.ElementType = 'div'): React.ReactNode =>
+{
+  // CHECK: Is this true? Who sanitizes the content?
+  // NOTE: Is safe to use dangerouslySetInnerHTML because the content is already
+  //       sanitized by XXX.
+  return (<Tag dangerouslySetInnerHTML={{ __html: content }} />);
 };
 
 // == Attributes ==================================================================
