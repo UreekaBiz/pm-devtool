@@ -5,7 +5,7 @@ import { getMarkOutputSpec, AttributeType, TextStyleMarkSpec } from 'common';
 import { isValidHTMLElement, safeParseTag } from 'notebookEditor/extension/util/parse';
 import { NoStorage } from 'notebookEditor/model/type';
 
-import { removeEmptyTextStyleCommand, setTextStyleCommand, unsetTextStyleCommand } from './command';
+import { setTextStyleCommand } from './command';
 
 // ********************************************************************************
 interface TextStyleOptions { HTMLAttributes: Record<string, any>; }
@@ -30,13 +30,7 @@ export const TextStyle = Mark.create<TextStyleOptions, NoStorage>({
   addOptions() { return { HTMLAttributes: {} }; },
 
   // -- Command -------------------------------------------------------------------
-  addCommands() {
-    return {
-      setTextStyle: setTextStyleCommand,
-      unsetTextStyle: unsetTextStyleCommand,
-      removeEmptyTextStyle: removeEmptyTextStyleCommand,
-    };
-  },
+  addCommands() { return { setTextStyle: setTextStyleCommand }; },
 
   // -- View ----------------------------------------------------------------------
   parseHTML() {
