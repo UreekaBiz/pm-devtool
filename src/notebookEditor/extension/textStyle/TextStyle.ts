@@ -3,14 +3,12 @@ import { Mark } from '@tiptap/core';
 import { getMarkOutputSpec, AttributeType, TextStyleMarkSpec } from 'common';
 
 import { isValidHTMLElement, safeParseTag } from 'notebookEditor/extension/util/parse';
-import { NoStorage } from 'notebookEditor/model/type';
+import { NoOptions, NoStorage } from 'notebookEditor/model/type';
 
 import { setTextStyleCommand } from './command';
 
 // ********************************************************************************
-interface TextStyleOptions { HTMLAttributes: Record<string, any>; }
-
-export const TextStyle = Mark.create<TextStyleOptions, NoStorage>({
+export const TextStyle = Mark.create<NoOptions, NoStorage>({
   ...TextStyleMarkSpec,
 
   // -- Attribute -----------------------------------------------------------------
@@ -27,7 +25,6 @@ export const TextStyle = Mark.create<TextStyleOptions, NoStorage>({
       },
     };
   },
-  addOptions() { return { HTMLAttributes: {} }; },
 
   // -- Command -------------------------------------------------------------------
   addCommands() { return { setTextStyle: setTextStyleCommand }; },
