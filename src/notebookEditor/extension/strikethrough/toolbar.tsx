@@ -1,8 +1,8 @@
 import { BiStrikethrough } from 'react-icons/bi';
 
-import { getStrikethroughMarkType, isNodeSelection, MarkName } from 'common';
+import { getStrikethroughMarkType, setMarkCommand, isNodeSelection, MarkName } from 'common';
 
-import { getMarkHolder, inMarkHolder, toggleMarkInMarkHolder } from 'notebookEditor/extension/markHolder/util';
+import { getMarkHolder, inMarkHolder, toggleMarkInMarkHolderCommand } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -24,11 +24,15 @@ export const markStrikethrough: ToolItem = {
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
   onClick: (editor) => {
     // if MarkHolder is defined toggle the Mark inside it
-    const markHolder = getMarkHolder(editor);
-    if(markHolder) return toggleMarkInMarkHolder(editor, () => editor.chain()/*(SEE: toggleInMarkHolder)*/, markHolder, getStrikethroughMarkType(editor.schema))/*nothing else to do*/;
-    /* else -- MarkHolder is not present */
+    const { state, view } = editor;
+    const { dispatch } = view;
+    const markHolder = getMarkHolder(state);
 
-    return editor.chain().focus().toggleStrikethrough().run();
+    if(markHolder) {
+      return toggleMarkInMarkHolderCommand(markHolder, getStrikethroughMarkType(editor.schema))(state, dispatch);
+    }/* else -- no MarkHolder present */
+
+    return setMarkCommand(state.schema, MarkName.STRIKETHROUGH, {/*no attributes*/})(state, dispatch);
   },
 
   isActive: (editor) => {

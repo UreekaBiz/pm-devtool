@@ -1,8 +1,8 @@
 import { BiBold } from 'react-icons/bi';
 
-import { getBoldMarkType, isNodeSelection, MarkName } from 'common';
+import { getBoldMarkType, isNodeSelection, setMarkCommand, MarkName } from 'common';
 
-import { getMarkHolder, inMarkHolder, toggleMarkInMarkHolder } from 'notebookEditor/extension/markHolder/util';
+import { getMarkHolder, inMarkHolder, toggleMarkInMarkHolderCommand } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -24,10 +24,15 @@ export const markBold: ToolItem = {
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
   onClick: (editor) => {
     // if MarkHolder is defined toggle the Mark inside it
-    const markHolder = getMarkHolder(editor);
+    const { state, view } = editor;
+    const { dispatch } = view;
+    const markHolder = getMarkHolder(state);
 
-    if(markHolder) return toggleMarkInMarkHolder(editor, () => editor.chain()/*(SEE: toggleInMarkHolder)*/, markHolder, getBoldMarkType(editor.schema))/*nothing else to do*/;
-    return editor.chain().focus().toggleBold().run();
+    if(markHolder) {
+      return toggleMarkInMarkHolderCommand(markHolder, getBoldMarkType(editor.schema))(state, dispatch);
+    }/* else -- no MarkHolder present */
+
+    return setMarkCommand(state.schema, MarkName.BOLD, {/*no attributes*/})(state, dispatch);
   },
 
   isActive: (editor) => {
