@@ -32,7 +32,7 @@ export const getMarkValue = (node: ProseMirrorNode, markName: MarkName, attribut
 // returns a string with the names of all allowed Marks for a Node
 export const getAllowedMarks = (allowedMarks: MarkName[]) => allowedMarks.join(' ');
 
-/** Compute the Range covered by a Mark */
+/** Get the Range covered by a Mark */
 const getMarkRange =($pos: ResolvedPos, markType: MarkType, attributes: Record<AttributeType | string, any> = {/*default no attributes*/}) => {
   let start = $pos.parent.childAfter($pos.parentOffset);
 
