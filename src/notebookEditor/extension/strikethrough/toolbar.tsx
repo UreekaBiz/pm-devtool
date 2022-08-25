@@ -5,6 +5,8 @@ import { getStrikethroughMarkType, setMarkCommand, isNodeSelection, MarkName } f
 import { getMarkHolder, inMarkHolder, toggleMarkInMarkHolderCommand } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
+import { toolItemCommandWrapper } from '../util/command';
+
 // ********************************************************************************
 // == Tool Items ==================================================================
 export const markStrikethrough: ToolItem = {
@@ -22,17 +24,16 @@ export const markStrikethrough: ToolItem = {
     return true;
   },
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
-  onClick: (editor) => {
+  onClick: (editor, depth) => {
     // if MarkHolder is defined toggle the Mark inside it
-    const { state, view } = editor;
-    const { dispatch } = view;
+    const { state } = editor;
     const markHolder = getMarkHolder(state);
 
     if(markHolder) {
-      return toggleMarkInMarkHolderCommand(markHolder, getStrikethroughMarkType(editor.schema))(state, dispatch);
+      return toolItemCommandWrapper(editor, depth, toggleMarkInMarkHolderCommand(markHolder, getStrikethroughMarkType(editor.schema)));
     }/* else -- no MarkHolder present */
 
-    return setMarkCommand(state.schema, MarkName.STRIKETHROUGH, {/*no attributes*/})(state, dispatch);
+    return toolItemCommandWrapper(editor, depth, setMarkCommand(state.schema, MarkName.STRIKETHROUGH, {/*no attributes*/}));
   },
 
   isActive: (editor) => {
