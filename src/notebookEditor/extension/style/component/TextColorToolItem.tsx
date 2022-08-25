@@ -1,5 +1,7 @@
 import { getSelectedNode, AttributeType, InvalidMergedAttributeValue } from 'common';
 
+
+import { updateAttributesInRangeCommand } from 'notebookEditor/command/selection';
 import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
 import { textColors } from 'notebookEditor/theme/type';
@@ -20,7 +22,7 @@ export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (value: string, focusEditor?: boolean) => {
-    editor.commands.setStyle(AttributeType.TextColor, value, depth);
+    updateAttributesInRangeCommand(AttributeType.TextColor, value, depth)(editor.state, editor.view.dispatch);
 
     // Focus the editor again
     if(focusEditor) editor.commands.focus();

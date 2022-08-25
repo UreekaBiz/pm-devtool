@@ -1,5 +1,6 @@
-import { getSelectedNode, AttributeType, Margin, Padding } from 'common';
+import { getSelectedNode, isNodeSelection, AttributeType, Margin, Padding } from 'common';
 
+import { updateAttributesInRangeCommand } from 'notebookEditor/command/selection';
 import { getTextDOMRenderedValue } from 'notebookEditor/extension/util/attribute';
 import { Unit } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
@@ -13,6 +14,7 @@ const DEFAULT_VALUE = `0${Unit.Pixel}`;
 interface Props extends EditorToolComponentProps {/*no additional*/}
 export const SpacingToolItem: React.FC<Props> = ({ depth, editor }) => {
   const { state } = editor;
+  const { selection } = state;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
@@ -32,7 +34,15 @@ export const SpacingToolItem: React.FC<Props> = ({ depth, editor }) => {
 
   // == Handler ===================================================================
   const handleChange = (attribute: AttributeType, value: string) => {
-    editor.commands.setStyle(attribute, value, depth);
+    updateAttributesInRangeCommand(attribute, value, depth)(editor.state, editor.view.dispatch);
+
+    const position = state.selection.anchor;
+    // set the selection in the same position in case that the node was replaced
+    if(isNodeSelection(selection)) editor.commands.setNodeSelection(position);
+    else editor.commands.setTextSelection(position);
+
+    // Focus the editor again
+    editor.commands.focus();
   };
 
   // == UI ========================================================================

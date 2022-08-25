@@ -10,7 +10,6 @@ import { NodeViewRemoval } from 'notebookEditor/extension/nodeViewRemoval/NodeVi
 import { MarkHolder } from 'notebookEditor/extension/markHolder/MarkHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph/Paragraph';
 import { Strikethrough } from 'notebookEditor/extension/strikethrough/Strikethrough';
-import { Style } from 'notebookEditor/extension/style/Style';
 import { Text } from 'notebookEditor/extension/text/Text';
 import { TextStyle } from 'notebookEditor/extension/textStyle/TextStyle';
 
@@ -37,7 +36,6 @@ export const editorDefinition = {
     MarkHolder,
     Paragraph,
     Strikethrough,
-    Style,
     Text,
     TextStyle,
   ],

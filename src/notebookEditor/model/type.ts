@@ -22,7 +22,6 @@ export enum ExtensionName {
   NODEVIEW_REMOVAL = 'nodeViewRemoval',
   UNIQUE_NODE_ID = 'uniqueNodeId',
   SET_DEFAULT_MARKS = 'setDefaultMarks',
-  STYLE = 'style',
 }
 
 // == Priority ====================================================================
