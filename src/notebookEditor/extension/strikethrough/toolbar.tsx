@@ -2,10 +2,10 @@ import { BiStrikethrough } from 'react-icons/bi';
 
 import { isNodeSelection, MarkName } from 'common';
 
+import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
-import { toolItemCommandWrapper } from '../util/command';
 import { toggleStrikethroughCommand } from './command';
 
 // ********************************************************************************
