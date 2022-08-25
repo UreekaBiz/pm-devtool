@@ -150,7 +150,7 @@ export const mapValues = <Vi, Vf>(object: Record<string, Vi>, fn: (value: Vi, ke
     return true/*by definition*/;
   } /* else -- look through keys */
 
-  return comparedKeys.every(key =>object2[key] === object1[key]);
+  return comparedKeys.every(key => object2[key] === object1[key]);
 };
 
 // ================================================================================
