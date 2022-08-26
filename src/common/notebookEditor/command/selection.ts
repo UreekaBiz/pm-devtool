@@ -1,8 +1,10 @@
 import { TextSelection } from 'prosemirror-state';
 
-import { getSelectedNode, isTextNode, AttributeType, SelectionDepth, Command } from 'common';
-
 import { minFromMax } from '../../util/number';
+import { AttributeType } from '../attribute';
+import { isTextNode } from '../extension/text';
+import { getSelectedNode, SelectionDepth } from '../selection';
+import { Command } from './type';
 
 // ********************************************************************************
 // == Type ========================================================================
