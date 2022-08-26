@@ -21,6 +21,7 @@ export const setTextSelectionCommand = (selectionRange: SelectionRange): Command
   const selection = TextSelection.create(doc, resolvedFrom, resolvedEnd);
 
   tr.setSelection(selection);
+  dispatch(tr);
   return true/*Command executed*/;
 };
 
