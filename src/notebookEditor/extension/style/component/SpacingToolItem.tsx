@@ -1,6 +1,5 @@
-import { getSelectedNode, isNodeSelection, AttributeType, Margin, Padding } from 'common';
+import { getSelectedNode, isNodeSelection, updateAttributesInRangeCommand, AttributeType, Margin, Padding } from 'common';
 
-import { updateAttributesInRangeCommand } from 'notebookEditor/command/selection';
 import { getTextDOMRenderedValue } from 'notebookEditor/extension/util/attribute';
 import { Unit } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';

@@ -1,7 +1,5 @@
-import { getSelectedNode, AttributeType, InvalidMergedAttributeValue } from 'common';
+import { getSelectedNode, updateAttributesInRangeCommand, AttributeType, InvalidMergedAttributeValue } from 'common';
 
-
-import { updateAttributesInRangeCommand } from 'notebookEditor/command/selection';
 import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
 import { textColors } from 'notebookEditor/theme/type';
