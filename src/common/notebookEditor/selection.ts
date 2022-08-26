@@ -1,5 +1,5 @@
-import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 
 import { NotebookSchemaType } from './schema';
 
