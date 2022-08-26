@@ -18,7 +18,7 @@ export const range = (values: number[], range?: Range): Range | undefined/*no ra
 export const generateRange = ([min, max]: Range, step = 1) =>
 Array.from({ length: (max - min) / step + 1 }, (_, i) => min + (i * step));
 
-// ................................................................................
+// --------------------------------------------------------------------------------
 /**
  * Performs a MinValue comparison between the given checkedValue and the result
  * of comparing the checkedValue against a given MaxValue
