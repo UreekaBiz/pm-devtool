@@ -2,6 +2,8 @@ import { TextSelection } from 'prosemirror-state';
 
 import { getSelectedNode, isTextNode, AttributeType, SelectionDepth, Command } from 'common';
 
+import { minFromMax } from '../../util/number';
+
 // ********************************************************************************
 // == Type ========================================================================
 type SelectionRange = { from: number; to: number; }
@@ -15,8 +17,8 @@ export const setTextSelectionCommand = (selectionRange: SelectionRange): Command
   const minPos = TextSelection.atStart(doc).from;
   const maxPos = TextSelection.atEnd(doc).to;
 
-  const resolvedFrom = Math.min(Math.max(from, minPos), maxPos);
-  const resolvedEnd = Math.min(Math.max(to, minPos), maxPos);
+  const resolvedFrom = minFromMax(from, minPos, maxPos);
+  const resolvedEnd = minFromMax(to, minPos, maxPos);
 
   const selection = TextSelection.create(doc, resolvedFrom, resolvedEnd);
 
