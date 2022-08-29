@@ -1,7 +1,7 @@
 import { Mark, MarkType } from 'prosemirror-model';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
-import { getMarkName, isMarkActive, stringifyMarksArray, AbstractDocumentUpdate, AttributeType, Command, MarkName, MarkHolderNodeType, UnsetMarkDocumentUpdate, SetMarkDocumentUpdate } from 'common';
+import { getMarkName, isMarkActive, stringifyMarksArray, AbstractDocumentUpdate, AttributeType, Command, MarkName, MarkHolderNodeType, SetMarkDocumentUpdate, UnsetMarkDocumentUpdate } from 'common';
 
 import { getMarkHolder, parseStoredMarks } from './util';
 
