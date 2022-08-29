@@ -50,7 +50,7 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
         });
       });
     }
-    return tr;
+    return tr/*updated*/;
   }
 }
 
