@@ -1,6 +1,7 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 
+import { AbstractDocumentUpdate, Command } from './command';
 import { NotebookSchemaType } from './schema';
 
 // ********************************************************************************
@@ -90,19 +91,31 @@ const getNodeBefore = (selection: Selection) => {
  * Replaces the node at the {@link Selection} of the given {@link Transaction} and
  * selects the new, replaced Node
  */
- export const replaceAndSelectNodeCommand = (node: ProseMirrorNode<NotebookSchemaType>, tr: Transaction<NotebookSchemaType>, dispatch: ((args?: any) => any) | undefined) => {
-  if(dispatch) {
-    tr.replaceSelectionWith(node);
+ export const replaceAndSelectNodeCommand = (node: ProseMirrorNode<NotebookSchemaType>): Command => (state, dispatch) => {
+  const updatedTr =  new ReplaceAndSelectNodeDocumentUpdate(node).update(state, state.tr);
+  dispatch(updatedTr);
+  return true/*Command executed*/;
+};
+
+export class ReplaceAndSelectNodeDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor(private node: ProseMirrorNode<NotebookSchemaType>) {/*nothing additional*/ }
+
+  /*
+   * modify the given Transaction such that a Bloc Node is created
+   * below the current Selection
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    tr.replaceSelectionWith(this.node);
 
     const nodeBefore = getNodeBefore(tr.selection),
           nodeBeforeSize = nodeBefore?.nodeSize ?? 0/*no node before -- no size*/;
+
     const resolvedPos = tr.doc.resolve(tr.selection.anchor - nodeBeforeSize);
     tr.setSelection(new NodeSelection(resolvedPos));
-    dispatch(tr);
-  } /* else -- called from can() (SEE: src/notebookEditor/README.md/#Commands) */
 
-  return true/*command can be executed, selection can always be replaced*/;
-};
+    return tr/*updated*/;
+  }
+}
 
 // == Range =======================================================================
 /**
