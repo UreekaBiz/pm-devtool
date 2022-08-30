@@ -1,7 +1,7 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { AbstractDocumentUpdate } from 'common';
+import { AbstractDocumentUpdate, NotebookSchemaType } from 'common';
 
 // ********************************************************************************
 /**
@@ -10,7 +10,7 @@ import { AbstractDocumentUpdate } from 'common';
  * modifications, resulting in their effect being combined as a single operation
  * through the History
  */
-export const applyDocumentUpdates = (startingState: EditorState, documentUpdates: AbstractDocumentUpdate[], view: EditorView): boolean => {
+export const applyDocumentUpdates = (startingState: EditorState<NotebookSchemaType>, documentUpdates: AbstractDocumentUpdate[], view: EditorView): boolean => {
   let currentState = startingState/*default*/;
 
   for(let i=0; i<documentUpdates.length; i++) {
@@ -29,6 +29,7 @@ export const applyDocumentUpdates = (startingState: EditorState, documentUpdates
 
   // update the View with the final EditorState, after all DocumentUpdates have
   // been applied, resulting in a single change for the History
+  view.focus();
   view.updateState(currentState);
   return true/*updates applied*/;
 };
