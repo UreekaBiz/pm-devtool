@@ -6,12 +6,13 @@ import { RiHeading } from 'react-icons/ri';
 
 import { AttributeType, HeadingLevel, NodeName } from 'common';
 
+import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { markBold } from 'notebookEditor/extension/bold/toolbar';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough/toolbar';
 import { fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle/toolbar';
 import { Toolbar, ToolItem } from 'notebookEditor/toolbar/type';
 
-import { createDefaultHeadingAttributes } from './type';
+import { setHeadingCommand } from './command';
 
 //*********************************************************************************
 // == Tool Items ==================================================================
@@ -26,7 +27,7 @@ const createHeadingTool = (level: HeadingLevel, icon: ReactElement): ToolItem =>
   tooltip: `Heading ${level} (⌘ + ⌥ + ${level})`,
 
   shouldShow: (editor, depth) => depth === 1/*only show on the direct parent node of a TextNode*/,
-  onClick: (editor) => editor.chain().focus().setHeading(createDefaultHeadingAttributes(level)).run(),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, setHeadingCommand({ [AttributeType.Level]: level })),
 });
 export const heading1: ToolItem = createHeadingTool(HeadingLevel.One, <FaHeading size={16} />);
 export const heading2: ToolItem = createHeadingTool(HeadingLevel.Two, <RiHeading size={16} />);
