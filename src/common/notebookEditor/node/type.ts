@@ -19,6 +19,7 @@ export enum NodeName {
   TEXT = 'text',
 }
 export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
+export const isNodeName = (name: string) => Object.values(NodeName).includes(name as NodeName/*by definition*/);
 
 /** The type of group that this Node belongs to. This is used on the Content field
  *  on a NodeSpec */

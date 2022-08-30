@@ -25,6 +25,7 @@ export enum MarkName {
   TEXT_STYLE = 'textStyle',
 }
 export const getMarkName = (mark: ProseMirrorMark) => mark.type.name as MarkName;
+export const isMarkName = (name: string) => Object.values(MarkName).includes(name as MarkName/*by definition*/);
 
 // --------------------------------------------------------------------------------
 export const markFromJSONMark = (schema: NotebookSchemaType, jsonMark: JSONMark) => ProseMirrorMark.fromJSON(schema, jsonMark);
