@@ -3,6 +3,7 @@ import { useState, ChangeEventHandler } from 'react';
 
 import { notebookEditorTheme, ThemeName, Themes } from 'common';
 
+import { setThemeStylesheet } from 'notebookEditor/theme/theme';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -19,6 +20,7 @@ export const SetThemeToolItem: React.FC<Props> = () => {
     if(!theme) return/*invalid value -- ignore*/;
     setTheme(value);
     notebookEditorTheme.setTheme(theme);
+    setThemeStylesheet();
   };
 
   // == UI ========================================================================
