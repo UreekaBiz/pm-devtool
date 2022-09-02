@@ -1,5 +1,5 @@
 
-import { Attributes, HTMLAttributes } from '../attribute';
+import { Attributes, AttributeType, HTMLAttributes } from '../attribute';
 import { MarkName } from '../mark';
 import { NodeName } from '../node';
 import { RendererState } from './state';
@@ -87,3 +87,6 @@ export const createNodeDataTypeAttribute = (nodeName: NodeName) => `${DATA_NODE_
 
 export const DATA_MARK_TYPE = 'data-mark-type';
 export const createMarkDataTypeAttribute = (markName: MarkName) => `${DATA_MARK_TYPE}="${markName}"`;
+
+export const DATA_ATTRIBUTE = 'data-attribute';
+export const createNodeDataAttribute = (attributeType: AttributeType) => `${DATA_ATTRIBUTE}-${attributeType}`;
