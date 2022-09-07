@@ -18,6 +18,7 @@ export enum ExtensionName {
   GAP_CURSOR_ALLOW = 'allowGapCursor'/*CHECK: is this the right place for this?*/,
   HIGHLIGHT = 'highlight',
   HISTORY = 'history',
+  INPUT_RULE = 'inputRule',
   INLINE_NODE_WITH_CONTENT = 'inlineNodeWithContent',
   NODEVIEW_REMOVAL = 'nodeViewRemoval',
   UNIQUE_NODE_ID = 'uniqueNodeId',
@@ -42,6 +43,10 @@ export enum ExtensionPriority {
   //       first block Node encountered in the editor Extension array
   // SEE: notebookEditor/type.ts
   PARAGRAPH = 118,
+
+  // NOTE: custom InputRules just need to be triggered before Text so that their
+  //       effects are applied (SEE: InputRule.ts)
+  INPUT_RULE = 100,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when
