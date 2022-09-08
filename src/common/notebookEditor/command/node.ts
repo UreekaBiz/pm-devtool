@@ -2,6 +2,7 @@ import { EditorState, Selection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { Attributes } from '../attribute';
+import { isMarkHolderNode } from '../extension/markHolder';
 import { NodeName } from '../node';
 import { NotebookSchemaType } from '../schema';
 import { isGapCursorSelection } from '../selection';
@@ -11,7 +12,7 @@ import { AbstractDocumentUpdate, Command } from './type';
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/20fa086dfe21f7ce03e5a05b842cf04e0a91e653/src/commands.ts
 /** Creates a Block Node below the current Selection */
 export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (state, dispatch) => {
-  const updatedTr =  new CreateCodeBlockNodeDocumentUpdate(blockNodeName, attributes).update(state, state.tr);
+  const updatedTr =  new CreateBlockNodeDocumentUpdate(blockNodeName, attributes).update(state, state.tr);
   if(updatedTr) {
     dispatch(updatedTr);
     return true/*Command executed*/;
@@ -19,7 +20,7 @@ export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Part
 
   return false/*not executed*/;
 };
-export class CreateCodeBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
+export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
   /*
@@ -27,20 +28,19 @@ export class CreateCodeBlockNodeDocumentUpdate implements AbstractDocumentUpdate
    * below the current Selection
    */
   public update(editorState: EditorState<NotebookSchemaType>, tr: Transaction<NotebookSchemaType>) {
-    const { empty } = tr.selection;
-    if(!empty) {
-      return false/*do not allow on multiple Node Selection*/;
-    } /* else -- try to create Block below */
-
     const { schema } = editorState;
     if(isGapCursorSelection(tr.selection)) return false/*do not allow creation when selection is GapCursor*/;
 
     const { $anchor, $head } = tr.selection;
     const blockNodeType = schema.nodes[this.blockNodeName];
 
-    // if the current Block is empty, replace it with the desired Block
-    // NOTE: empty implies parent($anchor) === parent($head)
-    if(empty && $anchor.parent.content.size < 1) {
+    // if the current Block and the Selection are both empty
+    // (or only a MarkHolder is present), replace the
+    // parent Block with the desired Block
+    const { content, firstChild } = $anchor.parent;
+    const { size: contentSize } = content;
+    if(tr.selection.empty/*empty implies parent($anchor) === parent($head)*/ &&
+      (contentSize < 1 /*parent has no content*/ || contentSize === 1 && firstChild && isMarkHolderNode(firstChild)/*parent only has a MarkHolder*/)) {
       const parentBlockRange = $anchor.blockRange($anchor);
       if(!parentBlockRange) return false/*no parent Block Range*/;
 
