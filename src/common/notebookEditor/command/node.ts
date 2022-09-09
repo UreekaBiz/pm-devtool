@@ -10,6 +10,7 @@ import { isGapCursorSelection } from '../selection';
 import { AbstractDocumentUpdate, Command } from './type';
 
 // ********************************************************************************
+// -- Create ----------------------------------------------------------------------
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/20fa086dfe21f7ce03e5a05b842cf04e0a91e653/src/commands.ts
 /** Creates a Block Node below the current Selection */
 export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (state, dispatch) => {
@@ -71,7 +72,7 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
-// --------------------------------------------------------------------------------
+// -- Clear -----------------------------------------------------------------------
 /** clear the Nodes in the current Block */
 export const clearNodesCommand = (): Command => (state, dispatch) => {
   const updatedTr =  new ClearNodesDocumentUpdate().update(state, state.tr);
