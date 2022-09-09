@@ -1,6 +1,7 @@
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
+import { isBlank } from '../../util';
 import { Attributes } from '../attribute';
 import { isMarkHolderNode } from '../extension/markHolder';
 import { NodeName } from '../node';
@@ -37,10 +38,13 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
     // if the current Block and the Selection are both empty
     // (or only a MarkHolder is present), replace the
     // parent Block with the desired Block
-    const { content, firstChild } = $anchor.parent;
+    const { content, textContent, firstChild } = $anchor.parent;
     const { size: contentSize } = content;
     if(tr.selection.empty/*empty implies parent($anchor) === parent($head)*/ &&
-      (contentSize < 1 /*parent has no content*/ || contentSize === 1 && firstChild && isMarkHolderNode(firstChild)/*parent only has a MarkHolder*/)) {
+      (contentSize < 1/*parent has no content*/ ||
+      isBlank(textContent)/*the content is only white space*/ ||
+      contentSize === 1 && firstChild && isMarkHolderNode(firstChild)/*parent only has a MarkHolder*/)
+    ) {
       const parentBlockRange = $anchor.blockRange($anchor);
       if(!parentBlockRange) return false/*no parent Block Range*/;
 
@@ -67,6 +71,7 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+// --------------------------------------------------------------------------------
 /** clear the Nodes in the current Block */
 export const clearNodesCommand = (): Command => (state, dispatch) => {
   const updatedTr =  new ClearNodesDocumentUpdate().update(state, state.tr);
