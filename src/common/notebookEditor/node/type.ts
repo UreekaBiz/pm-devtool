@@ -63,7 +63,7 @@ export const contentToNode = (schema: Schema, content?: NodeContent) => content 
 // NOTE: at a minimum the id must be URL-safe (i.e. without the need to URL encode)
 // NOTE: this is expected to be used within a given context (e.g. within a document)
 //       and therefore does not need to have as much randomness as, say, UUIDv4
-const customNanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 10/*T&E*/);
+export const customNanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 10/*T&E*/);
 export const generateNodeId = () => customNanoid();
 
 /**

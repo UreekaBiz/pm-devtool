@@ -13,6 +13,7 @@ export class NoPluginState {
 
 // == Extension ===================================================================
 export enum ExtensionName {
+  EMOJI_SUGGESTION = 'emojiSuggestion',
   DROP_CURSOR = 'dropCursor',
   GAP_CURSOR = 'gapCursor',
   GAP_CURSOR_ALLOW = 'allowGapCursor'/*CHECK: is this the right place for this?*/,
@@ -47,6 +48,11 @@ export enum ExtensionPriority {
   // NOTE: custom InputRules just need to be triggered before Text so that their
   //       effects are applied (SEE: InputRule.ts)
   INPUT_RULE = 117/*T&E*/,
+
+  // NOTE: since Suggestions have specific behavior for the Enter and arrow
+  //       keydown events, they must run before other Extensions with these
+  //       keydown handlers run
+  EMOJI_SUGGESTION = 116,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when

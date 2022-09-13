@@ -1,6 +1,7 @@
 import { Bold } from 'notebookEditor/extension/bold/Bold';
 import { Document } from 'notebookEditor/extension/document/Document';
 import { DropCursor } from 'notebookEditor/extension/dropCursor/DropCursor';
+import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion/EmojiSuggestion';
 import { GapCursor } from 'notebookEditor/extension/gapcursor/GapCursor';
 import { Heading } from 'notebookEditor/extension/heading/Heading';
 import { Highlight } from 'notebookEditor/extension/highlight/Highlight';
@@ -28,6 +29,7 @@ export const editorDefinition = {
     Bold,
     DropCursor,
     Document,
+    EmojiSuggestion,
     GapCursor,
     Heading,
     Highlight,
