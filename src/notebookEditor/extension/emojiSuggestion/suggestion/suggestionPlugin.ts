@@ -188,6 +188,7 @@ export const suggestionPlugin = <I = any>(suggestionOptions: SuggestionOptions<I
 
           if(handleExit) {
             renderer?.onExit?.(props);
+            hideSuggestion(view)/*ensure suggestion is no longer shown*/;
           } /* else -- User did not try to exit, check for updates */
 
           if(handleChange) {
@@ -199,12 +200,14 @@ export const suggestionPlugin = <I = any>(suggestionOptions: SuggestionOptions<I
           } /* else -- nothing left to check, do nothing */
         },
 
+        // called when the whole View gets destroyed
         destroy: () => {
           if(!props) {
             return/*nothing to do*/;
           } /* else -- props given, do onExit behavior */
 
           renderer.onExit?.(props);
+          hideSuggestion(props.editor.view)/*ensure suggestion is no longer shown*/;
         },
       };
     },
@@ -240,6 +243,7 @@ export const suggestionPlugin = <I = any>(suggestionOptions: SuggestionOptions<I
   return suggestionPlugin;
 };
 
+// == Util ========================================================================
 // reset the Suggestion state. Note that this function does not change the
 // 'shouldShow' SuggestionState property since that should remain constant
 // across different Transactions, until another one sets it back to false
@@ -252,3 +256,7 @@ const resetSuggestionState = (suggestionState: SuggestionState) => {
   suggestionState.text = ''/*none*/;
   return suggestionState;
 };
+
+// dispatch a Transaction whose Metadata indicates that the Suggestion should
+// no longer be shown. (SEE: SHOULD_SHOW_SUGGESTION_META)
+const hideSuggestion = (view: EditorView) => view.dispatch(view.state.tr.setMeta(SHOULD_SHOW_SUGGESTION_META, false));
