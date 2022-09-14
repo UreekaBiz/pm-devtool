@@ -1,5 +1,6 @@
 import { ReactRenderer } from '@tiptap/react';
 import { PluginKey } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 import { RefAttributes } from 'react';
 import tippy, { Instance as TippyInstance, Props as TippyProps } from 'tippy.js';
 
@@ -8,6 +9,7 @@ import { insertContentAtCommand } from 'notebookEditor/command/node';
 import { EmojiSuggestionForwardedObject, EmojiSuggestionList, EmojiSuggestionListProps } from './component/EmojiSuggestionList';
 import { isValidClientRect, SuggestionOptions, SuggestionSymbol } from './suggestion/type';
 import { emojiSymbols } from './symbol';
+import { SHOULD_SHOW_SUGGESTION_META } from './suggestion/suggestionPlugin';
 
 // ********************************************************************************
 // == Type ========================================================================
@@ -22,7 +24,6 @@ export const emojiSuggestionOptions: Omit<SuggestionOptions<SuggestionSymbol>, '
 
   startOfLine: false/*show regardless of whether or not Selection is at the start of a line*/,
 
-  allow: () => true/*allow any match*/,
   allowSpaces: false/*disallow spaces on suggested items*/,
   allowedPrefixes: [' ']/*default allowed prefix characters to trigger the Suggestions*/,
 
@@ -78,7 +79,10 @@ export const emojiSuggestionOptions: Omit<SuggestionOptions<SuggestionSymbol>, '
           if(!component.ref) return false/*ref not set yet*/;
 
           if(props.event.key === 'Escape') {
-            destroyPopup(tippyPopup, component);
+            // only hide the popup. It will be destroyed when
+            // onExit gets called by the updated Suggestion Plugin
+            // (SEE: suggestionPlugin.ts, #onExit below)
+            tippyPopup.hide();
             return true/*nothing left to do*/;
           }/* else -- not trying to hide the tippyPopup */
 
@@ -89,7 +93,7 @@ export const emojiSuggestionOptions: Omit<SuggestionOptions<SuggestionSymbol>, '
         }
       },
 
-      onExit: () => destroyPopup(tippyPopup, component),
+      onExit: (props) => destroyPopup(props.editor.view, tippyPopup, component),
     };
   },
 
@@ -116,10 +120,14 @@ const sortByFilterString = (objA: SuggestionSymbol, objB: SuggestionSymbol) => {
 // (SEE: symbol.ts)
 const formatTrigger = (trigger: string) => trigger.substring(1/*remove '\'*/);
 
-// remove the tippy popup, unmount the component
-const destroyPopup = (tippyPopup: TippyInstance<TippyProps>, component: EmojiSuggestionOptionsComponent) => {
+// remove the tippy popup, unmount the component. Receives the editor View so that
+// the appropriate Metadata can be set to a Transaction, ensuring that the
+// Suggestion is no longer shown for this Suggestion trigger
+// (SEE: SHOULD_SHOW_SUGGESTION_META)
+const destroyPopup = (editorView: EditorView, tippyPopup: TippyInstance<TippyProps>, component: EmojiSuggestionOptionsComponent) => {
   try {
     if(!tippyPopup.state.isDestroyed) {
+      editorView.dispatch(editorView.state.tr.setMeta(SHOULD_SHOW_SUGGESTION_META, false/*no longer show the Suggestion*/));
       tippyPopup.destroy();
       component.destroy();
     } /* else -- already destroyed, do nothing */
