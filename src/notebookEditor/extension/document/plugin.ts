@@ -1,3 +1,4 @@
+import { Editor } from '@tiptap/core';
 import { Slice } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -13,7 +14,7 @@ import { serializeDocumentFragment } from './serialize';
 
 // == Plugin ======================================================================
 const documentKey = new PluginKey<NoPluginState, NotebookSchemaType>('documentKey');
-export const DocumentPlugin = () => {
+export const DocumentPlugin = (editor: Editor) => {
   const plugin = new Plugin<NoPluginState, NotebookSchemaType>({
     // -- Setup -------------------------------------------------------------------
     key: documentKey,
@@ -31,7 +32,7 @@ export const DocumentPlugin = () => {
       },
 
       // define custom clipboard Text representations for Nodes
-      clipboardTextSerializer: (slice: Slice) => serializeDocumentFragment(slice.content),
+      clipboardTextSerializer: (slice: Slice) => serializeDocumentFragment(editor, slice.content),
     },
   });
 

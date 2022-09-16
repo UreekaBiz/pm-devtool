@@ -14,7 +14,7 @@ export const Document = Node.create<NoOptions, NoStorage>({
   ...DocumentNodeSpec,
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins() { return [DocumentPlugin()]; },
+  addProseMirrorPlugins() { return [DocumentPlugin(this.editor)]; },
 
   // -- Keyboard Shortcut ---------------------------------------------------------
   // REF: https://prosemirror.net/docs/ref/#commands.pcBaseKeymap
