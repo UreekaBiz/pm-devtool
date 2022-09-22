@@ -25,6 +25,9 @@ export const CustomSelector = {
   HeadingLevelOne: `[${DATA_NODE_TYPE}="${NodeName.HEADING}"][level="${HeadingLevel.One}"]`,
   HeadingLevelTwo: `[${DATA_NODE_TYPE}="${NodeName.HEADING}"][level="${HeadingLevel.Two}"]`,
   HeadingLevelThree: `[${DATA_NODE_TYPE}="${NodeName.HEADING}"][level="${HeadingLevel.Three}"]`,
+  HeadingLevelFour: `[${DATA_NODE_TYPE}="${NodeName.HEADING}"][level="${HeadingLevel.Four}"]`,
+  HeadingLevelFive: `[${DATA_NODE_TYPE}="${NodeName.HEADING}"][level="${HeadingLevel.Five}"]`,
+  HeadingLevelSix: `[${DATA_NODE_TYPE}="${NodeName.HEADING}"][level="${HeadingLevel.Six}"]`,
 } as const;
 export type CustomThemeElements = Record<typeof CustomSelector[keyof typeof CustomSelector], ThemeElement>;
 
@@ -93,6 +96,18 @@ export const DefaultTheme: Theme = {
       [AttributeType.FontSize]: '20px',
       [AttributeType.TextColor]: '#89B181',
     },
+    [CustomSelector.HeadingLevelFour]: {
+      [AttributeType.FontSize]: '15px',
+      [AttributeType.TextColor]: '#89B181',
+    },
+    [CustomSelector.HeadingLevelFive]: {
+      [AttributeType.FontSize]: '14px',
+      [AttributeType.TextColor]: '#89B181',
+    },
+    [CustomSelector.HeadingLevelSix]: {
+      [AttributeType.FontSize]: '13px',
+      [AttributeType.TextColor]: '#89B181',
+    },
   },
 };
 
@@ -130,11 +145,23 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.TextColor]: '#00577C',
     },
     [CustomSelector.HeadingLevelTwo]: {
-      [AttributeType.FontSize]: '14pt',
+      [AttributeType.FontSize]: '13pt',
       [AttributeType.TextColor]: '#73AB84',
     },
     [CustomSelector.HeadingLevelThree]: {
-      [AttributeType.FontSize]: '13pt',
+      [AttributeType.FontSize]: '12pt',
+      [AttributeType.TextColor]: '#353744',
+    },
+    [CustomSelector.HeadingLevelFour]: {
+      [AttributeType.FontSize]: '11pt',
+      [AttributeType.TextColor]: '#353744',
+    },
+    [CustomSelector.HeadingLevelFive]: {
+      [AttributeType.FontSize]: '10pt',
+      [AttributeType.TextColor]: '#353744',
+    },
+    [CustomSelector.HeadingLevelSix]: {
+      [AttributeType.FontSize]: '9pt',
       [AttributeType.TextColor]: '#353744',
     },
   },
