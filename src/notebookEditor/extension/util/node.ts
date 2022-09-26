@@ -2,7 +2,7 @@ import { Editor } from '@tiptap/core';
 import { DOMParser, Fragment, Node as ProseMirrorNode, ParseOptions } from 'prosemirror-model';
 import { GapCursor } from 'prosemirror-gapcursor';
 
-import { isGapCursorSelection, JSONNode, NodeName, NotebookSchemaType } from 'common';
+import { clearNodesCommand, isGapCursorSelection, JSONNode, NodeName, NotebookSchemaType } from 'common';
 
 import { elementFromString } from './parse';
 
@@ -57,7 +57,7 @@ export const handleBlockBackspace = (editor: Editor, nodeName: NodeName) => {
 
   if(!empty || $anchor.parent.type.name !== nodeName) return false/*let event be handled elsewhere*/;
   if(isAtStartOfDoc || !$anchor.parent.textContent.length) {
-    return editor.commands.clearNodes();
+    return clearNodesCommand(editor.state, editor.view.dispatch);
   } /* else -- no need to delete blockNode */
 
   return false/*let event be handled elsewhere*/;
