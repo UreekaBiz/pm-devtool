@@ -14,9 +14,9 @@ export const ParagraphToolbar: Toolbar = {
 
   toolsCollections: [
     [
+      headingLevelToolItem,
       markBold,
       markStrikethrough,
-      headingLevelToolItem,
     ],
     [
       fontSizeToolItem,
