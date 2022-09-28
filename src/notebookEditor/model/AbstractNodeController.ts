@@ -4,6 +4,8 @@ import { NodeView as ProseMirrorNodeView } from 'prosemirror-view';
 
 import { getPosType, isGetPos, AttributeType, NotebookSchemaType } from 'common';
 
+import { PM_SELECTED_CLASS } from 'notebookEditor/theme/theme';
+
 import { AbstractNodeView } from './AbstractNodeView';
 import { AbstractNodeModel } from './AbstractNodeModel';
 import { isNodeViewStorage, NodeViewStorage } from './NodeViewStorage';
@@ -74,5 +76,21 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     //       their creation to prevent any issues with the View
     this.nodeView.destroy();
     this.nodeModel.destroy();
+  }
+
+  /** updates the selected state and update the view to reflect the changes */
+  public selectNode() {
+    this.nodeModel.setSelected(true);
+    if(this.nodeView.dom.nodeType === 1) {
+      this.nodeView.dom.classList.add(PM_SELECTED_CLASS);
+    } /* else -- do not set as Selected */
+    this.nodeView.updateView();
+  }
+  public deselectNode() {
+    this.nodeModel.setSelected(false);
+    if(this.nodeView.dom.nodeType === 1) {
+      this.nodeView.dom.classList.remove(PM_SELECTED_CLASS);
+    } /* else -- do not set as Selected */
+    this.nodeView.updateView();
   }
 }
