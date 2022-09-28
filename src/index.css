@@ -49,13 +49,15 @@
   cursor: pointer;
 }
 
+/* -- Editor Selection --------------------------------------------------------- */
+.ProseMirror-selectednode > span/*target inline nodes with content (e.g. asyncNodes)*/{
+  outline: 1px solid #666;
+}
+
 /* -- Inline Node ----------------------------------------------------------------- */
 .inlineNodeContainer {
   position: relative;
   display: inline;
-}
-.ProseMirror-selectednode > span/*target inline nodes with content (e.g. asyncNodes)*/{
-  outline: 1px solid #666;
 }
 
 /* -- Node styles -------------------------------------------------------------- */
