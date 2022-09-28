@@ -96,7 +96,7 @@ export const getTextDOMRenderedValue = (editor: Editor, attributeType: Attribute
     if(mergedValue === InvalidMergedAttributeValue) return false/*stop search*/;
     // Is a node that have at leas one child. This is needed since nodes that have
     // one child will take the attributes of the child.
-    if(!isTextNode(node)  )  {
+    if(!isTextNode(node))  {
       if(node.childCount > 0) return/*nothing to do*/;
       const attributeValue = getDOMNodeRenderedValue(node, attributeType);
       mergedValue = mergeAttributeValues(mergedValue, attributeValue);
@@ -112,8 +112,8 @@ export const getTextDOMRenderedValue = (editor: Editor, attributeType: Attribute
 
     // TextNode will inherit the vale of the parent Node, use its attribute
     // value instead.
-    const attributeValue = getDOMNodeRenderedValue(parent, attributeType);
-    mergedValue = mergeAttributeValues(mergedValue, attributeValue);
+    const attributeValue = parent && getDOMNodeRenderedValue(parent, attributeType);
+    mergedValue = mergeAttributeValues(mergedValue, attributeValue ?? undefined/*none*/);
     return/*nothing else to do*/;
   });
 

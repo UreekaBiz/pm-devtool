@@ -1,7 +1,7 @@
 import { Extension } from '@tiptap/core';
 import { Transaction } from 'prosemirror-state';
 
-import { computeRemovedNodePositions, getNodesAffectedByStepMap, AttributeType, NotebookSchemaType, NodePosition, NodeName } from 'common';
+import { computeRemovedNodePositions, getNodesAffectedByStepMap, AttributeType, NodePosition, NodeName } from 'common';
 
 import { ExtensionName, ExtensionPriority, NoOptions, NoStorage } from 'notebookEditor/model/type';
 
@@ -24,7 +24,7 @@ export const NodeViewRemoval = Extension.create<NoOptions, NoStorage>({
 });
 
 // == Util ========================================================================
-const getRemovedNodes = (transaction: Transaction<NotebookSchemaType>) => {
+const getRemovedNodes = (transaction: Transaction) => {
   const { maps } = transaction.mapping;
   let removedNodeObjs: NodePosition[] = [/*empty by default*/];
   // NOTE: not using 'wereNodesAffectedByTransaction' since the required check is

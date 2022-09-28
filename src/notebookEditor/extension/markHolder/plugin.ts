@@ -2,7 +2,7 @@ import { Slice } from 'prosemirror-model';
 import { NodeSelection, Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { createBoldMark, createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isHeadingNode, isMarkHolderNode, markFromJSONMark, parseStringifiedMarksArray, stringifyMarksArray, AttributeType, NodeName, NotebookSchemaType } from 'common';
+import { createBoldMark, createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isHeadingNode, isMarkHolderNode, markFromJSONMark, parseStringifiedMarksArray, stringifyMarksArray, AttributeType, NodeName } from 'common';
 
 import { parseStoredMarks } from './util';
 
@@ -12,7 +12,7 @@ import { parseStoredMarks } from './util';
 const blockNodesThatPreserveMarks = new Set([NodeName.HEADING, NodeName.PARAGRAPH]);
 
 // == Plugin ======================================================================
-export const MarkHolderPlugin = () => new Plugin<NotebookSchemaType>({
+export const MarkHolderPlugin = () => new Plugin({
   // -- Transaction ---------------------------------------------------------------
   // when a BlockNode that must preserve Marks (SEE: blockNodesThatPreserveMarks Set
   // above) gets its Content removed but the Node is not deleted (i.e., the

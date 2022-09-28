@@ -54,7 +54,7 @@ export const elementFromString = (value: string): HTMLElement =>
 
 // == Style =======================================================================
 /**
- * A wrapper function that allows parseHTML style getAttr calls to safely use node
+ * A wrapper function that allows parseHTML style getAttr calls to safely use Node
  * as an HTMLElement
  *
  * @param getAttrsCallback The callback function that will be used as the getAttrs call

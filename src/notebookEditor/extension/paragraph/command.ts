@@ -1,6 +1,6 @@
 import { EditorState, Transaction } from 'prosemirror-state';
 
-import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, AbstractDocumentUpdate, Command, NotebookSchemaType } from 'common';
+import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, AbstractDocumentUpdate, Command } from 'common';
 
 // ********************************************************************************
 export const setParagraphCommand: Command = (state, dispatch) => {
@@ -23,7 +23,7 @@ export class SetParagraphDocumentUpdate implements AbstractDocumentUpdate {
    * modify the given Transaction such that a Paragraph Node is set following
    * the given constraints (SEE: NOTE above) and return it
    */
-  public update(editorState: EditorState<NotebookSchemaType>, tr: Transaction<NotebookSchemaType>) {
+  public update(editorState: EditorState, tr: Transaction) {
     const { from, to } = getBlockNodeRange(tr.selection);
 
     // NOTE: removing MarkHolders before changing NodeType to ensure final

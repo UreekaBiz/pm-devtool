@@ -23,7 +23,7 @@ export const markPasteRule = (regExp: RegExp, type: MarkType): PasteRule => tipt
 
 // == Selection ===================================================================
 /** Gets all the ascendants of the current selected Node */
-export const getAllMarksFromSelection = (state: EditorState): ProseMirrorMark[] => {
+export const getAllMarksFromSelection = (state: EditorState): readonly ProseMirrorMark[] => {
   const { selection } = state;
   const { $anchor } = selection;
 

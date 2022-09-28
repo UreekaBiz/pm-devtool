@@ -1,8 +1,6 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 
-import { NotebookSchemaType } from './schema';
-
 // ********************************************************************************
 // == Type ========================================================================
 // .. Selection ...................................................................
@@ -21,10 +19,10 @@ export type getPosType = boolean | (() => number);
 export const isGetPos = (object: any): object is (() => number) => typeof object === 'function';
 
 /** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */
-export const isNodeSelection = (selection: Selection<NotebookSchemaType>): selection is NodeSelection<NotebookSchemaType> => 'node' in selection;
+export const isNodeSelection = (selection: Selection): selection is NodeSelection => 'node' in selection;
 
 /** Checks whether the given {@link Selection} is of GapCursor type */
-export const isGapCursorSelection = (selection: Selection<NotebookSchemaType>) => selection.toJSON().type === 'gapcursor';
+export const isGapCursorSelection = (selection: Selection) => selection.toJSON().type === 'gapcursor';
 
 // == Node ========================================================================
 /** @returns currently selected Node. The Node selection is based on the depth of
@@ -67,7 +65,7 @@ export const isGapCursorSelection = (selection: Selection<NotebookSchemaType>) =
   LEFT = -1,
   RIGHT = 1
 }
-export const resolveNewSelection = (selection: Selection<NotebookSchemaType>, tr: Transaction<NotebookSchemaType>, bias?: SelectionBias) => {
+export const resolveNewSelection = (selection: Selection, tr: Transaction, bias?: SelectionBias) => {
   if(isNodeSelection(selection)) {
     return new NodeSelection(tr.doc.resolve(selection.anchor));
   } /* else -- a Node is not selected */

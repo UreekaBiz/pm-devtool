@@ -1,6 +1,6 @@
 import { Editor } from '@tiptap/core';
 
-import { NodeName, NotebookSchemaType } from 'common';
+import { NodeName } from 'common';
 
 import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 
@@ -10,7 +10,7 @@ import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 // == Constant ====================================================================
 // a Map defining specific Text serialization functions (i.e. how the Node) gets
 // pasted into the clipboard for Text only paste) for Nodes, given their NodeName
-const customSerializerMap = new Map<NodeName, (editor: Editor, node: ProseMirrorNode<NotebookSchemaType>) => string>(/*currently nothing*/);
+const customSerializerMap = new Map<NodeName, (editor: Editor, node: ProseMirrorNode) => string>(/*currently nothing*/);
 
 // == Serialize ===================================================================
 // Define how to specifically serialize Nodes of different types to Text, so that
