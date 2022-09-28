@@ -81,14 +81,14 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
   /** updates the selected state and update the view to reflect the changes */
   public selectNode() {
     this.nodeModel.setSelected(true);
-    if(this.nodeView.dom.nodeType === 1) {
+    if(this.nodeView.dom.nodeType === 1/*Node*/) {
       this.nodeView.dom.classList.add(PM_SELECTED_CLASS);
     } /* else -- do not set as Selected */
     this.nodeView.updateView();
   }
   public deselectNode() {
     this.nodeModel.setSelected(false);
-    if(this.nodeView.dom.nodeType === 1) {
+    if(this.nodeView.dom.nodeType === 1/*Node*/) {
       this.nodeView.dom.classList.remove(PM_SELECTED_CLASS);
     } /* else -- do not set as Selected */
     this.nodeView.updateView();
