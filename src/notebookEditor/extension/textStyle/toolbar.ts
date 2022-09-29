@@ -13,7 +13,7 @@ export const fontSizeToolItem: ToolItem = {
   component: FontSizeToolItem,
 };
 
-//** Updates the TextColor attribute on the given node. */
+//** Updates the Color attribute on the given node. */
 // NOTE: Not to be confuse with textColorMarkToolItem that adds a TextStyle mark.
 export const textColorToolItem: ToolItem = {
   toolType: 'component',
@@ -23,7 +23,7 @@ export const textColorToolItem: ToolItem = {
 };
 
 //** Adds a TextStyle mark on the selected text*/
-// NOTE: Not to be confuse with textColorToolItem that update the TextColor attribute.
+// NOTE: Not to be confuse with textColorToolItem that update the Color attribute.
 export const textColorMarkToolItem: ToolItem = {
   toolType: 'component',
   name: 'textColorMarkToolItem',

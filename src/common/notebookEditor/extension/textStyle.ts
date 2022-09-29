@@ -11,7 +11,7 @@ import { NotebookSchemaType } from '../schema';
 // NOTE: this value must have matching types -- the ones defined in the Extension
 const TextStyleAttributesSpec = {
   [AttributeType.FontSize]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.TextColor]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.Color]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
 };
 export type TextStyleAttributes = AttributesTypeFromNodeSpecAttributes<typeof TextStyleAttributesSpec>;
 

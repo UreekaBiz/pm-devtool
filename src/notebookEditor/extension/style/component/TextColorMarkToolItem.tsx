@@ -7,20 +7,20 @@ import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
 // NOTE: This component adds a TextStyle mark in the selected text that adds the
-//       color to the text. This don't update the TextColor attribute of the Node.
-//       if that's the use case you should use TextColorToolItem instead.
+//       color to the text. This does not update the Color attribute of the Node.
+//       if that's the use case you should use ColorToolItem instead.
 interface Props extends EditorToolComponentProps {/*no additional*/}
 export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
   const { state } = editor;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
-  const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.TextColor, MarkName.TEXT_STYLE);
+  const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.Color, MarkName.TEXT_STYLE);
   const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
 
   // == Handler ===================================================================
   const handleChange = (value: string, focusEditor?: boolean) => {
-    editor.commands.setTextStyle(AttributeType.TextColor, value);
+    editor.commands.setTextStyle(AttributeType.Color, value);
 
     // Focus the editor again
     if(focusEditor) editor.commands.focus();

@@ -67,7 +67,7 @@ export const DefaultTheme: Theme = {
     },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
-      [AttributeType.TextColor]: '#000',
+      [AttributeType.Color]: '#000',
       [AttributeType.FontSize]: '16px',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginRight]: '4px',
@@ -86,27 +86,27 @@ export const DefaultTheme: Theme = {
   customSelectors: {
     [CustomSelector.HeadingLevelOne]: {
       [AttributeType.FontSize]: '34px',
-      [AttributeType.TextColor]: '#1C5987',
+      [AttributeType.Color]: '#1C5987',
     },
     [CustomSelector.HeadingLevelTwo]: {
       [AttributeType.FontSize]: '25px',
-      [AttributeType.TextColor]: '#4E7246',
+      [AttributeType.Color]: '#4E7246',
     },
     [CustomSelector.HeadingLevelThree]: {
       [AttributeType.FontSize]: '20px',
-      [AttributeType.TextColor]: '#89B181',
+      [AttributeType.Color]: '#89B181',
     },
     [CustomSelector.HeadingLevelFour]: {
       [AttributeType.FontSize]: '15px',
-      [AttributeType.TextColor]: '#89B181',
+      [AttributeType.Color]: '#89B181',
     },
     [CustomSelector.HeadingLevelFive]: {
       [AttributeType.FontSize]: '14px',
-      [AttributeType.TextColor]: '#89B181',
+      [AttributeType.Color]: '#89B181',
     },
     [CustomSelector.HeadingLevelSix]: {
       [AttributeType.FontSize]: '13px',
-      [AttributeType.TextColor]: '#89B181',
+      [AttributeType.Color]: '#89B181',
     },
   },
 };
@@ -124,7 +124,7 @@ export const GoogleDocsTheme: Theme = {
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
       [AttributeType.FontSize]: '11pt',
-      [AttributeType.TextColor]: '#353744',
+      [AttributeType.Color]: '#353744',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginRight]: '4px',
       [AttributeType.MarginTop]: '0.5rem',
@@ -142,27 +142,27 @@ export const GoogleDocsTheme: Theme = {
   customSelectors: {
     [CustomSelector.HeadingLevelOne]: {
       [AttributeType.FontSize]: '14pt',
-      [AttributeType.TextColor]: '#00577C',
+      [AttributeType.Color]: '#00577C',
     },
     [CustomSelector.HeadingLevelTwo]: {
       [AttributeType.FontSize]: '13pt',
-      [AttributeType.TextColor]: '#73AB84',
+      [AttributeType.Color]: '#73AB84',
     },
     [CustomSelector.HeadingLevelThree]: {
       [AttributeType.FontSize]: '12pt',
-      [AttributeType.TextColor]: '#353744',
+      [AttributeType.Color]: '#353744',
     },
     [CustomSelector.HeadingLevelFour]: {
       [AttributeType.FontSize]: '11pt',
-      [AttributeType.TextColor]: '#353744',
+      [AttributeType.Color]: '#353744',
     },
     [CustomSelector.HeadingLevelFive]: {
       [AttributeType.FontSize]: '10pt',
-      [AttributeType.TextColor]: '#353744',
+      [AttributeType.Color]: '#353744',
     },
     [CustomSelector.HeadingLevelSix]: {
       [AttributeType.FontSize]: '9pt',
-      [AttributeType.TextColor]: '#353744',
+      [AttributeType.Color]: '#353744',
     },
   },
 };
