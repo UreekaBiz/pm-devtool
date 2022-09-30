@@ -24,9 +24,9 @@ export const HeadingToolbar: Toolbar = {
 
   toolsCollections: [
     [
+      headingLevelToolItem,
       markBold,
       markStrikethrough,
-      headingLevelToolItem,
     ],
     [
       fontSizeToolItem,
