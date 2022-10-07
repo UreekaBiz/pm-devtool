@@ -3,7 +3,7 @@ import { Node } from '@tiptap/core';
 import { getNodeOutputSpec, storedMarksFromDOM, AttributeType, MarkHolderNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { NoOptions, NoStorage, ParseRulePriority } from 'notebookEditor/model/type';
-import { MarkHolderPlugin } from './plugin';
+import { markHolderPlugin } from './plugin';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -32,7 +32,7 @@ export const MarkHolder = Node.create<NoOptions, NoStorage>({
   },
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins() { return [ MarkHolderPlugin() ]; },
+  addProseMirrorPlugins() { return [markHolderPlugin()]; },
 
   // -- View ----------------------------------------------------------------------
   parseHTML() { return [{

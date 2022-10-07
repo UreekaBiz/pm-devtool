@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view';
 import { generateNodeId, getSelectedNode, isHeadingNode, AttributeType, HeadingAttributes, getParagraphNodeType } from 'common';
 
 // ********************************************************************************
-export const HeadingPlugin = () => new Plugin({
+export const headingPlugin = () => new Plugin({
   // -- Props ---------------------------------------------------------------------
   props: {
     // .. Handler .................................................................
