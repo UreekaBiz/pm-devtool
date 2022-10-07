@@ -14,10 +14,16 @@ import { NodeName } from './node';
 // ********************************************************************************
 // ================================================================================
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
+  // NOTE: the order must match the order defined in ExtensionPriority for Nodes
+  //       and Marks so that the resulting Schema priorities follow the same
+  //       hierarchy as the web-package (note that Doc is at the top even if not
+  //       specified in ExtensionPriority)
+  //       (SEE: web/src/notebookEditor/model/type/ExtensionPriority.ts)
   [NodeName.DOC]: DocumentNodeSpec,
+  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
+
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
-  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,
 };
 
