@@ -1,12 +1,14 @@
-import { getSelectedNode, isNodeType, isNodeSelection, AttributeType, NodeName } from 'common';
+import { InputProps } from '@chakra-ui/react';
+import { getSelectedNode, isBlank, isNodeSelection, isNodeType, AttributeType, NodeName, SetNodeSelectionDocumentUpdate, SetTextSelectionDocumentUpdate, UpdateSingleNodeAttributesDocumentUpdate } from 'common';
 
+import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 import { InputToolItemContainer } from '../../InputToolItemContainer';
 import { InputTool } from './InputTool';
 
 // ********************************************************************************
-interface Props extends EditorToolComponentProps {
+interface Props extends EditorToolComponentProps, Omit<InputProps, 'onChange'> {
   /** the NodeName of the Node */
   nodeName: NodeName;
   /** the attribute that this ToolItems corresponds to */
@@ -15,9 +17,10 @@ interface Props extends EditorToolComponentProps {
   /** the name of the ToolItem */
   name: string;
 }
-export const InputToolItem: React.FC<Props> = ({ editor, depth, nodeName, attributeType, name }) => {
+export const InputToolItem: React.FC<Props> = ({ editor, depth, nodeName, attributeType, name, type, ...props }) => {
   const { state } = editor;
   const { selection } = state;
+  const { $anchor, anchor } = selection;
   const node = getSelectedNode(state, depth);
   if(!node || !isNodeType(node, nodeName)) return null/*nothing to render - invalid node render*/;
 
@@ -25,21 +28,30 @@ export const InputToolItem: React.FC<Props> = ({ editor, depth, nodeName, attrib
 
   // == Handler ===================================================================
   const handleChange = (value: string) => {
-    editor.commands.updateAttributes(nodeName, { [attributeType]: value });
+    let parsedValue: string | undefined | number;
 
-    const position = state.selection.anchor;
-    // set the selection in the same position in case that the node was replaced
-    if(isNodeSelection(selection)) editor.commands.setNodeSelection(position);
-    else editor.commands.setTextSelection(position);
+    if(isBlank(value)) parsedValue = undefined/*no value*/;
+    else if(type === 'number') parsedValue = parseFloat(value);
+    else parsedValue = value;
 
-    // Focus the editor again
-    editor.commands.focus();
+    const nodeSelection = isNodeSelection(selection);
+    const updatePos = isNodeSelection(selection)
+      ? anchor
+      : anchor - $anchor.parentOffset - 1/*select the Node itself*/;
+
+    applyDocumentUpdates(editor, [
+      new UpdateSingleNodeAttributesDocumentUpdate(nodeName as NodeName/*by definition*/, updatePos, { [attributeType]: parsedValue }),
+      ...(nodeSelection ? [new SetNodeSelectionDocumentUpdate(anchor)] : [new SetTextSelectionDocumentUpdate({ from: anchor, to: anchor })]),
+    ]);
+
+    // focus the Editor again
+    editor.view.focus();
   };
 
   // == UI ========================================================================
   return (
     <InputToolItemContainer name={name}>
-      <InputTool value={value} placeholder={name} onChange={handleChange}/>
+      <InputTool value={value} placeholder={name} onChange={handleChange} type={type} {...props}/>
     </InputToolItemContainer>
   );
 };
