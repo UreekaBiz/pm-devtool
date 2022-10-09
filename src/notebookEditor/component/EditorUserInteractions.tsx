@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { isNodeSelection } from 'common';
+import { isNodeSelection, setNodeSelectionCommand } from 'common';
 
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { isValidHTMLElement } from 'notebookEditor/extension/util/parse';
@@ -35,10 +35,14 @@ export const EditorUserInteractions = () => {
       if(event.code === 'Comma' && event.altKey && event.metaKey) {
         event.preventDefault();
 
-        // Focus the last focused item. If none select the editor.
-        if(isNodeSelection(editor.state.selection)) editor.chain().focus().setNodeSelection(editor.state.selection.anchor);
-        else editor.commands.focus();
-      }
+        // focus the last focused item. If none select the Editor
+        if(isNodeSelection(editor.state.selection)) {
+          setNodeSelectionCommand(editor.state.selection.anchor)(editor.state, editor.view.dispatch);
+          editor.view.focus();
+        } else {
+          editor.view.focus();
+        }
+      } /* else -- not selecting Editor */
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
