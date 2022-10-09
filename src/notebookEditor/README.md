@@ -29,13 +29,13 @@ This is the list of keyboard shortcuts that is built into the Notebook Editor.
 | Keyboard Shortcut                                   | Description                                                    |
 | --------------------------------------------------- | -------------------------------------------------------------- |
 | <kbd>cmd</kbd><kbd>B</kbd>                          | Toggle the **bold** Mark                                       |
-| <kbd>cmd</kbd><kbd>Shift</kbd><kbd>X</kbd>          | Toggle the ~~strikethrough~~ Mark                              |
+| <kbd>cmd</kbd><kbd>⇧</kbd><kbd>X</kbd>          | Toggle the ~~strikethrough~~ Mark                              |
 | <kbd>cmd</kbd><kbd>A</kbd>                          | Select all the text in the editor (when focused)               |
 | <kbd>cmd</kbd><kbd>C</kbd>                          | Copy the selected text or nodes to the clipboard               |
 | <kbd>cmd</kbd><kbd>V</kbd>                          | Paste the selected text or nodes to the editor                 |
-| <kbd>cmd</kbd><kbd>Shift</kbd><kbd>V</kbd>          | Paste the selected text or nodes to the editor as plain text   |
+| <kbd>cmd</kbd><kbd>⇧</kbd><kbd>V</kbd>          | Paste the selected text or nodes to the editor as plain text   |
 | <kbd>cmd</kbd><kbd>X</kbd>                          | Cut the selected text or nodes from the editor                 |
-| <kbd>cmd</kbd><kbd>Shift</kbd><kbd>Arrow Keys</kbd> | Select the corresponding text or nodes with the arrow keys     |
+| <kbd>cmd</kbd><kbd>⇧</kbd><kbd>Arrow Keys</kbd> | Select the corresponding text or nodes with the arrow keys     |
 | <kbd>cmd</kbd><kbd>option</kbd><kbd>0</kbd>         | Toggle a Paragraph Node                                        |
 | <kbd>cmd</kbd><kbd>option</kbd><kbd>1</kbd>         | Toggle a Heading1 Node                                         |
 | <kbd>cmd</kbd><kbd>option</kbd><kbd>2</kbd>         | Toggle a Heading2 Node                                         |
