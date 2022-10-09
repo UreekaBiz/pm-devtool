@@ -23,7 +23,7 @@ export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
     updateAttributesInRangeCommand(AttributeType.Color, value, depth)(editor.state, editor.view.dispatch);
 
     // Focus the editor again
-    if(focusEditor) editor.commands.focus();
+    if(focusEditor) editor.view.focus();
   };
 
   // == UI ========================================================================

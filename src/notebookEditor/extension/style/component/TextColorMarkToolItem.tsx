@@ -23,7 +23,7 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
     editor.commands.setTextStyle(AttributeType.Color, value);
 
     // Focus the editor again
-    if(focusEditor) editor.commands.focus();
+    if(focusEditor) editor.view.focus();
   };
 
   // == UI ========================================================================
