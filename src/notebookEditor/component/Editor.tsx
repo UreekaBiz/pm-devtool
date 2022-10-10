@@ -2,6 +2,8 @@ import { Box } from '@chakra-ui/react';
 import { EditorContent } from '@tiptap/react';
 import { useEffect, useState } from 'react';
 
+import { setTextSelectionCommand } from 'common';
+
 import { useNotebookEditor } from 'notebookEditor/hook/useNotebookEditor';
 
 import { EditorUserInteractions } from './EditorUserInteractions';
@@ -51,7 +53,9 @@ export const Editor: React.FC = () => {
     if(!editor) return/*nothing to do*/;
     if(editor.isFocused) return/*already focused*/;
 
-    editor.commands.focus(editor.state.doc.nodeSize/*go to the end of the doc*/);
+    const focusPos = editor.state.doc.nodeSize - 2/*account for start and end of Doc*/;
+    setTextSelectionCommand({ from: focusPos, to: focusPos })(editor.state, editor.view.dispatch);
+    editor.view.focus();
   };
 
   // == UI ========================================================================
