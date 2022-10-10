@@ -1,4 +1,4 @@
-import { getSelectedNode, AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
+import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
 
 import { getTextDOMRenderedValue } from 'notebookEditor/extension/util/attribute';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
@@ -17,7 +17,7 @@ export const FontSizeToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (inputValue: string, focusEditor?: boolean) => {
-    editor.commands.setTextStyle(AttributeType.FontSize, inputValue);
+    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.FontSize]: inputValue })(editor.state, editor.view.dispatch);
 
     // Focus the editor again
     if(focusEditor) editor.view.focus();

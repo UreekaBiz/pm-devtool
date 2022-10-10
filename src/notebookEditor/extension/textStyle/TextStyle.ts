@@ -5,8 +5,6 @@ import { getMarkOutputSpec, AttributeType, TextStyleMarkSpec } from 'common';
 import { isValidHTMLElement, safeParseTag } from 'notebookEditor/extension/util/parse';
 import { NoOptions, NoStorage } from 'notebookEditor/model/type';
 
-import { setTextStyleCommand } from './command';
-
 // ********************************************************************************
 export const TextStyle = Mark.create<NoOptions, NoStorage>({
   ...TextStyleMarkSpec,
@@ -25,9 +23,6 @@ export const TextStyle = Mark.create<NoOptions, NoStorage>({
       },
     };
   },
-
-  // -- Command -------------------------------------------------------------------
-  addCommands() { return { setTextStyle: setTextStyleCommand }; },
 
   // -- View ----------------------------------------------------------------------
   parseHTML() {

@@ -1,4 +1,4 @@
-import { getSelectedNode, AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
+import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
 
 import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
@@ -20,7 +20,7 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (value: string, focusEditor?: boolean) => {
-    editor.commands.setTextStyle(AttributeType.Color, value);
+    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.Color]: value })(editor.state, editor.view.dispatch);
 
     // Focus the editor again
     if(focusEditor) editor.view.focus();
