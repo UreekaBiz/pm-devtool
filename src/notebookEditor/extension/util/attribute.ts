@@ -1,7 +1,7 @@
 import { Attribute, Editor } from '@tiptap/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { generateNodeId, getHeadingThemeValue, getMarkValue, getNodeName, getSelectedNode, getThemeValue, isHeadingNode, isTextNode, mergeAttributeValues, AttributeType, HeadingLevel, InvalidMergedAttributeValue, MarkName, MergedAttributeValue, SetAttributeType } from 'common';
+import { camelToKebabCase, generateNodeId, getHeadingThemeValue, getMarkValue, getNodeName, getSelectedNode, getThemeValue, isHeadingNode, isTextNode, mergeAttributeValues, AttributeType, HeadingLevel, InvalidMergedAttributeValue, MarkName, MergedAttributeValue, SetAttributeType } from 'common';
 
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
@@ -20,6 +20,9 @@ export const setAttributeParsingBehavior = (name: string, type: SetAttributeType
 
   switch(type) {
     case SetAttributeType.STRING:
+      break/*use default*/;
+    case SetAttributeType.STYLE:
+      parseHTML = (element: HTMLElement) => element.style.getPropertyValue(camelToKebabCase(name));
       break/*use default*/;
     case SetAttributeType.BOOLEAN:
       parseHTML = (element: HTMLElement) => {
