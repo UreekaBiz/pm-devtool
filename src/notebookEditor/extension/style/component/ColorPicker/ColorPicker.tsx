@@ -42,8 +42,15 @@ export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) 
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
-    // Save changes when user presses enter
-    if(event.key === 'Enter') saveChange();
+    // save changes when user presses Enter
+    if(event.key === 'Enter') {
+      // prevent defaults so that PM does not handle the event
+      event.preventDefault();
+      event.stopPropagation();
+
+      // save change
+      saveChange();
+    } /* else -- ignore */
   };
 
   // == UI ========================================================================
