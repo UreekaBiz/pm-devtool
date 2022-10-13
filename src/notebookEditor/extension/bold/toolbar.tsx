@@ -18,12 +18,7 @@ export const markBold: ToolItem = {
   icon: <BiBold size={16} />,
   tooltip: 'Bold (⌘ + B)',
 
-  shouldBeDisabled: (editor) => {
-    const { selection } = editor.state;
-    if(!isNodeSelection(selection)) return false;
-
-    return true;
-  },
+  shouldBeDisabled: (editor) => isNodeSelection(editor.state.selection),
   shouldShow: (editor, depth) => depth === undefined || editor.state.selection.$anchor.depth === depth/*direct parent*/,
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleBoldCommand),
   isActive: (editor) => {
