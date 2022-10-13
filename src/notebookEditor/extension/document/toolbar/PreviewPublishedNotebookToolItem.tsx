@@ -62,7 +62,7 @@ export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) =>
       }
 
       currentClosestNode.scrollIntoView();
-    });
+    }/*after rendering the NotebookViewer*/);
   }, [view, doc, selection, isOpen]);
 
 
