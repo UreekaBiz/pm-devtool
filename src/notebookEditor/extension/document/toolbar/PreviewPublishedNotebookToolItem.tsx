@@ -61,7 +61,7 @@ export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) =>
         } /* else -- not the closest Node, ignore */
       }
 
-      currentClosestNode.scrollIntoView();
+      currentClosestNode.scrollIntoView({ block: 'center', inline: 'center' });
     }/*after rendering the NotebookViewer*/);
   }, [view, doc, selection, isOpen]);
 
