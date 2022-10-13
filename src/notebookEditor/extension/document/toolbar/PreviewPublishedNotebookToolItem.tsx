@@ -45,7 +45,7 @@ export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) =>
 
       const { $from, from } = selection;
       const parentTextContent = doc.textBetween(from - $from.parentOffset, from);
-      const matchedNodes = focusChildWithContent(notebookViewer, $from.parent.type.name, parentTextContent, [/*initially empty*/]);
+      const matchedNodes = getHTMLNodesWithMatchingContent(notebookViewer, $from.parent.type.name, parentTextContent, [/*initially empty*/]);
 
       // focus the matched Node that is closest to the currentPos in the View's
       // DOM, so that if several Nodes have the same Text, the
@@ -97,11 +97,11 @@ export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) =>
 // == Util ========================================================================
 // iterate recursively through the children of an HTMLElement and scrollIntoView
 // if it has the given content inside its innerText and is of the given type
-const focusChildWithContent = (node: HTMLElement, parentTypeName: string, content: string, matchedNodes: HTMLElement[]) => {
+const getHTMLNodesWithMatchingContent = (node: HTMLElement, parentTypeName: string, content: string, matchedNodes: HTMLElement[]) => {
   for(let i=0; i <node.childNodes.length; i++) {
     let child = node.childNodes[i];
     if(isValidHTMLElement(child)) {
-      focusChildWithContent(child, parentTypeName, content, matchedNodes);
+      getHTMLNodesWithMatchingContent(child, parentTypeName, content, matchedNodes);
     } /* else -- ignore */
 
     const dataNodeType = node.getAttribute(DATA_NODE_TYPE);
