@@ -1,6 +1,30 @@
 // convenience methods for working with arrays
 // ********************************************************************************
+// REF: https://github.com/tc39/proposal-array-from-async
+export const fromAsync = async <T>(iterator: AsyncIterable<T>): Promise<T[]> => {
+  const result: T[] = [];
+  for await (const item of iterator) {
+    result.push(item);
+  }
+  return result;
+};
+
 // ================================================================================
+// deduplicates the specified array while preserving order. Elements found earlier
+// in the array are preferred over elements found later in the array
+export const deduplicate = <T>(array: T[]) => {
+  const set = new Set<T>();
+  return array.filter(item => {
+    if(set.has(item)) {
+      return false/*exclude*/;
+    } else { /*doesn't already exist*/
+      set.add(item);
+      return true/*include*/;
+    }
+  });
+};
+
+// --------------------------------------------------------------------------------
 // returns an array of values that exist in `previous` that do not exist in `final`.
 // If there are no values that have been removed in `final` then an *empty* array
 // is returned. Additional values in `final` that do not appear in `previous` (i.e.
@@ -16,12 +40,6 @@ export const difference = <T>(previous: T[], final: T[]): T[] => {
     previous.forEach(e => { if(!lookup.has(e)) result.push(e); });
   return result;
 };
-export const differenceSet = <T>(previous: Set<T>, final: Set<T>): Set<T> => {
-  if(final.size < 1) return new Set(previous)/*clone*/;
-  const result = new Set<T>();
-    previous.forEach(e => { if(!final.has(e)) result.add(e); });
-  return result;
-};
 
 // returns an array of values that is the intersection of A of B (i.e. the set of
 // values contained in both A and B). The returned array is always a new array.
@@ -35,22 +53,11 @@ export const intersection = <T>(a: T[], b: T[]): T[] => {
     a.forEach(e => { if(lookup.has(e)) result.push(e); });
   return result;
 };
-export const intersectionSet = <T>(a: Set<T>, b: Set<T>): Set<T> => {
-  const result = new Set<T>();
-    a.forEach(e => { if(b.has(e)) result.add(e); });
-  return result;
-};
 
 // --------------------------------------------------------------------------------
 // returns `true` if and only if there is an element in A that is in B
 export const setOverlapsSet = <T>(a: Set<T>, b: Set<T>) => {
   for(let element of a.values()) if(b.has(element)) return true/*by contract*/;
-  return false/*by contract*/;
-};
-
-// returns `true` if and only if there is an element in `list` that is in `set`
-export const listOverlapsSet = <T>(list: T[], set: Set<T>) => {
-  for(let element of list) if(set.has(element)) return true/*by contract*/;
   return false/*by contract*/;
 };
 

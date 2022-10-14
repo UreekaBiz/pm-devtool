@@ -1,6 +1,12 @@
 import { Transaction } from 'prosemirror-state';
+import { Step, Transform } from 'prosemirror-transform';
+
+import { SelectionRange } from '../command';
+import { ChangedRange, simplifyChangedRanges } from './util';
 
 // ********************************************************************************
+// == Util ========================================================================
+// -- Step ------------------------------------------------------------------------
 /**
  * @param transaction The transactions whose steps are being mapped
  * @param stepMapIndex The stepMapIndex of the step that is currently being mapped
@@ -30,4 +36,43 @@ export const mapOldStartAndOldEndThroughHistory = (transaction: Transaction, ste
         mappedOldEnd = transaction.mapping.invert().map(mappedNewEnd);
 
   return { mappedOldStart, mappedOldEnd, mappedNewStart, mappedNewEnd };
+};
+
+
+// -- Change ----------------------------------------------------------------------
+// NOTE: not in a separate file since Changes take Steps into account
+/**
+ * Returns a list of changed ranges
+ * based on the first and last state of all steps.
+ */
+ export const getChangedRanges =(transform: Transform): ChangedRange[] => {
+  const { mapping, steps } = transform;
+  const changes: ChangedRange[] = [/*default empty*/];
+
+  mapping.maps.forEach((stepMap, index) => {
+    const ranges: SelectionRange[] = [];
+
+    // NOTE: need to account for Step changes where no Range was altered
+    //       (e.g. setting a Mark, Node Attribute, etc)
+    // NOTE: @ts-ignore is to access needed information in the StepMap that is marked
+    //       as private, in order to ensure the requirements of the NOTE above
+    // @ts-ignore
+    if(!stepMap.ranges.length) {
+      const { from, to } = steps[index] as Step & { from?: number; to?: number; };
+      if(from === undefined/*explicit check since it can be 0*/ || to === undefined/*explicit check since it can be 0*/) return/*nothing to do*/;
+      ranges.push({ from, to });
+    } else {
+      stepMap.forEach((from, to) => ranges.push({ from, to }));
+    }
+
+    ranges.forEach(({ from, to }) => {
+      const newStart = mapping.slice(index).map(from, -1/*associate to position to the left*/),
+            newEnd = mapping.slice(index).map(to);
+      const oldStart = mapping.invert().map(newStart, -1/*associate to position to the left*/),
+            oldEnd = mapping.invert().map(newEnd);
+      changes.push({ oldRange: { from: oldStart, to: oldEnd }, newRange: { from: newStart, to: newEnd } });
+    });
+  });
+
+  return simplifyChangedRanges(changes);
 };
