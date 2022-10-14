@@ -17,4 +17,5 @@ export * from './mark';
 export * from './node';
 export * from './selection';
 export * from './schema';
+export * from './step';
 export * from './theme';
