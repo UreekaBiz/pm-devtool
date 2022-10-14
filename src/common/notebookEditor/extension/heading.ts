@@ -39,6 +39,7 @@ export const HeadingNodeSpec: NodeSpec = {
   marks: getAllowedMarks([MarkName.BOLD, MarkName.STRIKETHROUGH, MarkName.TEXT_STYLE]),
 
   group: NodeGroup.BLOCK,
+  selectable: false/*cannot be set as NodeSelection*/,
   defining: true,
 
   attrs: HeadingAttributesSpec,

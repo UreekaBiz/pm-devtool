@@ -35,6 +35,7 @@ export const ParagraphNodeSpec: Readonly<NodeSpec> = {
   marks: getAllowedMarks([MarkName.BOLD, MarkName.STRIKETHROUGH, MarkName.TEXT_STYLE]),
 
   group: NodeGroup.BLOCK,
+  selectable: false/*cannot be set as NodeSelection*/,
 
   attrs: ParagraphAttributesSpec,
 };
