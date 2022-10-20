@@ -33,8 +33,9 @@ export enum AttributeType {
   PaddingRight = 'paddingRight',
 
   // -- Text Style ----------------------------------------------------------------
-  FontSize = 'fontSize',
+  BackgroundColor = 'backgroundColor',
   Color = 'color',
+  FontSize = 'fontSize',
   TextAlign = 'textAlign',
   VerticalAlign = 'verticalAlign',
 
@@ -57,8 +58,9 @@ export type StyleAttributes = {
   [AttributeType.Width]: string;
   [AttributeType.Height]: string;
 
-  [AttributeType.FontSize]: string;
+  [AttributeType.BackgroundColor]: string;
   [AttributeType.Color]: string;
+  [AttributeType.FontSize]: string;
   [AttributeType.VerticalAlign]: string;
 
   [AttributeType.MarginTop]: string;
@@ -72,8 +74,9 @@ export type StyleAttributes = {
   [AttributeType.PaddingRight]: string;
 };
 const styleAttributeSet = new Set([
-  AttributeType.FontSize,
+  AttributeType.BackgroundColor,
   AttributeType.Color,
+  AttributeType.FontSize,
   AttributeType.TextAlign,
   AttributeType.VerticalAlign,
 

@@ -2,6 +2,7 @@ import { FontSizeToolItem } from 'notebookEditor/extension/style/component/FontS
 import { TextColorToolItem } from 'notebookEditor/extension/style/component/TextColorToolItem';
 import { TextColorMarkToolItem } from 'notebookEditor/extension/style/component/TextColorMarkToolItem';
 import { SpacingToolItem } from 'notebookEditor/extension/style/component/SpacingToolItem';
+import { BackgroundColorMarkToolItem } from 'notebookEditor/extension/style/component/BackgroundColorMarkToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -14,7 +15,7 @@ export const fontSizeToolItem: ToolItem = {
 };
 
 //** Updates the Color attribute on the given node. */
-// NOTE: Not to be confuse with textColorMarkToolItem that adds a TextStyle mark.
+// NOTE: Not to be confuse with textColorMarkToolItem that adds a TextStyle Mark.
 export const textColorToolItem: ToolItem = {
   toolType: 'component',
   name: 'textColorToolItem',
@@ -22,13 +23,22 @@ export const textColorToolItem: ToolItem = {
   component: TextColorToolItem,
 };
 
-//** Adds a TextStyle mark on the selected text*/
+//** Adds a TextStyle Mark on the selected text*/
 // NOTE: Not to be confuse with textColorToolItem that update the Color attribute.
 export const textColorMarkToolItem: ToolItem = {
   toolType: 'component',
   name: 'textColorMarkToolItem',
 
   component: TextColorMarkToolItem,
+};
+
+//** Adds a TextStyle Mark on the selected text*/
+// NOTE: Not to be confuse with textColorToolItem that update the Color attribute.
+export const backgroundColorMarkToolItem: ToolItem = {
+  toolType: 'component',
+  name: 'backgroundColorMarkToolItem',
+
+  component: BackgroundColorMarkToolItem,
 };
 
 export const spacingToolItem: ToolItem = {
