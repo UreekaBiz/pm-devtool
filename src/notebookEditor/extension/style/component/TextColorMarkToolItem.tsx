@@ -1,9 +1,10 @@
 import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
 
-import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
-import { textColors } from 'notebookEditor/theme/type';
+import { googleDocsColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
+
+import { GoogleDocsColorPicker } from './GoogleDocsColorPicker';
 
 // ********************************************************************************
 // NOTE: This component adds a TextStyle mark in the selected text that adds the
@@ -22,12 +23,10 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
   const handleChange = (value: string, focusEditor?: boolean) => {
     setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.Color]: value })(editor.state, editor.view.dispatch);
 
-    // Focus the editor again
+    // focus the Editor again
     if(focusEditor) editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (
-    <ColorPicker name='Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />
-  );
+  return (<GoogleDocsColorPicker name='Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
 };
