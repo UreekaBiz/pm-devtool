@@ -2,13 +2,13 @@ import { Editor } from '@tiptap/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { NodeView as ProseMirrorNodeView } from 'prosemirror-view';
 
-import { getPosType, isGetPos, AttributeType } from 'common';
+import { getPosType, isGetPos, AttributeType, NodeName } from 'common';
 
 import { PM_SELECTED_CLASS } from 'notebookEditor/theme/theme';
 
 import { AbstractNodeView } from './AbstractNodeView';
 import { AbstractNodeModel } from './AbstractNodeModel';
-import { isNodeViewStorage, NodeViewStorage } from './NodeViewStorage';
+import { getNodeViewStorage, isNodeViewStorage, NodeViewStorage } from './NodeViewStorage';
 import { NoStorage } from './type';
 
 // ********************************************************************************
@@ -47,7 +47,7 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
   }
 
   // Sync getPos and node when prosemirror updates it.
-  public updateProps(getPos: getPosType){
+  public updateProps(getPos: getPosType) {
     if(!isGetPos(getPos)) throw new Error('getPos is not a function when calling updateProps');
     this.getPos = getPos;
 
@@ -71,12 +71,20 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     return true/*as far as this implementation is concerned, an update occurred*/;
   }
 
-  // called by ProseMirror when the node is removed
+  // called by ProseMirror when the Node is removed
   public destroy() {
+    const { name: nodeName } = this.node.type;
+    const nodeId = this.node.attrs[AttributeType.Id];
+
     // NOTE: the View and the Model are destroyed in the inverse order of
     //       their creation to prevent any issues with the View
     this.nodeView.destroy();
     this.nodeModel.destroy();
+
+    if(nodeId && this.storage) {
+      const storage = getNodeViewStorage(this.editor, nodeName as NodeName/*by definition*/);
+      storage.removeNodeView(nodeId);
+    } /* else -- this Node does not have an Id (and hence it does not use a storage) */
   }
 
   /** updates the selected state and update the view to reflect the changes */

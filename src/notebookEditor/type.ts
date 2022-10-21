@@ -9,7 +9,6 @@ import { History } from 'notebookEditor/extension/history/History';
 import { InlineNodeWithContent } from 'notebookEditor/extension/inlineNodeWithContent/InlineNodeWithContent';
 import { InputRule } from './extension/inputRule/InputRule';
 import { Keymap } from 'notebookEditor/extension/keymap/Keymap';
-import { NodeViewRemoval } from 'notebookEditor/extension/nodeViewRemoval/NodeViewRemoval';
 import { MarkHolder } from 'notebookEditor/extension/markHolder/MarkHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph/Paragraph';
 import { Strikethrough } from 'notebookEditor/extension/strikethrough/Strikethrough';
@@ -38,7 +37,6 @@ export const editorDefinition = {
     History,
     InputRule,
     InlineNodeWithContent,
-    NodeViewRemoval,
     MarkHolder,
     Paragraph,
     Strikethrough,
