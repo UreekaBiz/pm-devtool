@@ -1,7 +1,7 @@
 import { Editor, Extension } from '@tiptap/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { isInlineNodeWithContent, SetNodeSelectionDocumentUpdate } from 'common';
+import { isInlineNodeWithContent, isMarkHolderNode, SetNodeSelectionDocumentUpdate } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { ExtensionName, ExtensionPriority, NoOptions, NoStorage } from 'notebookEditor/model/type';
@@ -50,7 +50,10 @@ const selectInlineNodeWithContent = (editor: Editor,  arrowDir: 'up' | 'down') =
     if(arrowDirUp) { nodeNearbyPos = Math.max(from-1/*nodeBefore*/, 0/*do not go behind Doc*/); }
     else { nodeNearbyPos = Math.min(from/*position can be a TextSelection and a NodeSelection at the same time*/, editor.state.doc.nodeSize/*do not go past Doc*/); }
 
-    if(nodeNearby && isInlineNodeWithContent(nodeNearby)) {
+    if(nodeNearby
+        && isInlineNodeWithContent(nodeNearby)
+        && !isMarkHolderNode(nodeNearby/*MarkHolders should not be selected*/)
+      ) {
       return applyDocumentUpdates(editor, [new SetNodeSelectionDocumentUpdate(nodeNearbyPos)]);
     } else {
       return false/*let PM handle the event*/;
