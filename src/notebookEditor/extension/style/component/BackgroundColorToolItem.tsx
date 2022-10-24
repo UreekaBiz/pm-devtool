@@ -1,8 +1,8 @@
 import { getSelectedNode, updateAttributesInRangeCommand, AttributeType, InvalidMergedAttributeValue } from 'common';
 
-import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
+import { GoogleDocsColorPicker } from 'notebookEditor/extension/style/component/GoogleDocsColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
-import { textColors } from 'notebookEditor/theme/type';
+import { googleDocsColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -19,17 +19,17 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
-  const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.Color);
+  const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.BackgroundColor);
   const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
 
   // == Handler ===================================================================
-  const handleChange = (value: string, focusEditor?: boolean) => {
+  const handleChange = (value: string) => {
     updateAttributesInRangeCommand(AttributeType.BackgroundColor, value, depth)(editor.state, editor.view.dispatch);
 
-    // Focus the editor again
-    if(focusEditor) editor.view.focus();
+    // focus the Editor again
+    editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<GoogleDocsColorPicker name='Block Background Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
 };

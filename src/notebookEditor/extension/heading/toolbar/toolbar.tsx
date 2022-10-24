@@ -2,7 +2,7 @@ import { NodeName } from 'common';
 
 import { markBold } from 'notebookEditor/extension/bold/toolbar';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough/toolbar';
-import { backgroundColorMarkToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle/toolbar';
+import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle/toolbar';
 import { Toolbar, ToolItem } from 'notebookEditor/toolbar/type';
 
 import { HeadingLevelToolItem } from './HeadingLevelToolItem';
@@ -27,6 +27,7 @@ export const HeadingToolbar: Toolbar = {
       headingLevelToolItem,
       markBold,
       markStrikethrough,
+      backgroundColorToolItem,
     ],
     [
       fontSizeToolItem,

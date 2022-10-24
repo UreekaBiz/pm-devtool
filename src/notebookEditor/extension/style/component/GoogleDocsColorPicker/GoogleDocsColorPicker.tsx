@@ -1,7 +1,7 @@
 import { Input, InputGroup, InputLeftAddon } from '@chakra-ui/react';
 import { ChangeEventHandler, KeyboardEventHandler } from 'react';
 
-import { Color, colorToHexColor, googleDocsColors, removeColorAddon } from 'notebookEditor/theme/type';
+import { colorToHexColor, removeColorAddon, Color } from 'notebookEditor/theme/type';
 import { ToolContainer } from 'notebookEditor/toolbar/ToolbarContainer';
 import { useLocalValue } from 'notebookEditor/shared/hook/useLocalValue';
 
@@ -63,7 +63,7 @@ export const GoogleDocsColorPicker: React.FC<Props> = ({ colors, name, onChange,
   return (
     <ToolContainer name={name} width='auto'>
      <InputGroup size='sm' marginTop='5px' marginBottom='5px' gap={1} borderRadius='15px'>
-      <GoogleDocsColorPickerMenu value={localValue} colors={googleDocsColors} onChange={handleColorPickerChange} />
+      <GoogleDocsColorPickerMenu value={localValue} colors={colors} onChange={handleColorPickerChange} />
 
       <InputLeftAddon>{LEFT_ADDON_TEXT}</InputLeftAddon>
       <Input

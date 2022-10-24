@@ -24,9 +24,9 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
     setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.Color]: value })(editor.state, editor.view.dispatch);
 
     // focus the Editor again
-    if(focusEditor) editor.view.focus();
+    editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (<GoogleDocsColorPicker name='Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
+  return (<GoogleDocsColorPicker name='Text Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
 };

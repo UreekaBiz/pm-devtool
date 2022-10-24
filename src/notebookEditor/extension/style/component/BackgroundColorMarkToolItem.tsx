@@ -23,13 +23,13 @@ export const BackgroundColorMarkToolItem: React.FC<Props> = ({ editor, depth }) 
   const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
 
   // == Handler ===================================================================
-  const handleChange = (value: string, focusEditor?: boolean) => {
+  const handleChange = (value: string) => {
     setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.BackgroundColor]: value })(editor.state, editor.view.dispatch);
 
-    // Focus the editor again
-    if(focusEditor) editor.view.focus();
+    // focus the Editor again
+    editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (<GoogleDocsColorPicker name='Background Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
+  return (<GoogleDocsColorPicker name='Inline Background Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
 };
