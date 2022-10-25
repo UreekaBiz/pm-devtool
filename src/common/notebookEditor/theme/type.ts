@@ -61,7 +61,6 @@ export const DefaultTheme: Theme = {
   nodes:{
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.HEADING]: {
-      [AttributeType.BackgroundColor]: '#F3F3F3',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginRight]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
@@ -86,6 +85,7 @@ export const DefaultTheme: Theme = {
 
   customSelectors: {
     [CustomSelector.HeadingLevelOne]: {
+      [AttributeType.BackgroundColor]: '#F3F3F3',
       [AttributeType.Color]: '#1C5987',
       [AttributeType.FontSize]: '34px',
     },
@@ -119,7 +119,6 @@ export const GoogleDocsTheme: Theme = {
   nodes:{
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.HEADING]: {
-      [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },

@@ -1,4 +1,4 @@
-import { getSelectedNode, getThemeValue, updateAttributesInRangeCommand, AttributeType, InvalidMergedAttributeValue, NodeName } from 'common';
+import { getSelectedNode, updateAttributesInRangeCommand, AttributeType, InvalidMergedAttributeValue } from 'common';
 
 import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
@@ -21,7 +21,6 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.BackgroundColor);
   const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
-  const backgroundColorValue = inputValue ?? getThemeValue(node.type.name as NodeName, AttributeType.BackgroundColor) ?? ''/*none specified*/;
 
   // == Handler ===================================================================
   const handleChange = (value: string) => {
@@ -32,5 +31,5 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Background Color' value={backgroundColorValue} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
 };
