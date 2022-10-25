@@ -1,4 +1,4 @@
-import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
+import { getSelectedNode, getThemeValue, setMarkCommand, AttributeType, InvalidMergedAttributeValue, MarkName, NodeName } from 'common';
 
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
 import { textColors } from 'notebookEditor/theme/type';
@@ -18,9 +18,10 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.Color, MarkName.TEXT_STYLE);
   const inputValue = domRenderValue === InvalidMergedAttributeValue ? '' : domRenderValue;
+  const textColorValue = inputValue ?? getThemeValue(node.type.name as NodeName, AttributeType.Color) ?? ''/*none specified*/;
 
   // == Handler ===================================================================
-  const handleChange = (value: string, focusEditor?: boolean) => {
+  const handleChange = (value: string) => {
     setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.Color]: value })(editor.state, editor.view.dispatch);
 
     // focus the Editor again
@@ -28,5 +29,5 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Text Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Text Color' value={textColorValue} colors={textColors} onChange={handleChange} />);
 };
