@@ -20,7 +20,7 @@ export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (value: string, focusEditor?: boolean) => {
-    updateAttributesInRangeCommand(AttributeType.Color, value, depth)(editor.state, editor.view.dispatch);
+    updateAttributesInRangeCommand(AttributeType.Color, value, editor.state.selection.$anchor.depth/*direct parent*/)(editor.state, editor.view.dispatch);
 
     // Focus the editor again
     if(focusEditor) editor.view.focus();
