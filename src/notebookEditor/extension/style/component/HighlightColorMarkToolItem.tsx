@@ -31,5 +31,5 @@ export const HighlightColorMarkToolItem: React.FC<Props> = ({ editor, depth }) =
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Inline Highlight Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Highlight Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
 };

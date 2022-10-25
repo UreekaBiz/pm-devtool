@@ -14,7 +14,7 @@ import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 interface Props extends EditorToolComponentProps {/*no additional*/}
 
 // == Component ===================================================================
-export const HighlightColorToolItem: React.FC<Props> = ({ editor, depth }) => {
+export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   const { state } = editor;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
@@ -31,5 +31,5 @@ export const HighlightColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Block Highlight Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
 };

@@ -1,5 +1,5 @@
 import { HighlightColorMarkToolItem } from 'notebookEditor/extension/style/component/HighlightColorMarkToolItem';
-import { HighlightColorToolItem } from 'notebookEditor/extension/style/component/HighlightColorToolItem';
+import { BackgroundColorToolItem } from 'notebookEditor/extension/style/component/BackgroundColorToolItem';
 import { FontSizeToolItem } from 'notebookEditor/extension/style/component/FontSizeToolItem';
 import { TextColorToolItem } from 'notebookEditor/extension/style/component/TextColorToolItem';
 import { TextColorMarkToolItem } from 'notebookEditor/extension/style/component/TextColorMarkToolItem';
@@ -39,7 +39,7 @@ export const backgroundColorToolItem: ToolItem = {
   toolType: 'component',
   name: 'backgroundColorToolItem',
 
-  component: HighlightColorToolItem,
+  component: BackgroundColorToolItem,
 };
 
 //** Adds a TextStyle Mark on the selected text*/
