@@ -24,7 +24,7 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (value: string) => {
-    updateAttributesInRangeCommand(AttributeType.Color, value, editor.state.selection.$anchor.depth/*direct parent*/)(editor.state, editor.view.dispatch);
+    updateAttributesInRangeCommand(AttributeType.BackgroundColor, value, editor.state.selection.$anchor.depth/*direct parent*/)(editor.state, editor.view.dispatch);
 
     // focus the Editor again
     editor.view.focus();
