@@ -11,7 +11,7 @@ import { ColorPickerMenu } from './ColorPickerMenu';
 // == Constant ====================================================================
 const LEFT_ADDON_TEXT = '#';
 
-// ================================================================================
+// == Interface ===================================================================
 interface Props {
   name: string;
 
@@ -20,11 +20,13 @@ interface Props {
 
   colors: Color[][];
 }
+
+// == Component ===================================================================
 export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) => {
-  // == State ====================================================================
+  // -- State ---------------------------------------------------------------------
   const { commitChange, localValue, resetLocalValue, updateLocalValue } = useLocalValue(value, onChange);
 
-  // == Handler ===================================================================
+  // -- Handler -------------------------------------------------------------------
   const handleColorPickerChange = (color: Color) => {
     const value = color.hexCode;
     updateLocalValue(value);
@@ -53,7 +55,7 @@ export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) 
     } /* else -- ignore */
   };
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   return (
     <ToolContainer name={name} width='auto'>
      <InputGroup size='sm' marginTop='5px' marginBottom='5px' gap={1} borderRadius='15px'>
