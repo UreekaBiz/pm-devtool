@@ -5,7 +5,7 @@ import { Color, colorToHexColor, removeColorAddon } from 'notebookEditor/theme/t
 import { ToolContainer } from 'notebookEditor/toolbar/ToolbarContainer';
 import { useLocalValue } from 'notebookEditor/shared/hook/useLocalValue';
 
-import { ColorPickerMenu } from './ColorPickerMenu';
+import { KeyboardShortcutColorPickerMenu } from './KeyboardShortcutColorPickerMenu';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -22,7 +22,7 @@ interface Props {
 }
 
 // == Component ===================================================================
-export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) => {
+export const KeyboardShortcutColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) => {
   // -- State ---------------------------------------------------------------------
   const { commitChange, localValue, resetLocalValue, updateLocalValue } = useLocalValue(value, onChange);
 
@@ -59,7 +59,7 @@ export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) 
   return (
     <ToolContainer name={name} width='auto'>
      <InputGroup size='sm' marginTop='5px' marginBottom='5px' gap={1} borderRadius='15px'>
-      <ColorPickerMenu value={localValue} colors={colors} onChange={handleColorPickerChange} />
+      <KeyboardShortcutColorPickerMenu value={localValue} colors={colors} onChange={handleColorPickerChange} />
 
       <InputLeftAddon>{LEFT_ADDON_TEXT}</InputLeftAddon>
       <Input
