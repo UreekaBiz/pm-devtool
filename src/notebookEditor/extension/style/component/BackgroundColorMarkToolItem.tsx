@@ -3,7 +3,7 @@ import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeV
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
 import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
-import { GoogleDocsColorPicker } from './GoogleDocsColorPicker';
+import { ColorPicker } from './ColorPicker';
 
 // ********************************************************************************
 // NOTE: This component adds a TextStyle Mark in the selected text that adds the
@@ -31,5 +31,5 @@ export const BackgroundColorMarkToolItem: React.FC<Props> = ({ editor, depth }) 
   };
 
   // == UI ========================================================================
-  return (<GoogleDocsColorPicker name='Inline Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Inline Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
 };

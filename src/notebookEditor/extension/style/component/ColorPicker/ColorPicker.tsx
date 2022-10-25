@@ -5,13 +5,9 @@ import { colorToHexColor, removeColorAddon, Color } from 'notebookEditor/theme/t
 import { ToolContainer } from 'notebookEditor/toolbar/ToolbarContainer';
 import { useLocalValue } from 'notebookEditor/shared/hook/useLocalValue';
 
-import { GoogleDocsColorPickerMenu } from './GoogleDocsColorPickerMenu';
+import { ColorPickerMenu } from './ColorPickerMenu';
 
 // ********************************************************************************
-// NOTE: this component is like the ColorPicker component, but uses the Google Docs
-//       Color set, does not attach event handlers, and the design of the Buttons
-//       of the Colors is different
-
 // == Constant ====================================================================
 const LEFT_ADDON_TEXT = '#';
 
@@ -26,7 +22,7 @@ interface Props {
 }
 
 // == Component ===================================================================
-export const GoogleDocsColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) => {
+export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) => {
   // -- State ---------------------------------------------------------------------
   const { commitChange, localValue, resetLocalValue, updateLocalValue } = useLocalValue(value, onChange);
 
@@ -63,7 +59,7 @@ export const GoogleDocsColorPicker: React.FC<Props> = ({ colors, name, onChange,
   return (
     <ToolContainer name={name} width='auto'>
      <InputGroup size='sm' marginTop='5px' marginBottom='5px' gap={1} borderRadius='15px'>
-      <GoogleDocsColorPickerMenu value={localValue} colors={colors} onChange={handleColorPickerChange} />
+      <ColorPickerMenu value={localValue} colors={colors} onChange={handleColorPickerChange} />
 
       <InputLeftAddon>{LEFT_ADDON_TEXT}</InputLeftAddon>
       <Input

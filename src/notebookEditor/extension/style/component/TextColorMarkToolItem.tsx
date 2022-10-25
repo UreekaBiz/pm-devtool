@@ -4,7 +4,7 @@ import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribut
 import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { GoogleDocsColorPicker } from './GoogleDocsColorPicker';
+import { ColorPicker } from './ColorPicker';
 
 // ********************************************************************************
 // NOTE: This component adds a TextStyle mark in the selected text that adds the
@@ -28,5 +28,5 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<GoogleDocsColorPicker name='Text Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Text Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
 };
