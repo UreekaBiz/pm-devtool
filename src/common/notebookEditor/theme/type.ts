@@ -85,7 +85,7 @@ export const DefaultTheme: Theme = {
 
   customSelectors: {
     [CustomSelector.HeadingLevelOne]: {
-      [AttributeType.BackgroundColor]: '#F4F4F4',
+      [AttributeType.BackgroundColor]: '#F3F3F3',
       [AttributeType.Color]: '#1C5987',
       [AttributeType.FontSize]: '34px',
     },
@@ -142,7 +142,7 @@ export const GoogleDocsTheme: Theme = {
 
   customSelectors: {
     [CustomSelector.HeadingLevelOne]: {
-      [AttributeType.BackgroundColor]: 'white',
+      [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#00577C',
       [AttributeType.FontSize]: '14pt',
     },
