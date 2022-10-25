@@ -2,7 +2,7 @@ import { getSelectedNode, updateAttributesInRangeCommand, AttributeType, Invalid
 
 import { GoogleDocsColorPicker } from 'notebookEditor/extension/style/component/GoogleDocsColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
-import { googleDocsColors } from 'notebookEditor/theme/type';
+import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -31,5 +31,5 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<GoogleDocsColorPicker name='Block Background Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
+  return (<GoogleDocsColorPicker name='Block Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
 };

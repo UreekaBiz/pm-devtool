@@ -1,7 +1,7 @@
 import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeValue, MarkName } from 'common';
 
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
-import { googleDocsColors } from 'notebookEditor/theme/type';
+import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 import { GoogleDocsColorPicker } from './GoogleDocsColorPicker';
@@ -28,5 +28,5 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<GoogleDocsColorPicker name='Text Color' value={inputValue ?? ''} colors={googleDocsColors} onChange={handleChange} />);
+  return (<GoogleDocsColorPicker name='Text Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
 };

@@ -2,7 +2,7 @@ import { getSelectedNode, updateAttributesInRangeCommand, AttributeType, Invalid
 
 import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
-import { textColors } from 'notebookEditor/theme/type';
+import { keyboardShortcutTextColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -28,6 +28,6 @@ export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == UI ========================================================================
   return (
-    <ColorPicker name='Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />
+    <ColorPicker name='Color' value={inputValue ?? ''} colors={keyboardShortcutTextColors} onChange={handleChange} />
   );
 };
