@@ -14,6 +14,7 @@ export const Editor: React.FC<Props> = () => {
   // -- Effect --------------------------------------------------------------------
   useEffect(() => {
     if(!editorContainer.current) return/*not mounted yet*/;
+    if(notebookAPI.view) return/*already mounted*/;
 
     notebookAPI.mountView(editorContainer.current);
   }, [notebookAPI]);
