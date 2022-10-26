@@ -20,7 +20,6 @@ export const Editor: React.FC<Props> = () => {
   // -- Effect --------------------------------------------------------------------
   useEffect(() => {
     if(!editorContainer.current) return/*not mounted yet*/;
-    if(notebookAPI.view) return/*already mounted*/;
 
     notebookAPI.mountView(editorContainer.current);
   }, [notebookAPI]);
@@ -32,13 +31,11 @@ export const Editor: React.FC<Props> = () => {
     //       is being clicked so that the Selection is not being modified
     //       incorrectly. More checks might have to be added in the future
     if(!(event.target instanceof HTMLDivElement)) return/*(SEE: NOTE above)*/;
-    if(!notebookAPI.view) return/*not initialized yet*/;
 
-    const focusPos = notebookAPI.view.state.doc.nodeSize - 2/*account for start and end of Doc*/;
-    setTextSelectionCommand({ from: focusPos, to: focusPos })(notebookAPI.view.state, notebookAPI.view?.dispatch);
-    notebookAPI.view?.focus();
+    notebookAPI.executeCommand(setTextSelectionCommand({ from: notebookAPI.endOfDocPos, to: notebookAPI.endOfDocPos }));
+    notebookAPI.focusView();
   };
 
   // -- UI ------------------------------------------------------------------------
-  return (<Box id={EDITOR_CONTAINER_ID} ref={editorContainer} height='full' overflowY='auto' onClick={handleClick} />);
+  return (<Box id={EDITOR_CONTAINER_ID} ref={editorContainer} height='full' overflowY='auto' onClick={(event) => handleClick(event)} />);
 };
