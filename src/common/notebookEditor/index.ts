@@ -7,4 +7,5 @@ export * from './schema';
 export * from './attribute';
 export * from './notebookDocument';
 export * from './schema';
+export * from './theme';
 export * from './selection';

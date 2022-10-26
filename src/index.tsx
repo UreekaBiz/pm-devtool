@@ -1,9 +1,9 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { NotebookEditorPage } from 'notebookEditor/component/NotebookEditorPage';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { FullPageLayout } from 'core';
+import { EditorPage } from 'notebookEditor/component';
 
 import './index.css';
 
@@ -15,7 +15,7 @@ root.render(
   <StrictMode>
     <ChakraProvider>
       <FullPageLayout>
-        <NotebookEditorPage />
+        <EditorPage />
       </FullPageLayout>
     </ChakraProvider>
   </StrictMode>

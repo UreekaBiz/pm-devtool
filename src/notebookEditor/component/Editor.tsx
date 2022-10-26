@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 
 import { setTextSelectionCommand } from 'common';
 
-import { useValidatedNotebookAPI } from 'notebookEditor/hook/';
+import { useValidatedEditor } from 'notebookEditor/hook/';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -15,14 +15,14 @@ interface Props {/*currently nothing*/}
 // == Component ===================================================================
 export const Editor: React.FC<Props> = () => {
   const editorContainer = useRef<HTMLDivElement>(null/*default*/);
-  const notebookAPI = useValidatedNotebookAPI();
+  const editor = useValidatedEditor();
 
   // -- Effect --------------------------------------------------------------------
   useEffect(() => {
     if(!editorContainer.current) return/*not mounted yet*/;
 
-    notebookAPI.mountView(editorContainer.current);
-  }, [notebookAPI]);
+    editor.mountView(editorContainer.current);
+  }, [editor]);
 
   // -- Handler -------------------------------------------------------------------
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -32,8 +32,8 @@ export const Editor: React.FC<Props> = () => {
     //       incorrectly. More checks might have to be added in the future
     if(!(event.target instanceof HTMLDivElement)) return/*(SEE: NOTE above)*/;
 
-    notebookAPI.executeCommand(setTextSelectionCommand({ from: notebookAPI.endOfDocPos, to: notebookAPI.endOfDocPos }));
-    notebookAPI.focusView();
+    editor.executeCommand(setTextSelectionCommand({ from: editor.endOfDocPos, to: editor.endOfDocPos }));
+    editor.focusView();
   };
 
   // -- UI ------------------------------------------------------------------------

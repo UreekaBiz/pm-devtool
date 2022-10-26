@@ -1,1 +1,1 @@
-export * from './NotebookAPI';
+export * from './Editor';

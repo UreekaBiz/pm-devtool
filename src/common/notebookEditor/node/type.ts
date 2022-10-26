@@ -12,6 +12,7 @@ export type NodeIdentifier = string/*alias*/;
 /** Unique identifier for each Node on the schema */
 export enum NodeName {
   DOC = 'document',
+  HEADING = 'heading',
   MARK_HOLDER = 'markHolder',
   PARAGRAPH = 'paragraph',
   TEXT = 'text',

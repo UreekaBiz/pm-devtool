@@ -10,7 +10,7 @@ import { getBasicKeymap } from './keymap';
 
 // ********************************************************************************
 // == Class =======================================================================
-export class NotebookAPI {
+export class Editor {
   // -- Attribute -----------------------------------------------------------------
   private schema: Schema;
   public view: EditorView;

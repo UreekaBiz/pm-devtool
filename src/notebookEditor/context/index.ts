@@ -1,2 +1,2 @@
-export * from './NotebookAPIContext';
-export * from './NotebookAPIProvider';
+export * from './EditorContext';
+export * from './EditorProvider';

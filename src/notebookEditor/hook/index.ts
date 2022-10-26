@@ -1,2 +1,2 @@
-export * from './useNotebookAPI';
-export * from './useValidatedNotebookAPI';
+export * from './useEditor';
+export * from './useValidatedEditor';
