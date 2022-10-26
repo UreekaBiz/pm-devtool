@@ -24,6 +24,8 @@ export class NotebookAPI {
   }
 
   private buildView(root: HTMLElement) {
+    // FIXME: define how to interact with Commands
+    // @ts-ignore
     return new EditorView(root, { state: EditorState.create({ schema: this.schema, plugins: [history(), keymap(getBasicKeymap())] }) });
   }
 }
