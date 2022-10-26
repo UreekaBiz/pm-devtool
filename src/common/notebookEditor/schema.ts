@@ -1,6 +1,7 @@
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
 import { DocumentNodeSpec } from './extension/document';
+import { MarkHolderNodeSpec } from './extension/markHolder';
 import { ParagraphNodeSpec } from './extension/paragraph';
 import { TextNodeSpec } from './extension/text';
 import { MarkName } from './mark/type';
@@ -10,6 +11,7 @@ import { NodeName } from './node/type';
 // == NodeSpec ====================================================================
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.DOC]: DocumentNodeSpec,
+  [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,
 };
