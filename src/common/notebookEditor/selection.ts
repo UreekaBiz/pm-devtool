@@ -19,6 +19,9 @@ export type getPosType = boolean | (() => number);
 export const isGetPos = (object: any): object is (() => number) => typeof object === 'function';
 
 /** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */
+export const isTextSelection = (selection: Selection): selection is TextSelection  => selection.toJSON().type === 'text';
+
+/** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */
 export const isNodeSelection = (selection: Selection): selection is NodeSelection => 'node' in selection;
 
 /** Checks whether the given {@link Selection} is of GapCursor type */
