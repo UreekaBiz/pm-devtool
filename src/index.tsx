@@ -1,9 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-
-import ErrorBoundary from 'core/component/ErrorBoundary';
-import { CoreRouter } from 'core/component/route/CoreRouter';
-import { FullPageLayout } from 'core/layout/FullPageLayout';
 
 import './index.css';
 
@@ -12,16 +9,9 @@ import './index.css';
 //       null exception is used
 const root = createRoot(document.getElementById('root')!);
 root.render(
-  // REF: https://github.com/chakra-ui/chakra-ui/pull/6303
-  // FIXME: Add StrictMode back when Chakra UI fixes the REF above, since it
-  //        currently causes the tooltips and other portals to not show properly
-  // NOTE:  ChakraProvider is before ErrorBoundary
-  //        to ensure that error pages have consistent style
-  <ChakraProvider>
-    <ErrorBoundary>
-      <FullPageLayout>
-        <CoreRouter />
-      </FullPageLayout>
-    </ErrorBoundary>
-  </ChakraProvider>
+  <StrictMode>
+    <ChakraProvider>
+      <div>h</div>
+    </ChakraProvider>
+  </StrictMode>
 );
