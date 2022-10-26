@@ -1,6 +1,6 @@
 import { undo, redo } from 'prosemirror-history';
 
-import { splitBlockCommand } from 'common/notebookEditor/command';
+import { deleteSelectionCommand, splitBlockCommand } from 'common';
 
 // ********************************************************************************
 // REF: https://raw.githubusercontent.com/ProseMirror/prosemirror-example-setup/master/src/keymap.ts
@@ -11,11 +11,6 @@ export const getBasicKeymap = () => ({
   'Mod-z': undo,
   'Shift-Mod-z': redo,
   'Enter': splitBlockCommand,
-
-  // TODO: add
-  // 'Backspace': undoInputRule,
-  // 'Alt-ArrowUp': joinUp,
-  // 'Alt-ArrowDown': joinDown,
-  // 'Mod-BracketLeft': lift,
-  // 'Escape': selectParentNode,
+  'Backspace': deleteSelectionCommand,
+  'Mod-Backspace': deleteSelectionCommand,
 });
