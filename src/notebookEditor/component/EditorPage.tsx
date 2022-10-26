@@ -1,6 +1,7 @@
 import { SideBarLayout } from 'core';
 
 import { EditorProvider } from 'notebookEditor/context';
+import { SideBar } from 'notebookEditor/toolbar/component/SideBar';
 
 import { Editor } from './Editor';
 import { EditorValidator } from './EditorValidator';
@@ -10,7 +11,7 @@ import { EditorValidator } from './EditorValidator';
 export const EditorPage = () => (
   <EditorProvider>
     <EditorValidator>
-      <SideBarLayout sidebar={<div>sidebar</div>}>
+      <SideBarLayout sidebar={<SideBar />}>
         <Editor />
       </SideBarLayout>
     </EditorValidator>
