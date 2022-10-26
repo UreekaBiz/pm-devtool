@@ -20,5 +20,5 @@ export const Editor: React.FC<Props> = () => {
   }, [notebookAPI]);
 
   // -- UI ------------------------------------------------------------------------
-  return <div ref={editorContainer} style={{ position: 'relative' }} />;
+  return <div ref={editorContainer} />;
 };

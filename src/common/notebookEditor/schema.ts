@@ -15,7 +15,9 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
 };
 
 // == MarkSpec ====================================================================
-export const MarkSpecs: Record<MarkName, MarkSpec> = {};
+export const MarkSpecs: Record<MarkName, MarkSpec> = {
+  [MarkName.BOLD]: {},
+};
 
 // == Schema ======================================================================
 /** the schema version of the {@link Notebook}
