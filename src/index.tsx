@@ -3,6 +3,8 @@ import { NotebookEditorPage } from 'notebookEditor/component/NotebookEditorPage'
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { FullPageLayout } from 'core';
+
 import './index.css';
 
 // ********************************************************************************
@@ -12,7 +14,9 @@ const root = createRoot(document.getElementById('root')!);
 root.render(
   <StrictMode>
     <ChakraProvider>
-      <NotebookEditorPage />
+      <FullPageLayout>
+        <NotebookEditorPage />
+      </FullPageLayout>
     </ChakraProvider>
   </StrictMode>
 );
