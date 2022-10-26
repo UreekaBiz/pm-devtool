@@ -6,6 +6,9 @@ import { EditorView } from 'prosemirror-view';
 
 import { Command } from 'common';
 
+import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
+import { DialogStorage } from 'notebookEditor/model/DialogStorage';
+
 import { getBasicKeymap } from './keymap';
 
 // ********************************************************************************
@@ -14,11 +17,13 @@ export class Editor {
   // -- Attribute -----------------------------------------------------------------
   private schema: Schema;
   public view: EditorView;
+  public storage: { [key: string]: NodeViewStorage<any> | DialogStorage; };
 
   // -- Lifecycle -----------------------------------------------------------------
   constructor(schema: Schema) {
     this.schema = schema;
     this.view = new EditorView(null/*default empty*/, { state: EditorState.create({ schema: this.schema }) });
+    this.storage = {/*default empty*/};
   }
 
   // -- View ----------------------------------------------------------------------
