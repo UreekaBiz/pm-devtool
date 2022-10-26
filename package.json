@@ -33,6 +33,7 @@
     "crypto-js": "4.1.1",
     "framer-motion": "7.6.1",
     "nanoid": "4.0.0",
+    "prosemirror-keymap": "1.2.0",
     "prosemirror-model": "1.18.1",
     "prosemirror-state": "1.4.2",
     "prosemirror-transform": "1.7.0",
