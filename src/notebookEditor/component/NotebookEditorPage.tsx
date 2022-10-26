@@ -1,12 +1,17 @@
-import { SideBarLayout } from 'core/layout/SideBarLayout';
+import { SideBarLayout } from 'core';
+
+import { NotebookAPIProvider } from 'notebookEditor/context';
+
+import { Editor } from './Notebook';
+import { NotebookAPIValidator } from './NotebookAPIValidator';
 
 // ********************************************************************************
 export const NotebookEditorPage = () => (
-  // <NotebookEditorProvider>
-  //   <EditorValidator>
+  <NotebookAPIProvider>
+    <NotebookAPIValidator>
       <SideBarLayout sidebar={<div>sidebar</div>}>
-        {/* <Editor /> */}
+        <Editor />
       </SideBarLayout>
-  //   </EditorValidator>
-  // </NotebookEditorProvider>
+    </NotebookAPIValidator>
+  </NotebookAPIProvider>
 );
