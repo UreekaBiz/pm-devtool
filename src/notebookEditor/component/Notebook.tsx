@@ -1,8 +1,12 @@
+import { Box } from '@chakra-ui/react';
 import { useEffect, useRef } from 'react';
 
 import { useValidatedNotebookAPI } from 'notebookEditor/hook/';
 
 // ********************************************************************************
+// == Constant ====================================================================
+export const EDITOR_CONTAINER_ID = 'NotebookEditorContainerID';
+
 // == Interface ===================================================================
 interface Props {/*currently nothing*/}
 
@@ -20,5 +24,5 @@ export const Editor: React.FC<Props> = () => {
   }, [notebookAPI]);
 
   // -- UI ------------------------------------------------------------------------
-  return <div ref={editorContainer} />;
+  return (<Box id={EDITOR_CONTAINER_ID} ref={editorContainer} height='full' overflowY='auto' />);
 };
