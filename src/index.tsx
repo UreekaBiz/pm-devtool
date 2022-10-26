@@ -1,4 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import { NotebookEditorPage } from 'notebookEditor/component/NotebookEditorPage';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -11,7 +12,7 @@ const root = createRoot(document.getElementById('root')!);
 root.render(
   <StrictMode>
     <ChakraProvider>
-      <div>h</div>
+      <NotebookEditorPage />
     </ChakraProvider>
   </StrictMode>
 );
