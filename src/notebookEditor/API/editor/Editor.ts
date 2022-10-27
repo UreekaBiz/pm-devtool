@@ -71,6 +71,7 @@ export class Editor {
       });
 
     this.viewMounted = true/*EditorView initialized*/;
+    this.view.focus();
   }
 
   /** query whether the Editor's {@link EditorView} is mounted */

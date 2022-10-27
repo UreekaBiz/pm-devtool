@@ -7,4 +7,4 @@ import { insertTabCommand } from './command';
 
 // ********************************************************************************
 // == Plugin ======================================================================
-export const textPlugin = (editor: Editor) => keymap({ 'Mod-Alt-0': () => shortcutCommandWrapper(editor, insertTabCommand) });
+export const textPlugin = (editor: Editor) => keymap({ 'Tab': () => shortcutCommandWrapper(editor, insertTabCommand) });
