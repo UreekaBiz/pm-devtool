@@ -13,6 +13,7 @@ export class NoPluginState {
 
 // == Extension ===================================================================
 export enum ExtensionName {
+  BASIC_KEYMAP = 'basicKeymap',
   HISTORY = 'history',
 }
 

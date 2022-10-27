@@ -1,5 +1,3 @@
-import { history } from 'prosemirror-history';
-import { keymap } from 'prosemirror-keymap';
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode, Schema } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -9,8 +7,6 @@ import { Command, MarkName, NodeName } from 'common';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
-
-import { getBasicKeymap } from './keymap';
 
 // ********************************************************************************
 // == Class =======================================================================
@@ -62,7 +58,7 @@ export class Editor {
       {
         state: EditorState.create({
           schema: this.schema,
-          plugins: [history(), keymap(getBasicKeymap())],
+          plugins: [],
         }),
 
         dispatchTransaction: (tr) => {

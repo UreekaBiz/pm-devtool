@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { Editor } from 'notebookEditor/API/Editor';
+import { Editor } from 'notebookEditor/API/editor';
 
 // ********************************************************************************
 // == State =======================================================================
