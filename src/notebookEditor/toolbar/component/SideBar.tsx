@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getAllAscendantsFromSelection, getMarkName, getNodeName, SelectionDepth } from 'common';
 
-import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
+import { getAllMarksFromSelection } from 'notebookEditor/plugin/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
 import { getToolbar } from '../toolbar';

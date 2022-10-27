@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react';
 
 import { getAllAscendantsFromSelection, getMarkName, getNodeName, isTextNode, SelectionDepth } from 'common';
 
-import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
+import { getAllMarksFromSelection } from 'notebookEditor/plugin/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { getToolbar } from 'notebookEditor/toolbar/toolbar';
 
