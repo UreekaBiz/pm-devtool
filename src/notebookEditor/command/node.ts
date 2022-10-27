@@ -4,7 +4,7 @@ import { ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 
 import { AbstractDocumentUpdate, Command, JSONNode, SelectionRange } from 'common';
 
-import { createNodeFromContent, isFragment } from 'notebookEditor/plugin/util';
+import { createNodeFromContent, isFragment } from 'notebookEditor/extension/util';
 
 // ********************************************************************************
 // -- Insertion -------------------------------------------------------------------

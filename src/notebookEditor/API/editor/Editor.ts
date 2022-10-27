@@ -7,7 +7,7 @@ import { Command, MarkName, NodeName } from 'common';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
-import { Extension } from 'notebookEditor/plugin/type';
+import { Extension } from 'notebookEditor/extension/type';
 
 // ********************************************************************************
 // == Class =======================================================================
