@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from 'react';
+
 import { getSchema, NotebookSchemaVersion } from 'common';
 
 import { Editor } from 'notebookEditor/API';
@@ -10,7 +12,14 @@ interface Props { children: React.ReactNode; }
 
 // == Component ===================================================================
 export const EditorProvider: React.FC<Props> = ({ children }) => {
-  const editor = new Editor(getSchema(NotebookSchemaVersion.V1));
+  const editor = useMemo(() => new Editor(getSchema(NotebookSchemaVersion.V1)), [/*no deps*/]);
+
+  // -- State ---------------------------------------------------------------------
+  const [/*state can be accessed through Editor object*/, setViewState] = useState(editor.view.state);
+
+  useEffect(() => {
+    editor.setReactUpdateCallback(setViewState);
+  }, [editor]);
 
   // TODO: add back
   // sets the initial Theme when the component mounts

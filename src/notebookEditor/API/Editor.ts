@@ -18,19 +18,39 @@ export class Editor {
   private schema: Schema;
   public view: EditorView;
   public storage: { [key: string]: NodeViewStorage<any> | DialogStorage; };
+  public updateReactStateCallback: React.Dispatch<React.SetStateAction<EditorState>> | undefined;
 
   // -- Lifecycle -----------------------------------------------------------------
   constructor(schema: Schema) {
     this.schema = schema;
     this.view = new EditorView(null/*default empty*/, { state: EditorState.create({ schema: this.schema }) });
     this.storage = {/*default empty*/ };
+    this.updateReactStateCallback = undefined/*not initialized yet*/;
   }
 
   // -- View ----------------------------------------------------------------------
   public mountView(root: HTMLElement) {
-    // FIXME: define how to interact with Commands
-    // @ts-ignore
-    this.view = new EditorView(root, { state: EditorState.create({ schema: this.schema, plugins: [history(), keymap(getBasicKeymap())] }) });
+    this.view = new EditorView(
+      root,
+      {
+        state: EditorState.create({
+          schema: this.schema,
+
+          // FIXME: define how to interact with Commands
+          // @ts-ignore
+          plugins: [history(), keymap(getBasicKeymap())],
+        }),
+        dispatchTransaction: (tr) => {
+          this.view.updateState(this.view.state.apply(tr));
+          if(this.updateReactStateCallback) {
+            this.updateReactStateCallback(this.view.state);
+          } /* else -- not initialized yet, nothing to do */
+        },
+      });
+  }
+
+  public setReactUpdateCallback(callback: React.Dispatch<React.SetStateAction<EditorState>>) {
+    this.updateReactStateCallback = callback;
   }
 
   // -- Command -------------------------------------------------------------------
