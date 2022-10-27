@@ -7,7 +7,7 @@ import { Command, MarkName, NodeName } from 'common';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
-import { Extension } from 'notebookEditor/extension/type';
+import { getEditorPlugins } from './type';
 
 // ********************************************************************************
 // == Class =======================================================================
@@ -19,12 +19,6 @@ export class Editor {
    * will use
    */
   private schema: Schema;
-
-  /**
-   * the array of {@link Extension}s that define the Plugins whose functionality
-   * will be added to the Editor
-   */
-  private extensions: Extension[];
 
   /** whether or not the {@link EditorView} has been fully mounted */
   private viewMounted: boolean;
@@ -46,10 +40,9 @@ export class Editor {
   public storage: Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>;
 
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(schema: Schema, extensions: Extension[]) {
+  constructor(schema: Schema) {
     // .. Private .................................................................
     this.schema = schema;
-    this.extensions = extensions;
     this.viewMounted = false/*by definition*/;
 
     // .. Public ..................................................................
@@ -66,7 +59,7 @@ export class Editor {
       {
         state: EditorState.create({
           schema: this.schema,
-          plugins: [...this.extensions.flatMap(extension => [...extension.proseMirrorPlugins] )],
+          plugins: getEditorPlugins(),
         }),
 
         dispatchTransaction: (tr) => {

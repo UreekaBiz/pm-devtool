@@ -1,2 +1,3 @@
-export * from './type';
+export * from './util';
 export * from './Editor';
+export * from './type';
