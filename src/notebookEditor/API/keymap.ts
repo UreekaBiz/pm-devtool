@@ -1,16 +1,17 @@
 import { undo, redo } from 'prosemirror-history';
 
-import { chainCommands, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand, splitBlockCommand } from 'common';
+import { chainCommands, deleteSelectionCommand, joinBackwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, splitBlockCommand } from 'common';
 
 // ********************************************************************************
-// REF: https://raw.githubusercontent.com/ProseMirror/prosemirror-example-setup/master/src/keymap.ts
+// REF: https://prosemirror.net/docs/ref/#commands.baseKeymap
 
 // == Keymap ======================================================================
 export const getBasicKeymap = () => ({
   // -- Default -------------------------------------------------------------------
+  'Enter': chainCommands(liftEmptyBlockNodeCommand, splitBlockCommand),
+
   'Mod-z': undo,
   'Shift-Mod-z': redo,
-  'Enter': splitBlockCommand,
   'Backspace': chainCommands(deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),
-  'Mod-Backspace': deleteSelectionCommand,
+  'Mod-Backspace': chainCommands(deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),
 });

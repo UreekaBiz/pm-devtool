@@ -266,7 +266,7 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
 // -- Lift ------------------------------------------------------------------------
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
 // If the cursor is in an empty Text Block that can be lifted, lift it.
-export const liftEmptyBlockNodeCommand = (): Command => (state, dispatch) =>
+export const liftEmptyBlockNodeCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new LiftEmptyBlockNodeDocumentUpdate().update(state, state.tr), dispatch);
 export class LiftEmptyBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
