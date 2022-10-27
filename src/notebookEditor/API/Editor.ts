@@ -16,20 +16,46 @@ import { getBasicKeymap } from './keymap';
 // == Class =======================================================================
 export class Editor {
   // -- Attribute -----------------------------------------------------------------
+  // .. Private ...................................................................
+  /**
+   * the {@link Schema} that the {@link EditorView}'s {@link EditorState}
+   * will use
+   */
   private schema: Schema;
+
+  /** whether or not the {@link EditorView} has been fully mounted */
+  private viewMounted: boolean;
+
+  /** utility to set the Callback that updates React's state with the new
+   * {@link EditorView}'s state whenever a {@link Transaction} is dispatched,
+   * so that the rest of the application can read it
+   */
+  private updateReactStateCallback: React.Dispatch<React.SetStateAction<EditorState>> | undefined;
+
+  // .. Public ....................................................................
+  /** the Editor's {@link EditorView} */
   public view: EditorView;
-  public storage: { [key: string]: NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage; };
-  public updateReactStateCallback: React.Dispatch<React.SetStateAction<EditorState>> | undefined;
+
+  /**
+   * map containing NodeNames and mapping them to their storage, which
+   * holds references to their {@link AbstractNodeController}s
+   */
+  public storage: Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>;
 
   // -- Lifecycle -----------------------------------------------------------------
   constructor(schema: Schema) {
+    // .. Private .................................................................
     this.schema = schema;
+    this.viewMounted = false/*by definition*/;
+
+    // .. Public ..................................................................
     this.view = new EditorView(null/*default empty*/, { state: EditorState.create({ schema: this.schema }) });
-    this.storage = {/*default empty*/ };
+    this.storage = new Map(/*default empty*/);
     this.updateReactStateCallback = undefined/*not initialized yet*/;
   }
 
   // -- View ----------------------------------------------------------------------
+  /** mount the Editor's {@link EditorView} */
   public mountView(root: HTMLElement) {
     this.view = new EditorView(
       root,
@@ -50,6 +76,15 @@ export class Editor {
       });
   }
 
+  /** query whether the Editor's {@link EditorView} is mounted */
+  public isViewMounted() {
+    return this.viewMounted;
+  }
+
+  /**
+   * set the callback that will update React's state with the latest
+   * {@link EditorView}'s state whenever a {@link Transaction} is dispatched
+   */
   public setReactUpdateCallback(callback: React.Dispatch<React.SetStateAction<EditorState>>) {
     this.updateReactStateCallback = callback;
   }
@@ -76,8 +111,8 @@ export class Editor {
   }
 
   /**
-   * get the attributes of the given NodeName or MarkName at the Selection
-   * if a Node or Mark of said type currently exists there
+   * get the attributes of the given {@link NodeName} or {@link MarkName} at
+   * the Selection if a Node or Mark with said name currently exists there
    */
   public getAttributes(name: string) {
     const { state } = this.view/*for convenience*/;
