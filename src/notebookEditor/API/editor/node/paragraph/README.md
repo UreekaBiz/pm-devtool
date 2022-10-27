@@ -1,3 +1,3 @@
 # Paragraph
 
-Contains the Paragraph Toolbar, as well as the plugins that relate to Paragraph-Logic.
+Contains the Paragraph Toolbar, as well as the Commands and Plugins that relate to Paragraph-Logic.

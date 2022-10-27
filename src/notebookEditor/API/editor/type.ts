@@ -5,8 +5,9 @@ import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
 import { chainCommands, liftEmptyBlockNodeCommand, splitBlockCommand, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand, joinForwardCommand, selectNodeForwardCommand } from 'common';
 
 import { Editor } from '../editor';
-import { documentPlugin } from './node';
-import { paragraphPlugin } from './node/paragraph/plugin';
+import { documentPlugin } from './node/document';
+import { paragraphPlugin } from './node/paragraph';
+import { textPlugin } from './node/text';
 
 // ********************************************************************************
 /**
@@ -33,5 +34,8 @@ export const getEditorPlugins = (editor: Editor): ProseMirrorPlugin[] => {
       'Delete': chainCommands(deleteSelectionCommand, joinForwardCommand, selectNodeForwardCommand),
       'Mod-Delete': chainCommands(deleteSelectionCommand, joinForwardCommand, selectNodeForwardCommand),
     }),
+
+    // -- Basic Keymap ------------------------------------------------------------
+    textPlugin(editor),
   ];
 };

@@ -1,3 +1,3 @@
 # Document
 
-Contains the Document Toolbar, as well as the plugins that relate to Document-Logic.
+Contains the Document Toolbar, as well as the Plugins that relate to Document-Logic.
