@@ -10,7 +10,7 @@ import { isTextNode } from '../extension/text';
 import { NodeName } from '../node';
 import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../selection';
 import { AbstractDocumentUpdate, Command } from './type';
-import { defaultBlockAt, deleteBarrier, findCutBefore, textblockAt } from './util';
+import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt } from './util';
 
 // ********************************************************************************
 // -- Create ----------------------------------------------------------------------
@@ -45,17 +45,17 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
       } /* else -- do not change default */
     });
 
-    if(tr.selection.empty/*empty implies parent($anchor) === parent($head)*/ &&
-      (contentSize < 1/*parent has no content*/ ||
-      onlyContainsEmptyTextNodes/*the content is only white space and there are no atom nodes*/ ||
-      contentSize === 1 && firstChild && isMarkHolderNode(firstChild)/*parent only has a MarkHolder*/)
+    if(tr.selection.empty/*empty implies parent($anchor) === parent($head)*/
+      && (contentSize < 1/*parent has no content*/
+        || onlyContainsEmptyTextNodes/*the content is only white space and there are no atom nodes*/
+        || contentSize === 1 && firstChild && isMarkHolderNode(firstChild)/*parent only has a MarkHolder*/)
     ) {
       const parentBlockRange = $anchor.blockRange($anchor);
       if(!parentBlockRange) return false/*no parent Block Range*/;
 
       const { $from, $to } = parentBlockRange;
       tr.setBlockType($from.pos, $to.pos, blockNodeType, this.attributes)
-        .setSelection(Selection.near(tr.doc.resolve($to.pos-1/*inside the new Block*/)));
+        .setSelection(Selection.near(tr.doc.resolve($to.pos - 1/*inside the new Block*/)));
 
       return tr/*nothing left to do*/;
     } /* else -- not the same parent (multiple Selection) or content not empty, insert Block below */
@@ -338,14 +338,14 @@ export class JoinBackwardDocumentUpdate implements AbstractDocumentUpdate {
       return deleteBarrierUpdatedTr;
     } /* else -- isolating nodeBefore or could not join or replace */
 
-    // if the node below has no content and the node above is
+    // if the Node below has no content and the node above is
     // selectable, delete the node below and select the one above.
     if($cursor.parent.content.size == 0/*empty*/ && (textblockAt(nodeBefore, 'end') || NodeSelection.isSelectable(nodeBefore))) {
       const deleteStep = replaceStep(editorState.doc, $cursor.before(), $cursor.after(), Slice.empty);
       if(deleteStep && (deleteStep as ReplaceStep/*by definition*/).slice.size < (deleteStep as ReplaceStep/*by definition*/).to - (deleteStep as ReplaceStep).from) {
         const tr = editorState.tr.step(deleteStep);
-          tr.setSelection(textblockAt(nodeBefore, 'end') ? Selection.findFrom(tr.doc.resolve(tr.mapping.map($cut.pos, -1)), -1)!
-                        : NodeSelection.create(tr.doc, $cut.pos - nodeBefore.nodeSize));
+
+        tr.setSelection(textblockAt(nodeBefore, 'end') ? Selection.findFrom(tr.doc.resolve(tr.mapping.map($cut.pos, -1/*move backward*/)), -1/*look backward*/)/*guaranteed by textBlockAt call*/! : NodeSelection.create(tr.doc, $cut.pos - nodeBefore.nodeSize));
         tr.scrollIntoView();
         return tr/*updated*/;
       }
@@ -357,5 +357,64 @@ export class JoinBackwardDocumentUpdate implements AbstractDocumentUpdate {
     } /* else -- nodeBefore is not an Atom */
 
     return false/*could not joinBackward*/;
+  }
+}
+
+// When the Selection is empty and at the end of a TextBlock, select
+// the node coming after that textblock, if possible
+export const joinForwardCommand: Command = (state, dispatch, view) => AbstractDocumentUpdate.execute(new JoinForwardDocumentUpdate().update(state, state.tr, view), dispatch);
+export class JoinForwardDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
+
+  /**
+   * modify the given Transaction such that the conditions described by the
+   * joinForward Command (SEE: joinForward above) hold
+   */
+  public update(editorState: EditorState, tr: Transaction, view: EditorView | undefined/*not given by the caller*/) {
+    const { $cursor } = editorState.selection as TextSelection/*specifically looking for $cursor*/;
+    if(!$cursor) return false/*selection is not an empty Text selection*/;
+
+    if(view) {
+      const wouldLeaveBlockIfForward = view.endOfTextblock('forward', editorState);
+      if(!wouldLeaveBlockIfForward || $cursor.parentOffset < $cursor.parent.content.size) {
+        return false;
+      } /* else -- would leave the parent Text Block if Cursor goes forward, or the Cursor is past the end of the parent TextBlock*/
+    } /* else -- View not given */
+
+    const $cut = findCutAfter($cursor);
+    if(!$cut || !$cut.nodeAfter) return false/*no Node after this, nothing to do*/;
+
+    const nodeAfter = $cut.nodeAfter;
+
+    // try to join
+    const deleteBarrierUpdatedTr = deleteBarrier(editorState, $cut);
+    if(deleteBarrierUpdatedTr) {
+      return deleteBarrierUpdatedTr;
+    } /* else -- isolating nodeBefore or could not join or replace */
+
+    // if the Node above has no content and the Node below is selectable,
+    // delete the Node above and select the one below
+    if($cursor.parent.content.size === 0/*empty*/
+      && (textblockAt(nodeAfter, 'start')
+      || NodeSelection.isSelectable(nodeAfter))
+    ) {
+
+      const deleteStep = replaceStep(editorState.doc, $cursor.before(), $cursor.after(), Slice.empty);
+      if(deleteStep && (deleteStep as ReplaceStep).slice.size < (deleteStep as ReplaceStep).to - (deleteStep as ReplaceStep).from) {
+          tr.step(deleteStep)
+            .setSelection(textblockAt(nodeAfter, 'start') ? Selection.findFrom(tr.doc.resolve(tr.mapping.map($cut.pos)), 1/*look forward*/)/*guaranteed by textBlockAt*/! : NodeSelection.create(tr.doc, tr.mapping.map($cut.pos)))
+            .scrollIntoView();
+        return tr;
+      }
+    } /* else -- the Node above has content or the Node below is not selectable */
+
+    // if the next Node is an Atom, delete it
+    if(nodeAfter.isAtom && $cut.depth === $cursor.depth - 1/*parent*/) {
+      tr.delete($cut.pos, $cut.pos + nodeAfter.nodeSize)
+        .scrollIntoView();
+      return tr;
+    } /* else -- next Node is not an Atom or the $cut depth is not the same as the parent of $cut */
+
+    return false/*could not joinForward*/;
   }
 }

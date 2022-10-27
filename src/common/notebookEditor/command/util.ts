@@ -1,30 +1,8 @@
 import { ContentMatch, Fragment, Node as ProseMirrorNode, ResolvedPos, Slice } from 'prosemirror-model';
-import { Command, EditorState, Selection } from 'prosemirror-state';
+import { EditorState, Selection } from 'prosemirror-state';
 import { canJoin, liftTarget, ReplaceAroundStep } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
-
-import { DispatchType } from './type';
 
 // ********************************************************************************
-// == Command =====================================================================
-/**
- * REF: https://github.com/ProseMirror/prosemirror-commands/blob/9a187ecec867a44826d130c9d85d05598a8dbaf2/src/commands.ts
- * combine the given Commands into a single function which calls
- * them until one returns true
- */
-export const chainCommands = (...commands: Command[]) => {
-  const combined = (state: EditorState, dispatch: DispatchType, view: EditorView | undefined/*not given by the caller*/) => {
-    for(let i = 0; i < commands.length; i++) {
-      if(commands[i](state, dispatch, view)) return true/*Command executed*/;
-    } /* else -- none of the given Commands can be executed */
-
-    return false/*default*/;
-  };
-
-  return combined;
-};
-
-// == Misc ========================================================================
 // check whether the first or last child of the given Node is a Text Block, if only
 // is given, then said first or last child must only have a single child
 export const textblockAt = (node: ProseMirrorNode, side: 'start' | 'end', onlyOneChild = false) => {
@@ -48,7 +26,7 @@ export const defaultBlockAt = (match: ContentMatch) => {
 };
 
 // ................................................................................
-// find the ResolvedPos where a Join operation can be attempted
+// find the ResolvedPos where a JoinBackward operation can be attempted
 export const findCutBefore = ($pos: ResolvedPos): ResolvedPos | null => {
   if(!$pos.parent.type.spec.isolating) {
     for(let i=$pos.depth-1/*start with parent of $pos*/; i >= 0; i--) {
@@ -62,6 +40,21 @@ export const findCutBefore = ($pos: ResolvedPos): ResolvedPos | null => {
 
   return null/*default*/;
 };
+
+// find the ResolvedPos where a JoinForward operation can be attempted
+export const findCutAfter = ($pos: ResolvedPos): ResolvedPos | null => {
+  if(!$pos.parent.type.spec.isolating) {
+    for(let i = $pos.depth - 1/*start with parent of $pos*/; i >= 0; i--) {
+      const parent = $pos.node(i);
+      if($pos.index(i) + 1 < parent.childCount) return $pos.doc.resolve($pos.after(i + 1));
+
+      if(parent.type.spec.isolating) break/*do not cross boundary, since parent has isolating property*/;
+    }
+  } /* else -- parent of the $pos has isolating property, nothing to do */
+
+  return null/*default*/;
+};
+
 
 // ................................................................................
 // try to Join or Delete the Nodes backwards given the $cut ResolvedPos.
