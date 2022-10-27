@@ -6,6 +6,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { Command, MarkName, NodeName } from 'common';
 
+import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
 
@@ -17,7 +18,7 @@ export class Editor {
   // -- Attribute -----------------------------------------------------------------
   private schema: Schema;
   public view: EditorView;
-  public storage: { [key: string]: NodeViewStorage<any> | DialogStorage; };
+  public storage: { [key: string]: NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage; };
   public updateReactStateCallback: React.Dispatch<React.SetStateAction<EditorState>> | undefined;
 
   // -- Lifecycle -----------------------------------------------------------------
