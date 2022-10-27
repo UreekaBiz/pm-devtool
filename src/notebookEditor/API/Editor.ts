@@ -62,11 +62,9 @@ export class Editor {
       {
         state: EditorState.create({
           schema: this.schema,
-
-          // FIXME: define how to interact with Commands
-          // @ts-ignore
           plugins: [history(), keymap(getBasicKeymap())],
         }),
+
         dispatchTransaction: (tr) => {
           this.view.updateState(this.view.state.apply(tr));
           if(this.updateReactStateCallback) {

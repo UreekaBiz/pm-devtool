@@ -15,15 +15,9 @@ type InsertContentAtOptions = {
 // NOTE: this Command is limited to Web since the content that gets inserted must
 //       might be a string that gets parsed and converted into an HTMLElement
 /** Insert the given content at the specified SelectionRange */
-export const insertContentAtCommand = (selectionRange: SelectionRange, value: string | JSONNode | JSONNode[], options?: InsertContentAtOptions): Command => (state, dispatch) => {
-  const updatedTr = new InsertContentAtDocumentUpdate(selectionRange, value, options).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
+export const insertContentAtCommand = (selectionRange: SelectionRange, value: string | JSONNode | JSONNode[], options?: InsertContentAtOptions): Command =>
+  (state, dispatch) => AbstractDocumentUpdate.execute(new InsertContentAtDocumentUpdate(selectionRange, value, options).update(state, state.tr), dispatch);
 
-  return false/*not executed*/;
-};
 export class InsertContentAtDocumentUpdate implements AbstractDocumentUpdate  {
   public constructor(private readonly selectionRange: SelectionRange, private readonly value: string | JSONNode | JSONNode[], private readonly options?: InsertContentAtOptions) {/*nothing additional*/}
 

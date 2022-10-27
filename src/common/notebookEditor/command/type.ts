@@ -15,8 +15,15 @@ export const HISTORY_META = 'addToHistory';
 // Transaction dispatched by a Command goes through one DocumentUpdate. Multiple
 // DocumentUpdates can be executed in a single operation through the
 // applyDocumentUpdates method (SEE: web/src/command/update.ts)
-export type Command = (state: EditorState, dispatch: (tr: Transaction) => void | undefined/*not given by caller*/, view?: EditorView)
+export type Command = (state: EditorState, dispatch: DispatchType, view?: EditorView)
   => boolean/*indicates whether the command can be performed*/;
+
+//
+/**
+ * type of the function that dispatches {@link Transaction}s to modify the
+ * {@link EditorView}'s state
+ * */
+export type DispatchType = ((tr: Transaction) => void) | undefined/*not given by caller*/;
 
 // == Update ======================================================================
 // A DocumentUpdate encapsulates the individual modifications that a Transaction
@@ -39,7 +46,7 @@ export abstract class AbstractDocumentUpdate implements DocumentUpdate {
    * receive an updated {@link Transaction} and return whether it was
    * successfully executed
    */
-  public static execute(updatedTr: Transaction | false/*could not update Transaction*/, dispatch?: (tr: Transaction) => void | undefined/*not given by caller*/) {
+  public static execute(updatedTr: Transaction | false/*could not update Transaction*/, dispatch?: DispatchType) {
     if(updatedTr && dispatch) {
       dispatch(updatedTr);
       return true/*Command executed*/;

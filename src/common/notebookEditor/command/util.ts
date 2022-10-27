@@ -1,8 +1,30 @@
 import { ContentMatch, Fragment, Node as ProseMirrorNode, ResolvedPos, Slice } from 'prosemirror-model';
-import { EditorState, Selection } from 'prosemirror-state';
+import { Command, EditorState, Selection } from 'prosemirror-state';
 import { canJoin, liftTarget, ReplaceAroundStep } from 'prosemirror-transform';
+import { EditorView } from 'prosemirror-view';
+
+import { DispatchType } from './type';
 
 // ********************************************************************************
+// == Command =====================================================================
+/**
+ * REF: https://github.com/ProseMirror/prosemirror-commands/blob/9a187ecec867a44826d130c9d85d05598a8dbaf2/src/commands.ts
+ * combine the given Commands into a single function which calls
+ * them until one returns true
+ */
+export const chainCommands = (...commands: Command[]) => {
+  const combined = (state: EditorState, dispatch: DispatchType, view: EditorView | undefined/*not given by the caller*/) => {
+    for(let i = 0; i < commands.length; i++) {
+      if(commands[i](state, dispatch, view)) return true/*Command executed*/;
+    } /* else -- none of the given Commands can be executed */
+
+    return false/*default*/;
+  };
+
+  return combined;
+};
+
+// == Misc ========================================================================
 // check whether the first or last child of the given Node is a Text Block, if only
 // is given, then said first or last child must only have a single child
 export const textblockAt = (node: ProseMirrorNode, side: 'start' | 'end', onlyOneChild = false) => {
