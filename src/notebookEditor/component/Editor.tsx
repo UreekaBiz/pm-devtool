@@ -20,6 +20,7 @@ export const Editor: React.FC<Props> = () => {
   // -- Effect --------------------------------------------------------------------
   useEffect(() => {
     if(!editorContainer.current) return/*not mounted yet*/;
+    if(editor.isViewMounted()) return/*already mounted*/;
 
     editor.mountView(editorContainer.current);
   }, [editor]);

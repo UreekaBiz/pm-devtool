@@ -9,7 +9,7 @@ import { AbstractNodeView } from './AbstractNodeView';
 // returns the NodeViewStorage that manages all AbstractNodeViews for a particular
 // type of Node (specified)
 export const getNodeViewStorage = <Storage extends NodeViewStorage<any>>(editor: Editor, nodeName: NodeName): Storage => {
-  const storage = editor.storage[nodeName];
+  const storage = editor.storage.get(nodeName);
   if(!isNodeViewStorage<Storage>(storage)) throw new Error(`Invalid storage for Node (${nodeName}): ${JSON.stringify(storage)}`);
 
   return storage;

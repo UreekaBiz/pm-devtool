@@ -33,7 +33,7 @@ export class DialogStorage {
 export const getDialogStorage = (editor: Editor | null/*not created yet*/, name: NodeName | MarkName) => {
   if(!editor) return undefined;
 
-  const storage = editor.storage[name];
+  const storage = editor.storage.get(name);
   if(!isDialogStorage(storage)) throw new Error(`Wrong kind of storage for ${name} storage`);
 
   return storage;

@@ -74,6 +74,8 @@ export class Editor {
           } /* else -- not initialized yet, nothing to do */
         },
       });
+
+    this.viewMounted = true/*EditorView initialized*/;
   }
 
   /** query whether the Editor's {@link EditorView} is mounted */
