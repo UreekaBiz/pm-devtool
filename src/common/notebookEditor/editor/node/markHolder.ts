@@ -1,9 +1,9 @@
 import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
-import { NodeRendererSpec, DATA_NODE_TYPE } from '../htmlRenderer/type';
-import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../node';
-import { NotebookSchemaType } from '../schema';
+import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../attribute';
+import { NodeRendererSpec, DATA_NODE_TYPE } from '../../htmlRenderer/type';
+import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node';
+import { NotebookSchemaType } from '../../schema';
 
 // ********************************************************************************
 // == Attribute ===================================================================
