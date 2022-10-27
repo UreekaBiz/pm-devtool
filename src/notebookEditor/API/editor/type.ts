@@ -4,18 +4,23 @@ import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
 
 import { chainCommands, liftEmptyBlockNodeCommand, splitBlockCommand, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand, joinForwardCommand, selectNodeForwardCommand } from 'common';
 
+import { Editor } from '../editor';
 import { documentPlugin } from './node';
+import { paragraphPlugin } from './node/paragraph/plugin';
 
 // ********************************************************************************
 /**
  * defines the Plugins that get added to the Editor. Those that
  * appear first in the array get their functionality executed first
  */
-export const getEditorPlugins = (): ProseMirrorPlugin[] => {
+export const getEditorPlugins = (editor: Editor): ProseMirrorPlugin[] => {
   return [
     // -- History -----------------------------------------------------------------
     history({ depth: 100/*PM's default*/, newGroupDelay: 500/*PM's default, in ms*/ }),
     keymap({ 'Mod-z': undo, 'Mod-Shift-z': redo }),
+
+    // -- Paragraph ---------------------------------------------------------------
+    paragraphPlugin(editor),
 
     // -- Document ----------------------------------------------------------------
     documentPlugin(),

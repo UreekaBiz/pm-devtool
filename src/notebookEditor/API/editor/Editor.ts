@@ -59,7 +59,7 @@ export class Editor {
       {
         state: EditorState.create({
           schema: this.schema,
-          plugins: getEditorPlugins(),
+          plugins: getEditorPlugins(this),
         }),
 
         dispatchTransaction: (tr) => {
