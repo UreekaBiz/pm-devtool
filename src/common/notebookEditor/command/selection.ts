@@ -13,17 +13,9 @@ import { findCutBefore } from './util';
 export type SelectionRange = { from: number; to: number; }
 
 // == Selection ===================================================================
-// == Selection ===================================================================
 /** set a Selection regardless of its type */
-export const setSelectionCommand = (selection: Selection): Command => (state, dispatch) => {
-  const updatedTr =  new SetSelectionDocumentUpdate(selection).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const setSelectionCommand = (selection: Selection): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SetSelectionDocumentUpdate(selection).update(state, state.tr), dispatch);
 export class SetSelectionDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly selection: Selection) {/*nothing additional*/}
   /*
@@ -36,15 +28,8 @@ export class SetSelectionDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 /** set a TextSelection given the Range */
-export const setTextSelectionCommand = (selectionRange: SelectionRange): Command => (state, dispatch) => {
-  const updatedTr =  new SetTextSelectionDocumentUpdate(selectionRange).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const setTextSelectionCommand = (selectionRange: SelectionRange): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SetTextSelectionDocumentUpdate(selectionRange).update(state, state.tr), dispatch);
 export class SetTextSelectionDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly selectionRange: SelectionRange) {/*nothing additional*/}
   /*
@@ -69,15 +54,8 @@ export class SetTextSelectionDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 /** set a NodeSelection at the given position */
-export const setNodeSelectionCommand = (nodePos: number): Command => (state, dispatch) => {
-  const updatedTr =  new SetNodeSelectionDocumentUpdate(nodePos).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const setNodeSelectionCommand = (nodePos: number): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SetNodeSelectionDocumentUpdate(nodePos).update(state, state.tr), dispatch);
 export class SetNodeSelectionDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodePos: number) {/*nothing additional*/}
   /*
@@ -93,15 +71,8 @@ export class SetNodeSelectionDocumentUpdate implements AbstractDocumentUpdate {
 
 // ................................................................................
 /** select the contents of the current parent Block Node */
-export const selectBlockNodeContentCommand = (nodeName: NodeName): Command => (state, dispatch) => {
-  const updatedTr =  new SelectBlockNodeContentDocumentUpdate(nodeName).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const selectBlockNodeContentCommand = (nodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SelectBlockNodeContentDocumentUpdate(nodeName).update(state, state.tr), dispatch);
 export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeName: NodeName) {/*nothing additional*/ }
 
@@ -128,15 +99,8 @@ export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpd
 
 // ................................................................................
 // Delete the selection, if there is one.
-export const deleteSelectionCommand: Command = (state, dispatch) => {
-  const updatedTr =  new DeleteSelectionDocumentUpdate().update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const deleteSelectionCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new DeleteSelectionDocumentUpdate().update(state, state.tr), dispatch);
 export class DeleteSelectionDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -156,15 +120,8 @@ export class DeleteSelectionDocumentUpdate implements AbstractDocumentUpdate {
  * When the Selection is empty and at the start of a Text Block, select
  * the Node before that Text Block if possible
  */
-export const selectNodeBackwardCommand: Command = (state, dispatch, view) => {
-  const updatedTr =  new SelectNodeBackwardDocumentUpdate().update(state, state.tr, view);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const selectNodeBackwardCommand: Command = (state, dispatch, view) =>
+  AbstractDocumentUpdate.execute(new SelectNodeBackwardDocumentUpdate().update(state, state.tr, view), dispatch);
 export class SelectNodeBackwardDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -201,15 +158,8 @@ const getNodeBefore = (selection: Selection) => {
  * Replaces the node at the {@link Selection} of the given {@link Transaction} and
  * selects the new, replaced Node
  */
-export const replaceAndSelectNodeCommand = (node: ProseMirrorNode): Command => (state, dispatch) => {
-  const updatedTr =  new ReplaceAndSelectNodeDocumentUpdate(node).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const replaceAndSelectNodeCommand = (node: ProseMirrorNode): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new ReplaceAndSelectNodeDocumentUpdate(node).update(state, state.tr), dispatch);
 export class ReplaceAndSelectNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly node: ProseMirrorNode) {/*nothing additional*/ }
 

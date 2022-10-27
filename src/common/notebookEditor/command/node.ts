@@ -15,15 +15,8 @@ import { defaultBlockAt, deleteBarrier, findCutBefore, textblockAt } from './uti
 // -- Create ----------------------------------------------------------------------
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/20fa086dfe21f7ce03e5a05b842cf04e0a91e653/src/commands.ts
 /** Creates a Block Node below the current Selection */
-export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (state, dispatch) => {
-  const updatedTr =  new CreateBlockNodeDocumentUpdate(blockNodeName, attributes).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new CreateBlockNodeDocumentUpdate(blockNodeName, attributes).update(state, state.tr), dispatch);
 export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
@@ -84,15 +77,8 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 
 // -- Clear -----------------------------------------------------------------------
 /** clear the Nodes in the current Block */
-export const clearNodesCommand: Command = (state, dispatch) => {
-  const updatedTr =  new ClearNodesDocumentUpdate().update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const clearNodesCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new ClearNodesDocumentUpdate().update(state, state.tr), dispatch);
 export class ClearNodesDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -136,15 +122,8 @@ export class ClearNodesDocumentUpdate implements AbstractDocumentUpdate {
 // whose behavior should match the one provided by specifying 'code' in the
 // NodeSpec, without the need of declaring it, thus getting rid of the ProseMirror
 // induced constraints that come with it (e.g. not being able to paste Marks)
-export const insertNewlineCommand = (nodeName: NodeName): Command => (state, dispatch) => {
-  const updatedTr =  new InsertNewlineDocumentUpdate(nodeName).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const insertNewlineCommand = (nodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new InsertNewlineDocumentUpdate(nodeName).update(state, state.tr), dispatch);
 export class InsertNewlineDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeName: NodeName) {/*nothing additional*/}
 
@@ -166,15 +145,8 @@ export class InsertNewlineDocumentUpdate implements AbstractDocumentUpdate {
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
 // create a default Block Node after the one at the current Selection and
 // move the cursor there
-export const leaveBlockNodeCommand = (nodeName: NodeName): Command => (state, dispatch) => {
-  const updatedTr =  new LeaveBlockNodeDocumentUpdate(nodeName).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const leaveBlockNodeCommand = (nodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LeaveBlockNodeDocumentUpdate(nodeName).update(state, state.tr), dispatch);
 export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeName: NodeName) {/*nothing additional*/}
 
@@ -208,15 +180,8 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 
 // -- Split -----------------------------------------------------------------------
 // split the Block at the Selection
-export const splitBlockCommand: Command = (state, dispatch) => {
-  const updateResult = new SplitBlockDocumentUpdate().update(state, state.tr);
-  if(updateResult) {
-    dispatch(updateResult);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const splitBlockCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SplitBlockDocumentUpdate().update(state, state.tr), dispatch);
 export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -300,15 +265,8 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
 // -- Lift ------------------------------------------------------------------------
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
 // If the cursor is in an empty Text Block that can be lifted, lift it.
-export const liftEmptyBlockNodeCommand = (): Command => (state, dispatch) => {
-  const updatedTr =  new LiftEmptyBlockNodeDocumentUpdate().update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const liftEmptyBlockNodeCommand = (): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LiftEmptyBlockNodeDocumentUpdate().update(state, state.tr), dispatch);
 export class LiftEmptyBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -342,15 +300,8 @@ export class LiftEmptyBlockNodeDocumentUpdate implements AbstractDocumentUpdate 
 // before it that can be joined, by joining them. Otherwise try to move the
 // selected Block closer to the next one in the Document structure by lifting
 // it out of its parent or moving it into a parent of the previous Block
-export const joinBackwardCommand: Command = (state, dispatch) => {
-  const updatedTr = new JoinBackwardDocumentUpdate().update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const joinBackwardCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new JoinBackwardDocumentUpdate().update(state, state.tr), dispatch);
 export class JoinBackwardDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

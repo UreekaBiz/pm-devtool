@@ -8,15 +8,8 @@ import { AbstractDocumentUpdate, Command } from './type';
 // ********************************************************************************
 // == Setter ======================================================================
 /** set a Mark across the current Selection */
-export const setMarkCommand = (markName: MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) => {
-  const updatedTr = new SetMarkDocumentUpdate(markName, attributes).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const setMarkCommand = (markName: MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SetMarkDocumentUpdate(markName, attributes).update(state, state.tr), dispatch);
 export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
@@ -63,15 +56,8 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
  * Remove all Marks across the current Selection. If extendEmptyMarkRange,
  * is true, they will be removed even across (i.e. past) it
  */
-export const unsetMarkCommand = (markName: MarkName, extendEmptyMarkRange: boolean): Command => (state, dispatch) => {
-  const updatedTr = new UnsetMarkDocumentUpdate(markName, extendEmptyMarkRange).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const unsetMarkCommand = (markName: MarkName, extendEmptyMarkRange: boolean): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new UnsetMarkDocumentUpdate(markName, extendEmptyMarkRange).update(state, state.tr), dispatch);
 export class UnsetMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly extendEmptyMarkRange: boolean) {/*nothing additional*/}
 
@@ -108,15 +94,8 @@ export class UnsetMarkDocumentUpdate implements AbstractDocumentUpdate {
 // --------------------------------------------------------------------------------
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
 /** Toggle the given Mark with the given name */
-export const toggleMarkCommand = (markType: MarkType, attributes: Partial<Attributes>): Command => (state, dispatch) => {
-  const updatedTr = new ToggleMarkDocumentUpdate(markType, attributes).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const toggleMarkCommand = (markType: MarkType, attributes: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new ToggleMarkDocumentUpdate(markType, attributes).update(state, state.tr), dispatch);
 export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markType: MarkType, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
@@ -187,15 +166,8 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
  * of the given name in it, and if it does, modifies it so that the Range covers
  * it completely
  */
-export const extendMarkRangeCommand = (markName: MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) => {
-  const updatedTr = new ExtendMarkRangeDocumentUpdate(markName, attributes).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const extendMarkRangeCommand = (markName: MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new ExtendMarkRangeDocumentUpdate(markName, attributes).update(state, state.tr), dispatch);
 export class ExtendMarkRangeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 

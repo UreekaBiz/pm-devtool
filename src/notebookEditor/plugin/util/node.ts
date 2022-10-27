@@ -4,10 +4,6 @@ import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { isGapCursorSelection, AbstractDocumentUpdate, ClearNodesDocumentUpdate, Command, JSONNode, NodeName, NotebookSchemaType } from 'common';
 
-// import { Editor } from 'notebookEditor/API';
-// import { applyDocumentUpdates } from 'notebookEditor/command/update';
-
-// import { SetParagraphDocumentUpdate } from '../paragraph/command';
 import { elementFromString } from './parse';
 
 // ********************************************************************************
@@ -75,15 +71,8 @@ type CreateNodeFromContentOptions = {
 //       whenever they come from common or a similar place there are issues with
 //       the GapCursor Selection or the state getting stuck
 /** ensure the Block at the Selection is deleted on Backspace if its empty */
-export const blockBackspaceCommand = (blockNodeName: NodeName): Command => (state, dispatch) => {
-  const updatedTr =  new BlockBackspaceDocumentUpdate(blockNodeName).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const blockBackspaceCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new BlockBackspaceDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
 export class BlockBackspaceDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 
@@ -109,15 +98,8 @@ export class BlockBackspaceDocumentUpdate implements AbstractDocumentUpdate {
  * ensure the expected Mod-Backspace behavior is maintained inside
  * Block Nodes by removing a '\n' if required
  * */
- export const blockModBackspaceCommand = (blockNodeName: NodeName): Command => (state, dispatch) => {
-  const updatedTr =  new BlockModBackspaceDocumentUpdate(blockNodeName).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+ export const blockModBackspaceCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new BlockModBackspaceDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
 export class BlockModBackspaceDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 
@@ -150,15 +132,8 @@ export class BlockModBackspaceDocumentUpdate implements AbstractDocumentUpdate {
  * {@link GapCursor} selection when the arrowUp key is pressed if the selection
  * is at the start of it
  */
- export const blockArrowUpCommand = (blockNodeName: NodeName): Command => (state, dispatch) => {
-  const updatedTr =  new BlockArrowUpDocumentUpdate(blockNodeName).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+ export const blockArrowUpCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new BlockArrowUpDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
 export class BlockArrowUpDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 
@@ -184,15 +159,8 @@ export class BlockArrowUpDocumentUpdate implements AbstractDocumentUpdate {
  * {@link GapCursor} selection when the arrowDown is pressed if the selection
  * is at the end of it
  */
-export const blockArrowDownCommand = (blockNodeName: NodeName): Command => (state, dispatch) => {
-  const updatedTr =  new BlockArrowDownDocumentUpdate(blockNodeName).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const blockArrowDownCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new BlockArrowDownDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
 export class BlockArrowDownDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 

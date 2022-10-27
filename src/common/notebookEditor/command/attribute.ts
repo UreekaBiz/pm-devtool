@@ -15,15 +15,8 @@ import { AbstractDocumentUpdate, Command, HISTORY_META } from './type';
  *  UpdateAttributesInRangeCommand in that only Nodes that have the specified
  *  name get their attributes updated (SEE: UpdateAttributesInRangeCommand below)
  */
-export const updateAttributesCommand = (nodeOrMarkName: NodeName | MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) => {
-  const updatedTr = new UpdateAttributesDocumentUpdate(nodeOrMarkName, attributes).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const updateAttributesCommand = (nodeOrMarkName: NodeName | MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new UpdateAttributesDocumentUpdate(nodeOrMarkName, attributes).update(state, state.tr), dispatch);
 export class UpdateAttributesDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeOrMarkName: NodeName | MarkName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
   /*
@@ -77,15 +70,8 @@ export class UpdateAttributesDocumentUpdate implements AbstractDocumentUpdate {
  * are affected for all Nodes in the Selection Range, regardless of their type
  * (SEE: updateAttributesCommand above)
  */
-export const updateAttributesInRangeCommand = (attribute: AttributeType, value: string, depth: SelectionDepth): Command => (state, dispatch) => {
-  const updatedTr = new UpdateAttributesInRangeDocumentUpdate(attribute, value, depth).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const updateAttributesInRangeCommand = (attribute: AttributeType, value: string, depth: SelectionDepth): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new UpdateAttributesInRangeDocumentUpdate(attribute, value, depth).update(state, state.tr), dispatch);
 export class UpdateAttributesInRangeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly attribute: AttributeType, private readonly value: string, private readonly depth: SelectionDepth) {/*nothing additional*/}
   /*
@@ -137,15 +123,8 @@ export class UpdateAttributesInRangeDocumentUpdate implements AbstractDocumentUp
  * Transaction will not be added to the History. This is ideal for asynchronous
  * update attributes, whose effects should (usually) not be undo-able
  */
- export const updateSingleNodeAttributesCommand = <T extends Attributes>(nodeName: NodeName, nodePosition: number, attributes: Partial<T>, addToHistory: boolean = true/*default*/): Command => (state, dispatch) => {
-  const updatedTr = new UpdateSingleNodeAttributesDocumentUpdate(nodeName, nodePosition, attributes, addToHistory).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+ export const updateSingleNodeAttributesCommand = <T extends Attributes>(nodeName: NodeName, nodePosition: number, attributes: Partial<T>, addToHistory: boolean = true/*default*/): Command =>
+  (state, dispatch) => AbstractDocumentUpdate.execute(new UpdateSingleNodeAttributesDocumentUpdate(nodeName, nodePosition, attributes, addToHistory).update(state, state.tr), dispatch);
 export class UpdateSingleNodeAttributesDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeName: NodeName, private readonly nodePosition: number, private readonly attributes: Partial<Attributes>, private readonly addToHistory: boolean = true/*default*/) {/*nothing additional*/}
 
