@@ -10,11 +10,13 @@ import { NodeName } from './node/type';
 
 // ********************************************************************************
 // == NodeSpec ====================================================================
+// NOTE: the order of appearance of the Nodes dictates their priority
+//       (e.g. since Paragraph is the default Block type, it must appear first)
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.DOC]: DocumentNodeSpec,
+  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
-  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,
 };
 
