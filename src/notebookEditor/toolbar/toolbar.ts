@@ -1,6 +1,7 @@
 import { MarkName, NodeName } from 'common';
 
 import { DocumentToolbar } from 'notebookEditor/API/editor/node/document';
+import { ParagraphToolbar } from 'notebookEditor/API/editor/node/paragraph';
 
 import { Toolbar } from './type';
 
@@ -10,7 +11,7 @@ import { Toolbar } from './type';
 const TOOLBAR_MAP: Record<NodeName | MarkName, Toolbar | null> = {
   [NodeName.DOC]: DocumentToolbar,
   [NodeName.MARK_HOLDER]: null/*none*/,
-  [NodeName.PARAGRAPH]: null/*none*/,
+  [NodeName.PARAGRAPH]: ParagraphToolbar,
   [NodeName.TEXT]: null/*none*/,
   [NodeName.HEADING]: null,
 

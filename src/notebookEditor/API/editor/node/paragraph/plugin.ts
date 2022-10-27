@@ -1,8 +1,8 @@
-import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { keymap } from 'prosemirror-keymap';
 
-import { Editor } from '../../Editor';
+import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
+import { Editor } from '../../Editor';
 import { setParagraphCommand } from './command';
 
 // ********************************************************************************
