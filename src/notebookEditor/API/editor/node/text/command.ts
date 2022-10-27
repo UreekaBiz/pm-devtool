@@ -3,16 +3,7 @@ import { EditorState, Transaction } from 'prosemirror-state';
 import { AbstractDocumentUpdate, Command } from 'common';
 
 // ********************************************************************************
-/** Inserts a Tab. (SEE: ExtensionPriority) for details on handling */
-export const insertTabCommand: Command = (state, dispatch) => {
-  const updatedTr = new InsertTabDocumentUpdate().update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const insertTabCommand: Command = (state, dispatch) => AbstractDocumentUpdate.execute(new InsertTabDocumentUpdate().update(state, state.tr), dispatch);
 export class InsertTabDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
