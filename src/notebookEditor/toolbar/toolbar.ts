@@ -1,12 +1,14 @@
 import { MarkName, NodeName } from 'common';
 
+import { DocumentToolbar } from 'notebookEditor/API/editor/node/document';
+
 import { Toolbar } from './type';
 
 // ********************************************************************************
 // A collection of Toolbars. Each Node can have its own Toolbar. If it's not defined
 // in the collection then nothing will be shown.
 const TOOLBAR_MAP: Record<NodeName | MarkName, Toolbar | null> = {
-  [NodeName.DOC]: null,
+  [NodeName.DOC]: DocumentToolbar,
   [NodeName.MARK_HOLDER]: null/*none*/,
   [NodeName.PARAGRAPH]: null/*none*/,
   [NodeName.TEXT]: null/*none*/,
