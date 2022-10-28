@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { NodeName, ParagraphNodeSpec } from 'common';
+import { getNodeOutputSpec, NodeName, ParagraphNodeSpec, DATA_NODE_TYPE } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
@@ -18,6 +18,9 @@ export const Paragraph = new NodeExtension({
   // -- Spec ----------------------------------------------------------------------
   nodeSpec: {
     ...ParagraphNodeSpec,
+
+    parseDOM:[ { tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` }, { tag: 'p' } ],
+    toDOM: (node) => getNodeOutputSpec(node, {/*no attrs*/}),
   },
 
   // -- Plugin --------------------------------------------------------------------
