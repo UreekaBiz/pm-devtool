@@ -27,9 +27,6 @@ export const DocumentNodeSpec: NodeSpec = {
   // NOTE: is expected that the Schema using this Node explicitly defines that this
   //       is the top Node
   topNode: true/*it's the Node that will be used as a root for the Document*/,
-
-  // .. View ......................................................................
-  // Document has no explicit View. It mounts on an HTMLDivElement
 };
 
 // -- Render Spec -----------------------------------------------------------------

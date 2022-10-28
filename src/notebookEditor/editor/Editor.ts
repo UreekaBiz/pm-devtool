@@ -7,7 +7,6 @@ import { Command, MarkName, NodeName } from 'common';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
-import { getEditorPlugins } from './type';
 
 // ********************************************************************************
 // == Class =======================================================================
@@ -59,7 +58,7 @@ export class Editor {
       {
         state: EditorState.create({
           schema: this.schema,
-          plugins: getEditorPlugins(this),
+          plugins: [],
         }),
 
         dispatchTransaction: (tr) => {

@@ -1,7 +1,7 @@
 import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../attribute';
-import { NodeRendererSpec, DATA_NODE_TYPE } from '../../htmlRenderer/type';
+import { NodeRendererSpec } from '../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
 
@@ -34,10 +34,6 @@ export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
   selectable: false/*do not allow this Node to be set as a NodeSelection*/,
   atom: true/*MarkHolder should be treated as a single unit in the View*/,
   leaf: true/*MarkHolder has no Content*/,
-
-  // .. View ......................................................................
-  parseDOM: [{ tag: `div[${DATA_NODE_TYPE}="${NodeName.MARK_HOLDER}"]` }],
-  toDOM() { return ['div', { [DATA_NODE_TYPE]: NodeName.MARK_HOLDER } /*isLeaf, no content hole*/]; },
 };
 
 // -- Render Spec -----------------------------------------------------------------

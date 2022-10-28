@@ -74,10 +74,6 @@ export const HeadingNodeSpec: NodeSpec = {
   defining: true,
 
   attrs: HeadingAttributesSpec,
-
-  // .. View ......................................................................
-  parseDOM: Object.values(HeadingLevel).map((level) => ({ tag: `h${level}`, attrs: { [AttributeType.Level]: level } })),
-  toDOM: (node) => ['h' + node.attrs[AttributeType.Level], 0/*content hole*/],
 };
 
 // -- Render Spec -----------------------------------------------------------------
