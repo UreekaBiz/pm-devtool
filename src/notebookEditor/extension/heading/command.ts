@@ -5,15 +5,8 @@ import { createBoldMark, createMarkHolderNode, getBlockNodeRange, getHeadingNode
 import { SetParagraphDocumentUpdate } from '../paragraph/command';
 
 // ********************************************************************************
-export const setHeadingCommand = (attributes: Partial<HeadingAttributes>): Command => (state, dispatch) => {
-  const updatedTr = new SetHeadingDocumentUpdate(attributes).update(state, state.tr);
-  if(updatedTr) {
-    dispatch(updatedTr);
-    return true/*Command executed*/;
-  } /* else -- Command cannot be executed */
-
-  return false/*not executed*/;
-};
+export const setHeadingCommand = (attributes: Partial<HeadingAttributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SetHeadingDocumentUpdate(attributes).update(state, state.tr), dispatch);
 export class SetHeadingDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly attributes: Partial<HeadingAttributes>) {/*nothing additional*/ }
 

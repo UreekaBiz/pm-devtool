@@ -2,7 +2,7 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
-import { JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../../node';
+import { generateNodeId, JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
 
 // ********************************************************************************
@@ -98,3 +98,16 @@ export const HeadingNodeRendererSpec: NodeRendererSpec<HeadingAttributes> = {
 
   attributes: {/*use the default renderer on all Attributes*/},
 };
+
+// == Util ========================================================================
+export const DEFAULT_HEADING_LEVEL: HeadingLevel = HeadingLevel.One;
+export const DEFAULT_HEADING_STYLE_SET = false;
+
+/** create a default set of Attributes for a Heading Node */
+export const createDefaultHeadingAttributes = (level: number) =>
+  ({
+    id: generateNodeId()/*unique for each invocation*/,
+
+    level,
+  });
+

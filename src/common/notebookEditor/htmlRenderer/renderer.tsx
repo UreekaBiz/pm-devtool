@@ -3,11 +3,11 @@ import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNo
 
 import { Attributes, HTMLAttributes } from '../attribute';
 import { NotebookDocumentContent } from '../notebookDocument';
-import { HeadingNodeRendererSpec } from '../extension/node/heading';
-import { DocumentNodeRendererSpec } from '../extension/node/document';
-import { MarkHolderNodeRendererSpec } from '../extension/node/markHolder';
-import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/node/paragraph';
-import { isTextJSONNode, TextNodeRendererSpec } from '../extension/node/text';
+import { HeadingNodeRendererSpec } from '../extension/heading';
+import { DocumentNodeRendererSpec } from '../extension/document';
+import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
+import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
+import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { getMarkName, JSONMark, MarkName } from '../mark';
 import { contentToJSONNode, getNodeName, JSONNode, NodeName } from '../node';
 import { MarkSpecs, NodeSpecs } from '../schema';
@@ -28,6 +28,7 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
 
 export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
   [MarkName.BOLD]: {} as any,
+  [MarkName.TEXT_STYLE]: {} as any,
 };
 
 // == Content =====================================================================

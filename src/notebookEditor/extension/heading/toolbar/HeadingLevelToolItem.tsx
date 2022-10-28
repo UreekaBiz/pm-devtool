@@ -5,6 +5,7 @@ import { isHeadingLevel, isHeadingNode, isNumber, AttributeType, HeadingLevel, S
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { Editor } from 'notebookEditor/editor';
+import { DropdownButtonToolItem } from 'notebookEditor/extension/style/component/DropdownButtonToolItem';
 import { ACTIVE_BUTTON_COLOR } from 'notebookEditor/theme/theme';
 import { EditorToolComponentProps, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
@@ -53,7 +54,7 @@ export const HeadingLevelToolItem: React.FC<EditorToolComponentProps> = ({ edito
       name='headingLevelToolItem'
       asMenuButton={HeadingMenuButton}
       options={headingLevelOptions}
-      isButtonActive={(editor, depth) => isHeadingNode(editor.state.selection.$anchor.parent)}
+      isButtonActive={(editor, depth) => isHeadingNode(editor.view.state.selection.$anchor.parent)}
       shouldBeDisabled={(editor, depth) => depth !== 1/*only show on the direct parent*/}
       selectedOptionCheck={(parent, optionValue, optionIndex) => isHeadingNode(parent) && parent.attrs[AttributeType.Level] === (optionIndex+1/*account for 0 indexing*/)}
       handleClick={handleClick}
@@ -74,7 +75,7 @@ const HeadingMenuButton = forwardRef((props, ref) => {
       <button
         id='headingLevelToolItemButton'
         ref={ref}
-        datatype={TOOL_ITEM_DATA_TYPE/*(SEE: notebookEditor/toolbar/type )*/}
+        data-type={TOOL_ITEM_DATA_TYPE/*(SEE: notebookEditor/toolbar/type )*/}
         disabled={shouldBeDisabled}
         style={{ background: isButtonActive ? ACTIVE_BUTTON_COLOR : undefined/*default*/, color: shouldBeDisabled ? 'slategray' : 'black' }}
         {...otherProps}

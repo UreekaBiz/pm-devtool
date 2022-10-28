@@ -1,10 +1,10 @@
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
-import { HeadingNodeSpec } from './extension/node/heading';
-import { DocumentNodeSpec } from './extension/node/document';
-import { MarkHolderNodeSpec } from './extension/node/markHolder';
-import { ParagraphNodeSpec } from './extension/node/paragraph';
-import { TextNodeSpec } from './extension/node/text';
+import { HeadingNodeSpec } from './extension/heading';
+import { DocumentNodeSpec } from './extension/document';
+import { MarkHolderNodeSpec } from './extension/markHolder';
+import { ParagraphNodeSpec } from './extension/paragraph';
+import { TextNodeSpec } from './extension/text';
 import { MarkName } from './mark/type';
 import { NodeName } from './node/type';
 
@@ -23,6 +23,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
 // == MarkSpec ====================================================================
 export const MarkSpecs: Record<MarkName, MarkSpec> = {
   [MarkName.BOLD]: {},
+  [MarkName.TEXT_STYLE]: {},
 };
 
 // == Schema ======================================================================
