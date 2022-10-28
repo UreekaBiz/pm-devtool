@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getSchema, NotebookSchemaVersion } from 'common';
 
 import { Editor } from 'notebookEditor/API';
+import { setThemeStylesheet } from 'notebookEditor/theme';
 
 import { EditorContext } from './EditorContext';
 
@@ -21,11 +22,10 @@ export const EditorProvider: React.FC<Props> = ({ children }) => {
     editor.setReactUpdateCallback(setViewState);
   }, [editor]);
 
-  // TODO: add back
   // sets the initial Theme when the component mounts
-  // useEffect(() => {
-  //   setThemeStylesheet()/*sync stylesheet*/;
-  // }, [/*only on mount/unmount*/]);
+  useEffect(() => {
+    setThemeStylesheet()/*sync stylesheet*/;
+  }, [/*only on mount/unmount*/]);
 
   return <EditorContext.Provider value={{ editor }}>{children}</EditorContext.Provider>;
 };

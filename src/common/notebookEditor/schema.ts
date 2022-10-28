@@ -14,8 +14,8 @@ import { NodeName } from './node/type';
 //       (e.g. since Paragraph is the default Block type, it must appear first)
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.DOC]: DocumentNodeSpec,
-  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
+  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,
 };
