@@ -7,6 +7,7 @@ import { History } from 'notebookEditor/extension/history';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
 import { Text } from 'notebookEditor/extension/text';
+import { TextStyle } from 'notebookEditor/extension/textStyle';
 
 // ********************************************************************************
 // == Definition ==================================================================
@@ -23,4 +24,5 @@ export const editorDefinition: Extension[] = [
   MarkHolder,
   Paragraph,
   Text,
+  TextStyle,
 ];
