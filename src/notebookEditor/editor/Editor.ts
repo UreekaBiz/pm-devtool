@@ -9,6 +9,8 @@ import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
 import { getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
 
+import { sortExtensionPlugins } from './type';
+
 // ********************************************************************************
 // == Class =======================================================================
 export class Editor {
@@ -72,11 +74,12 @@ export class Editor {
       {
         state: EditorState.create({
           schema: this.schema,
-          plugins: [],
+          plugins: sortExtensionPlugins(this, this.extensions),
         }),
 
         dispatchTransaction: (tr) => {
           this.view.updateState(this.view.state.apply(tr));
+
           if(this.updateReactStateCallback) {
             this.updateReactStateCallback(this.view.state);
           } /* else -- not initialized yet, nothing to do */
