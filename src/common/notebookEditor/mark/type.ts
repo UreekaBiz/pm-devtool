@@ -7,6 +7,7 @@ import { NotebookSchemaType } from '../schema';
 // == Definition ==================================================================
 export enum MarkName {
   BOLD = 'bold',
+  STRIKETHROUGH = 'strikethrough',
   TEXT_STYLE = 'textStyle',
 }
 

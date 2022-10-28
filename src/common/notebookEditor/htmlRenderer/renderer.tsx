@@ -3,6 +3,7 @@ import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNo
 
 import { Attributes, HTMLAttributes } from '../attribute';
 import { NotebookDocumentContent } from '../notebookDocument';
+import { StrikethroughMarkRendererSpec, TextStyleMarkRendererSpec } from '../extension';
 import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
@@ -29,7 +30,8 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
 
 export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
   [MarkName.BOLD]: BoldMarkRendererSpec,
-  [MarkName.TEXT_STYLE]: {} as any,
+  [MarkName.STRIKETHROUGH]: StrikethroughMarkRendererSpec,
+  [MarkName.TEXT_STYLE]: TextStyleMarkRendererSpec as any/*FIXME!!!*/,
 };
 
 // == Content =====================================================================

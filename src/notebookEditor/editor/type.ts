@@ -6,6 +6,7 @@ import { Heading } from 'notebookEditor/extension/heading';
 import { History } from 'notebookEditor/extension/history';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
+import { Strikethrough } from 'notebookEditor/extension/strikethrough';
 import { Text } from 'notebookEditor/extension/text';
 import { TextStyle } from 'notebookEditor/extension/textStyle';
 
@@ -23,6 +24,7 @@ export const editorDefinition: Extension[] = [
   Heading,
   MarkHolder,
   Paragraph,
+  Strikethrough,
   Text,
   TextStyle,
 ];

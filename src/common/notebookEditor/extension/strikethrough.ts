@@ -9,41 +9,41 @@ import { NotebookSchemaType } from '../schema';
 // == Attribute ===================================================================
 // NOTE: must be present on the MarkSpec below
 // NOTE: this value must have matching types -- the ones defined in the Extension
-const BoldAttributesSpec = {/*no attributes*/};
-export type BoldAttributes = AttributesTypeFromNodeSpecAttributes<typeof BoldAttributesSpec>;
+const StrikethroughAttributesSpec = {/*no attributes*/};
+export type StrikethroughAttributes = AttributesTypeFromNodeSpecAttributes<typeof StrikethroughAttributesSpec>;
 
 // == Spec ========================================================================
 // -- Mark Spec -------------------------------------------------------------------
-export const BoldMarkSpec: MarkSpec = {
+export const StrikethroughMarkSpec: MarkSpec = {
   // .. Definition ................................................................
-  name: MarkName.BOLD/*expected and guaranteed to be unique*/,
+  name: MarkName.STRIKETHROUGH/*expected and guaranteed to be unique*/,
 
   // .. Attribute .................................................................
-  attributes: BoldAttributesSpec,
+  attrs: StrikethroughAttributesSpec,
 };
 
 // -- Render Spec -----------------------------------------------------------------
-export const BoldMarkRendererSpec: MarkRendererSpec<BoldAttributes> = {
+export const StrikethroughMarkRendererSpec: MarkRendererSpec<StrikethroughAttributes> = {
   // NOTE: the tag is only used for the Editor. The HTML renderer uses the tag of
   //       the TextNode instead
   // SEE: ./renderer.ts
   // NOTE: renderer tag must match toDOM tag
-  tag: 'strong',
-  render: { style: 'font-weight: bold;' },
+  tag: 's',
+  render: { style: 'text-decoration: line-through;' },
 
-  attributes: {/*no Attributes*/},
+  attributes: {/*no attributes*/},
 };
 
 // == Type ========================================================================
 // -- Mark Type -------------------------------------------------------------------
 // NOTE: this is the only way since PM does not provide a way to specify the type
-//       of the attributes
-export type BoldMarkType = ProseMirrorMark & { attrs: BoldAttributes; };
-export const isBoldMark = (mark: ProseMirrorMark): mark is BoldMarkType => mark.type.name === MarkName.BOLD;
+//       of the Attributes
+export type StrikethroughMarkType = ProseMirrorMark & { attrs: StrikethroughAttributes; };
+export const isStrikethroughMark = (mark: ProseMirrorMark): mark is StrikethroughMarkType => mark.type.name === MarkName.STRIKETHROUGH;
 
-export const getBoldMarkType = (schema: NotebookSchemaType) => schema.marks[MarkName.BOLD];
-export const createBoldMark = (schema: NotebookSchemaType, attributes?: Partial<BoldAttributes>) => getBoldMarkType(schema).create(attributes);
+export const getStrikethroughMarkType = (schema: NotebookSchemaType) => schema.marks[MarkName.STRIKETHROUGH];
+export const createStrikethroughMark = (schema: NotebookSchemaType, attributes?: Partial<StrikethroughAttributes>) => getStrikethroughMarkType(schema).create(attributes);
 
 // -- JSON Mark Type --------------------------------------------------------------
-export type BoldJSONMarkType = JSONMark<BoldAttributes> & { type: MarkName.BOLD; };
-export const isBoldJSONMark = (mark: JSONMark): mark is BoldJSONMarkType => mark.type === MarkName.BOLD;
+export type StrikethroughJSONMarkType = JSONMark<StrikethroughAttributes> & { type: MarkName.STRIKETHROUGH; };
+export const isStrikethroughJSONMark = (mark: JSONMark): mark is StrikethroughJSONMarkType => mark.type === MarkName.STRIKETHROUGH;
