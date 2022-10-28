@@ -17,6 +17,7 @@ export type DocumentAttributes = AttributesTypeFromNodeSpecAttributes<typeof Doc
 // -- Node Spec -------------------------------------------------------------------
 export const DocumentNodeSpec: NodeSpec = {
   // .. Definition ................................................................
+  name: NodeName.DOC/*expected and guaranteed to be unique*/,
   content: `${NodeGroup.BLOCK}+`,
 
   // .. Attribute .................................................................

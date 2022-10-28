@@ -30,6 +30,7 @@ export type ParagraphAttributes = AttributesTypeFromNodeSpecAttributes<typeof Pa
 // -- Node Spec -------------------------------------------------------------------
 export const ParagraphNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
+  name: NodeName.PARAGRAPH/*expected and guaranteed to be unique*/,
   content: `${NodeGroup.INLINE}*`,
   marks: '',
   group: NodeGroup.BLOCK,
