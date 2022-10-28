@@ -30,50 +30,8 @@ const HeadingAttributesSpec = {
 };
 export type HeadingAttributes = AttributesTypeFromNodeSpecAttributes<typeof HeadingAttributesSpec>;
 
-// == Spec ========================================================================
-// -- Node Spec -------------------------------------------------------------------
-export const HeadingNodeSpec: NodeSpec = {
-  // .. Definition ................................................................
-  name: NodeName.HEADING/*expected and guaranteed to be unique*/,
-  content: `${NodeGroup.INLINE}*`,
-  group: NodeGroup.BLOCK,
-  marks: '_'/*all Marks allowed*/,
-
-  // .. Misc ......................................................................
-  selectable: false/*cannot be set as NodeSelection*/,
-  defining: true,
-
-  attrs: HeadingAttributesSpec,
-
-  // .. View ......................................................................
-  parseDOM: [{ tag: 'h1' }],
-  toDOM() { return ['h1', 0]; },
-};
-
-// -- Render Spec -----------------------------------------------------------------
-export const HeadingNodeRendererSpec: NodeRendererSpec<HeadingAttributes> = {
-  tag: attributes => {
-    switch(attributes[AttributeType.Level]) {
-      default: /*use H1 if level is unknown*/
-      case HeadingLevel.One:
-        return 'h1';
-      case HeadingLevel.Two:
-        return 'h2';
-      case HeadingLevel.Three:
-        return 'h3';
-      case HeadingLevel.Four:
-        return 'h4';
-      case HeadingLevel.Five:
-        return 'h5';
-      case HeadingLevel.Six:
-        return 'h6';
-    }
-  },
-
-  attributes: {/*use the default renderer on all Attributes*/},
-};
-
 // == Type ========================================================================
+// NOTE: types defined before spec so that they can be used by it
 export enum HeadingLevel { One = 1, Two = 2, Three = 3, Four = 4, Five = 5, Six = 6 }
 export const isHeadingLevel = (level: number): level is HeadingLevel => level in HeadingLevel;
 
@@ -101,3 +59,46 @@ export const createHeadingNode = (schema: NotebookSchemaType, attributes?: Parti
 // -- JSON Node Type --------------------------------------------------------------
 export type HeadingJSONNodeType = JSONNode<HeadingAttributes> & { type: NodeName.HEADING; };
 export const isHeadingJSONNode = (node: JSONNode): node is HeadingJSONNodeType => node.type === NodeName.HEADING;
+
+// == Spec ========================================================================
+// -- Node Spec -------------------------------------------------------------------
+export const HeadingNodeSpec: NodeSpec = {
+  // .. Definition ................................................................
+  name: NodeName.HEADING/*expected and guaranteed to be unique*/,
+  content: `${NodeGroup.INLINE}*`,
+  group: NodeGroup.BLOCK,
+  marks: '_'/*all Marks allowed*/,
+
+  // .. Misc ......................................................................
+  selectable: false/*cannot be set as NodeSelection*/,
+  defining: true,
+
+  attrs: HeadingAttributesSpec,
+
+  // .. View ......................................................................
+  parseDOM: Object.values(HeadingLevel).map((level) => ({ tag: `h${level}`, attrs: { [AttributeType.Level]: level } })),
+  toDOM: (node) => ['h' + node.attrs[AttributeType.Level], 0/*content hole*/],
+};
+
+// -- Render Spec -----------------------------------------------------------------
+export const HeadingNodeRendererSpec: NodeRendererSpec<HeadingAttributes> = {
+  tag: attributes => {
+    switch(attributes[AttributeType.Level]) {
+      default: /*use H1 if level is unknown*/
+      case HeadingLevel.One:
+        return 'h1';
+      case HeadingLevel.Two:
+        return 'h2';
+      case HeadingLevel.Three:
+        return 'h3';
+      case HeadingLevel.Four:
+        return 'h4';
+      case HeadingLevel.Five:
+        return 'h5';
+      case HeadingLevel.Six:
+        return 'h6';
+    }
+  },
+
+  attributes: {/*use the default renderer on all Attributes*/},
+};

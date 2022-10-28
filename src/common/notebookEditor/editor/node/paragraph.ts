@@ -1,7 +1,7 @@
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../attribute';
-import { NodeRendererSpec } from '../../htmlRenderer/type';
+import { NodeRendererSpec, DATA_NODE_TYPE } from '../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node/type';
 import { NotebookSchemaType } from '../../schema';
 
@@ -42,8 +42,8 @@ export const ParagraphNodeSpec: Readonly<NodeSpec> = {
   selectable: false/*cannot be set as NodeSelection*/,
 
   // .. View ......................................................................
-  parseDOM: [{ tag: 'div' }],
-  toDOM() { return ['div', 0]; },
+  parseDOM: [{ tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` }, { tag: 'p' }],
+  toDOM() { return ['div', { [DATA_NODE_TYPE]: NodeName.PARAGRAPH }, 0/*content hole*/]; },
 };
 
 // -- Render Spec -----------------------------------------------------------------

@@ -37,7 +37,7 @@ export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
 
   // .. View ......................................................................
   parseDOM: [{ tag: `div[${DATA_NODE_TYPE}="${NodeName.MARK_HOLDER}"]` }],
-  toDOM() { return ['div' /*isLeaf, no content hole*/]; },
+  toDOM() { return ['div', { [DATA_NODE_TYPE]: NodeName.MARK_HOLDER } /*isLeaf, no content hole*/]; },
 };
 
 // -- Render Spec -----------------------------------------------------------------
