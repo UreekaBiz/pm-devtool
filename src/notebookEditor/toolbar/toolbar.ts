@@ -1,6 +1,7 @@
 import { MarkName, NodeName } from 'common';
 
 import { DocumentToolbar } from 'notebookEditor/extension/document';
+import { HeadingToolbar } from 'notebookEditor/extension/heading';
 import { ParagraphToolbar } from 'notebookEditor/extension/paragraph';
 
 import { Toolbar } from './type';
@@ -10,12 +11,14 @@ import { Toolbar } from './type';
 // in the collection then nothing will be shown.
 const TOOLBAR_MAP: Record<NodeName | MarkName, Toolbar | null> = {
   [NodeName.DOC]: DocumentToolbar,
+  [NodeName.HEADING]: HeadingToolbar,
   [NodeName.MARK_HOLDER]: null/*none*/,
   [NodeName.PARAGRAPH]: ParagraphToolbar,
   [NodeName.TEXT]: null/*none*/,
   [NodeName.HEADING]: null,
 
   [MarkName.BOLD]: null/*none*/,
+  [MarkName.TEXT_STYLE]: null/*none*/,
 };
 
 // --------------------------------------------------------------------------------
