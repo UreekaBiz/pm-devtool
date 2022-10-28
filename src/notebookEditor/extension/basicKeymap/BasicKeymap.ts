@@ -14,7 +14,7 @@ export const BasicKeymap = new Extension({
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [
+  addProseMirrorPlugins: () => [
     keymap({
       'Enter': chainCommands(liftEmptyBlockNodeCommand, splitBlockCommand),
       'Backspace': chainCommands(deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),
