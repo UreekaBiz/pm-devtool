@@ -17,11 +17,6 @@ export type BoldAttributes = AttributesTypeFromNodeSpecAttributes<typeof BoldAtt
 export const BoldMarkSpec: MarkSpec = {
   name: MarkName.BOLD/*expected and guaranteed to be unique*/,
 
-  // NOTE: toDOM must be defined so that the Schema knows how to create it
-  //       (SEE: schema.ts)
-  // NOTE: toDOM tag must match renderer tag
-  toDOM: (mark, inline) => ['strong', BoldMarkSpec],
-
   attributes: BoldAttributesSpec,
 };
 

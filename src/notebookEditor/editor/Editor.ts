@@ -1,26 +1,23 @@
-import { Mark as ProseMirrorMark, Node as ProseMirrorNode, Schema } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 import { EditorState, Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { Command, MarkName, NodeName } from 'common';
+import { Attributes, Command, MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
+
+import { getMarkAttributesFromView, getNodeAttributesFromView, isMarkActive, isNodeActive } from './util';
 
 // ********************************************************************************
 // == Class =======================================================================
 export class Editor {
   // -- Attribute -----------------------------------------------------------------
   // .. Private ...................................................................
-  /**
-   * the {@link Extension}s that will be used by the Editor
-   */
+  /** the {@link Extension}s that will be used by the Editor */
   private extensions: Extension[];
 
-  /**
-   * the {@link Schema} that the {@link EditorView}'s {@link EditorState}
-   * will use
-   */
+  /** the {@link Schema} that the {@link EditorView}'s will use */
   private schema: Schema;
 
   /** whether or not the {@link EditorView} has been fully mounted */
@@ -131,44 +128,30 @@ export class Editor {
    * the Selection if a Node or Mark with said name currently exists there
    */
   public getAttributes(name: string) {
-    const { state } = this.view/*for convenience*/;
-
     if(Object.values(NodeName).includes(name as NodeName/*check*/)) {
-      const nodes: ProseMirrorNode[] = [/*default empty*/];
-
-      const { from, to } = state.selection;
-      state.doc.nodesBetween(from, to, (node) => { nodes.push(node); });
-
-      const node = nodes.reverse(/*from most nested to least nested*/).find(nodeItem => nodeItem.type.name === name);
-      if(!node) {
-        return {/*no attrs*/};
-      } /* else -- return the Node's attrs */
-
-      return { ...node.attrs };
+      return getNodeAttributesFromView(this.view.state, name as NodeName/*guaranteed by check*/);
     } /* else -- not a Node */
 
     if(Object.values(MarkName).includes(name as MarkName/*check*/)) {
-      const { from, to, empty } = state.selection;
-      const marks: ProseMirrorMark[] = [/*default empty*/];
-
-      if(empty) {
-        if(state.storedMarks) {
-          marks.push(...state.storedMarks);
-        } /* else -- no stored Marks */
-        marks.push(...state.selection.$head.marks());
-
-      } else {
-        state.doc.nodesBetween(from, to, node => { marks.push(...node.marks); });
-      }
-
-      const mark = marks.find(markItem => markItem.type.name === name);
-      if(!mark) {
-        return {/*no attrs*/};
-      } /* else -- return Mark's attrs */
-
-      return { ...mark.attrs };
+      getMarkAttributesFromView(this.view.state, name as MarkName/*guaranteed by check*/);
     } /* else -- not a Node or a Mark*/
 
     return {/*default no attributes*/};
+  }
+
+  /**
+   * query whether the Node or Mark with the given name
+   * is active in the current Selection
+   */
+  public isNodeOrMarkActive(name: string, attributes: Attributes = {/*default no attrs*/}) {
+    if(Object.values(NodeName).includes(name as NodeName/*check*/)) {
+      return isNodeActive(this.view.state, name as NodeName/*guaranteed by check above*/, attributes);
+    } /* else -- not a Node */
+
+    if(Object.values(MarkName).includes(name as MarkName/*check*/)) {
+      return isMarkActive(this.view.state, name as MarkName/*guaranteed by check above*/, attributes);
+    } /* else -- not a Node or a Mark*/
+
+    return false/*default not active*/;
   }
 }

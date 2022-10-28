@@ -1,5 +1,6 @@
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
+import { Bold } from 'notebookEditor/extension/bold/Bold';
 import { Document } from 'notebookEditor/extension/document';
 import { Heading } from 'notebookEditor/extension/heading';
 import { History } from 'notebookEditor/extension/history';
@@ -15,6 +16,7 @@ import { Text } from 'notebookEditor/extension/text';
  */
 export const editorDefinition: Extension[] = [
   BasicKeymap,
+  Bold,
   History,
   Document,
   Heading,

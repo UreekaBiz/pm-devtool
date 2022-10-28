@@ -3,8 +3,9 @@ import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNo
 
 import { Attributes, HTMLAttributes } from '../attribute';
 import { NotebookDocumentContent } from '../notebookDocument';
-import { HeadingNodeRendererSpec } from '../extension/heading';
+import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
+import { HeadingNodeRendererSpec } from '../extension/heading';
 import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
@@ -27,7 +28,7 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
 };
 
 export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
-  [MarkName.BOLD]: {} as any,
+  [MarkName.BOLD]: BoldMarkRendererSpec,
   [MarkName.TEXT_STYLE]: {} as any,
 };
 
