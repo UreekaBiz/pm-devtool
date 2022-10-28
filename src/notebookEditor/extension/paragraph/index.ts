@@ -1,3 +1,3 @@
 export * from './command';
-export * from './plugin';
+export * from './Paragraph';
 export * from './toolbar';
