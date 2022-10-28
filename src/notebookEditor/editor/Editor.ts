@@ -7,12 +7,18 @@ import { Command, MarkName, NodeName } from 'common';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
+import { getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
 
 // ********************************************************************************
 // == Class =======================================================================
 export class Editor {
   // -- Attribute -----------------------------------------------------------------
   // .. Private ...................................................................
+  /**
+   * the {@link Extension}s that will be used by the Editor
+   */
+  private extensions: Extension[];
+
   /**
    * the {@link Schema} that the {@link EditorView}'s {@link EditorState}
    * will use
@@ -39,15 +45,23 @@ export class Editor {
   public storage: Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>;
 
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(schema: Schema) {
+  constructor(extensions: Extension[]) {
     // .. Private .................................................................
-    this.schema = schema;
+    this.extensions = extensions;
+    this.schema = this.buildSchemaFromExtensions(this.extensions);
     this.viewMounted = false/*by definition*/;
 
     // .. Public ..................................................................
     this.view = new EditorView(null/*default empty*/, { state: EditorState.create({ schema: this.schema }) });
     this.storage = new Map(/*default empty*/);
     this.updateReactStateCallback = undefined/*not initialized yet*/;
+  }
+
+  /** create a {@link Schema} from the given {@link Extension}s */
+  private buildSchemaFromExtensions(extensions: Extension[]) {
+    const nodes = getNodeSpecs(extensions);
+    const marks = getMarkSpecs(extensions);
+    return new Schema({ nodes, marks, topNode: getTopNode(nodes) });
   }
 
   // -- View ----------------------------------------------------------------------

@@ -4,7 +4,7 @@ import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForward
 
 import { ExtensionName } from 'notebookEditor/model/type';
 
-import { DEFAULT_EXTENSION_PRIORITY, Extension } from '../Extension';
+import { DEFAULT_EXTENSION_PRIORITY, Extension } from '../type';
 
 // ********************************************************************************
 // == Node ========================================================================

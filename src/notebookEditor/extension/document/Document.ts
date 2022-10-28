@@ -1,8 +1,8 @@
 import { DocumentNodeSpec, NodeName } from 'common';
 
-import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/Extension';
+import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type';
 
-import { NodeExtension } from '../NodeExtension';
+import { NodeExtension } from '../type';
 
 import { documentPlugin } from './plugin';
 
@@ -16,7 +16,7 @@ export const Document = new NodeExtension({
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Spec ----------------------------------------------------------------------
-  spec: { ...DocumentNodeSpec },
+  nodeSpec: { ...DocumentNodeSpec },
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [documentPlugin()],

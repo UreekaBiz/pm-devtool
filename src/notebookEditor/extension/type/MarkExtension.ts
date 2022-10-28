@@ -1,16 +1,18 @@
-import { NodeSpec } from 'prosemirror-model';
+import { MarkSpec } from 'prosemirror-model';
 
 import { Extension, ExtensionProps } from './Extension';
 
 // ********************************************************************************
 // == Interface ===================================================================
-export interface NodeExtensionProps extends ExtensionProps {
-  readonly spec: NodeSpec;
+export interface MarkExtensionProps extends ExtensionProps {
+  readonly markSpec: MarkSpec;
 }
 
 // == Class =======================================================================
-export class NodeExtension extends Extension {
-  constructor(public readonly props: NodeExtensionProps) {
+export class MarkExtension extends Extension {
+  constructor(public readonly props: MarkExtensionProps) {
     super(props);
+
+    // nothing additional
   }
 }

@@ -5,7 +5,7 @@ import { NodeName, ParagraphNodeSpec } from 'common';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 
-import { NodeExtension } from '../NodeExtension';
+import { NodeExtension } from '../type/NodeExtension';
 import { setParagraphCommand } from './command';
 
 // ********************************************************************************
@@ -16,7 +16,7 @@ export const Paragraph = new NodeExtension({
   priority: ExtensionPriority.PARAGRAPH,
 
   // -- Spec ----------------------------------------------------------------------
-  spec: {
+  nodeSpec: {
     ...ParagraphNodeSpec,
   },
 

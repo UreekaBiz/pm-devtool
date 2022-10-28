@@ -5,7 +5,7 @@ import { NodeName, TextNodeSpec } from 'common';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 
-import { NodeExtension } from '../NodeExtension';
+import { NodeExtension } from '../type/NodeExtension';
 import { insertTabCommand } from './command';
 
 // ********************************************************************************
@@ -16,7 +16,7 @@ export const Text = new NodeExtension({
   priority: ExtensionPriority.TEXT,
 
   // -- Spec ----------------------------------------------------------------------
-  spec: { ...TextNodeSpec },
+  nodeSpec: { ...TextNodeSpec },
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [keymap({ 'Tab': () => shortcutCommandWrapper(editor, insertTabCommand) })],
