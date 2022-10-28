@@ -32,7 +32,7 @@ export const ParagraphNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   name: NodeName.PARAGRAPH/*expected and guaranteed to be unique*/,
   content: `${NodeGroup.INLINE}*`,
-  marks: '',
+  marks: '_'/*all Marks allowed*/,
   group: NodeGroup.BLOCK,
 
   // .. Attribute .................................................................
