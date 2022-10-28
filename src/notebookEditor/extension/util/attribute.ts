@@ -8,12 +8,12 @@ import { Editor } from 'notebookEditor/editor';
 // ********************************************************************************
 // == Util ========================================================================
 /**
- * Sets the parsing behavior that will be used when parsing an {@link Attribute}
+ * Sets the parsing behavior that will be used when parsing an attribute
  *
- * @param name The name of the {@link Attribute} to be parsed
- * @param type The {@link SetAttributeType} for the {@link Attribute} that will be parsed
- * @param defaultValue The default value of the {@link Attribute} to be parsed
- * @returns The {@link Attribute} spec object that defines the parsing behavior of the {@link Attribute}
+ * @param name The name of the attribute to be parsed
+ * @param type The {@link SetAttributeType} for the attribute that will be parsed
+ * @param defaultValue The default value of the attribute to be parsed
+ * @returns The attribute spec object that defines the parsing behavior of the attribute
  */
 export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | undefined) => {
   let parseHTML: (element: HTMLElement) => string | string[] | boolean | number | null = (element: HTMLElement) => element.getAttribute(name);
@@ -47,7 +47,6 @@ export const setAttributeParsingBehavior = (name: string, type: SetAttributeType
   return {
     default: defaultValue,
     parseHTML,
-    keepOnSplit: false/*don't keep by default*/,
   };
 };
 
