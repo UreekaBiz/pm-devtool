@@ -1,3 +1,3 @@
 # Document
 
-Contains the Document Toolbar, as well as the Plugins that relate to Document-Logic.
+Implements the document's topNode. This extension is required so that all other extensions work correctly. Its like the '<body>' tag for the document.

@@ -1,3 +1,3 @@
 # Text
 
-Contains the Commands and Plugins that relate to Text-Logic.
+This extension ensures that TextNodes can be created and displayed in the editor.
