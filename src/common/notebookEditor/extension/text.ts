@@ -5,11 +5,6 @@ import { NodeRendererSpec } from '../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName } from '../node/type';
 import { NotebookSchemaType } from '../schema';
 
-// import { AttributesTypeFromNodeSpecAttributes } from '../attribute';
-// import { NodeRendererSpec } from '../htmlRenderer/type';
-// import { JSONNode, NodeGroup, NodeName } from '../node';
-// import { NotebookSchemaType } from '../schema';
-
 // ********************************************************************************
 // == Attribute ===================================================================
 // NOTE: must be present on the NodeSpec below

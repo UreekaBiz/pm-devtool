@@ -9,19 +9,21 @@ import { ACTIVE_BUTTON_COLOR, ICON_BUTTON_CLASS } from 'notebookEditor/theme/the
 import { ToolItem, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
+// == Interface ===================================================================
 interface Props {
   editor: Editor;
   tool: ToolItem;
 
   depth: SelectionDepth;
 }
+// == Component ===================================================================
 // NOTE: this component is not meant to be used directly, it is meant to be used
 //       inside a ErrorBoundary component. (See below)
 const InternalToolItem: React.FC<Props> = ({ editor, tool, depth }) => {
   const isButtonActive = isToolActive(editor, tool);
   const toast = useToast();
 
-  // == Handler ===================================================================
+  // -- Handler -------------------------------------------------------------------
   const handleToolClick = useCallback(() => {
     if(tool.toolType !== 'button') return/*nothing to do*/;
 
@@ -46,10 +48,9 @@ const InternalToolItem: React.FC<Props> = ({ editor, tool, depth }) => {
     }
   }, [editor, depth, toast, tool]);
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   if(tool.shouldShow && !tool.shouldShow(editor, depth)) return null/*nothing to render*/;
   if(tool.toolType === 'component') return <>{tool.component({ editor, depth })/*use tool component implementation*/}</>;
-
   return (
     <Tooltip hasArrow label={tool.tooltip} size='md'>
       <button
@@ -90,6 +91,5 @@ const isToolActive = (editor: Editor, tool: ToolItem) => {
   if(tool.isActive) return tool.isActive(editor);
 
   // Use editor implementation
-  return false;
-  // return editor.isActive(tool.name);
+  return editor.isNodeOrMarkActive(tool.name);
 };

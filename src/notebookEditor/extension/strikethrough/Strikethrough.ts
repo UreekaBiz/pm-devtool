@@ -10,8 +10,8 @@ import { toggleStrikethroughCommand } from './command';
 
 // ********************************************************************************
 // == RegEx =======================================================================
-// const strikethroughInputRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))$/;
-// const strikethroughPasteRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))/g;
+const strikethroughInputRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))$/;
+const strikethroughPasteRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))/g;
 
 // == Mark ========================================================================
 export const Strikethrough = new MarkExtension({
