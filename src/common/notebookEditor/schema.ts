@@ -1,7 +1,7 @@
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
 import { HeadingNodeSpec } from './extension/node/heading';
-import { DocumentNodeSpec } from './extension/document';
+import { DocumentNodeSpec } from './extension/node/document';
 import { MarkHolderNodeSpec } from './extension/node/markHolder';
 import { ParagraphNodeSpec } from './extension/node/paragraph';
 import { TextNodeSpec } from './extension/node/text';

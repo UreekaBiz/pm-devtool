@@ -4,7 +4,7 @@ import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNo
 import { Attributes, HTMLAttributes } from '../attribute';
 import { NotebookDocumentContent } from '../notebookDocument';
 import { HeadingNodeRendererSpec } from '../extension/node/heading';
-import { DocumentNodeRendererSpec } from '../extension/document';
+import { DocumentNodeRendererSpec } from '../extension/node/document';
 import { MarkHolderNodeRendererSpec } from '../extension/node/markHolder';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/node/paragraph';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/node/text';
