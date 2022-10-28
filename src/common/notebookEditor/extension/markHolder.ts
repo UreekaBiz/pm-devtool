@@ -22,7 +22,6 @@ export type MarkHolderAttributes = AttributesTypeFromNodeSpecAttributes<typeof M
 // -- Node Spec -------------------------------------------------------------------
 export const MarkHolderNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  name: NodeName.MARK_HOLDER/*expected and guaranteed to be unique*/,
   group: NodeGroup.INLINE,
   marks: ''/*no Marks allowed for MarkHolder*/,
 

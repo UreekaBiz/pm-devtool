@@ -19,9 +19,8 @@ export type TextAttributes = AttributesTypeFromNodeSpecAttributes<typeof TextAtt
 
 // == Spec ========================================================================
 // -- Node Spec -------------------------------------------------------------------
-export const TextNodeSpec: NodeSpec = {
+export const TextNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  name: NodeName.TEXT/*expected and guaranteed to be unique*/,
   group: NodeGroup.INLINE,
   marks: '_'/*all marks allowed*/,
 

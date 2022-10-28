@@ -14,10 +14,7 @@ export type BoldAttributes = AttributesTypeFromNodeSpecAttributes<typeof BoldAtt
 
 // == Spec ========================================================================
 // -- Mark Spec -------------------------------------------------------------------
-export const BoldMarkSpec: MarkSpec = {
-  // .. Definition ................................................................
-  name: MarkName.BOLD/*expected and guaranteed to be unique*/,
-
+export const BoldMarkSpec: Readonly<MarkSpec> = {
   // .. Attribute .................................................................
   attributes: BoldAttributesSpec,
 };

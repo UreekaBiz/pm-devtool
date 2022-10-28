@@ -62,9 +62,8 @@ export const isHeadingJSONNode = (node: JSONNode): node is HeadingJSONNodeType =
 
 // == Spec ========================================================================
 // -- Node Spec -------------------------------------------------------------------
-export const HeadingNodeSpec: NodeSpec = {
+export const HeadingNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  name: NodeName.HEADING/*expected and guaranteed to be unique*/,
   content: `${NodeGroup.INLINE}*`,
   group: NodeGroup.BLOCK,
   marks: '_'/*all Marks allowed*/,

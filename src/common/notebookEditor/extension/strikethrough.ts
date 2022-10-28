@@ -14,10 +14,7 @@ export type StrikethroughAttributes = AttributesTypeFromNodeSpecAttributes<typeo
 
 // == Spec ========================================================================
 // -- Mark Spec -------------------------------------------------------------------
-export const StrikethroughMarkSpec: MarkSpec = {
-  // .. Definition ................................................................
-  name: MarkName.STRIKETHROUGH/*expected and guaranteed to be unique*/,
-
+export const StrikethroughMarkSpec: Readonly<MarkSpec> = {
   // .. Attribute .................................................................
   attrs: StrikethroughAttributesSpec,
 };
