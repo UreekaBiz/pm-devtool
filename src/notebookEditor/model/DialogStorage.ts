@@ -1,7 +1,7 @@
 
 import { MarkName, NodeName } from 'common';
 
-import { Editor } from 'notebookEditor/API';
+import { Editor } from 'notebookEditor/editor';
 
 // storage exists for the life-time of the editor (regardless of whether
 // or not any nodes or marks exist or have ever existed). Its primary function is

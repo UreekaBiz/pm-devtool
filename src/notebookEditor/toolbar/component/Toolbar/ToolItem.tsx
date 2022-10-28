@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { SelectionDepth } from 'common';
 
 import ErrorBoundary from 'core/component/ErrorBoundary';
-import { Editor } from 'notebookEditor/API';
+import { Editor } from 'notebookEditor/editor';
 import { ACTIVE_BUTTON_COLOR, ICON_BUTTON_CLASS } from 'notebookEditor/theme/theme';
 import { ToolItem, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 

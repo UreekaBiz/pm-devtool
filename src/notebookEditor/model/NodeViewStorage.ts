@@ -1,6 +1,6 @@
 import { NodeIdentifier, NodeName } from 'common';
 
-import { Editor } from 'notebookEditor/API';
+import { Editor } from 'notebookEditor/editor';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 
 import { AbstractNodeView } from './AbstractNodeView';

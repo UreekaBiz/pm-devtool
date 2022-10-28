@@ -1,9 +1,9 @@
 import { NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import { Step } from 'prosemirror-transform';
 
-import { Editor } from 'notebookEditor/API';
-
 import { isNodeSelection, AbstractDocumentUpdate } from 'common';
+
+import { Editor } from 'notebookEditor/editor';
 
 // ********************************************************************************
 /**

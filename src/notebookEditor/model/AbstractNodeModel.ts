@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { getPosType, isGetPos } from 'common';
 
-import { Editor } from 'notebookEditor/API';
+import { Editor } from 'notebookEditor/editor';
 
 import { AbstractNodeController } from './AbstractNodeController';
 import { NodeViewStorage } from './NodeViewStorage';

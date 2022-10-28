@@ -3,8 +3,8 @@ import { NodeView as ProseMirrorNodeView } from 'prosemirror-view';
 
 import { getPosType, isGetPos, AttributeType, NodeName } from 'common';
 
-import { Editor } from 'notebookEditor/API';
-import { PM_SELECTED_CLASS } from 'notebookEditor/theme/theme';
+import { Editor } from 'notebookEditor/editor';
+import { PM_SELECTED_CLASS } from 'notebookEditor/theme';
 
 import { AbstractNodeView } from './AbstractNodeView';
 import { AbstractNodeModel } from './AbstractNodeModel';

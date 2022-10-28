@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getSchema, NotebookSchemaVersion } from 'common';
 
-import { Editor } from 'notebookEditor/API';
+import { Editor } from 'notebookEditor/editor';
 import { setThemeStylesheet } from 'notebookEditor/theme';
 
 import { EditorContext } from './EditorContext';

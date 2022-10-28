@@ -4,10 +4,11 @@ import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
 
 import { chainCommands, liftEmptyBlockNodeCommand, splitBlockCommand, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand, joinForwardCommand, selectNodeForwardCommand } from 'common';
 
-import { Editor } from '../editor';
-import { documentPlugin } from '../../extension/node/document';
-import { paragraphPlugin } from '../../extension/node/paragraph';
-import { textPlugin } from '../../extension/node/text';
+import { documentPlugin } from 'notebookEditor/extension/node/document';
+import { paragraphPlugin } from 'notebookEditor/extension/node/paragraph';
+import { Editor } from './Editor';
+
+import { textPlugin } from 'notebookEditor/extension/node/text';
 
 // ********************************************************************************
 /**

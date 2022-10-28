@@ -2,7 +2,7 @@ import { keymap } from 'prosemirror-keymap';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
-import { Editor } from '../../../API/editor/Editor';
+import { Editor } from '../../../editor/Editor';
 import { insertTabCommand } from './command';
 
 // ********************************************************************************
