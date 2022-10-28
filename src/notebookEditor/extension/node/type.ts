@@ -12,11 +12,5 @@ export interface NodeExtensionProps extends ExtensionProps {
 export class NodeExtension extends Extension {
   constructor(public readonly props: NodeExtensionProps) {
     super(props);
-
-    // nothing additional
-  }
-
-  public static create(props: NodeExtensionProps) {
-    return new NodeExtension(props);
   }
 }

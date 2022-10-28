@@ -1,13 +1,15 @@
-import { Plugin as ProseMirrorPlugin } from "prosemirror-state";
+import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
+
+import { Editor } from 'notebookEditor/editor';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const DEFAULT_EXTENSION_PRIORITY = 100;
+export const DEFAULT_EXTENSION_PRIORITY = 100;
 
 // == Interface ===================================================================
 export interface ExtensionProps {
   readonly name: string;
-  readonly proseMirrorPlugins: ProseMirrorPlugin[];
+  readonly addProseMirrorPlugins: (editor: Editor) => ProseMirrorPlugin[];
   readonly priority: number;
 }
 
@@ -15,9 +17,5 @@ export interface ExtensionProps {
 export class Extension {
   constructor(public readonly props: ExtensionProps) {
     // nothing additional
-  }
-
-  public static create({ name, proseMirrorPlugins = [/*default empty*/], priority = DEFAULT_EXTENSION_PRIORITY }: ExtensionProps) {
-    return new Extension({ name, proseMirrorPlugins, priority });
   }
 }
