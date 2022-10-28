@@ -1,10 +1,10 @@
 import { Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { JSONNode, NodeGroup, NodeName } from '../../node/type';
-import { NotebookSchemaType } from '../../schema';
+import { JSONNode, NodeGroup, NodeName } from '../node/type';
+import { NotebookSchemaType } from '../schema';
 
-import { AttributesTypeFromNodeSpecAttributes } from '../../attribute';
-import { NodeRendererSpec } from '../../htmlRenderer/type';
+import { AttributesTypeFromNodeSpecAttributes } from '../attribute';
+import { NodeRendererSpec } from '../htmlRenderer/type';
 
 // ********************************************************************************
 // == Attribute ===================================================================

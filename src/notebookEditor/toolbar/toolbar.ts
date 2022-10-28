@@ -1,7 +1,7 @@
 import { MarkName, NodeName } from 'common';
 
-import { DocumentToolbar } from 'notebookEditor/API/editor/node/document';
-import { ParagraphToolbar } from 'notebookEditor/API/editor/node/paragraph';
+import { DocumentToolbar } from 'notebookEditor/extension/node/document';
+import { ParagraphToolbar } from 'notebookEditor/extension/node/paragraph';
 
 import { Toolbar } from './type';
 

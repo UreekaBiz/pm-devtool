@@ -1,10 +1,10 @@
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
-import { HeadingNodeSpec } from './editor/node/heading';
-import { DocumentNodeSpec } from './editor/node/document';
-import { MarkHolderNodeSpec } from './editor/node/markHolder';
-import { ParagraphNodeSpec } from './editor/node/paragraph';
-import { TextNodeSpec } from './editor/node/text';
+import { HeadingNodeSpec } from './extension/node/heading';
+import { DocumentNodeSpec } from './extension/document';
+import { MarkHolderNodeSpec } from './extension/node/markHolder';
+import { ParagraphNodeSpec } from './extension/node/paragraph';
+import { TextNodeSpec } from './extension/node/text';
 import { MarkName } from './mark/type';
 import { NodeName } from './node/type';
 

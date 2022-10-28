@@ -1,5 +1,5 @@
 export * from './command';
-export * from './editor';
+export * from './extension';
 export * from './htmlRenderer';
 export * from './mark';
 export * from './node';

@@ -5,9 +5,9 @@ import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
 import { chainCommands, liftEmptyBlockNodeCommand, splitBlockCommand, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand, joinForwardCommand, selectNodeForwardCommand } from 'common';
 
 import { Editor } from '../editor';
-import { documentPlugin } from './node/document';
-import { paragraphPlugin } from './node/paragraph';
-import { textPlugin } from './node/text';
+import { documentPlugin } from '../../extension/node/document';
+import { paragraphPlugin } from '../../extension/node/paragraph';
+import { textPlugin } from '../../extension/node/text';
 
 // ********************************************************************************
 /**

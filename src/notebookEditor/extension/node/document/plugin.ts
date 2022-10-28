@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
-import { serializeDocumentFragment } from '../document/serialize';
+import { serializeDocumentFragment } from './serialize';
 
 // ********************************************************************************
 // this Plugin implements behavior that is common to all the Document.

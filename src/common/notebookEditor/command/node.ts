@@ -5,8 +5,8 @@ import { EditorView } from 'prosemirror-view';
 
 import { isBlank } from '../../util';
 import { Attributes } from '../attribute';
-import { isMarkHolderNode } from '../editor/node/markHolder';
-import { isTextNode } from '../editor/node/text';
+import { isMarkHolderNode } from '../extension/node/markHolder';
+import { isTextNode } from '../extension/node/text';
 import { NodeName } from '../node';
 import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../selection';
 import { AbstractDocumentUpdate, Command } from './type';
