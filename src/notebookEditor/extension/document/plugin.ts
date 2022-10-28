@@ -2,7 +2,7 @@ import { Slice } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { NoPluginState } from 'notebookEditor/model/type';
+import { NoPluginState } from 'notebookEditor/model';
 
 import { serializeDocumentFragment } from './serialize';
 

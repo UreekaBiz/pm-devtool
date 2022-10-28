@@ -7,8 +7,6 @@ import { NodeExtension } from '../type';
 import { documentPlugin } from './plugin';
 
 // ********************************************************************************
-// REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-document/src/document.ts
-
 // == Node ========================================================================
 export const Document = new NodeExtension({
   // -- Definition ----------------------------------------------------------------

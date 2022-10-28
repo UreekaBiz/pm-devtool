@@ -4,9 +4,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { Command, MarkName, NodeName } from 'common';
 
-import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
-import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
-import { DialogStorage } from 'notebookEditor/model/DialogStorage';
+import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
 
 // ********************************************************************************

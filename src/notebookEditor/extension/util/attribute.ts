@@ -2,8 +2,8 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { camelToKebabCase, generateNodeId, getHeadingThemeValue, getMarkValue, getNodeName, getSelectedNode, getThemeValue, isHeadingNode, isTextNode, mergeAttributeValues, AttributeType, HeadingLevel, InvalidMergedAttributeValue, MarkName, MergedAttributeValue, SetAttributeType } from 'common';
 
-import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { Editor } from 'notebookEditor/editor';
+import { NodeViewStorage } from 'notebookEditor/model';
 
 import { AttributeSpecWithParseHTML } from '../type';
 

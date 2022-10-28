@@ -2,7 +2,7 @@ import { keymap } from 'prosemirror-keymap';
 
 import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockCommand } from 'common';
 
-import { ExtensionName } from 'notebookEditor/model/type';
+import { ExtensionName } from 'notebookEditor/model';
 
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 
