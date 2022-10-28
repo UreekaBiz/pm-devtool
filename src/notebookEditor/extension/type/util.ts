@@ -1,5 +1,7 @@
-import { MarkSpec, NodeSpec } from 'prosemirror-model';
-import { Extension } from './Extension';
+import { MarkSpec, NodeSpec, ParseRule } from 'prosemirror-model';
+
+import { isValidHTMLElement } from '../util';
+import { AttributeSpecWithParseHTML, Extension } from './Extension';
 import { MarkExtension } from './MarkExtension';
 import { NodeExtension } from './NodeExtension';
 
@@ -9,7 +11,7 @@ import { NodeExtension } from './NodeExtension';
  * return an array containing only {@link NodeExtension}s given an array of
  * {@link Extension}s
  */
- export const getNodeSpecs = (extensions: Extension[]) => extensions.reduce<{ [name: string]: NodeSpec; }>((nodeExtensions, currentExtension) => {
+export const getNodeSpecs = (extensions: Extension[]) => extensions.reduce<{ [name: string]: NodeSpec; }>((nodeExtensions, currentExtension) => {
   if(isNodeExtension(currentExtension)) {
     nodeExtensions[currentExtension.props.name] = currentExtension.props.nodeSpec;
   } /* else -- ignore */
@@ -35,7 +37,7 @@ export const isNodeExtension = (extension: Extension): extension is NodeExtensio
  * return an array containing only {@link MarkExtension}s given an array of
  * {@link Extension}s
  */
- export const getMarkSpecs = (extensions: Extension[]) => extensions.reduce<{ [name: string]: MarkSpec; }>((nodeExtensions, currentExtension) => {
+export const getMarkSpecs = (extensions: Extension[]) => extensions.reduce<{ [name: string]: MarkSpec; }>((nodeExtensions, currentExtension) => {
   if(isMarkExtension(currentExtension)) {
     nodeExtensions[currentExtension.props.name] = currentExtension.props.markSpec;
   } /* else -- ignore */
@@ -44,4 +46,44 @@ export const isNodeExtension = (extension: Extension): extension is NodeExtensio
 
 /** check whether the given {@link Extension} is a {@link MarkExtension} */
 export const isMarkExtension = (extension: Extension): extension is MarkExtension => 'markSpec' in extension.props;
+
+// == Parse =======================================================================
+/**
+ * since getAttribute is the attribute set by the function, it is the only one
+ * that should not be specified
+ */
+type CreateExtensionParseRuleType = Omit<ParseRule, 'getAttrs'>;
+
+/**
+ * ensures that ParseRules with the specified parseHTML functions
+ * declared for all attributes get created for each tag that gets specified
+ */
+export const createExtensionParseRules = (partialParseRules: CreateExtensionParseRuleType[], attrs: { [attributeName: string]: AttributeSpecWithParseHTML; }): ParseRule[] => {
+  const parseRules: ParseRule[] = [/*initially empty*/];
+
+  partialParseRules.forEach((partialRule) => {
+    parseRules.push({
+      ...partialRule,
+      getAttrs: (node) => {
+        if(!isValidHTMLElement(node)) return {/* no attrs */};
+
+        const attrsObj = Object.entries(attrs).reduce<{ [attr: string]: string | number | boolean | string[] | undefined; }>((previousObj, currentEntry) => {
+          const [attrName, attrSpecWithParseHTML] = currentEntry;
+          const { parseHTML } =attrSpecWithParseHTML;
+
+          const attrValue = parseHTML(node);
+          if(attrValue) {
+            previousObj[attrName] = attrValue;
+          } /* else -- do not add to returned object */
+
+          return previousObj;
+        }, {/*default empty*/});
+
+        return attrsObj;
+      },
+    });
+  });
+
+  return parseRules;
+};
 

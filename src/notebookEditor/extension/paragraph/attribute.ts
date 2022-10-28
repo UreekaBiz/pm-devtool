@@ -3,6 +3,7 @@ import { NodeExtensionAttributes } from '../type';
 import { setAttributeParsingBehavior } from '../util';
 
 // ********************************************************************************
+// == Attribute ===================================================================
 // NOTE: extracted so that it can be used by both the attributes of the Extension
 //       and added to all ParseRules of the parseDOM property
 export const ParagraphAttrs: NodeExtensionAttributes<ParagraphAttributes> = {

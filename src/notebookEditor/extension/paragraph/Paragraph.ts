@@ -5,6 +5,7 @@ import { getNodeOutputSpec, NodeName, ParagraphNodeSpec, DATA_NODE_TYPE } from '
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 
+import { createExtensionParseRules } from '../type';
 import { NodeExtension } from '../type/NodeExtension';
 import { setParagraphCommand } from './command';
 import { ParagraphAttrs } from './attribute';
@@ -22,10 +23,7 @@ export const Paragraph = new NodeExtension({
 
     attrs: ParagraphAttrs,
 
-    parseDOM:[
-      { tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` },
-      { tag: 'p' },
-    ],
+    parseDOM: createExtensionParseRules([ { tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` }, { tag: 'p' }], ParagraphAttrs),
     toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/}),
   },
 
