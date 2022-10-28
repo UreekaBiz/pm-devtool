@@ -6,7 +6,7 @@ import { NodeExtension } from './NodeExtension';
 // ********************************************************************************
 // == NodeExtension ===============================================================
 /**
- * return an array containing only {@link NodeExtensions} given an array of
+ * return an array containing only {@link NodeExtension}s given an array of
  * {@link Extension}s
  */
  export const getNodeSpecs = (extensions: Extension[]) => extensions.reduce<{ [name: string]: NodeSpec; }>((nodeExtensions, currentExtension) => {
@@ -32,7 +32,7 @@ export const isNodeExtension = (extension: Extension): extension is NodeExtensio
 
 // == MarkExtension ===============================================================
 /**
- * return an array containing only {@link NodeExtensions} given an array of
+ * return an array containing only {@link MarkExtension}s given an array of
  * {@link Extension}s
  */
  export const getMarkSpecs = (extensions: Extension[]) => extensions.reduce<{ [name: string]: MarkSpec; }>((nodeExtensions, currentExtension) => {

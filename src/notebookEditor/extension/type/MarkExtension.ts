@@ -9,7 +9,7 @@ export type MarkExtensionAttributesType = { attrs: MarkExtensionAttributes<any/*
 
 // == Interface ===================================================================
 export interface MarkExtensionProps extends ExtensionProps {
-  readonly nodeSpec: Exclude<MarkSpec, 'attrs'> & MarkExtensionAttributesType;
+  readonly markSpec: Exclude<MarkSpec, 'attrs'> & MarkExtensionAttributesType;
 }
 
 // == Class =======================================================================
