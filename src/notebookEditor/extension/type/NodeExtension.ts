@@ -1,11 +1,11 @@
 import { NodeSpec } from 'prosemirror-model';
 
-import { Extension, ExtensionProps } from './Extension';
+import { AttributeSpecWithParseHTML, Extension, ExtensionProps } from './Extension';
 
 // ********************************************************************************
 // == Interface ===================================================================
 export interface NodeExtensionProps extends ExtensionProps {
-  readonly nodeSpec: NodeSpec;
+  readonly nodeSpec: Exclude<NodeSpec, 'attrs'> & { attrs: { [name: string]: AttributeSpecWithParseHTML; }; };
 }
 
 // == Class =======================================================================

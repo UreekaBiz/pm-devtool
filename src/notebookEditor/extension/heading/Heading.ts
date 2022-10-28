@@ -32,7 +32,7 @@ export const Heading = new NodeExtension({
     },
 
     parseDOM:[ { tag: 'h1' } ],
-    toDOM: (node) => getNodeOutputSpec(node, {/*no attrs*/}),
+    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/}),
   },
 
   // -- Plugin --------------------------------------------------------------------

@@ -16,7 +16,10 @@ export const Text = new NodeExtension({
   priority: ExtensionPriority.TEXT,
 
   // -- Spec ----------------------------------------------------------------------
-  nodeSpec: { ...TextNodeSpec },
+  nodeSpec: {
+    ...TextNodeSpec,
+    attrs: {/*no attrs*/},
+  },
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [keymap({ 'Tab': () => shortcutCommandWrapper(editor, insertTabCommand) })],

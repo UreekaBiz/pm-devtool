@@ -16,7 +16,10 @@ export const Document = new NodeExtension({
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Spec ----------------------------------------------------------------------
-  nodeSpec: { ...DocumentNodeSpec },
+  nodeSpec: {
+    ...DocumentNodeSpec,
+    attrs: {/*no attrs*/},
+  },
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [documentPlugin()],

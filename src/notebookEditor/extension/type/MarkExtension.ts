@@ -1,11 +1,11 @@
 import { MarkSpec } from 'prosemirror-model';
 
-import { Extension, ExtensionProps } from './Extension';
+import { AttributeSpecWithParseHTML, Extension, ExtensionProps } from './Extension';
 
 // ********************************************************************************
 // == Interface ===================================================================
 export interface MarkExtensionProps extends ExtensionProps {
-  readonly markSpec: MarkSpec;
+  readonly nodeSpec: Exclude<MarkSpec, 'attrs'> & { attrs: { [name: string]: AttributeSpecWithParseHTML; }; };
 }
 
 // == Class =======================================================================

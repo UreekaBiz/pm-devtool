@@ -5,6 +5,8 @@ import { camelToKebabCase, generateNodeId, getHeadingThemeValue, getMarkValue, g
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { Editor } from 'notebookEditor/editor';
 
+import { AttributeSpecWithParseHTML } from '../type';
+
 // ********************************************************************************
 // == Util ========================================================================
 /**
@@ -15,7 +17,7 @@ import { Editor } from 'notebookEditor/editor';
  * @param defaultValue The default value of the attribute to be parsed
  * @returns The attribute spec object that defines the parsing behavior of the attribute
  */
-export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | undefined) => {
+export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | undefined): AttributeSpecWithParseHTML => {
   let parseHTML: (element: HTMLElement) => string | string[] | boolean | number | null = (element: HTMLElement) => element.getAttribute(name);
 
   switch(type) {

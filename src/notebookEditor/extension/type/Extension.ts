@@ -7,6 +7,12 @@ import { Editor } from 'notebookEditor/editor';
 export const DEFAULT_EXTENSION_PRIORITY = 100;
 
 // == Interface ===================================================================
+/** defines how the attributes of an extension's spec should look when included  */
+export interface AttributeSpecWithParseHTML {
+  default: string | number | boolean | string[] | undefined;
+  parseHTML: (element: HTMLElement) => string | string[] | boolean | number | null;
+}
+
 export interface ExtensionProps {
   readonly name: string;
 
