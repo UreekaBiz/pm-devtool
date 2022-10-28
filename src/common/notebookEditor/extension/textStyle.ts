@@ -19,13 +19,10 @@ export type TextStyleAttributes = AttributesTypeFromNodeSpecAttributes<typeof Te
 // == Spec ========================================================================
 // -- Mark Spec -------------------------------------------------------------------
 export const TextStyleMarkSpec: MarkSpec = {
+  // .. Definition ................................................................
   name: MarkName.TEXT_STYLE/*expected and guaranteed to be unique*/,
 
-  // NOTE: toDOM must be defined so that the Schema knows how to create it
-  //       (SEE: schema.ts)
-  // NOTE: toDOM tag must match renderer tag
-  toDOM: (mark, inline) => ['span', TextStyleMarkSpec],
-
+  // .. Attribute .................................................................
   attrs: TextStyleAttributesSpec,
 };
 
