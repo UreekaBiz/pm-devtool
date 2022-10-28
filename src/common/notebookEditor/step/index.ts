@@ -1,2 +1,2 @@
-export * from './type';
+export * from './step';
 export * from './util';
