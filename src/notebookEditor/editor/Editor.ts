@@ -56,7 +56,7 @@ export class Editor {
   private buildSchemaFromExtensions(extensions: Extension[]) {
     const nodes = getNodeSpecs(extensions);
     const marks = getMarkSpecs(extensions);
-    return new Schema({ topNode: getTopNode(nodes), nodes, marks });
+    return new Schema({ topNode: getTopNode(extensions), nodes, marks });
   }
 
   // -- View ----------------------------------------------------------------------

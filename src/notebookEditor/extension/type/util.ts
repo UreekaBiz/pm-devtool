@@ -35,11 +35,11 @@ export const getNodeSpecs = (extensions: Extension[]) => extensions.reduce<{ [na
  * returns the name of the {@link NodeSpec} that contains the 'topNode'
  * property, which indicates that it is the root of the Document
  */
-export const getTopNode = (nodeSpecs: { [name: string]: NodeSpec; }) => {
-  const topNodeSpec = Object.values(nodeSpecs).find(nodeSpec => nodeSpec.topNode);
-  if(!topNodeSpec) throw new Error('Cannot create a Document without a topNode');
+export const getTopNode = (extensions: Extension[]) => {
+  const topNodeName = extensions.find(extension => isNodeExtension(extension) && extension.props.nodeSpec.topNode)?.props.name;
+  if(!topNodeName) throw new Error('Cannot create a Document without a topNode');
 
-  return topNodeSpec.name;
+  return topNodeName;
 };
 
 /** check whether the given {@link Extension} is a {@link NodeExtension} */
