@@ -8,6 +8,7 @@ import { createExtensionParseRules, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { NodeExtension } from '../type/NodeExtension';
 import { HeadingAttrs } from './attribute';
 import { setHeadingCommand } from './command';
+import { headingPlugin } from './plugin';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -32,6 +33,7 @@ export const Heading = new NodeExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
+    headingPlugin(),
     keymap(
       headingLevels.reduce((keyboardShortcuts, level) => ({
         ...keyboardShortcuts, ...{ [`Mod-Alt-${level}`]: () => shortcutCommandWrapper(editor, setHeadingCommand({ [AttributeType.Level]: Number(level) })) },
