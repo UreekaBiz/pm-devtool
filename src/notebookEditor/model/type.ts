@@ -55,12 +55,3 @@ export enum ExtensionPriority {
   // -- Mark ----------------------------------------------------------------------
   // Currently nothing
 }
-
-// NOTE: if parse rule priority is left unspecified, it defaults to 50
-// NOTE: names match Extension, Node or Mark names for sanity
-export enum ParseRulePriority {
-  // NOTE: since MarkHolders are also rendered as div elements, they need to take
-  //       priority over other nodes (such as Paragraphs or Headings)
-  //       when being parsed (SEE: MarkHolder.ts)
-  MARK_HOLDER = 52,
-}

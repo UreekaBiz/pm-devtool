@@ -5,8 +5,7 @@ import { getNodeOutputSpec, NodeName, ParagraphNodeSpec, DATA_NODE_TYPE } from '
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 
-import { createExtensionParseRules } from '../type';
-import { NodeExtension } from '../type/NodeExtension';
+import { createExtensionParseRules, NodeExtension } from '../type';
 import { setParagraphCommand } from './command';
 import { ParagraphAttrs } from './attribute';
 
