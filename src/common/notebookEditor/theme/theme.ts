@@ -1,6 +1,6 @@
 import { camelToKebabCase } from '../../util';
 import { AttributeType } from '../attribute';
-import { HeadingLevel } from '../extension/node/heading';
+import { HeadingLevel } from '../extension/heading';
 import { DATA_NODE_TYPE } from '../htmlRenderer/type';
 import { MarkName } from '../mark';
 import { NodeName } from '../node';
