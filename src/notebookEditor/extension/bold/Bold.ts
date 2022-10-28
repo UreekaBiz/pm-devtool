@@ -5,7 +5,7 @@ import { getMarkOutputSpec, BoldMarkSpec, MarkName } from 'common';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
-import { safeParseTag, wrapGetStyleAttrs, wrapGetTagAttrs } from '../util';
+import { safeParseTag, wrapGetStyleAttrs, wrapGetTagAttrs } from '../util/parse';
 import { toggleBoldCommand } from './command';
 
 // ********************************************************************************

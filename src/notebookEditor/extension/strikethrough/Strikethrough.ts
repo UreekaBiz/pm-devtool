@@ -5,7 +5,7 @@ import { getMarkOutputSpec, StrikethroughMarkSpec, MarkName } from 'common';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
-import { safeParseTag } from '../util';
+import { safeParseTag } from '../util/parse';
 import { toggleStrikethroughCommand } from './command';
 
 // ********************************************************************************
