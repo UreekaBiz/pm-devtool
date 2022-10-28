@@ -1,5 +1,5 @@
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode, Schema } from 'prosemirror-model';
-import { EditorState } from 'prosemirror-state';
+import { EditorState, Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { Command, MarkName, NodeName } from 'common';
@@ -7,9 +7,7 @@ import { Command, MarkName, NodeName } from 'common';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
-import { getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
-
-import { sortExtensionPlugins } from './type';
+import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
 
 // ********************************************************************************
 // == Class =======================================================================
@@ -49,7 +47,7 @@ export class Editor {
   // -- Lifecycle -----------------------------------------------------------------
   constructor(extensions: Extension[]) {
     // .. Private .................................................................
-    this.extensions = extensions;
+    this.extensions = sortExtensionsByPriority(extensions);
     this.schema = this.buildSchemaFromExtensions(this.extensions);
     this.viewMounted = false/*by definition*/;
 
@@ -74,7 +72,13 @@ export class Editor {
       {
         state: EditorState.create({
           schema: this.schema,
-          plugins: sortExtensionPlugins(this, this.extensions),
+
+          // NOTE: expects the extensions to be ordered by priority (which happens
+          //       in the Editor constructor)
+          plugins: this.extensions.reduce<Plugin[]>((pluginArray, sortedExtension) => {
+            pluginArray.push(...sortedExtension.props.addProseMirrorPlugins(this));
+            return pluginArray;
+          }, [/*initially empty*/]),
         }),
 
         dispatchTransaction: (tr) => {

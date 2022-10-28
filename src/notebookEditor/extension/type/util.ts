@@ -6,6 +6,19 @@ import { MarkExtension } from './MarkExtension';
 import { NodeExtension } from './NodeExtension';
 
 // ********************************************************************************
+// == Extension ===================================================================
+export const sortExtensionsByPriority = (extensions: Extension[]) =>
+  extensions.sort((extension, nextExtension) => {
+    const { priority: extensionPriority } = extension.props,
+          { priority: nextExtensionPriority } = nextExtension.props;
+
+    if(extensionPriority < nextExtensionPriority) return -1/*executes before*/;
+    if(extensionPriority === nextExtensionPriority) return 0/*executes by order of appearance*/;
+    if(extensionPriority > nextExtensionPriority) return 1/*executes after*/;
+
+    return 0/*default to executing by order of appearance*/;
+  }).reverse(/*ensure higher priority goes first*/);
+
 // == NodeExtension ===============================================================
 /**
  * return an array containing only {@link NodeExtension}s given an array of

@@ -33,8 +33,8 @@ export const Heading = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap(
-      headingLevels.reduce((shortcuts, level) => ({
-        ...shortcuts, ...{ [`Mod-Alt-${level}`]: () => shortcutCommandWrapper(editor, setHeadingCommand({ [AttributeType.Level]: Number(level) })) },
+      headingLevels.reduce((keyboardShortcuts, level) => ({
+        ...keyboardShortcuts, ...{ [`Mod-Alt-${level}`]: () => shortcutCommandWrapper(editor, setHeadingCommand({ [AttributeType.Level]: Number(level) })) },
       }), {/*default empty*/})
     ),
   ],
