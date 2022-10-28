@@ -1,6 +1,6 @@
 import { NodeSpec } from 'prosemirror-model';
 
-import { Extension, ExtensionProps } from '../type';
+import { Extension, ExtensionProps } from './Extension';
 
 // ********************************************************************************
 // == Interface ===================================================================
