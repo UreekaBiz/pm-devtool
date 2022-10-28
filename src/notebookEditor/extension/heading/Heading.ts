@@ -1,10 +1,19 @@
-import { getNodeOutputSpec, AttributeType, HeadingNodeSpec, NodeName, SetAttributeType } from 'common';
+import { keymap } from 'prosemirror-keymap';
 
-import { DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, NodeName } from 'common';
+
+import { shortcutCommandWrapper } from 'notebookEditor/command/util';
+
+import { createExtensionParseRules, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { NodeExtension } from '../type/NodeExtension';
-import { setAttributeParsingBehavior } from '../util';
+import { HeadingAttrs } from './attribute';
+import { setHeadingCommand } from './command';
 
 // ********************************************************************************
+// == Constant ====================================================================
+const headingLevels = Object.values(HeadingLevel);
+const headingTags = headingLevels.map(level => ({ tag: `h${level}` }));
+
 // == Node ========================================================================
 export const Heading = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
@@ -15,26 +24,18 @@ export const Heading = new NodeExtension({
   nodeSpec: {
     ...HeadingNodeSpec,
 
-    attrs: {
-      [AttributeType.BackgroundColor]: setAttributeParsingBehavior(AttributeType.BackgroundColor, SetAttributeType.STYLE),
-      [AttributeType.Color]: setAttributeParsingBehavior(AttributeType.Color, SetAttributeType.STYLE),
-      [AttributeType.FontSize]: setAttributeParsingBehavior(AttributeType.FontSize, SetAttributeType.STYLE),
+    attrs: HeadingAttrs,
 
-      [AttributeType.PaddingTop]: setAttributeParsingBehavior(AttributeType.PaddingTop, SetAttributeType.STYLE),
-      [AttributeType.PaddingBottom]: setAttributeParsingBehavior(AttributeType.PaddingBottom, SetAttributeType.STYLE),
-      [AttributeType.PaddingLeft]: setAttributeParsingBehavior(AttributeType.PaddingLeft, SetAttributeType.STYLE),
-      [AttributeType.PaddingRight]: setAttributeParsingBehavior(AttributeType.PaddingRight, SetAttributeType.STYLE),
-
-      [AttributeType.MarginTop]: setAttributeParsingBehavior(AttributeType.MarginTop, SetAttributeType.STYLE),
-      [AttributeType.MarginLeft]: setAttributeParsingBehavior(AttributeType.MarginLeft, SetAttributeType.STYLE),
-      [AttributeType.MarginBottom]: setAttributeParsingBehavior(AttributeType.MarginBottom, SetAttributeType.STYLE),
-      [AttributeType.MarginRight]: setAttributeParsingBehavior(AttributeType.MarginRight, SetAttributeType.STYLE),
-    },
-
-    parseDOM:[ { tag: 'h1' } ],
-    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/}),
+    parseDOM: createExtensionParseRules(headingTags, HeadingAttrs),
+    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/ }),
   },
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [],
+  addProseMirrorPlugins: (editor) => [
+    keymap(
+      headingLevels.reduce((shortcuts, level) => ({
+        ...shortcuts, ...{ [`Mod-Alt-${level}`]: () => shortcutCommandWrapper(editor, setHeadingCommand({ [AttributeType.Level]: Number(level) })) },
+      }), {/*default empty*/})
+    ),
+  ],
 });

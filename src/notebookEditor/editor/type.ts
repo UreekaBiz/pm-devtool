@@ -3,6 +3,7 @@ import { Plugin } from 'prosemirror-state';
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
 import { Document } from 'notebookEditor/extension/document';
+import { Heading } from 'notebookEditor/extension/heading';
 import { History } from 'notebookEditor/extension/history';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
 import { Text } from 'notebookEditor/extension/text';
@@ -16,11 +17,17 @@ export const editorDefinition: Extension[] = [
   BasicKeymap,
   History,
   Document,
+  Heading,
   Paragraph,
   Text,
 ];
 
 // == Util ========================================================================
+/**
+ * sort the {@link Plugin}s added by the given {@link Extension}s by
+ * priority order. Those whose {@link Extension}s have a higher priority will
+ * run first
+ */
 export const sortExtensionPlugins = (editor: Editor, extensions: Extension[]): Plugin[] => {
   const sortedByPriority = extensions.sort((extension, nextExtension) => {
     const { priority: extensionPriority } = extension.props,
