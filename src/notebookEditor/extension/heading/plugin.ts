@@ -1,10 +1,12 @@
-import { Plugin } from 'prosemirror-state';
+import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { createMarkHolderNode, generateNodeId, getParagraphNodeType, getSelectedNode, isHeadingNode, isTextNode, stringifyMarksArray, AttributeType, HeadingAttributes } from 'common';
 
 // ********************************************************************************
 export const headingPlugin = () => new Plugin({
+  key: new PluginKey('headingPluginKey'),
+
   // -- Props ---------------------------------------------------------------------
   props: {
     // .. Handler .................................................................
