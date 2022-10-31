@@ -81,8 +81,11 @@ new InputRule(regexp, (state, match, start, end) => {
   const textEnd = textStart + captureGroup.length;
 
   const excludedMarks = getMarksBetween(start, end, state.doc).filter(item => {
-    const excludeFunction = item.mark.type.excludes;
-    return excludeFunction(markType);
+    // NOTE: this property does exist on the MarkType
+    // @ts-ignore
+    const excluded = item.mark.type.excluded as MarkType[];
+
+    return excluded.find(type => type === markType && type !== item.mark.type);
   }).filter(item => item.to > textStart);
   if(excludedMarks.length) return null/*there is a Mark that excludes the given MarkType in the range of the match*/;
 
