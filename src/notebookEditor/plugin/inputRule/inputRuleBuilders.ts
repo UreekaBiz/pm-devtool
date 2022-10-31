@@ -1,13 +1,12 @@
+import { InputRule } from './InputRule';
 import { canJoin, findWrapping } from 'prosemirror-transform';
 import { NodeType, Node, Attrs } from 'prosemirror-model';
-
-import { ProseMirrorInputRule } from './ProseMirrorInputRule';
 
 // ********************************************************************************
 /**
  * build an input rule for automatically wrapping a TextBlock when a
  * given string is typed. The {@link RegExp} argument is
- * directly passed through to the {@link ProseMirrorInputRule} constructor
+ * directly passed through to the {@link InputRule} constructor
  *
  * {@link NodeType} is the type of node to wrap in. If it needs attributes,
  * they can be passed directly, of a function that will compute them from
@@ -19,8 +18,8 @@ import { ProseMirrorInputRule } from './ProseMirrorInputRule';
  * expression to match and the Node before the wrapped Node, and can
  * return a boolean to indicate whether a join should happen
  */
-export const createWrappingProseMirrorInputRule = (regexp: RegExp, nodeType: NodeType, getAttrs: Attrs | null | ((matches: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/, joinPredicate?: (match: RegExpMatchArray, node: Node) => boolean) =>
-  new ProseMirrorInputRule(regexp, (state, match, start, end) => {
+export const createWrappingInputRule = (regexp: RegExp, nodeType: NodeType, getAttrs: Attrs | null | ((matches: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/, joinPredicate?: (match: RegExpMatchArray, node: Node) => boolean) =>
+  new InputRule(regexp, (state, match, start, end) => {
     const attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
     const tr = state.tr.delete(start, end);
 
@@ -49,8 +48,8 @@ export const createWrappingProseMirrorInputRule = (regexp: RegExp, nodeType: Nod
  * can be used to compute the new Node's attributes,
  * and works the same as in {@link createWrappingInputRule}
  */
-export const createTextblockTypeProseMirrorInputRule = (regexp: RegExp, nodeType: NodeType, getAttrs: Attrs | null | ((match: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/) =>
-  new ProseMirrorInputRule(regexp, (state, match, start, end) => {
+export const textblockTypeInputRule = (regexp: RegExp, nodeType: NodeType, getAttrs: Attrs | null | ((match: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/) =>
+  new InputRule(regexp, (state, match, start, end) => {
     const $start = state.doc.resolve(start);
     const attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
 
