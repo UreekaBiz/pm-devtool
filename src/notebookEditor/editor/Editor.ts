@@ -6,6 +6,7 @@ import { Attributes, MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
+import { InputRule, inputRulePlugin } from 'notebookEditor/plugin/inputRule';
 
 import { getMarkAttributesFromView, getNodeAttributesFromView, isMarkActive, isNodeActive } from './util';
 
@@ -70,10 +71,7 @@ export class Editor {
 
           // NOTE: expects the extensions to be ordered by priority (which happens
           //       in the Editor constructor)
-          plugins: this.extensions.reduce<Plugin[]>((pluginArray, sortedExtension) => {
-            pluginArray.push(...sortedExtension.props.addProseMirrorPlugins(this));
-            return pluginArray;
-          }, [/*initially empty*/]),
+          plugins: this.initializePlugins(),
         }),
 
         dispatchTransaction: (tr) => {
@@ -89,10 +87,27 @@ export class Editor {
     this.view.focus();
   }
 
-  /** query whether the Editor's {@link EditorView} is mounted */
-  public isViewMounted() {
-    return this.viewMounted;
+  /**
+   * perform the necessary checks and things to ensure correct Plugin ordering
+   * from the given set of Extensions
+   * */
+  private initializePlugins(): Plugin[] {
+    // add required Plugins before adding Extension Plugins
+    const inputRules = this.extensions.reduce<InputRule[]>((pluginArray, sortedExtension) => {
+      pluginArray.push(...sortedExtension.props.inputRules(this));
+      return pluginArray;
+    }, [/*initially empty*/]);
+    const inputRulesPlugin = inputRulePlugin({ rules: inputRules });
+
+    // add Extension plugins
+    const initializedPlugins = this.extensions.reduce<Plugin[]>((pluginArray, sortedExtension) => {
+      pluginArray.push(...sortedExtension.props.addProseMirrorPlugins(this));
+      return pluginArray;
+    }, [inputRulesPlugin]);
+
+    return initializedPlugins;
   }
+
 
   /**
    * set the callback that will update React's state with the latest
@@ -118,11 +133,18 @@ export class Editor {
   }
 
   // -- Util ----------------------------------------------------------------------
+  // .. View ......................................................................
+  /** query whether the Editor's {@link EditorView} is mounted */
+  public isViewMounted() {
+    return this.viewMounted;
+  }
   /** focus the View */
   public focusView() {
     this.view.focus();
   }
 
+
+  // .. Attribute .................................................................
   /**
    * get the attributes of the given {@link NodeName} or {@link MarkName} at
    * the Selection if a Node or Mark with said name currently exists there
@@ -139,6 +161,7 @@ export class Editor {
     return {/*default no attributes*/};
   }
 
+  // .. Node or Mark ..............................................................
   /**
    * query whether the Node or Mark with the given name
    * is active in the current Selection
