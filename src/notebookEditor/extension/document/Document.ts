@@ -22,6 +22,9 @@ export const Document = new NodeExtension({
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
 
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [documentPlugin()],
 });

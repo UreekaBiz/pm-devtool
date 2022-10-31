@@ -29,6 +29,9 @@ export const Paragraph = new NodeExtension({
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
 
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Alt-0': () => shortcutCommandWrapper(editor, setParagraphCommand) })],
 });

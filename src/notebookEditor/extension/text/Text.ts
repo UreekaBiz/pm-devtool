@@ -24,6 +24,9 @@ export const Text = new NodeExtension({
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
 
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [keymap({ 'Tab': () => shortcutCommandWrapper(editor, insertTabCommand) })],
 });

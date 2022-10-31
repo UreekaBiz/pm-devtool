@@ -24,6 +24,9 @@ export const MarkHolder = new NodeExtension({
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
 
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [markHolderPlugin()],
 });

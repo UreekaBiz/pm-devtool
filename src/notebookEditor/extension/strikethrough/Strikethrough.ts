@@ -44,6 +44,9 @@ export const Strikethrough = new MarkExtension({
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [createMarkInputRule(strikethroughInputRegEx, getStrikethroughMarkType(editor.view.state.schema))],
 
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({

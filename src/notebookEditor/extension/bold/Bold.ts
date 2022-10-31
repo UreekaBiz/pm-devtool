@@ -4,6 +4,7 @@ import { getBoldMarkType, getMarkOutputSpec, BoldMarkSpec, MarkName } from 'comm
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createMarkInputRule } from 'notebookEditor/plugin/inputRule';
+import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { safeParseTag, wrapGetStyleAttrs, wrapGetTagAttrs } from '../util/parse';
@@ -46,6 +47,12 @@ export const Bold = new MarkExtension({
   inputRules: (editor) => [
     createMarkInputRule(starRegex, getBoldMarkType(editor.view.state.schema)),
     createMarkInputRule(underscoreRegex, getBoldMarkType(editor.view.state.schema)),
+  ],
+
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [
+    createMarkPasteRule(starRegex, getBoldMarkType(editor.view.state.schema)),
+    createMarkPasteRule(underscoreRegex, getBoldMarkType(editor.view.state.schema)),
   ],
 
   // -- Plugin --------------------------------------------------------------------

@@ -15,6 +15,9 @@ export const History = new Extension({
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
 
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [
     history({ depth: 100/*PM's default*/, newGroupDelay: 500/*PM's default, in ms*/ }),
