@@ -4,7 +4,7 @@ import { getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, NodeNa
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
-import { createExtensionParseRules, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { createExtensionParseRules, getExtensionDefaultAttributes, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { NodeExtension } from '../type/NodeExtension';
 import { HeadingAttrs } from './attribute';
 import { setHeadingCommand } from './command';
@@ -28,7 +28,7 @@ export const Heading = new NodeExtension({
     attrs: HeadingAttrs,
 
     parseDOM: createExtensionParseRules(headingTags, HeadingAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/ }),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionDefaultAttributes(HeadingAttrs)),
   },
 
   // -- Plugin --------------------------------------------------------------------

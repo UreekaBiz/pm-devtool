@@ -7,11 +7,15 @@ import { DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 // == Constant ====================================================================
 export const DEFAULT_EXTENSION_PRIORITY = 100;
 
+// == Type ========================================================================
+export type DefaultAttributeType = string | number | boolean | string[] | undefined;
+export type ParseHTMLAttributeType = (element: HTMLElement) => string | string[] | boolean | number | null;
+
 // == Interface ===================================================================
 /** defines how the attributes of an extension's spec should look when included  */
 export interface AttributeSpecWithParseHTML {
-  default: string | number | boolean | string[] | undefined;
-  parseHTML: (element: HTMLElement) => string | string[] | boolean | number | null;
+  default: DefaultAttributeType;
+  parseHTML: ParseHTMLAttributeType;
 }
 
 export interface ExtensionProps {

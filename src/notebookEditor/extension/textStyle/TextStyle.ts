@@ -1,6 +1,6 @@
 import { getMarkOutputSpec, TextStyleMarkSpec, MarkName } from 'common';
 
-import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { getExtensionDefaultAttributes, MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { isValidHTMLElement, safeParseTag } from '../util/parse';
 import { TextStyleAttrs } from './attribute';
 
@@ -28,7 +28,7 @@ export const TextStyle = new MarkExtension({
           return element.hasAttribute('style') ? {} : false/*no styles*/;
         },
       }],
-    toDOM: (mark) => getMarkOutputSpec(mark, {/*no attrs*/ }),
+    toDOM: (mark) => getMarkOutputSpec(mark, getExtensionDefaultAttributes(TextStyleAttrs)),
   },
 
   // -- Plugin --------------------------------------------------------------------

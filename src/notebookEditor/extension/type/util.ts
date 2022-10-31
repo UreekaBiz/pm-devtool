@@ -1,7 +1,7 @@
 import { MarkSpec, NodeSpec, ParseRule } from 'prosemirror-model';
 
 import { isValidHTMLElement } from '../util';
-import { AttributeSpecWithParseHTML, Extension } from './Extension';
+import { AttributeSpecWithParseHTML, DefaultAttributeType, Extension } from './Extension';
 import { MarkExtension } from './MarkExtension';
 import { NodeExtension } from './NodeExtension';
 
@@ -68,10 +68,16 @@ export const isMarkExtension = (extension: Extension): extension is MarkExtensio
 type CreateExtensionParseRuleType = Omit<ParseRule, 'getAttrs'>;
 
 /**
+ * an object that contains the names of the attributes of a {@link NodeExtension}
+ * or a {@link MarkExtension} and maps to their {@link AttributeSpecWithParseHTML}
+ */
+type AttributeDefinitionObjectType = { [attributeName: string]: AttributeSpecWithParseHTML; }
+
+/**
  * ensures that ParseRules with the specified parseHTML functions
  * declared for all attributes get created for each tag that gets specified
  */
-export const createExtensionParseRules = (partialParseRules: CreateExtensionParseRuleType[], attrs: { [attributeName: string]: AttributeSpecWithParseHTML; }): ParseRule[] => {
+export const createExtensionParseRules = (partialParseRules: CreateExtensionParseRuleType[], attrs: AttributeDefinitionObjectType): ParseRule[] => {
   const parseRules: ParseRule[] = [/*initially empty*/];
 
   partialParseRules.forEach((partialRule) => {
@@ -99,4 +105,20 @@ export const createExtensionParseRules = (partialParseRules: CreateExtensionPars
 
   return parseRules;
 };
+
+// == Render ======================================================================
+/**
+ * returns an object with the specified default values in the given
+ * {@link AttributeDefinitionObjectType} object so that they are added to the
+ * toDOM definition of a {@link NodeExtension} or {@link MarkExtension}, as
+ * HTMLAttributes (since they should have those default values)
+*/
+export const getExtensionDefaultAttributes = (attrs: AttributeDefinitionObjectType) =>
+  Object.entries(attrs).reduce<{ [attrName: string]: DefaultAttributeType; }>((previousObj, currentAttrDefinition) => {
+    const attrName = currentAttrDefinition[0/*the key*/];
+    const attrSpecWithParseHTML = currentAttrDefinition[1/*the value*/];
+
+    previousObj[attrName] = attrSpecWithParseHTML.default;
+    return previousObj;
+  }, {/*default empty*/});
 
