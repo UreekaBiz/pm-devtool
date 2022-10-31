@@ -12,6 +12,9 @@ export const History = new Extension({
   name: ExtensionName.HISTORY,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Input ---------------------------------------------------------------------
+  inputRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [
     history({ depth: 100/*PM's default*/, newGroupDelay: 500/*PM's default, in ms*/ }),

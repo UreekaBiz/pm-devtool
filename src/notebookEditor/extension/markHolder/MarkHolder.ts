@@ -21,6 +21,9 @@ export const MarkHolder = new NodeExtension({
     toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/}),
   },
 
+  // -- Input ---------------------------------------------------------------------
+  inputRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [markHolderPlugin()],
 });

@@ -26,6 +26,9 @@ export const Paragraph = new NodeExtension({
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ParagraphAttrs)),
   },
 
+  // -- Input ---------------------------------------------------------------------
+  inputRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Alt-0': () => shortcutCommandWrapper(editor, setParagraphCommand) })],
 });

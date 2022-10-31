@@ -19,6 +19,9 @@ export const Document = new NodeExtension({
     attrs: {/*no attrs*/},
   },
 
+  // -- Input ---------------------------------------------------------------------
+  inputRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [documentPlugin()],
 });

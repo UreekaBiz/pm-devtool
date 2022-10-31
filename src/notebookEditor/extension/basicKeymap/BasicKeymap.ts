@@ -16,6 +16,9 @@ export const BasicKeymap = new Extension({
   name: ExtensionName.BASIC_KEYMAP,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Input ---------------------------------------------------------------------
+  inputRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [
     keymap({

@@ -31,6 +31,9 @@ export const TextStyle = new MarkExtension({
     toDOM: (mark) => getMarkOutputSpec(mark, getExtensionAttributesObject(mark, TextStyleAttrs)),
   },
 
+  // -- Input ---------------------------------------------------------------------
+  inputRules: (editor) => [/*none*/],
+
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [/*none*/],
 });

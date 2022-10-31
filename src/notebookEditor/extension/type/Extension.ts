@@ -2,6 +2,7 @@ import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
 
 import { Editor } from 'notebookEditor/editor';
 import { DialogStorage, NodeViewStorage } from 'notebookEditor/model';
+import { InputRule } from 'notebookEditor/plugin/inputRule';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -27,6 +28,13 @@ export interface ExtensionProps {
    * those of Extensions with lower priority
    */
   readonly priority: number;
+
+  /**
+   * since only a single InputRule Plugin may be present on the
+   * {@link Editor} at a time, if an Extension must add InputRules
+   * it can do so through this method
+   */
+  readonly inputRules: (editor: Editor) => InputRule[];
 
   /** function to add the ProseMirror Plugins required by this Extension */
   readonly addProseMirrorPlugins: (editor: Editor) => ProseMirrorPlugin[];
