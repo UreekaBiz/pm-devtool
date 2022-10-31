@@ -40,7 +40,7 @@ export class PasteRule {
  * to be triggered whenever Text that matches its matcher
  * gets pasted into the Editor
  */
-export const createPasteRulePlugins = (rules: PasteRule[]): Plugin[] => {
+export const createPasteRulePlugins = ({ rules }: {rules: PasteRule[]; }): Plugin[] => {
   // -- State -----------------------------------------------------------
   let dragSourceElement: Element | null = null/*default*/;
   let draggedElement: any/*cannot know what will be dragged into the Editor*/;

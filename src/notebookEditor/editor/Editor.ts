@@ -6,7 +6,8 @@ import { Attributes, MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
-import { InputRule, inputRulesPlugin } from 'notebookEditor/plugin/inputRule';
+import { inputRulesPlugin, InputRule } from 'notebookEditor/plugin/inputRule';
+import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule';
 
 import { getMarkAttributesFromView, getNodeAttributesFromView, isMarkActive, isNodeActive } from './util';
 
@@ -92,17 +93,24 @@ export class Editor {
    * from the given set of Extensions
    * */
   private initializePlugins(): Plugin[] {
-    // add required Plugins before adding Extension Plugins
+    // get InputRules
     const inputRules = this.extensions.reduce<InputRule[]>((pluginArray, sortedExtension) => {
       pluginArray.push(...sortedExtension.props.inputRules(this));
       return pluginArray;
     }, [/*initially empty*/]);
 
+    // get PasteRules
+    const pasteRules = this.extensions.reduce<PasteRule[]>((pluginArray, sortedExtension) => {
+      pluginArray.push(...sortedExtension.props.pasteRules(this));
+      return pluginArray;
+    }, [/*initially empty*/]);
+    const pasteRulePlugins = createPasteRulePlugins({ rules: pasteRules });
+
     // add Extension plugins
     const initializedPlugins = this.extensions.reduce<Plugin[]>((pluginArray, sortedExtension) => {
       pluginArray.push(...sortedExtension.props.addProseMirrorPlugins(this));
       return pluginArray;
-    }, [inputRulesPlugin({ rules: inputRules })]);
+    }, [inputRulesPlugin({ rules: inputRules }), ...pasteRulePlugins]);
 
     return initializedPlugins;
   }
