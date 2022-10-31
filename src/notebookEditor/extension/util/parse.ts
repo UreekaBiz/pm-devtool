@@ -17,6 +17,13 @@ const isValidHTMLTag = (tag: string): boolean => document.createElement(tag).toS
  */
 export const isValidHTMLElement = (object: any): object is HTMLElement => object instanceof HTMLElement;
 
+/**
+ * check if the given object is a {@link RegExp}
+ */
+export const isValidRegExp = (object: any): object is RegExp => {
+  return Object.prototype.toString.call(object) === '[object RegExp]';
+};
+
 // == Tag =========================================================================
 /**
  * Wrapper around {@link isValidHTMLTag} that throws if {@link isValidHTMLTag}
