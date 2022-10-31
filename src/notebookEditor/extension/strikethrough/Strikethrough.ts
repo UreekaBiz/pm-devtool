@@ -4,6 +4,7 @@ import { getMarkOutputSpec, getStrikethroughMarkType, StrikethroughMarkSpec, Mar
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createMarkInputRule } from 'notebookEditor/plugin/inputRule';
+import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { safeParseTag } from '../util/parse';
@@ -12,7 +13,7 @@ import { toggleStrikethroughCommand } from './command';
 // ********************************************************************************
 // == RegEx =======================================================================
 const strikethroughInputRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))$/;
-// const strikethroughPasteRegEx = /(?:^|\s)((?:--)((?:[^-]+))(?:--))/g;
+const strikethroughPasteRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))/g;
 
 // == Mark ========================================================================
 export const Strikethrough = new MarkExtension({
@@ -45,7 +46,7 @@ export const Strikethrough = new MarkExtension({
   inputRules: (editor) => [createMarkInputRule(strikethroughInputRegEx, getStrikethroughMarkType(editor.view.state.schema))],
 
   // -- Paste ---------------------------------------------------------------------
-  pasteRules: (editor) => [/*none*/],
+  pasteRules: (editor) => [createMarkPasteRule(strikethroughPasteRegEx, getStrikethroughMarkType(editor.view.state.schema))],
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [

@@ -18,8 +18,12 @@ const cssFontWeightRegex = /^(bold(er)?|[5-9]\d{2}|1000)$/;
 
 // --------------------------------------------------------------------------------
 // NOTE: these are Markdown equivalents
-const starRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))/;
-const underscoreRegex = /(?:^|\s)((?:__)((?:[^_]+))(?:__))/ /*FIXME: incorrect / inconsistent RegEx (negated '__')*/;
+export const starInputRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))$/;
+export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))$/;
+
+// FIXME: incorrect / inconsistent RegEx (negated '__')
+export const starPasteRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))/g;
+export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))/g;
 
 // == Mark ========================================================================
 export const Bold = new MarkExtension({
@@ -45,14 +49,14 @@ export const Bold = new MarkExtension({
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [
-    createMarkInputRule(starRegex, getBoldMarkType(editor.view.state.schema)),
-    createMarkInputRule(underscoreRegex, getBoldMarkType(editor.view.state.schema)),
+    createMarkInputRule(starInputRegex, getBoldMarkType(editor.view.state.schema)),
+    createMarkInputRule(underscoreInputRegex, getBoldMarkType(editor.view.state.schema)),
   ],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [
-    createMarkPasteRule(starRegex, getBoldMarkType(editor.view.state.schema)),
-    createMarkPasteRule(underscoreRegex, getBoldMarkType(editor.view.state.schema)),
+    createMarkPasteRule(starPasteRegex, getBoldMarkType(editor.view.state.schema)),
+    createMarkPasteRule(underscorePasteRegex, getBoldMarkType(editor.view.state.schema)),
   ],
 
   // -- Plugin --------------------------------------------------------------------
