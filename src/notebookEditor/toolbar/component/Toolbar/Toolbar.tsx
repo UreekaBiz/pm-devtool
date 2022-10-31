@@ -29,6 +29,7 @@ export const Toolbar: React.FC<Props> = ({ depth, nodeOrMarkName, toolbar, selec
   //       hooks causing the problem "React has detected a change in the order of
   //       Hooks". To avoid this a valid component is created from the same function.
   const RightContent = toolbar.rightContent;
+  const { parent: parentNode } = editor.view.state.selection.$anchor;
 
   // -- UI ------------------------------------------------------------------------
   return useMemo(() => {
@@ -70,5 +71,8 @@ export const Toolbar: React.FC<Props> = ({ depth, nodeOrMarkName, toolbar, selec
         </VStack>
       </Box>
     );
-  }, [RightContent, depth, editor, nodeOrMarkName, onSelection, selectedDepth, toolbar]);
+  // NOTE: since the Toolbar reflects the state of the parent Node,
+  //       a change in the parent Node's attrs should re-render the Toolbar
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [RightContent, depth, editor, nodeOrMarkName, onSelection, parentNode.attrs, selectedDepth, toolbar]);
 };
