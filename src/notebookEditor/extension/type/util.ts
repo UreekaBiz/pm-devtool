@@ -1,4 +1,4 @@
-import { MarkSpec, NodeSpec, ParseRule } from 'prosemirror-model';
+import { Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNode, NodeSpec, ParseRule } from 'prosemirror-model';
 
 import { isValidHTMLElement } from '../util';
 import { AttributeSpecWithParseHTML, DefaultAttributeType, Extension } from './Extension';
@@ -111,14 +111,15 @@ export const createExtensionParseRules = (partialParseRules: CreateExtensionPars
  * returns an object with the specified default values in the given
  * {@link AttributeDefinitionObjectType} object so that they are added to the
  * toDOM definition of a {@link NodeExtension} or {@link MarkExtension}, as
- * HTMLAttributes (since they should have those default values)
+ * HTMLAttributes. If the node has the attribute present, it will be returned as
+ * part of the object, otherwise it will have the default value
 */
-export const getExtensionDefaultAttributes = (attrs: AttributeDefinitionObjectType) =>
+export const getExtensionDefaultAttributes = (nodeOrMark: ProseMirrorNode | ProseMirrorMark, attrs: AttributeDefinitionObjectType) =>
   Object.entries(attrs).reduce<{ [attrName: string]: DefaultAttributeType; }>((previousObj, currentAttrDefinition) => {
     const attrName = currentAttrDefinition[0/*the key*/];
     const attrSpecWithParseHTML = currentAttrDefinition[1/*the value*/];
 
-    previousObj[attrName] = attrSpecWithParseHTML.default;
+    previousObj[attrName] = nodeOrMark.attrs[attrName] ?? attrSpecWithParseHTML.default;
     return previousObj;
   }, {/*default empty*/});
 

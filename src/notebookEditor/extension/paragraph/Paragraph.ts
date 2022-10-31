@@ -23,7 +23,7 @@ export const Paragraph = new NodeExtension({
     attrs: ParagraphAttrs,
 
     parseDOM: createExtensionParseRules([ { tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` }, { tag: 'p' }], ParagraphAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionDefaultAttributes(ParagraphAttrs)),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionDefaultAttributes(node, ParagraphAttrs)),
   },
 
   // -- Plugin --------------------------------------------------------------------

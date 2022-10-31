@@ -28,7 +28,7 @@ export const TextStyle = new MarkExtension({
           return element.hasAttribute('style') ? {} : false/*no styles*/;
         },
       }],
-    toDOM: (mark) => getMarkOutputSpec(mark, getExtensionDefaultAttributes(TextStyleAttrs)),
+    toDOM: (mark) => getMarkOutputSpec(mark, getExtensionDefaultAttributes(mark, TextStyleAttrs)),
   },
 
   // -- Plugin --------------------------------------------------------------------

@@ -28,7 +28,7 @@ export const Heading = new NodeExtension({
     attrs: HeadingAttrs,
 
     parseDOM: createExtensionParseRules(headingTags, HeadingAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionDefaultAttributes(HeadingAttrs)),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionDefaultAttributes(node, HeadingAttrs)),
   },
 
   // -- Plugin --------------------------------------------------------------------
