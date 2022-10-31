@@ -108,13 +108,13 @@ export const createExtensionParseRules = (partialParseRules: CreateExtensionPars
 
 // == Render ======================================================================
 /**
- * returns an object with the specified default values in the given
- * {@link AttributeDefinitionObjectType} object so that they are added to the
- * toDOM definition of a {@link NodeExtension} or {@link MarkExtension}, as
- * HTMLAttributes. If the node has the attribute present, it will be returned as
- * part of the object, otherwise it will have the default value
+ * returns an object containing the values that will be added as HTMLAttributes
+ * to the DOM representation of the given {@link ProseMirrorNode} or
+ * {@link ProseMirrorMark}. If the Node or Mark has them, they will be set.
+ * Otherwise the default value defined in its {@link AttributeSpecWithParseHTML}
+ * will be used
 */
-export const getExtensionDefaultAttributes = (nodeOrMark: ProseMirrorNode | ProseMirrorMark, attrs: AttributeDefinitionObjectType) =>
+export const getExtensionAttributesObject = (nodeOrMark: ProseMirrorNode | ProseMirrorMark, attrs: AttributeDefinitionObjectType) =>
   Object.entries(attrs).reduce<{ [attrName: string]: DefaultAttributeType; }>((previousObj, currentAttrDefinition) => {
     const attrName = currentAttrDefinition[0/*the key*/];
     const attrSpecWithParseHTML = currentAttrDefinition[1/*the value*/];
