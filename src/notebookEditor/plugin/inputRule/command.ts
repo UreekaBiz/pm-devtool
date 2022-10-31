@@ -26,7 +26,9 @@ export class UndoInputRuleDocumentUpdate implements AbstractDocumentUpdate {
     for(let i = 0; i < plugins.length; i++) {
       const plugin = plugins[i];
 
-      if(plugin.spec[IS_INPUT_RULE_PLUGIN]) {
+      // @ts-ignore (SEE: InputRule.ts)
+      const isInputRulePlugin: boolean = plugin.spec.props[IS_INPUT_RULE_PLUGIN] ?? false/*default to not an InputRule Plugin*/;
+      if(isInputRulePlugin) {
           const inputRulePluginState: InputRulePluginState = plugin.getState(editorState);
           if(!inputRulePluginState) return false/*no Plugin state, nothing to do*/;
 

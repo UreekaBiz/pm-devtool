@@ -1,8 +1,12 @@
-import { InputRule } from './InputRule';
 import { canJoin, findWrapping } from 'prosemirror-transform';
-import { NodeType, Node, Attrs } from 'prosemirror-model';
+import { NodeType, Node, Attrs, MarkType } from 'prosemirror-model';
+
+import { getMarksBetween } from 'common';
+
+import { InputRule } from './InputRule';
 
 // ********************************************************************************
+// == Wrap ========================================================================
 /**
  * build an input rule for automatically wrapping a TextBlock when a
  * given string is typed. The {@link RegExp} argument is
@@ -42,13 +46,14 @@ export const createWrappingInputRule = (regexp: RegExp, nodeType: NodeType, getA
   });
 
 
+// == TextBlock ===================================================================
 /**
  * Build an InputRule that changes the type of a TextBlock when the
  * matched text is typed into it. The optional `getAttrs` parameter
  * can be used to compute the new Node's attributes,
  * and works the same as in {@link createWrappingInputRule}
  */
-export const textblockTypeInputRule = (regexp: RegExp, nodeType: NodeType, getAttrs: Attrs | null | ((match: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/) =>
+export const createTextblockTypeInputRule = (regexp: RegExp, nodeType: NodeType, getAttrs: Attrs | null | ((match: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/) =>
   new InputRule(regexp, (state, match, start, end) => {
     const $start = state.doc.resolve(start);
     const attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
@@ -57,3 +62,43 @@ export const textblockTypeInputRule = (regexp: RegExp, nodeType: NodeType, getAt
 
     return state.tr.delete(start, end).setBlockType(start, start, nodeType, attrs);
   });
+
+
+// == Mark ========================================================================
+/** build an Input Rule that adds a Mark when the matched text is typed into it */
+export const createMarkInputRule = (regexp: RegExp, markType: MarkType, getAttrs: Attrs | null | ((matches: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/) =>
+new InputRule(regexp, (state, match, start, end) => {
+  const attributes = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
+
+  const { tr } = state;
+  const captureGroup = match[match.length - 1];
+  const fullMatch = match[0/*all text*/];
+
+  if(!captureGroup) return null/*no space into which apply Mark*/;
+
+  const startSpaces = fullMatch.search(/\S/);
+  const textStart = start + fullMatch.indexOf(captureGroup);
+  const textEnd = textStart + captureGroup.length;
+
+  const excludedMarks = getMarksBetween(start, end, state.doc).filter(item => {
+    const excludeFunction = item.mark.type.excludes;
+    return excludeFunction(markType);
+  }).filter(item => item.to > textStart);
+  if(excludedMarks.length) return null/*there is a Mark that excludes the given MarkType in the range of the match*/;
+
+  if(textEnd < end) {
+    tr.delete(textEnd, end);
+  } /* else -- Text does not end before the match end */
+
+  if(textStart > start) {
+    tr.delete(start + startSpaces, textStart);
+  } /* else -- Text does not start after the match start */
+
+  const markEnd = start + startSpaces + captureGroup.length;
+  tr.addMark(start + startSpaces, markEnd, markType.create(attributes || {/*no attrs*/ }))
+    .removeStoredMark(markType);
+
+  return tr/*modified*/;
+});
+
+

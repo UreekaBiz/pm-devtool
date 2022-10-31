@@ -143,7 +143,7 @@ const executeInputRule = (view: EditorView, from: number, to: number, text: stri
     const tr = match &&  typeof handler === 'function' &&  handler(state, match, from - (match[0].length - text.length), to);
     if(!tr) continue/*this Rule does not specify a handler function or it did not match*/;
 
-    view.dispatch(tr.setMeta(plugin, { transform: tr, from, to, text }));
+    view.dispatch(tr.setMeta(plugin, { transaction: tr, from, to, text }));
     return true/*one inputRule was scheduled*/;
   }
 

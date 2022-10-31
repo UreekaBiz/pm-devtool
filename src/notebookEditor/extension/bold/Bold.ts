@@ -1,8 +1,9 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getMarkOutputSpec, BoldMarkSpec, MarkName } from 'common';
+import { getBoldMarkType, getMarkOutputSpec, BoldMarkSpec, MarkName } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
+import { createMarkInputRule, inputRulePlugin } from 'notebookEditor/plugin/inputRule';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { safeParseTag, wrapGetStyleAttrs, wrapGetTagAttrs } from '../util/parse';
@@ -43,6 +44,12 @@ export const Bold = new MarkExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
+    inputRulePlugin({
+      rules: [
+        createMarkInputRule(starRegex, getBoldMarkType(editor.view.state.schema)),
+        createMarkInputRule(underscoreRegex, getBoldMarkType(editor.view.state.schema)),
+      ],
+    }),
     keymap({
       'Mod-b': () => shortcutCommandWrapper(editor, toggleBoldCommand),
       'Mod-B': () => shortcutCommandWrapper(editor, toggleBoldCommand),
