@@ -1,17 +1,18 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getMarkOutputSpec, StrikethroughMarkSpec, MarkName } from 'common';
+import { getMarkOutputSpec, getStrikethroughMarkType, StrikethroughMarkSpec, MarkName } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { safeParseTag } from '../util/parse';
 import { toggleStrikethroughCommand } from './command';
+import { createMarkInputRule, inputRulePlugin } from 'notebookEditor/plugin/inputRule';
 
 // ********************************************************************************
 // == RegEx =======================================================================
-const strikethroughInputRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))$/;
-const strikethroughPasteRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))/g;
+const strikethroughInputRegEx = /(?:^|\s)((?:--)((?:[^-]+))(?:--))$/;
+// const strikethroughPasteRegEx = /(?:^|\s)((?:--)((?:[^-]+))(?:--))/g;
 
 // == Mark ========================================================================
 export const Strikethrough = new MarkExtension({
@@ -42,6 +43,11 @@ export const Strikethrough = new MarkExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
+    inputRulePlugin({
+      rules: [
+        createMarkInputRule(strikethroughInputRegEx, getStrikethroughMarkType(editor.view.state.schema)),
+      ],
+    }),
     keymap({
       'Mod-x': () => shortcutCommandWrapper(editor, toggleStrikethroughCommand),
       'Mod-X': () => shortcutCommandWrapper(editor, toggleStrikethroughCommand),
