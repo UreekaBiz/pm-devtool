@@ -10,7 +10,7 @@ const MAX_MATCH = 500;
 
 // used by the undoInputRuleCommand to check if the the effects of an InputRule
 // should be undone
-export const IS_INPUT_RULE_PLUGIN = 'isInputRulesPlugin';
+export const IS_INPUT_RULE_PLUGIN = 'isInputRulePlugin';
 
 // == Type ========================================================================
 export type InputRulePluginState = { transaction: Transaction; from: number; to: number; text: string; } | null;
