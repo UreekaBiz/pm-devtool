@@ -6,7 +6,7 @@ import { Attributes, MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
-import { InputRule, inputRulePlugin } from 'notebookEditor/plugin/inputRule';
+import { InputRule, inputRulesPlugin } from 'notebookEditor/plugin/inputRule';
 
 import { getMarkAttributesFromView, getNodeAttributesFromView, isMarkActive, isNodeActive } from './util';
 
@@ -97,13 +97,12 @@ export class Editor {
       pluginArray.push(...sortedExtension.props.inputRules(this));
       return pluginArray;
     }, [/*initially empty*/]);
-    const inputRulesPlugin = inputRulePlugin({ rules: inputRules });
 
     // add Extension plugins
     const initializedPlugins = this.extensions.reduce<Plugin[]>((pluginArray, sortedExtension) => {
       pluginArray.push(...sortedExtension.props.addProseMirrorPlugins(this));
       return pluginArray;
-    }, [inputRulesPlugin]);
+    }, [inputRulesPlugin({ rules: inputRules })]);
 
     return initializedPlugins;
   }

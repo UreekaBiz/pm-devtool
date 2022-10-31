@@ -47,7 +47,7 @@ export class InputRule {
  * create an InputRule plugin. When enabled, it will cause Text input
  * that matches any of the given rules to trigger the rule's action
  * */
- export const inputRulePlugin = ({ rules }: { rules: readonly InputRule[]; }) => {
+ export const inputRulesPlugin = ({ rules }: { rules: readonly InputRule[]; }) => {
   const plugin: Plugin<InputRulePluginState> = new Plugin<InputRulePluginState>({
     // -- State -------------------------------------------------------------------
     state: {
