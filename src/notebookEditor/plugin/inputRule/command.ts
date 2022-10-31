@@ -2,7 +2,9 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { AbstractDocumentUpdate } from 'common';
 
-import { InputRulePluginState, IS_INPUT_RULE_PLUGIN } from './InputRule';
+import { ProseMirrorInputRulePluginState } from '../proseMirrorInputRule/ProseMirrorInputRule';
+
+import { IS_INPUT_RULE_PLUGIN } from './InputRule';
 
 // ********************************************************************************
 // REF: https://github.com/ProseMirror/prosemirror-inputrules/blob/d60b7920d040e9b18ee893bad4213180fedc47f5/src/inputrules.ts
@@ -27,7 +29,7 @@ export class UndoInputRuleDocumentUpdate implements AbstractDocumentUpdate {
       const plugin = plugins[i];
 
       if(plugin.spec[IS_INPUT_RULE_PLUGIN]) {
-          const inputRulePluginState: InputRulePluginState = plugin.getState(editorState);
+          const inputRulePluginState: ProseMirrorInputRulePluginState = plugin.getState(editorState);
           if(!inputRulePluginState) return false/*no Plugin state, nothing to do*/;
 
           const transactionToUndo = inputRulePluginState.transaction;
