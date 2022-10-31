@@ -1,7 +1,7 @@
 import { Box, Divider, Flex, Text, VStack } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
-import { MarkName, NodeName, SelectionDepth } from 'common';
+import { getParentNode, MarkName, NodeName, SelectionDepth } from 'common';
 
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { Toolbar as ToolbarType } from 'notebookEditor/toolbar/type';
@@ -29,7 +29,7 @@ export const Toolbar: React.FC<Props> = ({ depth, nodeOrMarkName, toolbar, selec
   //       hooks causing the problem "React has detected a change in the order of
   //       Hooks". To avoid this a valid component is created from the same function.
   const RightContent = toolbar.rightContent;
-  const { parent: parentNode } = editor.view.state.selection.$anchor;
+  const parentNode  = getParentNode(editor.view.state.selection);
 
   // -- UI ------------------------------------------------------------------------
   return useMemo(() => {
