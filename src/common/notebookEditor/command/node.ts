@@ -1,5 +1,5 @@
 import { Fragment, Slice } from 'prosemirror-model';
-import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { canSplit, liftTarget, replaceStep, ReplaceStep } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 
@@ -9,7 +9,7 @@ import { isMarkHolderNode } from '../extension/markHolder';
 import { isTextNode } from '../extension/text';
 import { NodeName } from '../node';
 import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../selection';
-import { AbstractDocumentUpdate, Command } from './type';
+import { AbstractDocumentUpdate } from './type';
 import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt } from './util';
 
 // ********************************************************************************

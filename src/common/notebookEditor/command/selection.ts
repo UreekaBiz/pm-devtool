@@ -1,11 +1,11 @@
 import { Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
-import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { minFromMax } from '../../util';
 import { NodeName } from '../node';
 import { getBlockNodeRange } from '../selection';
-import { AbstractDocumentUpdate, Command } from './type';
+import { AbstractDocumentUpdate } from './type';
 import { findCutAfter, findCutBefore } from './util';
 
 // ********************************************************************************

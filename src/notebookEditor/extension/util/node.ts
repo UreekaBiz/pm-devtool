@@ -1,8 +1,8 @@
 import { GapCursor } from 'prosemirror-gapcursor';
 import { DOMParser, Fragment, Node as ProseMirrorNode, ParseOptions } from 'prosemirror-model';
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
-import { isGapCursorSelection, AbstractDocumentUpdate, Attributes, ClearNodesDocumentUpdate, Command, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, NotebookSchemaType } from 'common';
+import { isGapCursorSelection, AbstractDocumentUpdate, Attributes, ClearNodesDocumentUpdate, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, NotebookSchemaType } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command';
 import { Editor } from 'notebookEditor/editor';

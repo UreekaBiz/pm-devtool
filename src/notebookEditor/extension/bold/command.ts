@@ -1,6 +1,6 @@
-import { EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { AbstractDocumentUpdate, Command, MarkName } from 'common';
+import { AbstractDocumentUpdate, MarkName } from 'common';
 
 import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 

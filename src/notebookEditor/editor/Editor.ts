@@ -1,8 +1,8 @@
 import { Schema } from 'prosemirror-model';
-import { EditorState, Plugin } from 'prosemirror-state';
+import { Command, EditorState, Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { Attributes, Command, MarkName, NodeName } from 'common';
+import { Attributes, MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';

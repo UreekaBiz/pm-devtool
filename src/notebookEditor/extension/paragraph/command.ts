@@ -1,6 +1,6 @@
-import { EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, AbstractDocumentUpdate, Command } from 'common';
+import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
 export const setParagraphCommand: Command = (state, dispatch) => AbstractDocumentUpdate.execute(new SetParagraphDocumentUpdate().update(state, state.tr), dispatch);

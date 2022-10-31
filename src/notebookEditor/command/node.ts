@@ -1,8 +1,8 @@
 import { ParseOptions } from 'prosemirror-model';
-import { EditorState, Selection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 
-import { AbstractDocumentUpdate, Command, JSONNode, SelectionRange } from 'common';
+import { AbstractDocumentUpdate, JSONNode, SelectionRange } from 'common';
 
 import { createNodeFromContent, isFragment } from 'notebookEditor/extension/util';
 

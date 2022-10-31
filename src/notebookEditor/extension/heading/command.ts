@@ -1,6 +1,6 @@
-import { EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { createBoldMark, createMarkHolderNode, getBlockNodeRange, getHeadingNodeType, generateNodeId, getSelectedNode, isHeadingLevel, isHeadingNode, stringifyMarksArray, AbstractDocumentUpdate, AttributeType, Command, HeadingAttributes, NodeName, MarkName, NodeIdentifier, UpdateAttributesDocumentUpdate } from 'common';
+import { createBoldMark, createMarkHolderNode, getBlockNodeRange, getHeadingNodeType, generateNodeId, getSelectedNode, isHeadingLevel, isHeadingNode, stringifyMarksArray, AbstractDocumentUpdate, AttributeType, HeadingAttributes, NodeName, MarkName, NodeIdentifier, UpdateAttributesDocumentUpdate } from 'common';
 
 import { SetParagraphDocumentUpdate } from '../paragraph/command';
 

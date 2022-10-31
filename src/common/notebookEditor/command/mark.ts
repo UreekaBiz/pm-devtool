@@ -1,9 +1,9 @@
 import { MarkType } from 'prosemirror-model';
-import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { Attributes } from '../attribute';
 import { getMarkAttributes, getMarkRange, markApplies, MarkName } from '../mark';
-import { AbstractDocumentUpdate, Command } from './type';
+import { AbstractDocumentUpdate } from './type';
 
 // ********************************************************************************
 // == Setter ======================================================================

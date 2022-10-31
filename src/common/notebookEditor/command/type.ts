@@ -11,13 +11,6 @@ import { EditorView } from 'prosemirror-view';
 export const HISTORY_META = 'addToHistory';
 
 // == Command =====================================================================
-// Commands are meant to be atomic (i.e. they "encapsulate functionality"). The
-// Transaction dispatched by a Command goes through one DocumentUpdate. Multiple
-// DocumentUpdates can be executed in a single operation through the
-// applyDocumentUpdates method (SEE: web/src/command/update.ts)
-export type Command = (state: EditorState, dispatch: DispatchType, view?: EditorView)
-  => boolean/*indicates whether the command can be performed*/;
-
 //
 /**
  * type of the function that dispatches {@link Transaction}s to modify the

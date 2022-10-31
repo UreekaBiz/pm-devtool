@@ -1,6 +1,7 @@
+import { Command } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { Command, SelectionDepth } from 'common';
+import { SelectionDepth } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 
