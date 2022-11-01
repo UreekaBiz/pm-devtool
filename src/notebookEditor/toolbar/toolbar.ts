@@ -2,7 +2,11 @@ import { Mark as ProseMirrorMark, Node as ProseMirrorNode } from 'prosemirror-mo
 
 import { camelToTitleCase, MarkName, NodeName } from 'common';
 
+import { markBold } from 'notebookEditor/extension/bold';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
+import { headingLevelToolItem } from 'notebookEditor/extension/heading';
+import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
+import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle';
 
 import { Toolbar, ToolItem } from './type';
 
@@ -62,31 +66,47 @@ const buildMarkToolCollection = (mark: ProseMirrorMark): ToolItem[][] =>
 // == ToolItem ====================================================================
 /** {@link ToolItem}s received by Nodes that are TextBlocks */
 const TEXT_BLOCK_TOOL_ITEMS: ToolItem[] = [
-  // -- Style ---------------------------------------------------------------------
+  // -- Inline --------------------------------------------------------------------
+  // currently nothing
 
   // -- Mark ----------------------------------------------------------------------
+  markBold,
+  markStrikethrough,
+  backgroundColorToolItem,
 
-  // -- Inline --------------------------------------------------------------------
+  // -- Style ---------------------------------------------------------------------
+  fontSizeToolItem,
+  textColorMarkToolItem,
+  backgroundColorMarkToolItem,
+  spacingToolItem,
 ];
 
 /** {@link ToolItem}s received by Nodes that are Blocks */
 const BLOCK_TOOL_ITEMS: ToolItem[] = [
+  // -- BlockType -----------------------------------------------------------------
+  headingLevelToolItem,
+
+
   // -- Align ---------------------------------------------------------------------
+  // currently nothing
 
   // -- Format --------------------------------------------------------------------
+  // currently nothing
 ];
 
 /** {@link ToolItem}s that create new Nodes */
 const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   // -- Standard ------------------------------------------------------------------
+  // currently nothing
 
   // -- Custom --------------------------------------------------------------------
+  // currently nothing
 ];
 
 
 /**
- * {@link ToolItem}s that should only be received by a specific
- * {@link ProseMirrorNode} or {@link ProseMirrorMark}
+ * {@link ToolItem}s that should only be added to a specific
+ * {@link ProseMirrorNode} or {@link ProseMirrorMark} {@link Toolbar}
  */
 const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'; items: ToolItem[]; }> = {
   [NodeName.DOC]: {
@@ -97,11 +117,10 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'
     ],
   },
 
-  [NodeName.HEADING]: { position: 'end', items: [/*none*/] },
+  [NodeName.HEADING]: { position: 'start', items: [/*none*/] },
   [NodeName.MARK_HOLDER]: { position: 'end', items: [/*none*/] },
   [NodeName.PARAGRAPH]: { position: 'end', items: [/*none*/] },
   [NodeName.TEXT]: { position: 'end', items: [/*none*/] },
-
   [MarkName.BOLD]: { position: 'end', items: [/*none*/] },
   [MarkName.STRIKETHROUGH]: { position: 'end', items: [/*none*/] },
   [MarkName.TEXT_STYLE]: { position: 'end', items: [/*none*/] },
