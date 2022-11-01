@@ -8,6 +8,7 @@ import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { safeParseTag } from '../util/parse';
+import './code.css';
 import { toggleCodeCommand } from './command';
 
 // ********************************************************************************
