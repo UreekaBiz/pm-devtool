@@ -8,6 +8,7 @@ import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion';
 import { GapCursor } from 'notebookEditor/extension/gapcursor';
 import { Heading } from 'notebookEditor/extension/heading';
 import { History } from 'notebookEditor/extension/history';
+import { Italic } from 'notebookEditor/extension/italic';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
 import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
@@ -31,6 +32,7 @@ export const editorDefinition: Extension[] = [
   GapCursor,
   History,
   Heading,
+  Italic,
   MarkHolder,
   Paragraph,
   SelectionHandling,

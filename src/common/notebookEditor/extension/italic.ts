@@ -1,6 +1,6 @@
 import { Mark as ProseMirrorMark, MarkSpec } from 'prosemirror-model';
 
-import { AttributesTypeFromNodeSpecAttributes, noNodeOrMarkSpecAttributeDefaultValue, AttributeType } from '../attribute';
+import { AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { MarkRendererSpec } from '../htmlRenderer/type';
 import { JSONMark, MarkName } from '../mark';
 import { NotebookSchemaType } from '../schema';
@@ -9,29 +9,24 @@ import { NotebookSchemaType } from '../schema';
 // == Attribute ===================================================================
 // NOTE: must be present on the MarkSpec below
 // NOTE: this value must have matching types -- the ones defined in the Extension
-const CodeAttributesSpec = {
-  [AttributeType.BackgroundColor]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-};
-export type CodeAttributes = AttributesTypeFromNodeSpecAttributes<typeof CodeAttributesSpec>;
+const ItalicAttributesSpec = {/*no attributes*/};
+export type ItalicAttributes = AttributesTypeFromNodeSpecAttributes<typeof ItalicAttributesSpec>;
 
 // == Spec ========================================================================
 // -- Mark Spec -------------------------------------------------------------------
-export const CodeMarkSpec: MarkSpec = {
+export const ItalicMarkSpec: MarkSpec = {
   // .. Attribute .................................................................
-  attributes: CodeAttributesSpec,
-
-  // .. Misc ......................................................................
-  code: true/*contains Code*/,
+  attributes: ItalicAttributesSpec,
 };
 
 // -- Render Spec -----------------------------------------------------------------
-export const CodeMarkRendererSpec: MarkRendererSpec<CodeAttributes> = {
+export const ItalicMarkRendererSpec: MarkRendererSpec<ItalicAttributes> = {
   // NOTE: the tag is only used for the Editor. The HTML renderer uses the tag of
   //       the TextNode instead
   // SEE: ./renderer.ts
   // NOTE: renderer tag must match toDOM tag
-  tag: 'code',
-  render: {/*no Attributes*/},
+  tag: 'em',
+  render: { style: 'font-style: italic;' },
 
   attributes: {/*no Attributes*/},
 };
@@ -40,12 +35,12 @@ export const CodeMarkRendererSpec: MarkRendererSpec<CodeAttributes> = {
 // -- Mark Type -------------------------------------------------------------------
 // NOTE: this is the only way since PM does not provide a way to specify the type
 //       of the attributes
-export type CodeMarkType = ProseMirrorMark & { attrs: CodeAttributes; };
-export const isCodeMark = (mark: ProseMirrorMark): mark is CodeMarkType => mark.type.name === MarkName.CODE;
+export type ItalicMarkType = ProseMirrorMark & { attrs: ItalicAttributes; };
+export const isItalicMark = (mark: ProseMirrorMark): mark is ItalicMarkType => mark.type.name === MarkName.ITALIC;
 
-export const getCodeMarkType = (schema: NotebookSchemaType) => schema.marks[MarkName.CODE];
-export const createCodeMark = (schema: NotebookSchemaType, attributes?: Partial<CodeAttributes>) => getCodeMarkType(schema).create(attributes);
+export const getItalicMarkType = (schema: NotebookSchemaType) => schema.marks[MarkName.ITALIC];
+export const createItalicMark = (schema: NotebookSchemaType, attributes?: Partial<ItalicAttributes>) => getItalicMarkType(schema).create(attributes);
 
 // -- JSON Mark Type --------------------------------------------------------------
-export type CodeJSONMarkType = JSONMark<CodeAttributes> & { type: MarkName.CODE; };
-export const isCodeJSONMark = (mark: JSONMark): mark is CodeJSONMarkType => mark.type === MarkName.CODE;
+export type ItalicJSONMarkType = JSONMark<ItalicAttributes> & { type: MarkName.ITALIC; };
+export const isItalicJSONMark = (mark: JSONMark): mark is ItalicJSONMarkType => mark.type === MarkName.ITALIC;
