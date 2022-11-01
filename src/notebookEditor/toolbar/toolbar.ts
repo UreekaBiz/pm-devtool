@@ -27,6 +27,6 @@ const TOOLBAR_MAP: Record<NodeName | MarkName, Toolbar | null> = {
  * @returns The corresponding Toolbar for the given Node name
  */
 export const getToolbar = (nodeOrMarkName: NodeName | MarkName): Toolbar | null => {
-  let toolbar = TOOLBAR_MAP[nodeOrMarkName];
+  const toolbar = TOOLBAR_MAP[nodeOrMarkName];
   return toolbar;
 };
