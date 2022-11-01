@@ -1,5 +1,5 @@
 import { Box, Button } from '@chakra-ui/react';
-import React, { useEffect, useImperativeHandle, useState, ForwardedRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState, ForwardedRef } from 'react';
 
 import { Editor } from 'notebookEditor/editor';
 import { SuggestionKeyDownProps, SuggestionSymbol } from 'notebookEditor/plugin/suggestion';
@@ -16,7 +16,7 @@ export interface EmojiSuggestionListProps {
 }
 
 // == Component ===================================================================
-export const EmojiSuggestionList = React.forwardRef((props: EmojiSuggestionListProps, ref: ForwardedRef<EmojiSuggestionForwardedObject>) => {
+export const EmojiSuggestionList = forwardRef((props: EmojiSuggestionListProps, ref: ForwardedRef<EmojiSuggestionForwardedObject>) => {
   // == State =====================================================================
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
