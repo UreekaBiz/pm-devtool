@@ -17,3 +17,24 @@
 
 /* -- Custom ------------------------------------------------------------------- */
 .ProseMirror { outline: 1px solid transparent; }
+
+/* == Editor =================================================================== */
+/* NOTE: Must match theme variables. (SEE: core/theme) */
+:root {
+  --ACTIVE_BUTTON_COLOR: #E2E8F0;
+  --HOVER_BUTTON_COLOR: #EDF2F7/*currently only used through CSS file*/;
+}
+
+/* == Toolbar ================================================================== */
+/* -- IconButton --------------------------------------------------------------- */
+.iconButton {
+  width: auto;
+  height: auto;
+
+  margin-right: 0.375rem;
+  padding: 0.30em;
+
+  border-radius: 50%;
+}
+.iconButton.active { background-color: var(--ACTIVE_BUTTON_COLOR); }
+.iconButton:hover  { background-color: var(--HOVER_BUTTON_COLOR); }
