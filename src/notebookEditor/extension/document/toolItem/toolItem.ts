@@ -1,6 +1,4 @@
-import { NodeName } from 'common';
-
-import { Toolbar, ToolItem } from 'notebookEditor/toolbar/type';
+import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { PreviewPublishedNotebookToolItem } from './PreviewPublishedNotebookToolItem';
 import { SetThemeToolItem } from './SetThemeToolItem';
@@ -19,19 +17,4 @@ export const setThemeToolItem: ToolItem = {
   name: 'setThemeToolItem',
 
   component: SetThemeToolItem,
-};
-
-// == Toolbar =====================================================================
-export const DocumentToolbar: Toolbar = {
-  title: 'Document',
-  name: NodeName.DOC/*Expected and guaranteed to be unique*/,
-
-  toolsCollections: [
-    [
-      previewPublishedNotebookToolItem,
-    ],
-    [
-      setThemeToolItem,
-    ],
-],
 };
