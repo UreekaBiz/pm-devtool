@@ -17,7 +17,7 @@ export const getNodeToolbar = (node: ProseMirrorNode): Toolbar => {
   return {
     title: camelToTitleCase(node.type.name),
     name: node.type.name as MarkName/*by definition*/,
-    toolsCollections: buildNodeToolCollection(node),
+    toolsCollections: buildNodeToolCollections(node),
   };
 };
 
@@ -25,34 +25,39 @@ export const getNodeToolbar = (node: ProseMirrorNode): Toolbar => {
  * build {@link Toolbar} for the given {@link ProseMirrorNode}
  * based on its characteristics
  */
-const buildNodeToolCollection = (node: ProseMirrorNode): ToolItem[][] => {
-  const toolItems: ToolItem[][] = [];
-  if(node.isTextblock) {
-    toolItems.push(TEXT_BLOCK_TOOL_ITEMS);
-  } /* else -- not a textBlock */
+const buildNodeToolCollections = (node: ProseMirrorNode): ToolItem[][] => {
+  const toolCollections: ToolItem[][] = [];
+  if(node.isTextblock && TEXT_BLOCK_TOOL_ITEMS.length > 0) {
+    toolCollections.push(TEXT_BLOCK_TOOL_ITEMS);
+  } /* else -- not a TextBlock or no TextBlock ToolItems */
 
-  if(node.isBlock) {
-    toolItems.push(BLOCK_TOOL_ITEMS);
-  } /* else -- not a Block */
+  if(node.isBlock && BLOCK_TOOL_ITEMS.length > 0) {
+    toolCollections.push(BLOCK_TOOL_ITEMS);
+  } /* else -- not a Block or no Block ToolItems */
 
-  toolItems.push(NODE_CREATION_TOOL_ITEMS);
+  if(NODE_CREATION_TOOL_ITEMS.length > 0) {
+    toolCollections.push(NODE_CREATION_TOOL_ITEMS);
+  } /* else -- no Node Creation ToolItems */
 
   const uniqueToolItemsObj = UNIQUE_TOOL_ITEMS[node.type.name as NodeName];
-  if(uniqueToolItemsObj) {
+  if(uniqueToolItemsObj && uniqueToolItemsObj.items.length > 0) {
     const { position } = uniqueToolItemsObj;
-    position === 'start' ? toolItems.unshift(uniqueToolItemsObj.items) : toolItems.push(uniqueToolItemsObj.items);
-  } /* else -- no unique tool items for this Node */
+    position === 'start' ? toolCollections.unshift(uniqueToolItemsObj.items) : toolCollections.push(uniqueToolItemsObj.items);
+  } /* else -- no unique tool items for this Node or the ToolItems entry is empty */
 
-  return toolItems;
+  return toolCollections;
 };
 
 // == Mark ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorMark} */
-export const getMarkToolbar = (mark: ProseMirrorMark): Toolbar => {
+export const getMarkToolbar = (mark: ProseMirrorMark): Toolbar | null => {
+  const toolCollections = buildMarkToolCollections(mark);
+  if(toolCollections.length < 1) return null/*do not show on Toolbar*/;
+
   return {
     title: camelToTitleCase(mark.type.name),
     name: mark.type.name as MarkName/*by definition*/,
-    toolsCollections: buildMarkToolCollection(mark),
+    toolsCollections: buildMarkToolCollections(mark).filter(collection => collection.length > 0/*not empty*/),
   };
 };
 
@@ -60,14 +65,22 @@ export const getMarkToolbar = (mark: ProseMirrorMark): Toolbar => {
  * build {@link Toolbar} for the given {@link ProseMirrorMark}
  * based on its characteristics
  */
-const buildMarkToolCollection = (mark: ProseMirrorMark): ToolItem[][] =>
-  [UNIQUE_TOOL_ITEMS[mark.type.name as MarkName/*by definition*/].items];
+const buildMarkToolCollections = (mark: ProseMirrorMark): ToolItem[][] => {
+  const toolCollections: ToolItem[][] = [];
+  const uniqueToolItemsObj = UNIQUE_TOOL_ITEMS[mark.type.name as MarkName/*by definition*/];
+
+  if(uniqueToolItemsObj && uniqueToolItemsObj.items.length > 0) {
+    toolCollections.push(uniqueToolItemsObj.items);
+  } /* else -- no unique ToolItems for Mark or entry is empty */
+
+  return toolCollections;
+};
 
 // == ToolItem ====================================================================
 /** {@link ToolItem}s received by Nodes that are TextBlocks */
 const TEXT_BLOCK_TOOL_ITEMS: ToolItem[] = [
-  // -- Inline --------------------------------------------------------------------
-  // currently nothing
+  // -- Block ---------------------------------------------------------------------
+  headingLevelToolItem,
 
   // -- Mark ----------------------------------------------------------------------
   markBold,
@@ -83,10 +96,6 @@ const TEXT_BLOCK_TOOL_ITEMS: ToolItem[] = [
 
 /** {@link ToolItem}s received by Nodes that are Blocks */
 const BLOCK_TOOL_ITEMS: ToolItem[] = [
-  // -- BlockType -----------------------------------------------------------------
-  headingLevelToolItem,
-
-
   // -- Align ---------------------------------------------------------------------
   // currently nothing
 
