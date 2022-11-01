@@ -117,6 +117,7 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
  * end of their neighboring default ToolItems
  */
 const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'; items: ToolItem[]; }> = {
+  // -- Node ----------------------------------------------------------------------
   [NodeName.DOC]: {
     position: 'end',
     items: [
@@ -124,11 +125,12 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'
       setThemeToolItem,
     ],
   },
-
   [NodeName.HEADING]: { position: 'start', items: [/*none*/] },
   [NodeName.MARK_HOLDER]: { position: 'start', items: [/*none*/] },
   [NodeName.PARAGRAPH]: { position: 'start', items: [/*none*/] },
   [NodeName.TEXT]: { position: 'start', items: [/*none*/] },
+
+  // -- Mark ----------------------------------------------------------------------
   [MarkName.BOLD]: { position: 'start', items: [/*none*/] },
   [MarkName.STRIKETHROUGH]: { position: 'start', items: [/*none*/] },
   [MarkName.TEXT_STYLE]: { position: 'start', items: [/*none*/] },
