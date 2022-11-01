@@ -1,9 +1,8 @@
-import { SuggestionSymbol } from './suggestion/type';
+import { SuggestionSymbol } from 'notebookEditor/plugin/suggestion';
 
 // ********************************************************************************
 // an array of Emoji symbols
 export const emojiSymbols: SuggestionSymbol[] = [
-  // -- Basic -------------------------------------------------------------------
   { symbol: '✨', trigger: '@sparkles' },
   { symbol: '🙏', trigger: '@folded_hands' },
   { symbol: '😈', trigger: '@purple_devil' },
