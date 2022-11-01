@@ -11,8 +11,6 @@ import { safeParseTag, wrapGetTagAttrs } from '../util/parse';
 import { toggleItalicCommand } from './command';
 
 // ********************************************************************************
-// REF: https://github.com/ueberdosis/tiptap/blob/main/packages/extension-bold/src/bold.ts
-
 // == RegEx =======================================================================
 // NOTE: these are Markdown equivalents
 const starInputRegex = /(?:^|\s)((?:\*)((?:[^*]+))(?:\*))$/;

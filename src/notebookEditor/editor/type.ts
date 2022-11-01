@@ -15,6 +15,7 @@ import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
 import { Strikethrough } from 'notebookEditor/extension/strikethrough';
 import { Text } from 'notebookEditor/extension/text';
 import { TextStyle } from 'notebookEditor/extension/textStyle';
+import { Underline } from 'notebookEditor/extension/underline';
 
 // ********************************************************************************
 // == Definition ==================================================================
@@ -39,4 +40,5 @@ export const editorDefinition: Extension[] = [
   Strikethrough,
   Text,
   TextStyle,
+  Underline,
 ];

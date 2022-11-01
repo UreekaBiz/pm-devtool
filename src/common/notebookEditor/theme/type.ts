@@ -85,6 +85,7 @@ export const DefaultTheme: Theme = {
     [MarkName.ITALIC]:  {/*no defined value*/},
     [MarkName.STRIKETHROUGH]:  {/*no defined value*/},
     [MarkName.TEXT_STYLE]:  {/*no defined value*/},
+    [MarkName.UNDERLINE]:  {/*no defined value*/},
   },
 
   customSelectors: {
@@ -145,6 +146,7 @@ export const GoogleDocsTheme: Theme = {
     [MarkName.ITALIC]:  {/*no defined value*/},
     [MarkName.STRIKETHROUGH]:  {/*no defined value*/},
     [MarkName.TEXT_STYLE]:  {/*no defined value*/},
+    [MarkName.UNDERLINE]:  {/*no defined value*/},
   },
 
   customSelectors: {

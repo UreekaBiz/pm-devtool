@@ -13,6 +13,7 @@ import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/par
 import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
+import { UnderlineMarkRendererSpec } from '../extension/underline';
 import { getMarkName, JSONMark, MarkName } from '../mark';
 import { contentToJSONNode, getNodeName, JSONNode, NodeName } from '../node';
 import { MarkSpecs, NodeSpecs } from '../schema';
@@ -37,6 +38,7 @@ export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
   [MarkName.ITALIC]: ItalicMarkRendererSpec as any/*FIXME!!!*/,
   [MarkName.STRIKETHROUGH]: StrikethroughMarkRendererSpec,
   [MarkName.TEXT_STYLE]: TextStyleMarkRendererSpec as any/*FIXME!!!*/,
+  [MarkName.UNDERLINE]: UnderlineMarkRendererSpec as any/*FIXME!!!*/,
 };
 
 // == Content =====================================================================

@@ -8,10 +8,10 @@ import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEdit
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { markItalic } from 'notebookEditor/extension/italic';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
+import { markUnderline } from 'notebookEditor/extension/underline';
 import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle';
 
 import { Toolbar, ToolItem } from './type';
-
 // ********************************************************************************
 // == Node ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorNode} */
@@ -84,6 +84,7 @@ const TEXT_BLOCK_TOOL_ITEMS: ToolItem[] = [
   // -- Mark ----------------------------------------------------------------------
   markBold,
   markItalic,
+  markUnderline,
   markStrikethrough,
   markCode,
   backgroundColorToolItem,
@@ -140,4 +141,5 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'
   [MarkName.ITALIC]: { position: 'start', items: [/*none*/] },
   [MarkName.STRIKETHROUGH]: { position: 'start', items: [/*none*/] },
   [MarkName.TEXT_STYLE]: { position: 'start', items: [/*none*/] },
+  [MarkName.UNDERLINE]: { position: 'start', items: [/*none*/] },
 };

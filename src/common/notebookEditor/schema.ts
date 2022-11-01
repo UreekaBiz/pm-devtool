@@ -10,6 +10,7 @@ import { ParagraphNodeSpec } from './extension/paragraph';
 import { StrikethroughMarkSpec } from './extension/strikethrough';
 import { TextNodeSpec } from './extension/text';
 import { TextStyleMarkSpec } from './extension/textStyle';
+import { UnderlineMarkSpec } from './extension/underline';
 import { MarkName } from './mark';
 import { NodeName } from './node';
 
@@ -32,6 +33,7 @@ export const MarkSpecs: Record<MarkName, MarkSpec> = {
   [MarkName.ITALIC]: ItalicMarkSpec,
   [MarkName.STRIKETHROUGH]: StrikethroughMarkSpec,
   [MarkName.TEXT_STYLE]: TextStyleMarkSpec,
+  [MarkName.UNDERLINE]: UnderlineMarkSpec,
 };
 
 // == Schema ======================================================================

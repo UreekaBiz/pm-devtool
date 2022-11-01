@@ -11,6 +11,7 @@ export enum MarkName {
   ITALIC = 'italic',
   STRIKETHROUGH = 'strikethrough',
   TEXT_STYLE = 'textStyle',
+  UNDERLINE = 'underline',
 }
 
 // == JSON ========================================================================
