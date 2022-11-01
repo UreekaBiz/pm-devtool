@@ -1,10 +1,11 @@
 /* == GapCursor ================================================================ */
+/* REF: https://github.com/ProseMirror/prosemirror-gapcursor/blob/master/style/gapcursor.css */
+/* add required styles to ensure right GapCursor display behavior */
 .ProseMirror-gapcursor {
   display: none;
   position: absolute;
   pointer-events: none;
 }
-
 .ProseMirror-gapcursor:after {
   position: absolute;
   display: block;
@@ -15,9 +16,5 @@
   border-top: 1px solid black;
   content: '';
 }
-
-@keyframes ProseMirror-cursor-blink {
-  to { visibility: hidden; }
-}
-
+@keyframes ProseMirror-cursor-blink { to { visibility: hidden; } }
 .ProseMirror-focused .ProseMirror-gapcursor { display: block; }

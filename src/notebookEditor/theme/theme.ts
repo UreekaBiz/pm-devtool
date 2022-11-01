@@ -32,8 +32,10 @@ export const CHIP_CLASS = 'chip';
 export const CHIP_CLOSE_BUTTON_CLASS = 'chipCloseButton';
 
 // == Editor Theme ================================================================
-// updates the theme stylesheet with the current Theme. This function must be
-  // called whenever the Theme is updated
+/**
+ * updates the theme stylesheet with the current Theme. This function must be
+ * called whenever the Theme is updated
+ */
 export const setThemeStylesheet = () => {
   const stylesheet = notebookEditorTheme.getStylesheet();
 

@@ -3,6 +3,7 @@ import { gapCursor } from 'prosemirror-gapcursor';
 import { ExtensionName } from 'notebookEditor/model';
 
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import './gapcursor.css';
 
 // ********************************************************************************
 // == Node ========================================================================
