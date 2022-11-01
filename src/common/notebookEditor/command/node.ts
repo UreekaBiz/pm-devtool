@@ -19,7 +19,7 @@ import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt
 export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new CreateBlockNodeDocumentUpdate(blockNodeName, attributes).update(state, state.tr), dispatch);
 export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly blockNodeName: NodeName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
+  public constructor(private readonly blockNodeName: NodeName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/ }
 
   /*
    * modify the given Transaction such that a Bloc Node is created
@@ -149,7 +149,7 @@ export class InsertNewlineDocumentUpdate implements AbstractDocumentUpdate {
 export const leaveBlockNodeCommand = (nodeName: NodeName): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new LeaveBlockNodeDocumentUpdate(nodeName).update(state, state.tr), dispatch);
 export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly nodeName: NodeName) {/*nothing additional*/}
+  public constructor(private readonly nodeName: NodeName) {/*nothing additional*/ }
 
   /*
    * modify the given Transaction such that a default Block Node is created
@@ -161,7 +161,7 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
     if(!($head.parent.type.name === this.nodeName)) return false/*this Node should not handle the call*/;
 
     const parentOfHead = $head.node(-1),
-          indexAfterHeadParent = $head.indexAfter(-1);
+      indexAfterHeadParent = $head.indexAfter(-1);
     const type = defaultBlockAt(parentOfHead.contentMatchAt(indexAfterHeadParent));
 
     if(!type) return false/*no valid type was found*/;
