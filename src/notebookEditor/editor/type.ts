@@ -5,6 +5,7 @@ import { Bold } from 'notebookEditor/extension/bold/Bold';
 import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
 import { Document } from 'notebookEditor/extension/document';
 import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion';
+import { GapCursor } from 'notebookEditor/extension/gapcursor';
 import { Heading } from 'notebookEditor/extension/heading';
 import { History } from 'notebookEditor/extension/history';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
@@ -24,9 +25,10 @@ export const editorDefinition: Extension[] = [
   BlurredSelection,
   Bold,
   DefaultInputRules,
-  EmojiSuggestion,
-  History,
   Document,
+  EmojiSuggestion,
+  GapCursor,
+  History,
   Heading,
   MarkHolder,
   Paragraph,
