@@ -6,7 +6,7 @@ import { getAllAscendantsFromSelection, getMarkName, getNodeName, SelectionDepth
 import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
-import { getToolbar } from '../toolbar';
+import { getMarkToolbar, getNodeToolbar } from '../toolbar';
 import { Debugger } from './Debugger';
 import { Toolbar } from './Toolbar';
 import { ToolbarBreadcrumbs } from './ToolbarBreadcrumbs';
@@ -47,7 +47,8 @@ export const SideBar = () => {
       if(!mark) return undefined/*nothing to do*/;
 
       const markName = getMarkName(mark);
-      const toolbar = getToolbar(markName);
+      const toolbar = getMarkToolbar(mark);
+
       // Only render toolbar if it exists and allows it with shouldShow
       if(!toolbar || (toolbar.shouldShow && !toolbar.shouldShow(editor, undefined))) return/*nothing to do*/;
 
@@ -70,7 +71,7 @@ export const SideBar = () => {
 
       const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
       const nodeName = getNodeName(node);
-      const toolbar = getToolbar(nodeName);
+      const toolbar = getNodeToolbar(node);
       // Only render toolbar if it exists and allows it with shouldShow
       if(!toolbar || (toolbar.shouldShow && !toolbar.shouldShow(editor, undefined))) return/*nothing to do*/;
 

@@ -43,9 +43,13 @@ export const splitTrim = <T extends string | null | undefined>(s: T, separator: 
 export const hexString = (string: string) => /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(string);
 
 // --------------------------------------------------------------------------------
-// CHECK: this doesn't cover 'UPPERlower' but that isn't traditional camel-case regardless
+// CHECK: these don't cover 'UPPERlower' but that isn't traditional camel-case regardless
 export const camelToKebabCase = (s: string) =>
   s.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+export const camelToTitleCase = (s: string) => {
+  const result = s.replace(/([A-Z])/g, ' $1');
+  return result.charAt(0/*start*/).toUpperCase() + result.slice(1);
+};
 
 // ================================================================================
 // REF: https://stackoverflow.com/questions/10805125/how-to-remove-all-line-breaks-from-a-string
