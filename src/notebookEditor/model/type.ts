@@ -14,6 +14,7 @@ export class NoPluginState {
 // == Extension ===================================================================
 export enum ExtensionName {
   BASIC_KEYMAP = 'basicKeymap',
+  DEFAULT_INPUT_RULES = 'defaultInputRules',
   EMOJI_SUGGESTION = 'emojiSuggestion',
   BLURRED_SELECTION = 'blurredSelection',
   HISTORY = 'history',

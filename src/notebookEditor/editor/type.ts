@@ -2,6 +2,7 @@ import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
 import { BlurredSelection } from 'notebookEditor/extension/blurredSelection';
 import { Bold } from 'notebookEditor/extension/bold/Bold';
+import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
 import { Document } from 'notebookEditor/extension/document';
 import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion';
 import { Heading } from 'notebookEditor/extension/heading';
@@ -22,6 +23,7 @@ export const editorDefinition: Extension[] = [
   BasicKeymap,
   BlurredSelection,
   Bold,
+  DefaultInputRules,
   EmojiSuggestion,
   History,
   Document,
