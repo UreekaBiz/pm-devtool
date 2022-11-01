@@ -31,7 +31,5 @@ export const TextColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (
-    <KeyboardShortcutColorPicker name='Color' value={inputValue ?? ''} colors={keyboardShortcutTextColors} onChange={handleChange} />
-  );
+  return (<KeyboardShortcutColorPicker name='Color' value={inputValue ?? ''} colors={keyboardShortcutTextColors} onChange={handleChange} />);
 };
