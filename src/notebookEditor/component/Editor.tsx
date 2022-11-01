@@ -23,6 +23,7 @@ export const Editor: React.FC<Props> = () => {
     //       is being clicked so that the Selection is not being modified
     //       incorrectly. More checks might have to be added in the future
     if(!(event.target instanceof HTMLDivElement)) return/*(SEE: NOTE above)*/;
+    if(editor.view.hasFocus()) return/*already focused*/;
 
     editor.executeCommand(setTextSelectionCommand({ from: editor.endOfDocPos, to: editor.endOfDocPos }));
     editor.focusView();

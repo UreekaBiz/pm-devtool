@@ -94,7 +94,7 @@ export class Editor {
       });
 
     this.viewMounted = true/*EditorView initialized*/;
-    this.view.focus();
+    setTimeout(() => this.focusView()/*after rendering*/);
   }
 
   /**
