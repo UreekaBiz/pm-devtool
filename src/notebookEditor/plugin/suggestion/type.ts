@@ -3,7 +3,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { SelectionRange } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { CoreEditor } from 'notebookEditor/editor';
 
 // ********************************************************************************
 // -- Symbol ----------------------------------------------------------------------
@@ -35,7 +35,7 @@ export type SuggestionOptions<I = any> = {
   pluginKey: PluginKey;
 
   // the current Editor instance
-  editor: Editor;
+  editor: CoreEditor;
 
   // the character that triggers the display behavior of the Suggestion component
   char: string;
@@ -56,7 +56,7 @@ export type SuggestionOptions<I = any> = {
   decorationClass: string;
 
   // the Command that gets executed when the User chooses a Suggestion
-  command: (editor: Editor, range: SelectionRange, props: I) => void;
+  command: (editor: CoreEditor, range: SelectionRange, props: I) => void;
 
   // the available items the User can choose from, which get filtered by the
   // component of the Suggestion
@@ -64,7 +64,7 @@ export type SuggestionOptions<I = any> = {
 
   // a function that returns the items among which the User can choose from
   // given the current query (User input)
-  getItems: (props: { query: string; editor: Editor; }) => I[] | Promise<I[]>;
+  getItems: (props: { query: string; editor: CoreEditor; }) => I[] | Promise<I[]>;
 
   // function that returns the renderer for the popup
   createRenderer: () => {
@@ -81,7 +81,7 @@ export type SuggestionOptions<I = any> = {
 // the props received by the handler functions of a Suggestion object definition
 export type SuggestionProps<I = any> = {
   // the current Editor instance
-  editor: Editor;
+  editor: CoreEditor;
 
   // the range covering the text that could potentially be replaced
   range: SelectionRange;

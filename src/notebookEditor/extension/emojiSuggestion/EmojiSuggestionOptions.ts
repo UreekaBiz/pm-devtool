@@ -3,8 +3,8 @@ import { RefAttributes } from 'react';
 import tippy, { Instance as TippyInstance, Props as TippyProps } from 'tippy.js';
 
 import { insertContentAtCommand } from 'notebookEditor/command/node';
+import { ReactRenderer } from 'notebookEditor/editor/component';
 import { isValidClientRect, SuggestionOptions, SuggestionSymbol } from 'notebookEditor/plugin/suggestion';
-import { ReactRenderer } from 'notebookEditor/component/ReactRenderer';
 
 import { EmojiSuggestionForwardedObject, EmojiSuggestionList, EmojiSuggestionListProps } from './component/EmojiSuggestionList';
 import { emojiSymbols } from './symbol';
@@ -56,7 +56,7 @@ export const emojiSuggestionOptions: Omit<SuggestionOptions<SuggestionSymbol>, '
           interactive: true/*User can interact with tippyPopup*/,
           trigger: 'manual'/*triggered by text input*/,
           placement: 'bottom-start'/*T&E*/,
-        })[0];
+        })[0/*the tippy popup*/];
       },
 
       onUpdate: (props) => {

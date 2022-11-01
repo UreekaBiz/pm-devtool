@@ -1,29 +1,20 @@
 import { Box } from '@chakra-ui/react';
-import { useEffect, useRef } from 'react';
 
 import { setTextSelectionCommand } from 'common';
 
-import { useValidatedEditor } from 'notebookEditor/hook/';
+import { EditorContent } from 'notebookEditor/editor/component';
+import { useValidatedEditor } from 'notebookEditor/hook';
 
 // ********************************************************************************
 // == Constant ====================================================================
 export const EDITOR_CONTAINER_ID = 'NotebookEditorContainerID';
 
 // == Interface ===================================================================
-interface Props {/*currently nothing*/}
+interface Props {/*currently nothing*/ }
 
 // == Component ===================================================================
 export const Editor: React.FC<Props> = () => {
-  const editorContainer = useRef<HTMLDivElement>(null/*default*/);
   const editor = useValidatedEditor();
-
-  // -- Effect --------------------------------------------------------------------
-  useEffect(() => {
-    if(!editorContainer.current) return/*not mounted yet*/;
-    if(editor.isViewMounted()) return/*already mounted*/;
-
-    editor.mountView(editorContainer.current);
-  }, [editor]);
 
   // -- Handler -------------------------------------------------------------------
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -38,5 +29,9 @@ export const Editor: React.FC<Props> = () => {
   };
 
   // -- UI ------------------------------------------------------------------------
-  return (<Box id={EDITOR_CONTAINER_ID} ref={editorContainer} height='full' overflowY='auto' onClick={(event) => handleClick(event)} />);
+  return (
+    <Box id={EDITOR_CONTAINER_ID} height='full' overflowY='auto' onClick={(event) => handleClick(event)}>
+      <EditorContent editor={editor} />
+    </Box>
+  );
 };
