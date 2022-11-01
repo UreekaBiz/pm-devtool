@@ -111,7 +111,8 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
 
 /**
  * {@link ToolItem}s that should only be added to a specific
- * {@link ProseMirrorNode} or {@link ProseMirrorMark} {@link Toolbar}
+ * {@link ProseMirrorNode} or {@link ProseMirrorMark}'s {@link Toolbar}
+ *
  * the given position determines whether they appear at the start or at the
  * end of their neighboring default ToolItems
  */
@@ -125,10 +126,10 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'
   },
 
   [NodeName.HEADING]: { position: 'start', items: [/*none*/] },
-  [NodeName.MARK_HOLDER]: { position: 'end', items: [/*none*/] },
-  [NodeName.PARAGRAPH]: { position: 'end', items: [/*none*/] },
-  [NodeName.TEXT]: { position: 'end', items: [/*none*/] },
-  [MarkName.BOLD]: { position: 'end', items: [/*none*/] },
-  [MarkName.STRIKETHROUGH]: { position: 'end', items: [/*none*/] },
-  [MarkName.TEXT_STYLE]: { position: 'end', items: [/*none*/] },
+  [NodeName.MARK_HOLDER]: { position: 'start', items: [/*none*/] },
+  [NodeName.PARAGRAPH]: { position: 'start', items: [/*none*/] },
+  [NodeName.TEXT]: { position: 'start', items: [/*none*/] },
+  [MarkName.BOLD]: { position: 'start', items: [/*none*/] },
+  [MarkName.STRIKETHROUGH]: { position: 'start', items: [/*none*/] },
+  [MarkName.TEXT_STYLE]: { position: 'start', items: [/*none*/] },
 };
