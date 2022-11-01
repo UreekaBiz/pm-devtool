@@ -3,7 +3,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 import { customNanoid, SelectionRange } from 'common';
 
-import { CoreEditor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor';
 
 import { SuggestionOptions, SuggestionProps } from './type';
 import { findSuggestionMatch } from './util';
@@ -35,7 +35,7 @@ class SuggestionState {
   ) {/*nothing additional*/}
 
   // produce a new Plugin state
-  apply = (tr: Transaction, thisPluginState: SuggestionState, oldEditorState: EditorState, newEditorState: EditorState, editor: CoreEditor, suggestionOptions: SuggestionOptions) => {
+  apply = (tr: Transaction, thisPluginState: SuggestionState, oldEditorState: EditorState, newEditorState: EditorState, editor: Editor, suggestionOptions: SuggestionOptions) => {
     // NOTE: checking for strict boolean values since a value of 'undefined'
     //       should not modify this prop of the SuggestionState,
     //       as various Transactions without the Metadata can be dispatched in between

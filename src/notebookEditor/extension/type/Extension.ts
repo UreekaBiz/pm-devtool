@@ -1,6 +1,6 @@
 import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
 
-import { CoreEditor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor';
 import { DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { InputRule } from 'notebookEditor/plugin/inputRule';
 import { PasteRule } from 'notebookEditor/plugin/pasteRule';
@@ -32,20 +32,20 @@ export interface ExtensionProps {
 
   /**
    * since only a single InputRule Plugin may be present on the
-   * {@link CoreEditor} at a time, if an Extension must add InputRules
+   * {@link Editor} at a time, if an Extension must add InputRules
    * it can do so through this method
    */
-  readonly inputRules: (editor: CoreEditor) => InputRule[];
+  readonly inputRules: (editor: Editor) => InputRule[];
 
   /**
    * since only a single PasteRules Plugin may be present on the
-   * {@link CoreEditor} at a time, if an Extension must add InputRules
+   * {@link Editor} at a time, if an Extension must add InputRules
    * it can do so through this method
    */
-  readonly pasteRules: (editor: CoreEditor) => PasteRule[];
+  readonly pasteRules: (editor: Editor) => PasteRule[];
 
   /** function to add the ProseMirror Plugins required by this Extension */
-  readonly addProseMirrorPlugins: (editor: CoreEditor) => ProseMirrorPlugin[];
+  readonly addProseMirrorPlugins: (editor: Editor) => ProseMirrorPlugin[];
 
   /** the Storage used by this Extension */
   readonly storage?: NodeViewStorage<any> | DialogStorage | undefined/*Extension does not need storage*/;
