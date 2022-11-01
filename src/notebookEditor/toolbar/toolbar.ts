@@ -17,6 +17,7 @@ const TOOLBAR_MAP: Record<NodeName | MarkName, Toolbar | null> = {
   [NodeName.TEXT]: null/*none*/,
 
   [MarkName.BOLD]: null/*none*/,
+  [MarkName.CODE]: null/*none*/,
   [MarkName.STRIKETHROUGH]: null/*none*/,
   [MarkName.TEXT_STYLE]: null/*none*/,
 };

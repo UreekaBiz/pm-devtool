@@ -1,4 +1,5 @@
 export * from './bold';
+export * from './code';
 export * from './document';
 export * from './heading';
 export * from './markHolder';

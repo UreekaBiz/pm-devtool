@@ -1,6 +1,7 @@
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
 import { BoldMarkSpec } from './extension/bold';
+import { CodeMarkSpec } from './extension/code';
 import { DocumentNodeSpec } from './extension/document';
 import { HeadingNodeSpec } from './extension/heading';
 import { MarkHolderNodeSpec } from './extension/markHolder';
@@ -26,6 +27,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
 // == MarkSpec ====================================================================
 export const MarkSpecs: Record<MarkName, MarkSpec> = {
   [MarkName.BOLD]: BoldMarkSpec,
+  [MarkName.CODE]: CodeMarkSpec,
   [MarkName.STRIKETHROUGH]: StrikethroughMarkSpec,
   [MarkName.TEXT_STYLE]: TextStyleMarkSpec,
 };

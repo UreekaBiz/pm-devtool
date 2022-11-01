@@ -81,6 +81,7 @@ export const DefaultTheme: Theme = {
 
   marks: {
     [MarkName.BOLD]:  {/*no defined value*/},
+    [MarkName.CODE]:  {/*no defined value*/},
     [MarkName.STRIKETHROUGH]:  {/*no defined value*/},
     [MarkName.TEXT_STYLE]:  {/*no defined value*/},
   },
@@ -139,6 +140,7 @@ export const GoogleDocsTheme: Theme = {
 
   marks: {
     [MarkName.BOLD]:  {/*no defined value*/},
+    [MarkName.CODE]:  {/*no defined value*/},
     [MarkName.STRIKETHROUGH]:  {/*no defined value*/},
     [MarkName.TEXT_STYLE]:  {/*no defined value*/},
   },

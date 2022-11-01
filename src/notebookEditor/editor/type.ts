@@ -1,6 +1,7 @@
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
 import { Bold } from 'notebookEditor/extension/bold/Bold';
+import { Code } from 'notebookEditor/extension/code';
 import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
 import { Document } from 'notebookEditor/extension/document';
 import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion';
@@ -23,6 +24,7 @@ import { TextStyle } from 'notebookEditor/extension/textStyle';
 export const editorDefinition: Extension[] = [
   BasicKeymap,
   Bold,
+  Code,
   DefaultInputRules,
   Document,
   EmojiSuggestion,
