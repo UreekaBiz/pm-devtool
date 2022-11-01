@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, DependencyList } from 'react';
 
 import { Extension } from 'notebookEditor/extension';
 
@@ -6,7 +6,7 @@ import { Editor } from '../Editor';
 
 // ********************************************************************************
 // == Component ===================================================================
-export const useEditor = (extensions: Extension[]) => {
+export const useEditor = (extensions: Extension[], deps: DependencyList = [/*none*/]) => {
   // -- State ---------------------------------------------------------------------
   const [editor, setEditor] = useState<Editor | null>(null/*default none*/);
   const forceUpdate = useForceUpdate();
@@ -26,7 +26,7 @@ export const useEditor = (extensions: Extension[]) => {
     setEditor(newEditorInstance);
 
     return () => { newEditorInstance.destroy(); isMounted = false; };
-  }, [extensions, forceUpdate]);
+  }, deps);
 
   // ------------------------------------------------------------------------------
   return editor;

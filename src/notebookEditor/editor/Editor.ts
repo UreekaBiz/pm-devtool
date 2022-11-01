@@ -39,8 +39,8 @@ export class Editor {
   /** the React component where the Editor's content is displayed */
   public contentComponent: React.Component<EditorContentProps, EditorContentState> | null;
 
-  /** the element that holds Editor's {@link EditorView} */
-  public element: Element;
+  /** the {@link HTMLElement} that holds Editor's {@link EditorView} */
+  public element: HTMLElement;
 
   /** the Editor's {@link EditorView} object */
   public view: EditorView;
@@ -61,7 +61,7 @@ export class Editor {
 
     // .. Public ..................................................................
     this.contentComponent = null/*not initialized yet*/;
-    this.element = document.createElement('div')/*placeholder that will be replaced*/;
+    this.element = document.createElement('div')/*placeholder that will be replaced on mount (SEE: EditorContent.tsx)*/;
     this.view = new EditorView(null/*default empty*/, { state: EditorState.create({ schema: this.schema }) });
     this.storage = new Map(/*default empty*/);
   }
@@ -89,7 +89,6 @@ export class Editor {
 
         dispatchTransaction: (tr) => {
           this.view.updateState(this.view.state.apply(tr));
-
           this.updateReactEditorCallback();
         },
       });

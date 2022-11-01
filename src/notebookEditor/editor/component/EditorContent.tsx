@@ -27,16 +27,23 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
   }
   init() {
     const { editor } = this.props;
-
     if(editor && editor.element) {
-      if(editor.contentComponent) return/*already setup*/;
+      if(editor.contentComponent) {
+        return/*already setup*/;
+      }
 
       const element = this.editorContentRef.current;
-      if(!element) return/*does not exist*/;
+      if(!element) {
+        return/*does not exist*/;
+      }
 
       element.append(...editor.element.childNodes);
       editor.element = element;
       editor.contentComponent = this;
+
+      if(!editor.isViewMounted()) {
+        editor.mountView(editor.element);
+      } /* else -- View is already mounted */
     }
   }
 
