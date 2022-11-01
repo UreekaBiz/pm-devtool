@@ -1,6 +1,5 @@
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
-import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
 import { Bold } from 'notebookEditor/extension/bold/Bold';
 import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
 import { Document } from 'notebookEditor/extension/document';
@@ -10,6 +9,7 @@ import { Heading } from 'notebookEditor/extension/heading';
 import { History } from 'notebookEditor/extension/history';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
+import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
 import { Strikethrough } from 'notebookEditor/extension/strikethrough';
 import { Text } from 'notebookEditor/extension/text';
 import { TextStyle } from 'notebookEditor/extension/textStyle';
@@ -22,7 +22,6 @@ import { TextStyle } from 'notebookEditor/extension/textStyle';
  */
 export const editorDefinition: Extension[] = [
   BasicKeymap,
-  SelectionHandling,
   Bold,
   DefaultInputRules,
   Document,
@@ -32,6 +31,7 @@ export const editorDefinition: Extension[] = [
   Heading,
   MarkHolder,
   Paragraph,
+  SelectionHandling,
   Strikethrough,
   Text,
   TextStyle,
