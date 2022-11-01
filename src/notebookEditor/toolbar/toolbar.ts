@@ -109,10 +109,11 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   // currently nothing
 ];
 
-
 /**
  * {@link ToolItem}s that should only be added to a specific
  * {@link ProseMirrorNode} or {@link ProseMirrorMark} {@link Toolbar}
+ * the given position determines whether they appear at the start or at the
+ * end of their neighboring default ToolItems
  */
 const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'; items: ToolItem[]; }> = {
   [NodeName.DOC]: {
