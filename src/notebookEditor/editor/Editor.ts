@@ -145,11 +145,16 @@ export class Editor {
   public isViewMounted() {
     return this.viewMounted;
   }
+
   /** focus the View */
   public focusView() {
     this.view.focus();
   }
 
+  /** query whether or not the Editor's {@link EditorView} can be edited */
+  public get isEditable() {
+    return this.view.editable;
+  }
 
   // .. Attribute .................................................................
   /**

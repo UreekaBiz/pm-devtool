@@ -44,6 +44,7 @@
     "react-dom": "18.2.0",
     "react-icons": "4.6.0",
     "react-scripts": "5.0.1",
+    "tippy.js": "6.2.5",
     "uri-js": "4.4.1",
     "web-vitals": "3.0.4",
     "yup": "0.32.11"

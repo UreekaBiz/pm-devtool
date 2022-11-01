@@ -52,6 +52,11 @@ export const camelToKebabCase = (s: string) =>
 export const removeNewLines = (text: string) =>
   text.replace(/(\r\n|\n|\r)/gm, '');
 
+// REF: https://stackoverflow.com/a/6969486
+export const escapeStringForRegEx = (string: string): string => {
+  return string.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
 // --------------------------------------------------------------------------------
 /**
  * @returns an array of strings such that the specified array minus the returned

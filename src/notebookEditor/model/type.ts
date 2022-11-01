@@ -14,6 +14,7 @@ export class NoPluginState {
 // == Extension ===================================================================
 export enum ExtensionName {
   BASIC_KEYMAP = 'basicKeymap',
+  EMOJI_SUGGESTION = 'emojiSuggestion',
   HISTORY = 'history',
 }
 
@@ -24,10 +25,6 @@ export enum ExtensionName {
 // NOTE: if Extension priority is left unspecified, it defaults to 100
 // NOTE: names match Extension, Node or Mark names for sanity
 export enum ExtensionPriority {
-  // -- Extension -----------------------------------------------------------------
-  KEYMAP = 120/*T&E*/,
-
-  // -- Node ----------------------------------------------------------------------
   // NOTE: Paragraph must have a higher priority than other block Nodes since it
   //       is the 'default' block Node (by convention). If its priority is left
   //       unspecified, the default block Node on document creation will be the
@@ -35,9 +32,6 @@ export enum ExtensionPriority {
   // SEE: notebookEditor/type.ts
   PARAGRAPH = 118,
 
-  // NOTE: custom InputRules just need to be triggered before Text so that their
-  //       effects are applied (SEE: InputRule.ts)
-  INPUT_RULE = 117/*T&E*/,
 
   // NOTE: since Suggestions have specific behavior for the Enter and arrow
   //       keydown events, they must run before other Extensions with these
