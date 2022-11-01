@@ -1,5 +1,6 @@
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
+import { BlurredSelection } from 'notebookEditor/extension/blurredSelection';
 import { Bold } from 'notebookEditor/extension/bold/Bold';
 import { Document } from 'notebookEditor/extension/document';
 import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion';
@@ -19,6 +20,7 @@ import { TextStyle } from 'notebookEditor/extension/textStyle';
  */
 export const editorDefinition: Extension[] = [
   BasicKeymap,
+  BlurredSelection,
   Bold,
   EmojiSuggestion,
   History,

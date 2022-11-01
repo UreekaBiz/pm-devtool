@@ -25,6 +25,20 @@
   --HOVER_BUTTON_COLOR: #EDF2F7/*currently only used through CSS file*/;
 }
 
+/* .. BlurredSelection ......................................................... */
+.ProseMirror-focused .selected_text {
+  /*only show background when editor is no longer focused*/
+  background-color: transparent !important;
+}
+
+/* set background color on the selected Text while the Editor is not focused.
+  Prevent the styles from being added to NodeViews so that their styles do not
+  get messed up
+*/
+.selected_text:not([data-node-view]) {
+  background-color: rgba(0,0,0,0.1);
+}
+
 /* == Toolbar ================================================================== */
 /* -- IconButton --------------------------------------------------------------- */
 .iconButton {

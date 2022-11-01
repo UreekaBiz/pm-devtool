@@ -15,6 +15,7 @@ export class NoPluginState {
 export enum ExtensionName {
   BASIC_KEYMAP = 'basicKeymap',
   EMOJI_SUGGESTION = 'emojiSuggestion',
+  BLURRED_SELECTION = 'blurredSelection',
   HISTORY = 'history',
 }
 
