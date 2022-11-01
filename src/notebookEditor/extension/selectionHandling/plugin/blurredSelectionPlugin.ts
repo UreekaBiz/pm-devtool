@@ -7,10 +7,12 @@ import { Editor } from 'notebookEditor/editor';
 import { SELECTED_TEXT_CLASS } from 'notebookEditor/theme';
 
 // ********************************************************************************
+// REF: https://discuss.prosemirror.net/t/add-css-class-to-current-node-or-selected-nodes/1287
+
 // == Plugin ======================================================================
 /**
  * applies a BackgroundColor to the current Selection when it is a TextSelection and
- *  the EditorView is not focused
+ * the EditorView is not focused
  * (SEE: index.css)
  */
 export const blurredSelectionPlugin = (editor: Editor) => new Plugin({

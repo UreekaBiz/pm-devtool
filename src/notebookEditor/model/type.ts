@@ -14,11 +14,11 @@ export class NoPluginState {
 // == Extension ===================================================================
 export enum ExtensionName {
   BASIC_KEYMAP = 'basicKeymap',
-  BLURRED_SELECTION = 'blurredSelection',
   DEFAULT_INPUT_RULES = 'defaultInputRules',
   EMOJI_SUGGESTION = 'emojiSuggestion',
   GAP_CURSOR = 'gapCursor',
   HISTORY = 'history',
+  SELECTION_HANDLING = 'selectionHandling',
 }
 
 // == Priority ====================================================================

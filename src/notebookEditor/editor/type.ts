@@ -1,6 +1,6 @@
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
-import { BlurredSelection } from 'notebookEditor/extension/blurredSelection';
+import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
 import { Bold } from 'notebookEditor/extension/bold/Bold';
 import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
 import { Document } from 'notebookEditor/extension/document';
@@ -22,7 +22,7 @@ import { TextStyle } from 'notebookEditor/extension/textStyle';
  */
 export const editorDefinition: Extension[] = [
   BasicKeymap,
-  BlurredSelection,
+  SelectionHandling,
   Bold,
   DefaultInputRules,
   Document,
