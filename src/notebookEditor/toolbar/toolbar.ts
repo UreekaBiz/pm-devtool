@@ -79,9 +79,6 @@ const buildMarkToolCollections = (mark: ProseMirrorMark): ToolItem[][] => {
 // == ToolItem ====================================================================
 /** {@link ToolItem}s received by Nodes that are TextBlocks */
 const TEXT_BLOCK_TOOL_ITEMS: ToolItem[] = [
-  // -- Block ---------------------------------------------------------------------
-  headingLevelToolItem,
-
   // -- Mark ----------------------------------------------------------------------
   markBold,
   markStrikethrough,
@@ -106,7 +103,7 @@ const BLOCK_TOOL_ITEMS: ToolItem[] = [
 /** {@link ToolItem}s that create new Nodes */
 const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   // -- Standard ------------------------------------------------------------------
-  // currently nothing
+  headingLevelToolItem,
 
   // -- Custom --------------------------------------------------------------------
   // currently nothing
