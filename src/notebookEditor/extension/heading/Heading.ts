@@ -1,8 +1,9 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, NodeName } from 'common';
+import { createBoldMark, createMarkHolderNode, getBlockNodeRange, getHeadingNodeType, generateNodeId, getNodeOutputSpec, stringifyMarksArray, AttributeType, HeadingLevel, HeadingNodeSpec, NodeName } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
+import { InputRule } from 'notebookEditor/plugin/inputRule';
 
 import { createExtensionParseRules, getExtensionAttributesObject, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { NodeExtension } from '../type/NodeExtension';
@@ -32,7 +33,35 @@ export const Heading = new NodeExtension({
   },
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [/*none*/],
+  inputRules: (editor) =>
+    headingLevels.map(level => {
+      return new InputRule( new RegExp(`^(#{1,${level}})\\s$`), (state, match, start, end) => {
+        const headingType = getHeadingNodeType(state.schema);
+
+        const $resolvedStart = state.doc.resolve(start);
+        if(!$resolvedStart.node(-1/*top level*/).canReplaceWith($resolvedStart.index(-1/*top level*/), $resolvedStart.indexAfter(-1/*top level*/), headingType)) {
+          return null/*the resulting Node Content is not valid, do nothing*/;
+        } /* else -- the resulting Node Content is valid, set Heading Block Type */
+
+        const { tr } = state;
+        const boldMark = createBoldMark(state.schema);
+        const storedMarks = stringifyMarksArray([boldMark]);
+
+        tr.delete(start, end)
+          .setBlockType(start, start, headingType, { [AttributeType.Id]: generateNodeId(), [AttributeType.Level]: level });
+
+          if(tr.selection.$from.parent.content.childCount === 0/*empty parent*/) {
+            // add MarkHolder
+            tr.insert(tr.selection.anchor, createMarkHolderNode(state.schema, { storedMarks } ));
+          } else {
+            // apply default Bold Mark
+            const { from, to } = getBlockNodeRange(tr.selection);
+            tr.addMark(from, to, boldMark);
+        }
+
+        return tr/*modified*/;
+      });
+    }),
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],

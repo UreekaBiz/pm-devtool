@@ -20,7 +20,7 @@ export const History = new Extension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [
-    history({ depth: 100/*PM's default*/, newGroupDelay: 500/*PM's default, in ms*/ }),
+    history({ depth: 100/*PM's default*/, newGroupDelay: 500/*PM's default, ms*/ }),
     keymap({ 'Mod-z': undo, 'Mod-Shift-z': redo }),
   ],
 });
