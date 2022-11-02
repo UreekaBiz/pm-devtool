@@ -1,6 +1,9 @@
 import { DOMOutputSpec, Node as ProseMirrorNode, NodeSpec, ParseRule } from 'prosemirror-model';
+import { Decoration, DecorationSource } from 'prosemirror-view';
 
+import { Editor } from 'notebookEditor/editor';
 import { AttributeSpecWithParseHTML } from 'notebookEditor/extension/util';
+import { AbstractNodeController } from 'notebookEditor/model';
 
 import { ExtensionDefinition, ExtensionStorageType } from '../Extension';
 
@@ -18,6 +21,9 @@ export type NodeExtensionAttributesType = { attrs: NodeExtensionAttributes<any/*
 /** type of the NodeSpec used by a NodeExtension */
 export type NodeExtensionNodeSpec = Exclude<NodeSpec, 'attrs'> & NodeExtensionAttributesType;
 
+/** type of the function that defines the NodeView for this Node */
+export type NodeViewDefinitionFunction = (editor: Editor, node: ProseMirrorNode, getPos: () => number, decorations: readonly Decoration[], innerDecorations: DecorationSource) => AbstractNodeController<any, any>;
+
 // == Interface ===================================================================
 export interface NodeExtensionDefinition extends ExtensionDefinition {
   /** define the Attributes used by the Node this NodeExtension adds */
@@ -34,4 +40,7 @@ export interface NodeExtensionDefinition extends ExtensionDefinition {
     parseDOM?: ParseRule[];
     toDOM?: ((node: ProseMirrorNode) => DOMOutputSpec);
   });
+
+  /** define the NodeView added for this Node */
+  defineNodeView?: NodeViewDefinitionFunction;
 }

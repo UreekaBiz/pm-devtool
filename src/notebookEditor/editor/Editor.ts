@@ -1,11 +1,11 @@
 import { Schema } from 'prosemirror-model';
 import { Command, EditorState, Plugin } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
+import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 
 import { Attributes, MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
-import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension } from 'notebookEditor/extension';
+import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension, isNodeExtension } from 'notebookEditor/extension';
 import { inputRulesPlugin, InputRule } from 'notebookEditor/plugin/inputRule';
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule';
 
@@ -91,10 +91,26 @@ export class Editor {
           this.view.updateState(this.view.state.apply(tr));
           this.updateReactEditorCallback();
         },
+
+        nodeViews: this.initializeNodeViews(),
       });
+
 
     this.viewMounted = true/*EditorView initialized*/;
     setTimeout(() => this.focusView()/*after rendering*/);
+  }
+
+  /** set the Storages added by the {@link Extensions} in the Storage object */
+  private initializeStorage() {
+    const newStorage = new Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>();
+    this.extensions.forEach(extension => {
+      const { name, storage } = extension;
+      if(storage)  {
+        newStorage.set(name as (NodeName | MarkName)/*by definition*/, storage);
+      } /* else -- Extension does not add Storage, do nothing */
+    });
+
+    return newStorage;
   }
 
   /**
@@ -124,17 +140,25 @@ export class Editor {
     return initializedPlugins;
   }
 
-  /** set the Storages added by the {@link Extensions} in the Storage object */
-  private initializeStorage() {
-    const newStorage = new Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>();
-    this.extensions.forEach(extension => {
-      const { name, storage } = extension;
-      if(storage)  {
-        newStorage.set(name as (NodeName | MarkName)/*by definition*/, storage);
-      } /* else -- Extension does not add Storage, do nothing */
-    });
+  /**
+   * construct the object containing the information to
+   * map nodeNames to their NodeViews, according to the definition in
+   * the corresponding extension
+   */
+  private initializeNodeViews() {
+    const nodeViewDefinitionObj = this.extensions.reduce<{[nodeName: string]: NodeViewConstructor; }>((nodeViewDefinitionObj, currentExtension) => {
+      if(!isNodeExtension(currentExtension)) return nodeViewDefinitionObj/*do not add*/;
 
-    return newStorage;
+      const { defineNodeView } = currentExtension.definition;
+      if(!defineNodeView) return nodeViewDefinitionObj/*do not add*/;
+
+      const { name: nodeName } = currentExtension;
+      nodeViewDefinitionObj[nodeName] = (node, view/*ignore since part of Editor*/, getPos, decorations, innerDecorations) => defineNodeView(this, node, getPos, decorations, innerDecorations);
+
+      return nodeViewDefinitionObj;
+    }, {/*initially empty*/});
+
+    return nodeViewDefinitionObj;
   }
 
   /** destroy the {@link Editor}'s {@link EditorView} */

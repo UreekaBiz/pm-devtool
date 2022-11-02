@@ -1,8 +1,11 @@
 
-import { getNodeOutputSpec, ImageNodeSpec, NodeName, DATA_NODE_TYPE, DEFAULT_IMAGE_PARSE_TAG } from 'common';
+import { getNodeOutputSpec, isImageNode, AttributeType, ImageNodeSpec, NodeName, DATA_NODE_TYPE, DEFAULT_IMAGE_PARSE_TAG } from 'common';
+
+import { isNodeViewStorage } from 'notebookEditor/model';
 
 import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { getImageAttrs } from './attribute';
+import { ImageController } from './nodeView';
 import { ImageStorage } from './nodeView/storage';
 
 // ********************************************************************************
@@ -28,26 +31,24 @@ export const Image = new NodeExtension({
   addStorage: () => new ImageStorage(),
 
   // -- View ----------------------------------------------------------------------
-  // NOTE: NodeViews are supposed to be unique for each Node (based on the id of
-  //       the node). This is done to persist the state of the node.
-  // addNodeView() {
-  //   return ({ editor, node, getPos }) => {
-  //     if(!isImageNode(node)) throw new Error(`Unexpected node type (${node.type.name}) while adding CodeBlockNode NodeView.`);
-  //     const id = node.attrs[AttributeType.Id];
-  //     if(!id) return {}/*invalid id -- no node view returned*/;
+  defineNodeView: (editor, node, getPos) => {
+      if(!isImageNode(node)) throw new Error(`Unexpected Node: (${node.type.name}) while adding Image NodeView.`);
+      const id = node.attrs[AttributeType.Id];
+      if(!id) throw new Error(`Image does not have an Id when it should by contract.`);
 
-  //     const controller = this.storage.getNodeView(id);
+      const storage = editor.storage.get(node.type.name as NodeName/**/);
+      if(!storage || !(isNodeViewStorage(storage))) throw new Error(`Image does not have a valid storage Id when it should by contract.`);
 
-  //     // Use existing NodeView, update it and return it.
-  //     if(controller) {
-  //       controller.updateProps(getPos);
-  //       return controller;
-  //     } /* else -- controller don't exists */
+      // use existing NodeView, update it and return it
+      const controller = storage.getNodeView(id);
+      if(controller) {
+        controller.updateProps(getPos);
+        return controller;
+      } /* else -- controller don't exists */
 
-  //     // Create a new Controller and NodeView
-  //     return new ImageController(editor, node, this.storage, getPos);
-  //   };
-  // },
+      // create a new Controller and NodeView
+      return new ImageController(editor, node, storage as ImageStorage/*by definition*/, getPos);
+  },
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
