@@ -20,12 +20,13 @@ export const Paragraph = new NodeExtension({
   defineNodeAttributes: (extensionStorage) => ParagraphAttrs,
 
   // -- Spec ----------------------------------------------------------------------
-  partialNodeSpec: {
-    ...ParagraphNodeSpec,
+  partialNodeSpec: { ...ParagraphNodeSpec },
 
-    parseDOM: createExtensionParseRules([ { tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` }, { tag: 'p' }], ParagraphAttrs),
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
+    parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` }, { tag: 'p' }], ParagraphAttrs),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ParagraphAttrs)),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

@@ -1,4 +1,4 @@
-import { NodeSpec } from 'prosemirror-model';
+import { DOMOutputSpec, Node as ProseMirrorNode, NodeSpec, ParseRule } from 'prosemirror-model';
 
 import { AttributeSpecWithParseHTML } from 'notebookEditor/extension/util';
 
@@ -27,5 +27,11 @@ export interface NodeExtensionDefinition extends ExtensionDefinition {
    * the {@link NodeSpec} of the Node added by this Extension, without the Attrs object,
    * since, the parse functions must have access to the Storage of the Extension
    */
-  partialNodeSpec: Exclude<NodeSpec, 'attrs'>;
+  partialNodeSpec: Exclude<NodeSpec, 'attrs' | 'parseDOM' | 'toDOM'>;
+
+  /** define how the Node should be parsed and rendered from the DOM */
+  defineDOMBehavior: (extensionStorage: ExtensionStorageType | undefined/*Extension has no storage*/) => ({
+    parseDOM?: ParseRule[];
+    toDOM?: ((node: ProseMirrorNode) => DOMOutputSpec);
+  });
 }

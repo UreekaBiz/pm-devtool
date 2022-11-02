@@ -15,12 +15,13 @@ export const MarkHolder = new NodeExtension({
   defineNodeAttributes: (extensionStorage) => MarkHolderAttrs,
 
   // -- Spec ----------------------------------------------------------------------
-  partialNodeSpec: {
-    ...MarkHolderNodeSpec,
+  partialNodeSpec: { ...MarkHolderNodeSpec },
 
-    parseDOM: createExtensionParseRules([ { tag: `div[${DATA_NODE_TYPE}="${NodeName.MARK_HOLDER}"]` }], MarkHolderAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/}),
-  },
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
+    parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.MARK_HOLDER}"]` }], MarkHolderAttrs),
+    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/ }),
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

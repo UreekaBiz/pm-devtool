@@ -12,9 +12,12 @@ export class MarkExtension extends Extension {
     super(definition);
 
     const markAttributesDefinition = definition.defineMarkAttributes(this.storage);
+    const markDOMBehavior = definition.defineDOMBehavior(this.storage);
+
     this.markSpec = {
       ...definition.partialMarkSpec,
       attrs: { ...markAttributesDefinition },
+      ...markDOMBehavior,
     };
   }
 }

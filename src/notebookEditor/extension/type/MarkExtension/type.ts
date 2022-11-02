@@ -1,4 +1,4 @@
-import { MarkSpec } from 'prosemirror-model';
+import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, ParseRule } from 'prosemirror-model';
 
 import { AttributeSpecWithParseHTML } from 'notebookEditor/extension/util';
 
@@ -28,4 +28,10 @@ export interface MarkExtensionDefinition extends ExtensionDefinition {
    * since the parse functions must have access to the Storage of the Extension
    */
   partialMarkSpec: Exclude<MarkSpec, 'attrs'>;
+
+  /** define how the Node should be parsed and rendered from the DOM */
+  defineDOMBehavior: (extensionStorage: ExtensionStorageType | undefined/*Extension has no storage*/) => ({
+    parseDOM?: ParseRule[];
+    toDOM?: ((mark: ProseMirrorMark, inline: boolean) => DOMOutputSpec);
+  });
 }

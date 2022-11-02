@@ -12,9 +12,12 @@ export class NodeExtension extends Extension {
     super(definition);
 
     const nodeAttributeDefinition = definition.defineNodeAttributes(this.storage);
+    const nodeDOMBehavior = definition.defineDOMBehavior(this.storage);
+
     this.nodeSpec = {
       ...definition.partialNodeSpec,
       attrs: { ...nodeAttributeDefinition },
+      ...nodeDOMBehavior,
     };
   }
 }

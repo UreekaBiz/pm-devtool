@@ -21,6 +21,9 @@ export const Text = new NodeExtension({
   // -- Spec ----------------------------------------------------------------------
   partialNodeSpec: { ...TextNodeSpec },
 
+  // -- DOM ----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({/*no DOM behavior*/}),
+
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
 

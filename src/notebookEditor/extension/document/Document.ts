@@ -19,6 +19,9 @@ export const Document = new NodeExtension({
   // -- Spec ----------------------------------------------------------------------
   partialNodeSpec: { ...DocumentNodeSpec },
 
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({/*no DOM behavior*/}),
+
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
 
@@ -26,5 +29,5 @@ export const Document = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: () => [documentPlugin()],
+  addProseMirrorPlugins: (editor) => [documentPlugin()],
 });

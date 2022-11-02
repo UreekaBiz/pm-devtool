@@ -15,9 +15,10 @@ export const TextStyle = new MarkExtension({
   defineMarkAttributes: (extensionStorage) => TextStyleAttrs,
 
   // -- Spec ----------------------------------------------------------------------
-  partialMarkSpec: {
-    ...TextStyleMarkSpec,
+  partialMarkSpec: { ...TextStyleMarkSpec },
 
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified
     parseDOM: [
@@ -30,7 +31,7 @@ export const TextStyle = new MarkExtension({
         },
       }],
     toDOM: (mark) => getMarkOutputSpec(mark, getExtensionAttributesObject(mark, TextStyleAttrs)),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

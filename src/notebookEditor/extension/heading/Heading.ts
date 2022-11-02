@@ -26,12 +26,13 @@ export const Heading = new NodeExtension({
   defineNodeAttributes: (extensionStorage) => HeadingAttrs,
 
   // -- Spec ----------------------------------------------------------------------
-  partialNodeSpec: {
-    ...HeadingNodeSpec,
+  partialNodeSpec: { ...HeadingNodeSpec },
 
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     parseDOM: createExtensionParseRules(headingTags, HeadingAttrs),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, HeadingAttrs)),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) =>
