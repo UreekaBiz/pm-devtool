@@ -21,11 +21,13 @@ export const Strikethrough = new MarkExtension({
   name: MarkName.STRIKETHROUGH,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => ({/*no attrs*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  markSpec: {
+  partialMarkSpec: {
     ...StrikethroughMarkSpec,
 
-    attrs: {/*no attributes*/},
 
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified in the ParseRules

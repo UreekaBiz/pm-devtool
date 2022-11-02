@@ -16,11 +16,12 @@ export const Paragraph = new NodeExtension({
   name: NodeName.PARAGRAPH,
   priority: ExtensionPriority.PARAGRAPH,
 
-  // -- Spec ----------------------------------------------------------------------
-  nodeSpec: {
-    ...ParagraphNodeSpec,
+  // -- Attribute -----------------------------------------------------------------
+  defineNodeAttributes: (extensionStorage) => ParagraphAttrs,
 
-    attrs: ParagraphAttrs,
+  // -- Spec ----------------------------------------------------------------------
+  partialNodeSpec: {
+    ...ParagraphNodeSpec,
 
     parseDOM: createExtensionParseRules([ { tag: `div[${DATA_NODE_TYPE}="${NodeName.PARAGRAPH}"]` }, { tag: 'p' }], ParagraphAttrs),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ParagraphAttrs)),

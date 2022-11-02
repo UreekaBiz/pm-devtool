@@ -11,11 +11,12 @@ export const TextStyle = new MarkExtension({
   name: MarkName.TEXT_STYLE,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
-  // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...TextStyleMarkSpec,
+  // -- Attribute -----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => TextStyleAttrs,
 
-    attrs: TextStyleAttrs,
+  // -- Spec ----------------------------------------------------------------------
+  partialMarkSpec: {
+    ...TextStyleMarkSpec,
 
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified

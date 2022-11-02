@@ -15,11 +15,11 @@ export const Text = new NodeExtension({
   name: NodeName.TEXT,
   priority: ExtensionPriority.TEXT,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineNodeAttributes: (extensionStorage) => ({/*no attrs*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  nodeSpec: {
-    ...TextNodeSpec,
-    attrs: {/*no attrs*/},
-  },
+  partialNodeSpec: { ...TextNodeSpec },
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

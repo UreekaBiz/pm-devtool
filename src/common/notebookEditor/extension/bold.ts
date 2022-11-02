@@ -16,7 +16,7 @@ export type BoldAttributes = AttributesTypeFromNodeSpecAttributes<typeof BoldAtt
 // -- Mark Spec -------------------------------------------------------------------
 export const BoldMarkSpec: Readonly<MarkSpec> = {
   // .. Attribute .................................................................
-  attributes: BoldAttributesSpec,
+  attrs: BoldAttributesSpec,
 };
 
 // -- Render Spec -----------------------------------------------------------------

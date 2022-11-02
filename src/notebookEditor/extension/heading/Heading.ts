@@ -22,11 +22,12 @@ export const Heading = new NodeExtension({
   name: NodeName.HEADING,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
-  // -- Spec ----------------------------------------------------------------------
-  nodeSpec: {
-    ...HeadingNodeSpec,
+  // -- Attribute -----------------------------------------------------------------
+  defineNodeAttributes: (extensionStorage) => HeadingAttrs,
 
-    attrs: HeadingAttrs,
+  // -- Spec ----------------------------------------------------------------------
+  partialNodeSpec: {
+    ...HeadingNodeSpec,
 
     parseDOM: createExtensionParseRules(headingTags, HeadingAttrs),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, HeadingAttrs)),

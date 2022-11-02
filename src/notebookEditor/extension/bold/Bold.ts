@@ -30,11 +30,12 @@ export const Bold = new MarkExtension({
   name: MarkName.BOLD,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
-  // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...BoldMarkSpec,
+  // -- Attribute ----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => ({/*no attributes*/}),
 
-    attrs: {/*no attributes*/},
+  // -- Spec ----------------------------------------------------------------------
+  partialMarkSpec: {
+    ...BoldMarkSpec,
 
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified in the ParseRules, but Bold does not have any attributes

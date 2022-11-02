@@ -13,11 +13,11 @@ export const Document = new NodeExtension({
   name: NodeName.DOC,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineNodeAttributes: (extensionStorage) => ({/*no attributes*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  nodeSpec: {
-    ...DocumentNodeSpec,
-    attrs: {/*no attrs*/},
-  },
+  partialNodeSpec: { ...DocumentNodeSpec },
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

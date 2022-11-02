@@ -11,11 +11,12 @@ export const MarkHolder = new NodeExtension({
   name: NodeName.MARK_HOLDER,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
-  // -- Spec ----------------------------------------------------------------------
-  nodeSpec: {
-    ...MarkHolderNodeSpec,
+  // -- Attribute -----------------------------------------------------------------
+  defineNodeAttributes: (extensionStorage) => MarkHolderAttrs,
 
-    attrs: MarkHolderAttrs,
+  // -- Spec ----------------------------------------------------------------------
+  partialNodeSpec: {
+    ...MarkHolderNodeSpec,
 
     parseDOM: createExtensionParseRules([ { tag: `div[${DATA_NODE_TYPE}="${NodeName.MARK_HOLDER}"]` }], MarkHolderAttrs),
     toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/}),
