@@ -7,6 +7,8 @@ import { markCode } from 'notebookEditor/extension/code';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { markItalic } from 'notebookEditor/extension/italic';
+import { markSubScript } from 'notebookEditor/extension/subScript';
+import { markSuperScript } from 'notebookEditor/extension/superScript';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
 import { markUnderline } from 'notebookEditor/extension/underline';
 import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle';
@@ -86,6 +88,8 @@ const TEXT_BLOCK_TOOL_ITEMS: ToolItem[] = [
   markItalic,
   markUnderline,
   markStrikethrough,
+  markSuperScript,
+  markSubScript,
   markCode,
   backgroundColorToolItem,
 
@@ -139,6 +143,8 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'
   [MarkName.BOLD]: { position: 'start', items: [/*none*/] },
   [MarkName.CODE]: { position: 'start', items: [/*none*/] },
   [MarkName.ITALIC]: { position: 'start', items: [/*none*/] },
+  [MarkName.SUB_SCRIPT]: { position: 'start', items: [/*none*/] },
+  [MarkName.SUPER_SCRIPT]: { position: 'start', items: [/*none*/] },
   [MarkName.STRIKETHROUGH]: { position: 'start', items: [/*none*/] },
   [MarkName.TEXT_STYLE]: { position: 'start', items: [/*none*/] },
   [MarkName.UNDERLINE]: { position: 'start', items: [/*none*/] },

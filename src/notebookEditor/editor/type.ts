@@ -13,6 +13,8 @@ import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
 import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
 import { Strikethrough } from 'notebookEditor/extension/strikethrough';
+import { SubScript } from 'notebookEditor/extension/subScript';
+import { SuperScript } from 'notebookEditor/extension/superScript';
 import { Text } from 'notebookEditor/extension/text';
 import { TextStyle } from 'notebookEditor/extension/textStyle';
 import { Underline } from 'notebookEditor/extension/underline';
@@ -37,6 +39,8 @@ export const editorDefinition: Extension[] = [
   MarkHolder,
   Paragraph,
   SelectionHandling,
+  SubScript,
+  SuperScript,
   Strikethrough,
   Text,
   TextStyle,

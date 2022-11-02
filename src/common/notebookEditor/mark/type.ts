@@ -10,6 +10,8 @@ export enum MarkName {
   CODE = 'code',
   ITALIC = 'italic',
   STRIKETHROUGH = 'strikethrough',
+  SUB_SCRIPT = 'subScript',
+  SUPER_SCRIPT = 'superScript',
   TEXT_STYLE = 'textStyle',
   UNDERLINE = 'underline',
 }

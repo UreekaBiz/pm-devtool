@@ -7,6 +7,8 @@ import { HeadingNodeSpec } from './extension/heading';
 import { ItalicMarkSpec } from './extension/italic';
 import { MarkHolderNodeSpec } from './extension/markHolder';
 import { ParagraphNodeSpec } from './extension/paragraph';
+import { SubScriptMarkSpec } from './extension/subScript';
+import { SuperScriptMarkSpec } from './extension/superScript';
 import { StrikethroughMarkSpec } from './extension/strikethrough';
 import { TextNodeSpec } from './extension/text';
 import { TextStyleMarkSpec } from './extension/textStyle';
@@ -31,6 +33,8 @@ export const MarkSpecs: Record<MarkName, MarkSpec> = {
   [MarkName.BOLD]: BoldMarkSpec,
   [MarkName.CODE]: CodeMarkSpec,
   [MarkName.ITALIC]: ItalicMarkSpec,
+  [MarkName.SUB_SCRIPT]: SubScriptMarkSpec,
+  [MarkName.SUPER_SCRIPT]: SuperScriptMarkSpec,
   [MarkName.STRIKETHROUGH]: StrikethroughMarkSpec,
   [MarkName.TEXT_STYLE]: TextStyleMarkSpec,
   [MarkName.UNDERLINE]: UnderlineMarkSpec,

@@ -12,6 +12,8 @@ import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
 import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
+import { SubScriptMarkRendererSpec } from '../extension/subScript';
+import { SuperScriptMarkRendererSpec } from '../extension/superScript';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
 import { UnderlineMarkRendererSpec } from '../extension/underline';
 import { getMarkName, JSONMark, MarkName } from '../mark';
@@ -35,10 +37,12 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
 export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
   [MarkName.BOLD]: BoldMarkRendererSpec,
   [MarkName.CODE]: CodeMarkRendererSpec as any/*FIXME!!!*/,
-  [MarkName.ITALIC]: ItalicMarkRendererSpec as any/*FIXME!!!*/,
+  [MarkName.ITALIC]: ItalicMarkRendererSpec,
+  [MarkName.SUB_SCRIPT]: SubScriptMarkRendererSpec,
+  [MarkName.SUPER_SCRIPT]: SuperScriptMarkRendererSpec,
   [MarkName.STRIKETHROUGH]: StrikethroughMarkRendererSpec,
   [MarkName.TEXT_STYLE]: TextStyleMarkRendererSpec as any/*FIXME!!!*/,
-  [MarkName.UNDERLINE]: UnderlineMarkRendererSpec as any/*FIXME!!!*/,
+  [MarkName.UNDERLINE]: UnderlineMarkRendererSpec,
 };
 
 // == Content =====================================================================

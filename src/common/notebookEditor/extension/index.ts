@@ -6,6 +6,8 @@ export * from './italic';
 export * from './markHolder';
 export * from './paragraph';
 export * from './strikethrough';
+export * from './subScript';
+export * from './superScript';
 export * from './text';
 export * from './textStyle';
 export * from './underline';
