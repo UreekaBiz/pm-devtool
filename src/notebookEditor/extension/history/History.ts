@@ -19,7 +19,7 @@ export const History = new Extension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: () => [
+  addProseMirrorPlugins: (editor) => [
     history({ depth: 100/*PM's default*/, newGroupDelay: 500/*PM's default, ms*/ }),
     keymap({ 'Mod-z': undo, 'Mod-Shift-z': redo }),
   ],

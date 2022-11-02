@@ -5,9 +5,18 @@ import { camelToKebabCase, generateNodeId, getHeadingThemeValue, getMarkValue, g
 import { Editor } from 'notebookEditor/editor';
 import { NodeViewStorage } from 'notebookEditor/model';
 
-import { AttributeSpecWithParseHTML } from '../type';
-
 // ********************************************************************************
+// == Type ========================================================================
+export type DefaultAttributeType = string | number | boolean | string[] | undefined;
+export type ParseHTMLAttributeType = (element: HTMLElement) => string | string[] | boolean | number | null;
+
+// == Interface ===================================================================
+/** defines how the attributes of an extension's spec should look when included  */
+export interface AttributeSpecWithParseHTML {
+  default: DefaultAttributeType;
+  parseHTML: ParseHTMLAttributeType;
+}
+
 // == Util ========================================================================
 /**
  * Sets the parsing behavior that will be used when parsing an attribute

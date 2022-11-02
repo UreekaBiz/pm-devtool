@@ -30,12 +30,14 @@ export const Bold = new MarkExtension({
   name: MarkName.BOLD,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute ----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => ({/*no attrs*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...BoldMarkSpec,
+  partialMarkSpec: { ...BoldMarkSpec },
 
-    attrs: {/*no attributes*/},
-
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified in the ParseRules, but Bold does not have any attributes
     parseDOM: [
@@ -44,7 +46,7 @@ export const Bold = new MarkExtension({
       { style: 'font-weight', getAttrs: wrapGetStyleAttrs((value) => cssFontWeightRegex.test(value)) },
     ],
     toDOM: (mark) => getMarkOutputSpec(mark, {/*no attrs*/}),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [

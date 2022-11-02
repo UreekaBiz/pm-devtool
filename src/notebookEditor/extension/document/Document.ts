@@ -13,11 +13,14 @@ export const Document = new NodeExtension({
   name: NodeName.DOC,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineNodeAttributes: (extensionStorage) => ({/*no attributes*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  nodeSpec: {
-    ...DocumentNodeSpec,
-    attrs: {/*no attrs*/},
-  },
+  partialNodeSpec: { ...DocumentNodeSpec },
+
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({/*no DOM behavior*/}),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
@@ -26,5 +29,5 @@ export const Document = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: () => [documentPlugin()],
+  addProseMirrorPlugins: (editor) => [documentPlugin()],
 });

@@ -21,12 +21,14 @@ export const Strikethrough = new MarkExtension({
   name: MarkName.STRIKETHROUGH,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => ({/*no attrs*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...StrikethroughMarkSpec,
+  partialMarkSpec: { ...StrikethroughMarkSpec },
 
-    attrs: {/*no attributes*/},
-
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified in the ParseRules
     parseDOM: [
@@ -40,7 +42,7 @@ export const Strikethrough = new MarkExtension({
       },
     ],
     toDOM: (mark) => getMarkOutputSpec(mark, {/*no attrs*/}),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [createMarkInputRule(strikethroughInputRegEx, getStrikethroughMarkType(editor.view.state.schema))],

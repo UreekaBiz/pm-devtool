@@ -104,20 +104,20 @@ export class Editor {
   private initializePlugins(): Plugin[] {
     // get InputRules
     const inputRules = this.extensions.reduce<InputRule[]>((pluginArray, sortedExtension) => {
-      pluginArray.push(...sortedExtension.props.inputRules(this));
+      pluginArray.push(...sortedExtension.definition.inputRules(this));
       return pluginArray;
     }, [/*initially empty*/]);
 
     // get PasteRules
     const pasteRules = this.extensions.reduce<PasteRule[]>((pluginArray, sortedExtension) => {
-      pluginArray.push(...sortedExtension.props.pasteRules(this));
+      pluginArray.push(...sortedExtension.definition.pasteRules(this));
       return pluginArray;
     }, [/*initially empty*/]);
     const pasteRulePlugins = createPasteRulePlugins({ rules: pasteRules });
 
     // add Extension plugins
     const initializedPlugins = this.extensions.reduce<Plugin[]>((pluginArray, sortedExtension) => {
-      pluginArray.push(...sortedExtension.props.addProseMirrorPlugins(this));
+      pluginArray.push(...sortedExtension.definition.addProseMirrorPlugins(this, sortedExtension.storage));
       return pluginArray;
     }, [inputRulesPlugin({ rules: inputRules }), ...pasteRulePlugins]);
 
@@ -128,7 +128,7 @@ export class Editor {
   private initializeStorage() {
     const newStorage = new Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>();
     this.extensions.forEach(extension => {
-      const { name, storage } = extension.props;
+      const { name, storage } = extension;
       if(storage)  {
         newStorage.set(name as (NodeName | MarkName)/*by definition*/, storage);
       } /* else -- Extension does not add Storage, do nothing */
