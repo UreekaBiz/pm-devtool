@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 
-import { isNodeSelection, setNodeSelectionCommand, MarkName } from 'common';
+import { isNodeSelection, setNodeSelectionCommand, MarkName, NodeName } from 'common';
 
-import { getDialogStorage } from 'notebookEditor/model/DialogStorage';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
+import { getDialogStorage } from 'notebookEditor/model/DialogStorage';
 import { unsetLinkCommand } from 'notebookEditor/extension/link/command';
 import { isValidHTMLElement } from 'notebookEditor/extension/util/parse';
 import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
+import { ImageDialog } from './ImageDialog';
 import { LinkDialog } from './LinkDialog';
 
 // ********************************************************************************
@@ -17,12 +18,26 @@ export const EditorUserInteractions = () => {
   const editor = useValidatedEditor();
 
   // == State =====================================================================
+  // -- Image ---------------------------------------------------------------------
+  const imageStorage = getDialogStorage(editor, NodeName.IMAGE);
+  const shouldInsertImage = imageStorage?.getShouldInsertNodeOrMark();
+  const [isCreatingImage, setIsCreatingImage] = useState(false);
+
   // -- Link ----------------------------------------------------------------------
   const linkStorage = getDialogStorage(editor, MarkName.LINK);
   const shouldInsertLink = linkStorage?.getShouldInsertNodeOrMark();
   const [isCreatingLink, setIsCreatingLink] = useState(false);
 
   // == Effect ====================================================================
+  // -- Image ---------------------------------------------------------------------
+  // listen for Editor storage to see if image should be modified
+  // SEE: notebookEditor/extension/image.ts
+  useEffect(() => {
+    if(!shouldInsertImage) return;
+
+    setIsCreatingImage(true);
+  }, [shouldInsertImage]);
+
   // -- Link ----------------------------------------------------------------------
   // listen for Editor storage to see if link should be inserted (SEE: Link.ts)
   useEffect(() => {
@@ -43,6 +58,19 @@ export const EditorUserInteractions = () => {
         event.stopPropagation();
         return/*nothing left to do*/;
       } /* else -- not trying to save the page */
+
+      // add Image shortcut
+      if(event.code === 'KeyI' && event.ctrlKey && event.altKey) {
+        event.preventDefault();
+        // NOTE: this is needed to remove the focus of the Editor so that
+        //       the cursor is in the right position when the Editor is
+        //       focused back by closing the dialog
+        if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
+        /* else -- is not active element */
+
+        setIsCreatingImage(true);
+        return/*nothing left to do*/;
+      } /* else -- not creating image */
 
       // add Link shortcut
       if(event.code === 'KeyK' && event.metaKey) {
@@ -100,6 +128,19 @@ export const EditorUserInteractions = () => {
 
 
   // == Handler ===================================================================
+  // -- Image ---------------------------------------------------------------------
+  const handleCloseImageDialog = () => {
+    if(!editor || !imageStorage) return/*nothing to do*/;
+
+    setIsCreatingImage(false);
+    imageStorage.setShouldInsertNodeOrMark(false);
+
+    // NOTE: if Editor is destroyed before the timeout runs, it wont be focused
+    //       (i.e. no major side effects besides that)
+    // focus Editor after the react re-render
+    setTimeout(() => editor.view.focus(), 150/*T&E*/);
+  };
+
   // -- Link ----------------------------------------------------------------------
   const handleCloseLinkDialog = () => {
     if(!editor || !linkStorage) return;
@@ -115,6 +156,8 @@ export const EditorUserInteractions = () => {
 
   // == UI ========================================================================
   if(!editor) return null/*nothing to do*/;
+
+  if(isCreatingImage) return <ImageDialog editor={editor} isOpen={true/*by definition*/} onClose={handleCloseImageDialog} />;
 
   if(isCreatingLink) return <LinkDialog editor={editor} isOpen={isCreatingLink} onClose={handleCloseLinkDialog} />;
 
