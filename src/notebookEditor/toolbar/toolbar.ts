@@ -7,6 +7,7 @@ import { markCode } from 'notebookEditor/extension/code';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { markItalic } from 'notebookEditor/extension/italic';
+import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link';
 import { markSubScript } from 'notebookEditor/extension/subScript';
 import { markSuperScript } from 'notebookEditor/extension/superScript';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
@@ -145,7 +146,14 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
   [MarkName.BOLD]: defaultUniqueToolItemConfiguration,
   [MarkName.CODE]: defaultUniqueToolItemConfiguration,
   [MarkName.ITALIC]: defaultUniqueToolItemConfiguration,
-  [MarkName.LINK]: defaultUniqueToolItemConfiguration,
+  [MarkName.LINK]: {
+    position: 'end',
+    items: [
+      linkURLToolItem,
+      linkTargetToolItem,
+      linkColorToolItem,
+    ],
+  },
   [MarkName.REPLACED_TEXT_MARK]: defaultUniqueToolItemConfiguration,
   [MarkName.SUB_SCRIPT]: defaultUniqueToolItemConfiguration,
   [MarkName.SUPER_SCRIPT]: defaultUniqueToolItemConfiguration,

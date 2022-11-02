@@ -83,7 +83,10 @@ export const DefaultTheme: Theme = {
     [MarkName.BOLD]:  {/*no defined value*/},
     [MarkName.CODE]:  {/*no defined value*/},
     [MarkName.ITALIC]:  {/*no defined value*/},
-    [MarkName.LINK]:  {/*no defined value*/},
+    [MarkName.LINK]:  {
+      [AttributeType.Color]: '#1A73E8',
+      [AttributeType.TextDecoration]: 'underline',
+    },
     [MarkName.REPLACED_TEXT_MARK]:  {/*no defined value*/},
     [MarkName.SUB_SCRIPT]:  {/*no defined value*/},
     [MarkName.SUPER_SCRIPT]:  {/*no defined value*/},
@@ -148,7 +151,10 @@ export const GoogleDocsTheme: Theme = {
     [MarkName.BOLD]:  {/*no defined value*/},
     [MarkName.CODE]:  {/*no defined value*/},
     [MarkName.ITALIC]:  {/*no defined value*/},
-    [MarkName.LINK]:  {/*no defined value*/},
+    [MarkName.LINK]:  {
+      [AttributeType.Color]: '#1A73E8',
+      [AttributeType.TextDecoration]: 'underline',
+    },
     [MarkName.REPLACED_TEXT_MARK]:  {/*no defined value*/},
     [MarkName.SUB_SCRIPT]:  {/*no defined value*/},
     [MarkName.SUPER_SCRIPT]:  {/*no defined value*/},
