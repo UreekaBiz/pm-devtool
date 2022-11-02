@@ -10,6 +10,7 @@ import { HeadingNodeRendererSpec } from '../extension/heading';
 import { ItalicMarkRendererSpec } from '../extension/italic';
 import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
+import { ReplacedTextMarkMarkRendererSpec } from '../extension/replacedTextMark';
 import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { SubScriptMarkRendererSpec } from '../extension/subScript';
@@ -38,6 +39,7 @@ export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
   [MarkName.BOLD]: BoldMarkRendererSpec,
   [MarkName.CODE]: CodeMarkRendererSpec as any/*FIXME!!!*/,
   [MarkName.ITALIC]: ItalicMarkRendererSpec,
+  [MarkName.REPLACED_TEXT_MARK]: ReplacedTextMarkMarkRendererSpec,
   [MarkName.SUB_SCRIPT]: SubScriptMarkRendererSpec,
   [MarkName.SUPER_SCRIPT]: SuperScriptMarkRendererSpec,
   [MarkName.STRIKETHROUGH]: StrikethroughMarkRendererSpec,

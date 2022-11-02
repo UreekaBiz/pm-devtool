@@ -11,6 +11,7 @@ import { History } from 'notebookEditor/extension/history';
 import { Italic } from 'notebookEditor/extension/italic';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
+import { ReplacedTextMark } from 'notebookEditor/extension/replacedTextMark';
 import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
 import { Strikethrough } from 'notebookEditor/extension/strikethrough';
 import { SubScript } from 'notebookEditor/extension/subScript';
@@ -38,6 +39,7 @@ export const editorDefinition: Extension[] = [
   Italic,
   MarkHolder,
   Paragraph,
+  ReplacedTextMark,
   SelectionHandling,
   SubScript,
   SuperScript,

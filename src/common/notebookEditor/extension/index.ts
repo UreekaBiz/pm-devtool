@@ -5,6 +5,7 @@ export * from './heading';
 export * from './italic';
 export * from './markHolder';
 export * from './paragraph';
+export * from './replacedTextMark';
 export * from './strikethrough';
 export * from './subScript';
 export * from './superScript';
