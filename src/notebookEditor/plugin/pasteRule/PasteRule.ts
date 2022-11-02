@@ -12,9 +12,10 @@ const UI_EVENT_META = 'uiEvent';
 const DATA_PM_SLICE = 'data-pm-slice';
 
 // == Type ========================================================================
-type PasteRuleMatch = { index: number; text: string; replaceWith?: string; match?: RegExpMatchArray; data?: Record<string, any>; }
+export type ExtendedParseRuleRegExpMatchArray = RegExpMatchArray & { data?: any/*not known*/; }
+type PasteRuleMatch = { index: number; text: string; replaceWith?: string; match?: ExtendedParseRuleRegExpMatchArray; data?: Record<string, any>; }
 export type PasteRuleMatcher = RegExp | ((text: string) => PasteRuleMatch[] | null | undefined);
-type PasteRuleHandlerType = (state: EditorState, match: RegExpMatchArray, start: number, end: number) => Transaction | null;
+type PasteRuleHandlerType = (state: EditorState, match: ExtendedParseRuleRegExpMatchArray, start: number, end: number) => Transaction | null;
 
 // == Class =======================================================================
 export class PasteRule {
