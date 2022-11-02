@@ -145,6 +145,7 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
   [MarkName.BOLD]: defaultUniqueToolItemConfiguration,
   [MarkName.CODE]: defaultUniqueToolItemConfiguration,
   [MarkName.ITALIC]: defaultUniqueToolItemConfiguration,
+  [MarkName.LINK]: defaultUniqueToolItemConfiguration,
   [MarkName.REPLACED_TEXT_MARK]: defaultUniqueToolItemConfiguration,
   [MarkName.SUB_SCRIPT]: defaultUniqueToolItemConfiguration,
   [MarkName.SUPER_SCRIPT]: defaultUniqueToolItemConfiguration,

@@ -9,6 +9,7 @@ import { GapCursor } from 'notebookEditor/extension/gapcursor';
 import { Heading } from 'notebookEditor/extension/heading';
 import { History } from 'notebookEditor/extension/history';
 import { Italic } from 'notebookEditor/extension/italic';
+import { Link } from 'notebookEditor/extension/link';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
 import { ReplacedTextMark } from 'notebookEditor/extension/replacedTextMark';
@@ -37,6 +38,7 @@ export const editorDefinition: Extension[] = [
   History,
   Heading,
   Italic,
+  Link,
   MarkHolder,
   Paragraph,
   ReplacedTextMark,

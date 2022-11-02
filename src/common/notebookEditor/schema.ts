@@ -5,6 +5,7 @@ import { CodeMarkSpec } from './extension/code';
 import { DocumentNodeSpec } from './extension/document';
 import { HeadingNodeSpec } from './extension/heading';
 import { ItalicMarkSpec } from './extension/italic';
+import { LinkMarkSpec } from './extension/link';
 import { MarkHolderNodeSpec } from './extension/markHolder';
 import { ParagraphNodeSpec } from './extension/paragraph';
 import { ReplacedTextMarkMarkSpec } from './extension/replacedTextMark';
@@ -34,6 +35,7 @@ export const MarkSpecs: Record<MarkName, MarkSpec> = {
   [MarkName.BOLD]: BoldMarkSpec,
   [MarkName.CODE]: CodeMarkSpec,
   [MarkName.ITALIC]: ItalicMarkSpec,
+  [MarkName.LINK]: LinkMarkSpec,
   [MarkName.REPLACED_TEXT_MARK]: ReplacedTextMarkMarkSpec,
   [MarkName.SUB_SCRIPT]: SubScriptMarkSpec,
   [MarkName.SUPER_SCRIPT]: SuperScriptMarkSpec,

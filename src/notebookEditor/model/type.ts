@@ -35,6 +35,9 @@ export enum ExtensionPriority {
   // SEE: notebookEditor/type.ts
   PARAGRAPH = 118,
 
+  // NOTE: Link must have a higher priority than other marks so that it gets
+  //       preference over them when creating, pasting or applying parse rules
+  LINK = 117/*T&E*/,
 
   // NOTE: since Suggestions have specific behavior for the Enter and arrow
   //       keydown events, they must run before other Extensions with these

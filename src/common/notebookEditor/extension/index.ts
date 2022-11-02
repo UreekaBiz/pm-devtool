@@ -3,6 +3,7 @@ export * from './code';
 export * from './document';
 export * from './heading';
 export * from './italic';
+export * from './link';
 export * from './markHolder';
 export * from './paragraph';
 export * from './replacedTextMark';

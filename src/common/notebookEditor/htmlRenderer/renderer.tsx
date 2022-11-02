@@ -8,6 +8,7 @@ import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { ItalicMarkRendererSpec } from '../extension/italic';
+import { LinkMarkRendererSpec } from '../extension/link';
 import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
 import { ReplacedTextMarkMarkRendererSpec } from '../extension/replacedTextMark';
@@ -39,6 +40,7 @@ export const MarkRendererSpecs: Record<MarkName, MarkRendererSpec> = {
   [MarkName.BOLD]: BoldMarkRendererSpec,
   [MarkName.CODE]: CodeMarkRendererSpec as any/*FIXME!!!*/,
   [MarkName.ITALIC]: ItalicMarkRendererSpec,
+  [MarkName.LINK]: LinkMarkRendererSpec as any/*FIXME!!!*/,
   [MarkName.REPLACED_TEXT_MARK]: ReplacedTextMarkMarkRendererSpec,
   [MarkName.SUB_SCRIPT]: SubScriptMarkRendererSpec,
   [MarkName.SUPER_SCRIPT]: SuperScriptMarkRendererSpec,

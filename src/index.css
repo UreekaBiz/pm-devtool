@@ -22,6 +22,10 @@
   --ACTIVE_BUTTON_COLOR: #E2E8F0;
   --HOVER_BUTTON_COLOR: #EDF2F7/*currently only used through CSS file*/;
 }
+/* -- Actionable Node ---------------------------------------------------------- */
+.Editor-actionable [actionable-node]:hover {
+  cursor: pointer;
+}
 
 /* .. BlurredSelection ......................................................... */
 .ProseMirror-focused .selected_text {
