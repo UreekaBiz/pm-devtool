@@ -157,7 +157,6 @@ export class Editor {
 
       return nodeViewDefinitionObj;
     }, {/*initially empty*/});
-
     return nodeViewDefinitionObj;
   }
 
