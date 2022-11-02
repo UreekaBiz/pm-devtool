@@ -1,4 +1,5 @@
 import { ParagraphAttributes, AttributeType, SetAttributeType } from 'common';
+
 import { NodeExtensionAttributes } from '../type';
 import { setAttributeParsingBehavior } from '../util';
 

@@ -25,6 +25,7 @@ export const Link = new MarkExtension({
     parseDOM: [{ tag: DEFAULT_LINK_TAG }],
     toDOM: (mark) => getMarkOutputSpec(mark, LinkAttrs),
   },
+
   // -- Storage -------------------------------------------------------------------
   storage: new DialogStorage(),
 
