@@ -1,4 +1,4 @@
-import { Attributes, AttributeType } from '../attribute';
+import { Attributes, AttributeType, TextAlign, VerticalAlign } from '../attribute';
 import { HeadingLevel } from '../extension/heading';
 import { DATA_NODE_TYPE } from '../htmlRenderer/type';
 import { MarkName } from '../mark';
@@ -65,6 +65,13 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginRight]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
+    },
+    [NodeName.IMAGE]: {
+      [AttributeType.Color]: '#000',
+      [AttributeType.BorderWidth]: '1px',
+      [AttributeType.BorderStyle]: 'solid',
+      [AttributeType.TextAlign]: TextAlign.left,
+      [AttributeType.VerticalAlign]: VerticalAlign.bottom,
     },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
@@ -133,6 +140,13 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
+    },
+    [NodeName.IMAGE]: {
+      [AttributeType.Color]: '#353744',
+      [AttributeType.BorderWidth]: '1px',
+      [AttributeType.BorderStyle]: 'solid',
+      [AttributeType.TextAlign]: TextAlign.left,
+      [AttributeType.VerticalAlign]: VerticalAlign.bottom,
     },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {

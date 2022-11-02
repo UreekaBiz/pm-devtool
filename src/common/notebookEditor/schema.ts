@@ -4,6 +4,7 @@ import { BoldMarkSpec } from './extension/bold';
 import { CodeMarkSpec } from './extension/code';
 import { DocumentNodeSpec } from './extension/document';
 import { HeadingNodeSpec } from './extension/heading';
+import { ImageNodeSpec } from './extension/image';
 import { ItalicMarkSpec } from './extension/italic';
 import { LinkMarkSpec } from './extension/link';
 import { MarkHolderNodeSpec } from './extension/markHolder';
@@ -25,6 +26,7 @@ import { NodeName } from './node';
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.DOC]: DocumentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
+  [NodeName.IMAGE]: ImageNodeSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
   [NodeName.TEXT]: TextNodeSpec,

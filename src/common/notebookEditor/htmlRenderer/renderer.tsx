@@ -7,6 +7,7 @@ import { CodeMarkRendererSpec } from '../extension/code';
 import { BoldMarkRendererSpec } from '../extension/bold';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
+import { ImageNodeRendererSpec } from '../extension/image';
 import { ItalicMarkRendererSpec } from '../extension/italic';
 import { LinkMarkRendererSpec } from '../extension/link';
 import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
@@ -31,6 +32,7 @@ import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.DOC]: DocumentNodeRendererSpec,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.IMAGE]: ImageNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.MARK_HOLDER]: MarkHolderNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.PARAGRAPH]: ParagraphNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.TEXT]: TextNodeRendererSpec,
