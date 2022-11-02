@@ -2,7 +2,7 @@
 import { getNodeOutputSpec, ImageNodeSpec, NodeName, DATA_NODE_TYPE, DEFAULT_IMAGE_PARSE_TAG } from 'common';
 
 import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
-import { ImageAttrs } from './attribute';
+import { getImageAttrs } from './attribute';
 import { ImageStorage } from './nodeView/storage';
 
 // ********************************************************************************
@@ -12,18 +12,20 @@ export const Image = new NodeExtension({
   name: NodeName.IMAGE,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineNodeAttributes: (extensionStorage) => getImageAttrs(extensionStorage),
+
   // -- Spec ----------------------------------------------------------------------
-  nodeSpec: {
-    ...ImageNodeSpec,
+  partialNodeSpec: { ...ImageNodeSpec },
 
-    attrs: ImageAttrs,
-
-    parseDOM: createExtensionParseRules([ { tag: `${DEFAULT_IMAGE_PARSE_TAG}` }, { tag: `span[${DATA_NODE_TYPE}="${NodeName.IMAGE}"]` }], ImageAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ImageAttrs), true/*is Leaf*/),
-  },
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
+    parseDOM: createExtensionParseRules([ { tag: `${DEFAULT_IMAGE_PARSE_TAG}` }, { tag: `span[${DATA_NODE_TYPE}="${NodeName.IMAGE}"]` }], getImageAttrs(extensionStorage)),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, getImageAttrs(extensionStorage)), true/*is Leaf*/),
+  }),
 
   // -- Storage -------------------------------------------------------------------
-  storage: new ImageStorage(),
+  addStorage: () => new ImageStorage(),
 
   // -- View ----------------------------------------------------------------------
   // NOTE: NodeViews are supposed to be unique for each Node (based on the id of

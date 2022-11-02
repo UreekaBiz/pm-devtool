@@ -3,7 +3,9 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { camelToKebabCase, generateNodeId, getHeadingThemeValue, getMarkValue, getNodeName, getSelectedNode, getThemeValue, isHeadingNode, isTextNode, mergeAttributeValues, AttributeType, HeadingLevel, InvalidMergedAttributeValue, MarkName, MergedAttributeValue, SetAttributeType } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
-import { NodeViewStorage } from 'notebookEditor/model';
+import { isNodeViewStorage } from 'notebookEditor/model';
+
+import { ExtensionStorageType } from '../type';
 
 // ********************************************************************************
 // == Type ========================================================================
@@ -67,10 +69,12 @@ export const setAttributeParsingBehavior = (name: string, type: SetAttributeType
  *  performed. */
 // NOTE: Pasting a node will only create a new unique id when there is already a
 //       node of the same type with the same id.
-export const uniqueIdParsingBehavior = (storage: NodeViewStorage<any>) => {
+export const uniqueIdParsingBehavior = (storage: ExtensionStorageType) => {
   return {
     default: undefined/*no default*/,
     parseHTML: (element: HTMLElement) => {
+      if(!isNodeViewStorage(storage)) return generateNodeId();
+
       const id = element.getAttribute(AttributeType.Id);
       const nodeView = id ? storage.getNodeView(id) : undefined/*none*/;
 

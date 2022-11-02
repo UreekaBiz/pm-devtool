@@ -15,12 +15,14 @@ export const Underline = new MarkExtension({
   name: MarkName.UNDERLINE,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => ({/*no attrs*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...UnderlineMarkSpec,
+  partialMarkSpec: { ...UnderlineMarkSpec },
 
-    attrs: {/*no attributes*/},
-
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified in the ParseRules, but Bold does not have any attributes
     parseDOM: [
@@ -32,7 +34,7 @@ export const Underline = new MarkExtension({
       },
     ],
     toDOM: (mark) => getMarkOutputSpec(mark, {/*no attrs*/}),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

@@ -25,12 +25,14 @@ export const Italic = new MarkExtension({
   name: MarkName.ITALIC,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => ({/*no attrs*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...ItalicMarkSpec,
+  partialMarkSpec: { ...ItalicMarkSpec },
 
-    attrs: {/*no attributes*/},
-
+  // -- DOM ----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified in the ParseRules, but Italic does not have any attributes
     parseDOM: [
@@ -51,7 +53,7 @@ export const Italic = new MarkExtension({
       { style: 'font-style=italic' },
     ],
     toDOM: (mark) => getMarkOutputSpec(mark, {/*no attrs*/}),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [

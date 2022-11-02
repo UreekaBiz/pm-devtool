@@ -16,18 +16,20 @@ export const Link = new MarkExtension({
   name: MarkName.LINK,
   priority: ExtensionPriority.LINK,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => LinkAttrs,
+
   // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...LinkMarkSpec,
+  partialMarkSpec: { ...LinkMarkSpec },
 
-    attrs: LinkAttrs,
-
+  // -- DOM -----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     parseDOM: [{ tag: DEFAULT_LINK_TAG }],
     toDOM: (mark) => getMarkOutputSpec(mark, LinkAttrs),
-  },
+  }),
 
   // -- Storage -------------------------------------------------------------------
-  storage: new DialogStorage(),
+  addStorage: () => new DialogStorage(),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

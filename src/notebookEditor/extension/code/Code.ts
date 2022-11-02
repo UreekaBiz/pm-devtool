@@ -22,17 +22,19 @@ export const Code = new MarkExtension({
   name: MarkName.CODE,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
+  // -- Attribute -----------------------------------------------------------------
+  defineMarkAttributes: (extensionStorage) => ({/*no attrs*/}),
+
   // -- Spec ----------------------------------------------------------------------
-  markSpec: {
-    ...CodeMarkSpec,
+  partialMarkSpec: { ...CodeMarkSpec },
 
-    attrs: {/*no attributes*/},
-
+  // -- DOM ----------------------------------------------------------------------
+  defineDOMBehavior: (extensionStorage) => ({
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
-    //       be specified in the ParseRules, but Bold does not have any attributes
+    //       be specified in the ParseRules, but Code does not have any attributes
     parseDOM: [safeParseTag('code')],
     toDOM: (mark) => getMarkOutputSpec(mark, {/*no attrs*/}),
-  },
+  }),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [createMarkInputRule(backtickInputRegex, getCodeMarkType(editor.view.state.schema))],
