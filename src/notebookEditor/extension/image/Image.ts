@@ -32,22 +32,22 @@ export const Image = new NodeExtension({
 
   // -- View ----------------------------------------------------------------------
   defineNodeView: (editor, node, getPos) => {
-      if(!isImageNode(node)) throw new Error(`Unexpected Node: (${node.type.name}) while adding Image NodeView.`);
-      const id = node.attrs[AttributeType.Id];
-      if(!id) throw new Error(`Image does not have an Id when it should by contract.`);
+    if(!isImageNode(node)) throw new Error(`Unexpected Node: (${node.type.name}) while adding Image NodeView.`);
+    const id = node.attrs[AttributeType.Id];
+    if(!id) throw new Error(`Image does not have an Id when it should by contract.`);
 
-      const storage = editor.storage.get(node.type.name as NodeName/**/);
-      if(!storage || !(isNodeViewStorage(storage))) throw new Error(`Image does not have a valid storage Id when it should by contract.`);
+    const storage = editor.storage.get(node.type.name as NodeName/**/);
+    if(!storage || !(isNodeViewStorage(storage))) throw new Error(`Image does not have a valid storage Id when it should by contract.`);
 
-      // use existing NodeView, update it and return it
-      const controller = storage.getNodeView(id);
-      if(controller) {
-        controller.updateProps(getPos);
-        return controller;
-      } /* else -- controller don't exists */
+    // use existing NodeView, update it and return it
+    const controller = storage.getNodeView(id);
+    if(controller) {
+      controller.updateProps(getPos);
+      return controller;
+    } /* else -- controller don't exists */
 
-      // create a new Controller and NodeView
-      return new ImageController(editor, node, storage as ImageStorage/*by definition*/, getPos);
+    // create a new Controller and NodeView
+    return new ImageController(editor, node, storage as ImageStorage/*by definition*/, getPos);
   },
 
   // -- Input ---------------------------------------------------------------------
