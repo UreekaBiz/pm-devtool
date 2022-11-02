@@ -2,11 +2,11 @@ import { MarkType } from 'prosemirror-model';
 
 import { getMarksBetween } from 'common';
 
-import { ExtendedParseRuleRegExpMatchArray, PasteRule, PasteRuleMatcher } from './PasteRule';
+import { PasteRule, PasteRuleMatcher } from './PasteRule';
 
 // ********************************************************************************
 // == Type ========================================================================
-type MarkPasteRuleGetAttrsType = Record<string, any> | ((match: ExtendedParseRuleRegExpMatchArray) => Record<string, any>) | false | null;
+type MarkPasteRuleGetAttrsType = Record<string, any> | ((match: RegExpMatchArray) => Record<string, any>) | false | null;
 
 // == Mark ========================================================================
 /**
