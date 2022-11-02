@@ -125,7 +125,9 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
  * the given position determines whether they appear at the start or at the
  * end of their neighboring default ToolItems
  */
-const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'; items: ToolItem[]; }> = {
+type UniqueToolItemConfiguration = { position: 'start' | 'end'; items: ToolItem[]; };
+const defaultUniqueToolItemConfiguration: UniqueToolItemConfiguration= { position: 'start', items: [/*none*/] };
+const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration> = {
   // -- Node ----------------------------------------------------------------------
   [NodeName.DOC]: {
     position: 'end',
@@ -134,18 +136,18 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, { position: 'start' | 'end'
       setThemeToolItem,
     ],
   },
-  [NodeName.HEADING]: { position: 'start', items: [/*none*/] },
-  [NodeName.MARK_HOLDER]: { position: 'start', items: [/*none*/] },
-  [NodeName.PARAGRAPH]: { position: 'start', items: [/*none*/] },
-  [NodeName.TEXT]: { position: 'start', items: [/*none*/] },
+  [NodeName.HEADING]: defaultUniqueToolItemConfiguration,
+  [NodeName.MARK_HOLDER]: defaultUniqueToolItemConfiguration,
+  [NodeName.PARAGRAPH]: defaultUniqueToolItemConfiguration,
+  [NodeName.TEXT]: defaultUniqueToolItemConfiguration,
 
   // -- Mark ----------------------------------------------------------------------
-  [MarkName.BOLD]: { position: 'start', items: [/*none*/] },
-  [MarkName.CODE]: { position: 'start', items: [/*none*/] },
-  [MarkName.ITALIC]: { position: 'start', items: [/*none*/] },
-  [MarkName.SUB_SCRIPT]: { position: 'start', items: [/*none*/] },
-  [MarkName.SUPER_SCRIPT]: { position: 'start', items: [/*none*/] },
-  [MarkName.STRIKETHROUGH]: { position: 'start', items: [/*none*/] },
-  [MarkName.TEXT_STYLE]: { position: 'start', items: [/*none*/] },
-  [MarkName.UNDERLINE]: { position: 'start', items: [/*none*/] },
+  [MarkName.BOLD]: defaultUniqueToolItemConfiguration,
+  [MarkName.CODE]: defaultUniqueToolItemConfiguration,
+  [MarkName.ITALIC]: defaultUniqueToolItemConfiguration,
+  [MarkName.SUB_SCRIPT]: defaultUniqueToolItemConfiguration,
+  [MarkName.SUPER_SCRIPT]: defaultUniqueToolItemConfiguration,
+  [MarkName.STRIKETHROUGH]: defaultUniqueToolItemConfiguration,
+  [MarkName.TEXT_STYLE]: defaultUniqueToolItemConfiguration,
+  [MarkName.UNDERLINE]: defaultUniqueToolItemConfiguration,
 };
