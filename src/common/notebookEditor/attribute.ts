@@ -13,12 +13,21 @@ export enum SetAttributeType {
   ARRAY = 'array'
 }
 export type Attributes = Partial<Record<AttributeType, any>>;
-export type AttributeValue = string | undefined;
+export type AttributeValue = string | number | undefined;
 export type HTMLAttributes = Record<string, AttributeValue>;
 
-// Is there any other type of attribute that is not a string? If so add it below.
 export enum AttributeType {
   // -- CSS Styles ----------------------------------------------------------------
+  BackgroundColor = 'backgroundColor',
+
+  BorderColor = 'borderColor',
+  BorderTop = 'borderTop',
+  BorderBottom = 'borderBottom',
+  BorderLeft = 'borderLeft',
+  BorderRight = 'borderRight',
+  BorderStyle = 'borderStyle',
+  BorderWidth = 'borderWidth',
+
   Width = 'width',
   Height = 'height',
 
@@ -33,34 +42,84 @@ export enum AttributeType {
   PaddingRight = 'paddingRight',
 
   // -- Text Style ----------------------------------------------------------------
-  BackgroundColor = 'backgroundColor',
   Color = 'color',
+  FontFamily = 'fontFamily',
+  FontWeight = 'fontWeight',
   FontSize = 'fontSize',
+  LineHeight = 'lineHeight',
   TextAlign = 'textAlign',
+  TextDecoration = 'textDecoration',
   VerticalAlign = 'verticalAlign',
 
   // -- Custom --------------------------------------------------------------------
   // .. General ...................................................................
   Id = 'id',
-
-  // NOTE: this attribute is used by paste handlers whenever Nodes that have no
-  //       whose Content is managed by their NodeView are parsed for their content
   Text = 'text',
+
+  // .. AsyncNode .................................................................
+  Status = 'status',
+
+  // .. CodeBlock .................................................................
+  Type = 'type',
+  Wrap = 'wrap',
+
+  // .. CodeBlockReference ........................................................
+  CodeBlockReference = 'codeBlockReference',
+  LeftDelimiter = 'leftDelimiter',
+  RightDelimiter = 'rightDelimiter',
+
+  // .. Demo Async Node ...........................................................
+  CodeBlockReferences = 'codeBlockReferences',
+  CodeBlockHashes = 'codeBlockHashes',
+  Delay = 'delay',
+
+  // .. Demo 2 Async Node .........................................................
+  TextToReplace = 'textToReplace',
 
   // .. Heading ...................................................................
   Level = 'level',
 
+  // .. Image .....................................................................
+  Alt = 'alt',
+  Src = 'src',
+  Title = 'title',
+  Uploaded = 'uploaded',
+
+  // .. Link ......................................................................
+  Href = 'href',
+  Target = 'target',
+
+  // .. ListItem  .................................................................
+  Separator = 'separator',
+  ListStyleType = 'listStyleType',
+
   // .. MarkHolder ................................................................
   StoredMarks = 'storedMarks',
+
+  // .. Ordered List ..............................................................
+  // NOTE: corresponds to the 'start' HTML attribute from the 'ol' HTML tag
+  StartValue = 'start',
+
+  // .. TaskListItem ..............................................................
+  Checked = 'checked',
 }
 
 export type StyleAttributes = {
+  [AttributeType.BackgroundColor]: string;
+
+  [AttributeType.BorderColor]: string;
+  [AttributeType.BorderTop]: string;
+  [AttributeType.BorderBottom]: string;
+  [AttributeType.BorderLeft]: string;
+  [AttributeType.BorderRight]: string;
+  [AttributeType.BorderStyle]: string;
+  [AttributeType.BorderWidth]: string;
+
   [AttributeType.Width]: string;
   [AttributeType.Height]: string;
 
-  [AttributeType.BackgroundColor]: string;
-  [AttributeType.Color]: string;
   [AttributeType.FontSize]: string;
+  [AttributeType.Color]: string;
   [AttributeType.VerticalAlign]: string;
 
   [AttributeType.MarginTop]: string;
@@ -75,13 +134,22 @@ export type StyleAttributes = {
 };
 const styleAttributeSet = new Set([
   AttributeType.BackgroundColor,
-  AttributeType.Color,
-  AttributeType.FontSize,
-  AttributeType.TextAlign,
-  AttributeType.VerticalAlign,
+
+  AttributeType.BorderColor,
+  AttributeType.BorderTop,
+  AttributeType.BorderBottom,
+  AttributeType.BorderLeft,
+  AttributeType.BorderRight,
+  AttributeType.BorderStyle,
+  AttributeType.BorderWidth,
 
   AttributeType.Width,
   AttributeType.Height,
+
+  AttributeType.FontSize,
+  AttributeType.Color,
+  AttributeType.TextAlign,
+  AttributeType.VerticalAlign,
 
   AttributeType.MarginTop,
   AttributeType.MarginBottom,
@@ -94,6 +162,17 @@ const styleAttributeSet = new Set([
   AttributeType.PaddingRight,
 ]);
 export const isStyleAttribute = (property: any) => styleAttributeSet.has(property);
+/** gets a record of styles attributes that are present on the styleAttributesSet */
+export const filterStyleAttributes = (attributes: Attributes) => {
+  const filteredAttributes: Record<string, string> = {};
+  for(const [key, value] of Object.entries(attributes)) {
+    if(isStyleAttribute(key)) {
+      filteredAttributes[key] = value;
+    }
+  }
+  return filteredAttributes;
+};
+
 export const getWrapStyles = (isWrap: boolean) => `white-space: ${isWrap ? 'break-spaces' : 'pre'};`;
 
 // -- Spacing ---------------------------------------------------------------------
@@ -139,6 +218,14 @@ export enum VerticalAlign {
   middle = 'middle',
   bottom = 'sub'/*default*/,
 }
+
+// -- Border ----------------------------------------------------------------------
+export enum BorderStyle {
+  dashed = 'dashed',
+  dotted = 'dotted',
+  solid = 'solid',
+}
+export const isBorderStyle = (value: any): value is BorderStyle => Object.values(BorderStyle).includes(value);
 
 // == Node Spec ===================================================================
 export type NodeSpecAttributeDefaultValue = { default: any; };
