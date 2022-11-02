@@ -68,11 +68,13 @@ export const HeadingNodeSpec: Readonly<NodeSpec> = {
   group: NodeGroup.BLOCK,
   marks: '_'/*all Marks allowed*/,
 
+  // .. Attribute .................................................................
+  attrs: HeadingAttributesSpec,
+
   // .. Misc ......................................................................
   selectable: false/*cannot be set as NodeSelection*/,
   defining: true,
 
-  attrs: HeadingAttributesSpec,
 };
 
 // -- Render Spec -----------------------------------------------------------------
