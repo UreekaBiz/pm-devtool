@@ -30,6 +30,9 @@ export interface ExtensionProps {
    */
   readonly priority: number;
 
+  /** the Storage used by this Extension */
+  readonly storage?: NodeViewStorage<any> | DialogStorage | undefined/*Extension does not need storage*/;
+
   /**
    * since only a single InputRule Plugin may be present on the
    * {@link Editor} at a time, if an Extension must add InputRules
@@ -46,9 +49,6 @@ export interface ExtensionProps {
 
   /** function to add the ProseMirror Plugins required by this Extension */
   readonly addProseMirrorPlugins: (editor: Editor) => ProseMirrorPlugin[];
-
-  /** the Storage used by this Extension */
-  readonly storage?: NodeViewStorage<any> | DialogStorage | undefined/*Extension does not need storage*/;
 }
 
 // == Class =======================================================================
