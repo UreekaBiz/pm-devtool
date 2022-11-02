@@ -79,12 +79,12 @@ export const ImageDialog: React.FC<Props> = ({ editor, isOpen, onClose }) => {
           <form onSubmit={formik.handleSubmit}>
             <fieldset disabled={isLoading}>
 
-              <ModalHeader>Add an image</ModalHeader>
+              <ModalHeader>Add an Image</ModalHeader>
               <ModalCloseButton onClick={onClose} />
 
               <ModalBody>
                 <FormControl isInvalid={!!formik.errors.src}>
-                  <FormLabel htmlFor='src'>Image url</FormLabel>
+                  <FormLabel htmlFor='src'>Image URL</FormLabel>
                   <Field
                     as={Input}
                     id='src'
