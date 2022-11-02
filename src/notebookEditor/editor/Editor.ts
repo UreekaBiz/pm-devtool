@@ -63,7 +63,7 @@ export class Editor {
     this.contentComponent = null/*not initialized yet*/;
     this.element = document.createElement('div')/*placeholder that will be replaced on mount (SEE: EditorContent.tsx)*/;
     this.view = new EditorView(null/*default empty*/, { state: EditorState.create({ schema: this.schema }) });
-    this.storage = new Map(/*default empty*/);
+    this.storage = this.initializeStorage();
   }
 
   /** create a {@link Schema} from the given {@link Extension}s */
@@ -124,6 +124,20 @@ export class Editor {
     return initializedPlugins;
   }
 
+  /** set the Storages added by the {@link Extensions} in the Storage object */
+  private initializeStorage() {
+    const newStorage = new Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>();
+    this.extensions.forEach(extension => {
+      const { name, storage } = extension.props;
+      if(storage)  {
+        newStorage.set(name as (NodeName | MarkName)/*by definition*/, storage);
+      } /* else -- Extension does not add Storage, do nothing */
+    });
+
+    return newStorage;
+  }
+
+  /** destroy the {@link Editor}'s {@link EditorView} */
   public destroy() {
     if(!this.view.isDestroyed) {
       this.view.destroy();
