@@ -36,7 +36,7 @@ export const Link = new MarkExtension({
     createMarkPasteRule(
       (text) => find(text).filter(link => link.isLink).map(link => ({ text: link.value, index: link.start, data: link })),
       getLinkMarkType(editor.view.state.schema),
-      (match) => ({ [AttributeType.Href]: match.data?.href })),
+      (match) => ({ [AttributeType.Href]: (match[0/*pasted link*/] ?? ''/*default*/).trim() })),
   ],
 
   // -- Plugin --------------------------------------------------------------------
