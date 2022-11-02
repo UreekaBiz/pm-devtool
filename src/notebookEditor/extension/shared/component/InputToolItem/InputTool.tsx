@@ -5,6 +5,7 @@ import { useLocalValue } from 'notebookEditor/shared/hook/useLocalValue';
 import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
+// == Interface ===================================================================
 type Props = Omit<InputProps, 'onChange'> & {
   value: string;
 
@@ -14,10 +15,12 @@ type Props = Omit<InputProps, 'onChange'> & {
 
   onChange: (value: string) => void;
 }
+
+// == Component ===================================================================
 export const InputTool: React.FC<Props> = ({ value: initialInputValue, placeholder, tooltipLabel, onChange, ...props }) => {
   const { commitChange, localValue, updateLocalValue } = useLocalValue<string>(initialInputValue, onChange);
 
-  // == Handler ===================================================================
+  // -- Handler -------------------------------------------------------------------
   const handleValueChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     const newValue = event.target.value;
     updateLocalValue(newValue);
@@ -39,7 +42,7 @@ export const InputTool: React.FC<Props> = ({ value: initialInputValue, placehold
     } /* else -- ignore */
   };
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   return (
     <Tooltip label={tooltipLabel} hasArrow>
       <Input
@@ -47,7 +50,7 @@ export const InputTool: React.FC<Props> = ({ value: initialInputValue, placehold
         placeholder={placeholder}
         size='sm'
         autoComplete='off'
-        datatype={TOOL_ITEM_DATA_TYPE/*(SEE: journalEditor/sidebar/toolbar/type )*/}
+        datatype={TOOL_ITEM_DATA_TYPE/*(SEE: notebookEditor/sidebar/toolbar/type )*/}
         onBlur={() => saveChange(false)}
         onChange={handleValueChange}
         onKeyDown={handleKeyDown}

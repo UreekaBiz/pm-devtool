@@ -1,10 +1,9 @@
-import { getSelectedNode, isNodeType, isNodeSelection, AttributeType, NodeName, SetNodeSelectionDocumentUpdate, SetTextSelectionDocumentUpdate, UpdateSingleNodeAttributesDocumentUpdate } from 'common';
+import { getSelectedNode, isNodeSelection, isNodeType, AttributeType, NodeName, SetNodeSelectionDocumentUpdate, SetTextSelectionDocumentUpdate, UpdateSingleNodeAttributesDocumentUpdate } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { InputToolItemContainer } from '../InputToolItemContainer';
-import { DropdownTool, DropdownToolItemType } from './DropdownTool';
+import { SliderTool } from './SliderTool';
 
 // ********************************************************************************
 // == Interface ===================================================================
@@ -17,19 +16,27 @@ interface Props extends EditorToolComponentProps {
   /** the name of the ToolItem */
   name: string;
 
-  options: DropdownToolItemType[];
+  /** the range of the Slider */
+  minValue: number;
+  maxValue: number;
+
+  /** the increments for the step in the Slider */
+  step: number;
+
+  /** the decimals that the number will be round to */
+  fixedDecimals?: number;
 }
 
 // == Component ===================================================================
-export const DropdownToolItem: React.FC<Props> = ({ editor, depth, nodeName, attributeType, name, options }) => {
+export const SliderToolItem: React.FC<Props> = ({ editor, depth, attributeType, fixedDecimals = 0, minValue, maxValue, name, nodeName, step }) => {
   const { state } = editor.view;
   const { selection } = state;
   const { $anchor, anchor } = selection;
   const node = getSelectedNode(state, depth);
-  if(!node || !isNodeType(node, nodeName)) return null/*nothing to render - invalid node render*/;
+  if(!node || !isNodeType(node, nodeName)) return null /*nothing to render - invalid node render*/;
 
   // -- Handler -------------------------------------------------------------------
-  const handleChange = (value: string) => {
+  const handleChange = (value: number, focus?: boolean) => {
     const nodeSelection = isNodeSelection(selection);
     const updatePos = nodeSelection
       ? anchor
@@ -41,14 +48,20 @@ export const DropdownToolItem: React.FC<Props> = ({ editor, depth, nodeName, att
     ]);
 
     // focus the Editor again
-    editor.view.focus();
+    if(focus) editor.view.focus();
   };
 
   // -- UI ------------------------------------------------------------------------
-  const value = node.attrs[attributeType] ?? '' /*default*/;
+  const value = node.attrs[attributeType] ?? minValue /*default*/;
   return (
-    <InputToolItemContainer name={name}>
-      <DropdownTool value={value} options={options} placeholder={name} onChange={handleChange}/>
-    </InputToolItemContainer>
+    <SliderTool
+      name={name}
+      value={value}
+      step={step}
+      fixedDecimals={fixedDecimals}
+      minValue={minValue}
+      maxValue={maxValue}
+      onChange={handleChange}
+    />
   );
 };

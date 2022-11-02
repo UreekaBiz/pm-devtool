@@ -13,6 +13,7 @@ export type NodeIdentifier = string/*alias*/;
 export enum NodeName {
   DOC = 'document',
   HEADING = 'heading',
+  IMAGE = 'image',
   MARK_HOLDER = 'markHolder',
   PARAGRAPH = 'paragraph',
   TEXT = 'text',

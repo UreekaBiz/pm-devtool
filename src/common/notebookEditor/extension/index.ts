@@ -2,6 +2,7 @@ export * from './bold';
 export * from './code';
 export * from './document';
 export * from './heading';
+export * from './image';
 export * from './italic';
 export * from './link';
 export * from './markHolder';

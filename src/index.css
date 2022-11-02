@@ -27,6 +27,12 @@
   cursor: pointer;
 }
 
+/* -- Inline Node Container ---------------------------------------------------- */
+.inlineNodeContainer {
+  position: relative;
+  display: inline;
+}
+
 /* .. BlurredSelection ......................................................... */
 .ProseMirror-focused .selected_text {
   /*only show background when editor is no longer focused*/
