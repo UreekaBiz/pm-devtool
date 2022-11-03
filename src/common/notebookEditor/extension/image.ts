@@ -3,7 +3,7 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes, BorderStyle } from '../attribute';
 import { NodeRendererSpec } from '../htmlRenderer/type';
 import { getAllowedMarks } from '../mark';
-import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../node';
+import { JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../node';
 import { NotebookSchemaType } from '../schema';
 
 // ********************************************************************************
@@ -11,7 +11,7 @@ import { NotebookSchemaType } from '../schema';
 // NOTE: must be present on the NodeSpec below
 // NOTE: this value must have matching types -- the ones defined in the Extension
 const ImageAttributeSpec = {
-  [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<NodeIdentifier>(),
   [AttributeType.Uploaded]: noNodeOrMarkSpecAttributeDefaultValue<boolean>(),
 
   [AttributeType.Src]: noNodeOrMarkSpecAttributeDefaultValue<string>(),

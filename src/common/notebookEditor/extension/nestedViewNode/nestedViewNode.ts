@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { createNodeDataTypeAttribute } from '../../htmlRenderer';
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../attribute';
-import { NodeName } from '../../node';
+import { NodeIdentifier, NodeName } from '../../node';
 import { EditableInlineNodeWithContentNodeType } from './editableInlineNodeWithContent';
 import { NestedViewBlockNodeType } from './nestedViewBlockNode';
 
@@ -16,7 +16,7 @@ import { NestedViewBlockNodeType } from './nestedViewBlockNode';
 // == Attribute ===================================================================
 // NOTE: This values must have matching types the ones defined in the Node
 export const NestedViewNodeNodeAttributeSpec = {
-  [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+  [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<NodeIdentifier>(),
 };
 export type NestedViewNodeAttributes = AttributesTypeFromNodeSpecAttributes<typeof NestedViewNodeNodeAttributeSpec>;
 export const isNestedViewNodeAttributes = (attrs: any): attrs is NestedViewNodeAttributes => 'id' in attrs;
