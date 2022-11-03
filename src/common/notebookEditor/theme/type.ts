@@ -76,6 +76,10 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginRight]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },
+    [NodeName.HORIZONTAL_RULE]: {
+      [AttributeType.BackgroundColor]: '#000',
+      [AttributeType.Height]: '2px',
+    },
     [NodeName.IMAGE]: {
       [AttributeType.Color]: '#000',
       [AttributeType.BorderWidth]: '1px',
@@ -160,6 +164,10 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
+    },
+    [NodeName.HORIZONTAL_RULE]: {
+      [AttributeType.BackgroundColor]: '#000',
+      [AttributeType.Height]: '2px',
     },
     [NodeName.IMAGE]: {
       [AttributeType.Color]: '#353744',

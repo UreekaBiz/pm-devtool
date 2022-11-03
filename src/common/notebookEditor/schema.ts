@@ -5,6 +5,7 @@ import { BoldMarkSpec } from './extension/bold';
 import { CodeMarkSpec } from './extension/code';
 import { DocumentNodeSpec } from './extension/document';
 import { HeadingNodeSpec } from './extension/heading';
+import { HorizontalRuleNodeSpec } from './extension/horizontalRule';
 import { ImageNodeSpec } from './extension/image';
 import { ItalicMarkSpec } from './extension/italic';
 import { LinkMarkSpec } from './extension/link';
@@ -28,6 +29,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
   [NodeName.DOC]: DocumentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
+  [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeSpec,
   [NodeName.IMAGE]: ImageNodeSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,

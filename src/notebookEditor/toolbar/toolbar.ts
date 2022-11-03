@@ -7,6 +7,7 @@ import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem, block
 import { markCode } from 'notebookEditor/extension/code';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
+import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem, horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule';
 import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem, verticalAlignBottomToolItem, verticalAlignMiddleToolItem, verticalAlignTopToolItem } from 'notebookEditor/extension/image';
 import { markItalic } from 'notebookEditor/extension/italic';
 import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link';
@@ -117,6 +118,7 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   // -- Standard ------------------------------------------------------------------
   headingLevelToolItem,
   blockquoteToolItem,
+  horizontalRuleToolItem,
 
   // -- Custom --------------------------------------------------------------------
   // currently nothing
@@ -148,6 +150,13 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
     ],
   },
   [NodeName.HEADING]: defaultUniqueToolItemConfiguration,
+  [NodeName.HORIZONTAL_RULE]: {
+    position: 'start',
+    items: [
+      horizontalRuleColorToolItem,
+      horizontalRuleHeightToolItem,
+    ],
+  },
   [NodeName.IMAGE]: {
     position: 'start',
     items: [

@@ -14,6 +14,7 @@ export enum NodeName {
   BLOCKQUOTE = 'blockquote',
   DOC = 'document',
   HEADING = 'heading',
+  HORIZONTAL_RULE = 'horizontalRule',
   IMAGE = 'image',
   MARK_HOLDER = 'markHolder',
   PARAGRAPH = 'paragraph',

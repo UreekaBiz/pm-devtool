@@ -3,6 +3,7 @@ export * from './bold';
 export * from './code';
 export * from './document';
 export * from './heading';
+export * from './horizontalRule';
 export * from './image';
 export * from './italic';
 export * from './link';
