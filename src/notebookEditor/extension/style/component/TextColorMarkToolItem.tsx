@@ -10,9 +10,13 @@ import { ColorPicker } from './ColorPicker';
 // NOTE: This component adds a TextStyle mark in the selected text that adds the
 //       color to the text. This does not update the Color attribute of the Node.
 //       if that's the use case you should use ColorToolItem instead.
+
+// == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/}
+
+// == Component ===================================================================
 export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
-  const { state } = editor;
+  const { state } = editor.view;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
@@ -21,12 +25,12 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (value: string, focusEditor?: boolean) => {
-    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.Color]: value })(editor.state, editor.view.dispatch);
+    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.Color]: value })(editor.view.state, editor.view.dispatch);
 
     // focus the Editor again
     editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Text Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Text Color' value={inputValue?.toString() ?? ''} colors={textColors} onChange={handleChange} />);
 };

@@ -6,9 +6,12 @@ import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 import { UnitPickerInput } from './UnitPickerInput';
 
 // ********************************************************************************
+// == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/}
+
+// == Component ===================================================================
 export const FontSizeToolItem: React.FC<Props> = ({ editor, depth }) => {
-  const { state } = editor;
+  const { state } = editor.view;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
@@ -17,12 +20,12 @@ export const FontSizeToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (inputValue: string, focusEditor?: boolean) => {
-    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.FontSize]: inputValue })(editor.state, editor.view.dispatch);
+    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.FontSize]: inputValue })(editor.view.state, editor.view.dispatch);
 
     // Focus the editor again
     if(focusEditor) editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (<UnitPickerInput name='Font Size' onChange={handleChange} valueWithUnit={inputValue ?? ''} />);
+  return (<UnitPickerInput name='Font Size' onChange={handleChange} valueWithUnit={inputValue?.toString() ?? ''} />);
 };

@@ -15,7 +15,7 @@ interface Props extends EditorToolComponentProps {/*no additional*/}
 
 // == Component ===================================================================
 export const HighlightColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
-  const { state } = editor;
+  const { state } = editor.view;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
@@ -24,12 +24,12 @@ export const HighlightColorMarkToolItem: React.FC<Props> = ({ editor, depth }) =
 
   // == Handler ===================================================================
   const handleChange = (value: string) => {
-    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.BackgroundColor]: value })(editor.state, editor.view.dispatch);
+    setMarkCommand(MarkName.TEXT_STYLE, { [AttributeType.BackgroundColor]: value })(editor.view.state, editor.view.dispatch);
 
     // focus the Editor again
     editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Highlight Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Highlight Color' value={inputValue?.toString() ?? ''} colors={textColors} onChange={handleChange} />);
 };

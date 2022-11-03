@@ -15,7 +15,7 @@ interface Props extends EditorToolComponentProps {/*no additional*/}
 
 // == Component ===================================================================
 export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
-  const { state } = editor;
+  const { state } = editor.view;
   const node = getSelectedNode(state, depth);
   if(!node) return null/*nothing to render*/;
 
@@ -24,12 +24,12 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
 
   // == Handler ===================================================================
   const handleChange = (value: string) => {
-    updateAttributesInRangeCommand(AttributeType.BackgroundColor, value, editor.state.selection.$anchor.depth/*direct parent*/)(editor.state, editor.view.dispatch);
+    updateAttributesInRangeCommand(AttributeType.BackgroundColor, value, editor.view.state.selection.$anchor.depth/*direct parent*/)(editor.view.state, editor.view.dispatch);
 
     // focus the Editor again
     editor.view.focus();
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Background Color' value={inputValue?.toString() ?? ''} colors={textColors} onChange={handleChange} />);
 };
