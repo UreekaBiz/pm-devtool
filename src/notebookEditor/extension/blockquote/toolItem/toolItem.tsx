@@ -1,9 +1,8 @@
 import { MdFormatQuote } from 'react-icons/md';
 
-import { isNodeSelection, AttributeType, NodeName } from 'common';
+import { isNodeSelection, NodeName } from 'common';
 
 import { toggleBlock } from 'notebookEditor/extension/util';
-import { ColorPickerNodeToolItem } from 'notebookEditor/extension/shared/component/ColorPickerToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { BlockquoteBorderColorToolItem } from './BlockquoteBorderColorToolItem';
@@ -37,18 +36,4 @@ export const blockquoteBorderLeftWidthToolItem: ToolItem =  {
   name: 'blockquoteBorderLeftWidthToolItem',
 
   component: BlockquoteBorderLeftWidthToolItem,
-};
-
-export const blockquoteBackgroundColorToolItem: ToolItem = {
-  toolType: 'component',
-  name: 'blockquoteBackgroundColorToolItem',
-
-  component: ({ editor, depth }) =>
-    <ColorPickerNodeToolItem
-      editor={editor}
-      depth={depth}
-      nodeName={NodeName.BLOCKQUOTE}
-      attributeType={AttributeType.BackgroundColor}
-      name={'Background Color'}
-    />,
 };
