@@ -34,7 +34,7 @@ export const EditableInlineNodeWithContent = new NodeExtension({
   addStorage: () => new NodeViewStorage<EditableInlineNodeWithContentController>(),
 
   // -- View ----------------------------------------------------------------------
-  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<EditableInlineNodeWithContentController>(editor, node, NodeName.NESTED_VIEW_BLOCK_NODE, getPos, isEditableInlineNodeWithContentNode, EditableInlineNodeWithContentController),
+  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<EditableInlineNodeWithContentController>(editor, node, NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT, getPos, isEditableInlineNodeWithContentNode, EditableInlineNodeWithContentController),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],

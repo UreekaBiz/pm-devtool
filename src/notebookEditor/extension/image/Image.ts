@@ -29,7 +29,7 @@ export const Image = new NodeExtension({
   addStorage: () => new ImageStorage(),
 
   // -- View ----------------------------------------------------------------------
-  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<ImageController>(editor, node, NodeName.NESTED_VIEW_BLOCK_NODE, getPos, isImageNode, ImageController),
+  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<ImageController>(editor, node, NodeName.IMAGE, getPos, isImageNode, ImageController),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
