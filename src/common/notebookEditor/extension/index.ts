@@ -8,6 +8,7 @@ export * from './image';
 export * from './italic';
 export * from './link';
 export * from './markHolder';
+export * from './nestedViewNode';
 export * from './paragraph';
 export * from './replacedTextMark';
 export * from './strikethrough';

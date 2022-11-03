@@ -13,10 +13,12 @@ export type NodeIdentifier = string/*alias*/;
 export enum NodeName {
   BLOCKQUOTE = 'blockquote',
   DOC = 'document',
+  EDITABLE_INLINE_NODE_WITH_CONTENT = 'editableInlineNodeWithContent',
   HEADING = 'heading',
   HORIZONTAL_RULE = 'horizontalRule',
   IMAGE = 'image',
   MARK_HOLDER = 'markHolder',
+  NESTED_VIEW_BLOCK_NODE = 'nestedViewBlockNode',
   PARAGRAPH = 'paragraph',
   TEXT = 'text',
 }

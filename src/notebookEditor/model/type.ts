@@ -18,6 +18,7 @@ export enum ExtensionName {
   EMOJI_SUGGESTION = 'emojiSuggestion',
   GAP_CURSOR = 'gapCursor',
   HISTORY = 'history',
+  NESTED_VIEW_NODE = 'nestedViewNode',
   SELECTION_HANDLING = 'selectionHandling',
 }
 

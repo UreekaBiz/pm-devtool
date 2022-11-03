@@ -13,6 +13,8 @@ import { ImageNodeRendererSpec } from '../extension/image';
 import { ItalicMarkRendererSpec } from '../extension/italic';
 import { LinkMarkRendererSpec } from '../extension/link';
 import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
+import { NestedViewBlockNodeRendererSpec } from '../extension/nestedViewNode/nestedViewBlockNode';
+import { EditableInlineNodeWithContentNodeRendererSpec } from '../extension/nestedViewNode/editableInlineNodeWithContent';
 import { isParagraphJSONNode, ParagraphNodeRendererSpec } from '../extension/paragraph';
 import { ReplacedTextMarkMarkRendererSpec } from '../extension/replacedTextMark';
 import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
@@ -34,9 +36,11 @@ import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.BLOCKQUOTE]: BlockquoteNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DOC]: DocumentNodeRendererSpec,
+  [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.IMAGE]: ImageNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.MARK_HOLDER]: MarkHolderNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.PARAGRAPH]: ParagraphNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.TEXT]: TextNodeRendererSpec,

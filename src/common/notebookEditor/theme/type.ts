@@ -70,6 +70,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginLeft]: '4px',
     },
     [NodeName.DOC]: {/*no defined value*/},
+    [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#F3F3F3',
       [AttributeType.MarginLeft]: '4px',
@@ -88,6 +89,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.VerticalAlign]: VerticalAlign.bottom,
     },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
+    [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#000000',
@@ -160,6 +162,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.MarginLeft]: '4px',
     },
     [NodeName.DOC]: {/*no defined value*/},
+    [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.MarginLeft]: '4px',
@@ -177,6 +180,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.VerticalAlign]: VerticalAlign.bottom,
     },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
+    [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#353744',

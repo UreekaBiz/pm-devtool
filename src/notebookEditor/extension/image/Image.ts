@@ -32,12 +32,12 @@ export const Image = new NodeExtension({
 
   // -- View ----------------------------------------------------------------------
   defineNodeView: (editor, node, getPos) => {
-    if(!isImageNode(node)) throw new Error(`Unexpected Node: (${node.type.name}) while adding Image NodeView.`);
+    if(!isImageNode(node)) throw new Error(`Unexpected Node: (${node.type.name}) while adding ${NodeName.IMAGE} NodeView.`);
     const id = node.attrs[AttributeType.Id];
-    if(!id) throw new Error(`Image does not have an Id when it should by contract.`);
+    if(!id) throw new Error(`${NodeName.IMAGE} does not have an Id when it should by contract.`);
 
     const storage = editor.storage.get(node.type.name as NodeName/**/);
-    if(!storage || !(isNodeViewStorage(storage))) throw new Error(`Image does not have a valid storage Id when it should by contract.`);
+    if(!storage || !(isNodeViewStorage<ImageStorage>(storage))) throw new Error(`${NodeName.IMAGE} does not have a valid storage when it should by contract.`);
 
     // use existing NodeView, update it and return it
     const controller = storage.getNodeView(id);
@@ -47,7 +47,7 @@ export const Image = new NodeExtension({
     } /* else -- controller don't exists */
 
     // create a new Controller and NodeView
-    return new ImageController(editor, node, storage as ImageStorage/*by definition*/, getPos);
+    return new ImageController(editor, node, storage, getPos);
   },
 
   // -- Input ---------------------------------------------------------------------

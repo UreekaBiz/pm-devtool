@@ -14,6 +14,9 @@ import { Image } from 'notebookEditor/extension/image';
 import { Italic } from 'notebookEditor/extension/italic';
 import { Link } from 'notebookEditor/extension/link';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
+import { EditableInlineNodeWithContent } from 'notebookEditor/extension/nestedViewNode/editableInlineNodeWithContent';
+import { NestedViewBlockNode } from 'notebookEditor/extension/nestedViewNode/nestedViewBlockNode';
+import { NestedViewNode } from 'notebookEditor/extension/nestedViewNode/NestedViewNode';
 import { Paragraph } from 'notebookEditor/extension/paragraph';
 import { ReplacedTextMark } from 'notebookEditor/extension/replacedTextMark';
 import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
@@ -37,6 +40,7 @@ export const editorDefinition: Extension[] = [
   Code,
   DefaultInputRules,
   Document,
+  EditableInlineNodeWithContent,
   EmojiSuggestion,
   GapCursor,
   History,
@@ -46,6 +50,8 @@ export const editorDefinition: Extension[] = [
   Italic,
   Link,
   MarkHolder,
+  NestedViewBlockNode,
+  NestedViewNode,
   Paragraph,
   ReplacedTextMark,
   SelectionHandling,

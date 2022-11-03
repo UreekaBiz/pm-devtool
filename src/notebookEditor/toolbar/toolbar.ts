@@ -11,6 +11,8 @@ import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem, horizontalRu
 import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem, verticalAlignBottomToolItem, verticalAlignMiddleToolItem, verticalAlignTopToolItem } from 'notebookEditor/extension/image';
 import { markItalic } from 'notebookEditor/extension/italic';
 import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link';
+import { editableInlineNodeWithContentToolItem } from 'notebookEditor/extension/nestedViewNode/editableInlineNodeWithContent';
+import { nestedViewBlockNodeToolItem } from 'notebookEditor/extension/nestedViewNode/nestedViewBlockNode';
 import { markSubScript } from 'notebookEditor/extension/subScript';
 import { markSuperScript } from 'notebookEditor/extension/superScript';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
@@ -121,7 +123,8 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   horizontalRuleToolItem,
 
   // -- Custom --------------------------------------------------------------------
-  // currently nothing
+  editableInlineNodeWithContentToolItem,
+  nestedViewBlockNodeToolItem,
 ];
 
 /**
@@ -149,6 +152,7 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
       setThemeToolItem,
     ],
   },
+  [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: defaultUniqueToolItemConfiguration,
   [NodeName.HEADING]: defaultUniqueToolItemConfiguration,
   [NodeName.HORIZONTAL_RULE]: {
     position: 'start',
@@ -172,6 +176,7 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
     ],
   },
   [NodeName.MARK_HOLDER]: defaultUniqueToolItemConfiguration,
+  [NodeName.NESTED_VIEW_BLOCK_NODE]: defaultUniqueToolItemConfiguration,
   [NodeName.PARAGRAPH]: defaultUniqueToolItemConfiguration,
   [NodeName.TEXT]: defaultUniqueToolItemConfiguration,
 
