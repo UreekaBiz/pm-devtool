@@ -51,10 +51,6 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
     const { editor } = this.props;
     if(!editor) return/*nothing to do*/;
 
-    if(!editor.view.isDestroyed) {
-      editor.view.setProps({ nodeViews: {} });
-    } /* else -- view is already destroyed */
-
     editor.contentComponent = null;
     if(!editor.element.firstChild) return;
 
