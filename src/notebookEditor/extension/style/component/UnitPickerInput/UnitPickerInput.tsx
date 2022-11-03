@@ -45,7 +45,7 @@ export const UnitPickerInput: React.FC<Props> = ({ name, onChange, valueWithUnit
   return (
     <Box>
       {name}
-      <Flex marginTop='5px' gap={2}>
+      <Flex marginTop='5px'>
         <Input
           value={value}
           type='number'

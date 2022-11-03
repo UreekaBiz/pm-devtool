@@ -24,7 +24,6 @@ export const UnitPicker: React.FC<Props> = ({ value = Unit.Pixel, onChange }) =>
       // NOTE: Using class name to override the (seemingly impossible!) styles for
       //       the input with the accessible props.
       className='unit-picker'
-      width='fit-content'
       value={value}
       placeholder='Unit'
       size='sm'
