@@ -4,7 +4,7 @@ import { getBlockquoteNodeType, getNodeOutputSpec, insertNewlineCommand, leaveBl
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
-import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule';
+import {  InputRule } from 'notebookEditor/plugin/inputRule';
 
 import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension } from '../type';
 import { blockArrowUpCommand, blockArrowDownCommand, blockBackspaceCommand, blockModBackspaceCommand, toggleBlock } from '../util/node';
@@ -33,7 +33,15 @@ export const Blockquote = new NodeExtension({
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [createWrappingInputRule(blockquoteRegex, getBlockquoteNodeType(editor.view.state.schema))],
+  inputRules: (editor) => [new InputRule(blockquoteRegex, (state, match, start, end) => {
+    const tr = state.tr.delete(start, end)/*remove matched '>'*/;
+
+    const $start = tr.doc.resolve(start);
+    const range = $start.blockRange();
+    if(!range) return null/*nothing to do*/;
+
+    return tr.setBlockType(range.$from.pos, range.$to.pos, getBlockquoteNodeType(editor.view.state.schema));
+  })],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],
