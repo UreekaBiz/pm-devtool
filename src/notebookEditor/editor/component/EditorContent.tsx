@@ -27,7 +27,7 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
   }
   init() {
     const { editor } = this.props;
-    if(!editor || !editor.element) return/*not ready*/;
+    if(!editor || !editor.element) return/*not ready to mount*/;
     if(editor.contentComponent) return/*already setup*/;
 
     const element = this.editorContentRef.current;
