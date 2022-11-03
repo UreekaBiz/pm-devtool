@@ -27,24 +27,19 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
   }
   init() {
     const { editor } = this.props;
-    if(editor && editor.element) {
-      if(editor.contentComponent) {
-        return/*already setup*/;
-      }
+    if(!editor || !editor.element) return/*not ready*/;
+    if(editor.contentComponent) return/*already setup*/;
 
-      const element = this.editorContentRef.current;
-      if(!element) {
-        return/*does not exist*/;
-      }
+    const element = this.editorContentRef.current;
+    if(!element) return/*does not exist yet*/;
 
-      element.append(...editor.element.childNodes);
-      editor.element = element;
-      editor.contentComponent = this;
+    element.append(...editor.element.childNodes);
+    editor.element = element;
+    editor.contentComponent = this;
 
-      if(!editor.isViewMounted()) {
-        editor.mountView(editor.element);
-      } /* else -- View is already mounted */
-    }
+    if(editor.isViewMounted()) return/*already mounted*/;
+
+    editor.mountView(editor.element);
   }
 
   // -- Update --------------------------------------------------------------------
@@ -55,10 +50,6 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
   componentWillUnmount() {
     const { editor } = this.props;
     if(!editor) return/*nothing to do*/;
-
-    if(!editor.view.isDestroyed) {
-      editor.view.setProps({ nodeViews: {} });
-    } /* else -- view is already destroyed */
 
     editor.contentComponent = null;
     if(!editor.element.firstChild) return;
