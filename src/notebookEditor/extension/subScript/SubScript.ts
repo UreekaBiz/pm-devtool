@@ -5,7 +5,7 @@ import { getMarkOutputSpec, MarkName, SubScriptMarkSpec } from 'common';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
 import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
-import { safeParseTag, wrapGetStyleAttrs } from '../util/parse';
+import { safeParseTag } from '../util/parse';
 import { toggleSubScriptCommand } from './command';
 
 // ********************************************************************************
@@ -25,20 +25,7 @@ export const SubScript = new MarkExtension({
   defineDOMBehavior: (extensionStorage) => ({
     // NOTE: createExtensionParseRules not being used since specific getAttrs must
     //       be specified in the ParseRules, but Bold does not have any attributes
-    parseDOM: [
-      safeParseTag('sub'),
-      {
-        style: 'vertical-align',
-        getAttrs: wrapGetStyleAttrs(value => {
-          // check for vertical alignment
-          if(value !== 'sub') {
-            return false;
-          } /* else -- match */
-
-          return null/*match and add empty/default set of attrs */;
-        }),
-      },
-    ],
+    parseDOM: [safeParseTag('sub')],
     toDOM: (mark) => getMarkOutputSpec(mark, {/*no attrs*/}),
   }),
 
