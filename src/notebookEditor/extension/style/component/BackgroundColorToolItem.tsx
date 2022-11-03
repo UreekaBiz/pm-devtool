@@ -20,7 +20,7 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   if(!node) return null/*nothing to render*/;
 
   const domRenderValue = getTextDOMRenderedValue(editor, AttributeType.BackgroundColor);
-  const inputValue = String(domRenderValue === InvalidMergedAttributeValue ? ''/*invalid*/ : domRenderValue);
+  const inputValue = domRenderValue === InvalidMergedAttributeValue ? ''/*invalid*/ : domRenderValue;
 
   // == Handler ===================================================================
   const handleChange = (value: string) => {
