@@ -3,6 +3,7 @@ import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 import { BlockquoteNodeSpec } from './extension/blockquote';
 import { BoldMarkSpec } from './extension/bold';
 import { CodeMarkSpec } from './extension/code';
+import { CodeBlockNodeSpec } from './extension/codeBlock';
 import { DocumentNodeSpec } from './extension/document';
 import { EditableInlineNodeWithContentNodeSpec } from './extension/nestedViewNode/editableInlineNodeWithContent';
 import { HeadingNodeSpec } from './extension/heading';
@@ -29,6 +30,7 @@ import { NodeName } from './node';
 //       (e.g. since Paragraph is the default Block type, it must appear first)
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
+  [NodeName.CODEBLOCK]: CodeBlockNodeSpec,
   [NodeName.DOC]: DocumentNodeSpec,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,

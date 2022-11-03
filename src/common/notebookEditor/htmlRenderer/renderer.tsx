@@ -6,6 +6,7 @@ import { NotebookDocumentContent } from '../notebookDocument';
 import { BlockquoteNodeRendererSpec } from '../extension/blockquote';
 import { BoldMarkRendererSpec } from '../extension/bold';
 import { CodeMarkRendererSpec } from '../extension/code';
+import { CodeBlockNodeRendererSpec } from '../extension/codeBlock';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { HorizontalRuleNodeRendererSpec } from '../extension/horizontalRule';
@@ -35,6 +36,7 @@ import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK
 // == Type ========================================================================
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.BLOCKQUOTE]: BlockquoteNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.CODEBLOCK]: CodeBlockNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DOC]: DocumentNodeRendererSpec,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
