@@ -6,7 +6,7 @@ import { markBold } from 'notebookEditor/extension/bold';
 import { markCode } from 'notebookEditor/extension/code';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
-import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem } from 'notebookEditor/extension/image';
+import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem, verticalAlignBottomToolItem, verticalAlignMiddleToolItem, verticalAlignTopToolItem } from 'notebookEditor/extension/image';
 import { markItalic } from 'notebookEditor/extension/italic';
 import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link';
 import { markSubScript } from 'notebookEditor/extension/subScript';
@@ -148,6 +148,9 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
       imageWidthToolItem,
       imageHeightToolItem,
       imageBorderToolItem,
+      verticalAlignBottomToolItem,
+      verticalAlignMiddleToolItem,
+      verticalAlignTopToolItem,
     ],
   },
   [NodeName.MARK_HOLDER]: defaultUniqueToolItemConfiguration,

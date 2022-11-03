@@ -29,7 +29,7 @@ export class ImageView extends AbstractNodeView<ImageNodeType, ImageStorage, Ima
 
   // -- Creation ------------------------------------------------------------------
   protected createDomElement() {
-    const inlineNodeContainer =  createInlineNodeContainer();
+    const inlineNodeContainer = createInlineNodeContainer();
           inlineNodeContainer.setAttribute(DATA_NODE_TYPE, NodeName.IMAGE);
     return inlineNodeContainer;
   }
@@ -37,9 +37,6 @@ export class ImageView extends AbstractNodeView<ImageNodeType, ImageStorage, Ima
   // create the elements used by this Node with default styles
   private createViewElements() {
     const imageElement = document.createElement('img');
-          imageElement.style.width = '100%'/*default*/;
-          imageElement.style.height = '100%'/*default*/;
-
     return { imageElement };
   }
 
