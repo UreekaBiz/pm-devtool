@@ -25,7 +25,7 @@ export const InputToolItemContainer: React.FC<Props> = ({ children, name, rightC
       {children}
     </Flex>
     {showRightContent && (
-      <Flex alignItems='center' width={50} >
+      <Flex alignItems='center' width='fit-content' gap={1} >
         {rightContent}
       </Flex>
     )}

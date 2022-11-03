@@ -60,3 +60,25 @@
 }
 .iconButton.active { background-color: var(--ACTIVE_BUTTON_COLOR); }
 .iconButton:hover  { background-color: var(--HOVER_BUTTON_COLOR); }
+
+/* == Utilities ================================================================ */
+/* NOTE: Using class name to override the (seemingly impossible!) styles for the
+         input with the accessible props. */
+.unit-picker {
+  padding: 0 4px !important;
+}
+/* hides icon */
+.unit-picker + div {
+  display: none;
+}
+
+@keyframes lazy-shown {
+  0% { opacity: 0; }
+  99% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/** hides the element for the given time */
+.lazy-shown {
+  animation-name: lazy-shown;
+}
