@@ -6,6 +6,7 @@ import { keymap } from 'prosemirror-keymap';
 
 import { insertAndSelectNestedViewNode } from '../util';
 import { getEditableInlineNodeWithContentAttrs } from './attribute';
+import './editableInlineNodeWithContent.css';
 import { EditableInlineNodeWithContentController, EditableInlineNodeWithContentStorageType } from './nodeView/controller';
 
 // ********************************************************************************

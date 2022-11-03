@@ -7,6 +7,7 @@ import { isNodeViewStorage, NodeViewStorage } from 'notebookEditor/model/NodeVie
 
 import { getNestedViewBlockNodeAttrs } from './attribute';
 import { insertAndSelectNestedViewNode } from '../util';
+import './nestedViewBlockNode.css';
 import { NestedViewBlockNodeController, NestedViewBlockNodeStorageType } from './nodeView/controller';
 
 // ********************************************************************************

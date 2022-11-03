@@ -4,7 +4,9 @@ import { ExtensionName } from 'notebookEditor/model/type';
 
 import { DEFAULT_EXTENSION_PRIORITY, Extension } from '../type';
 import { nestedViewNodeBackspaceCommand } from './command';
+import './nestedViewNode.css';
 import { nestedViewNodePlugin } from './plugin';
+
 
 // ********************************************************************************
 // NOTE: nestedViewNodes are meant to be an abstraction for Inline or Block Nodes
