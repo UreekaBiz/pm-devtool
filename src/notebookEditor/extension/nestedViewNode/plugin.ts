@@ -68,7 +68,7 @@ export const nestedViewNodePlugin = () => {
           if(isNestedViewNode(node) && node.marks.length > 0) {
             for(let i=0; i<node.mark.length; i++) {
               tr.step(new RemoveMarkStep(pos, pos+node.nodeSize, node.marks[i]));
-            }
+            } /* else -- not a NestedViewNode, do nothing */
           }
         });
       });
