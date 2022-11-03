@@ -1,6 +1,6 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { createNodeDataTypeAttribute } from '../../htmlRenderer';
+import { createNodeDataTypeAttribute } from '../../../notebookEditor/htmlRenderer/type';
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../attribute';
 import { NodeIdentifier, NodeName } from '../../node';
 import { EditableInlineNodeWithContentNodeType } from './editableInlineNodeWithContent';

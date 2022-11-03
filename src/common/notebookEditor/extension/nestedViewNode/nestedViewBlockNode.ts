@@ -1,18 +1,16 @@
 import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../attribute';
+import { AttributesTypeFromNodeSpecAttributes } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
-import { JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../../node';
+import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
-import { createNestedViewNodeRenderedView } from './nestedViewNode';
+import { createNestedViewNodeRenderedView, NestedViewNodeNodeAttributeSpec } from './nestedViewNode';
 
 // ********************************************************************************
 // == Attribute ===================================================================
 // NOTE: must be present on the NodeSpec below
 // NOTE: This values must have matching types the ones defined in the Extension
-const NestedViewBlockNodeAttributeSpec = {
-  [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<NodeIdentifier>(),
-};
+const NestedViewBlockNodeAttributeSpec = { ...NestedViewNodeNodeAttributeSpec };
 export type NestedViewBlockNodeAttributes = AttributesTypeFromNodeSpecAttributes<typeof NestedViewBlockNodeAttributeSpec>;
 
 // == Spec ========================================================================
