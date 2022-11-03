@@ -44,8 +44,8 @@ export const NestedViewBlockNode = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-      'Mod-Alt-e': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
-      'Mod-Alt-E': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+      'Mod-Alt-n': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+      'Mod-Alt-N': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
     }),
   ],
 });

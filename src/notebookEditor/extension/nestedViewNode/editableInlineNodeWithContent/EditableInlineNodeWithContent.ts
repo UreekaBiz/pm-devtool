@@ -43,8 +43,8 @@ export const EditableInlineNodeWithContent = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-        'Mod-e': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
-        'Mod-E': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+        'Mod-n': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+        'Mod-N': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
     }),
   ],
 });
