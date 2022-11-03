@@ -1,8 +1,10 @@
+import { keymap } from 'prosemirror-keymap';
+
 import { getEditableInlineNodeWithContentNodeType, generateNodeId, getNodeOutputSpec, isEditableInlineNodeWithContentNode, AttributeType, EditableInlineNodeWithContentNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY, defineNodeViewBehavior } from 'notebookEditor/extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, defineNodeViewBehavior } from 'notebookEditor/extension/type';
+import { ExtensionPriority } from 'notebookEditor/model';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
-import { keymap } from 'prosemirror-keymap';
 
 import { insertAndSelectNestedViewNode } from '../util';
 import { getEditableInlineNodeWithContentAttrs } from './attribute';
@@ -14,7 +16,7 @@ import { EditableInlineNodeWithContentController } from './nodeView/controller';
 export const EditableInlineNodeWithContent = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.EDITABLE_INLINE_NODE_WITH_CONTENT,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => getEditableInlineNodeWithContentAttrs(extensionStorage),
@@ -43,8 +45,8 @@ export const EditableInlineNodeWithContent = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-        'Mod-n': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
-        'Mod-N': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+      'Mod-Shift-e': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+      'Mod-Shift-E': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
     }),
   ],
 });

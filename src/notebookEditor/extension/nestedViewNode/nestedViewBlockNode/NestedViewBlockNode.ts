@@ -2,8 +2,8 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNestedViewBlockNodeType, generateNodeId, getNodeOutputSpec, isNestedViewBlockNode, AttributeType, NestedViewBlockNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY, defineNodeViewBehavior } from 'notebookEditor/extension/type';
-import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
+import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, defineNodeViewBehavior } from 'notebookEditor/extension/type';
+import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
 
 import { getNestedViewBlockNodeAttrs } from './attribute';
 import { insertAndSelectNestedViewNode } from '../util';
@@ -15,7 +15,7 @@ import { NestedViewBlockNodeController } from './nodeView/controller';
 export const NestedViewBlockNode = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.NESTED_VIEW_BLOCK_NODE,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.NESTED_VIEW_BLOCK_NODE,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => getNestedViewBlockNodeAttrs(extensionStorage),
@@ -44,8 +44,8 @@ export const NestedViewBlockNode = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-      'Mod-Alt-n': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
-      'Mod-Alt-N': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+      'Mod-Shift-Alt-e': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
+      'Mod-Shift-Alt-E': () => insertAndSelectNestedViewNode(editor, editor.view.state.selection.$anchor.depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'keyboardShortcut'),
     }),
   ],
 });

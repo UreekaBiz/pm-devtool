@@ -14,7 +14,7 @@ export const editableInlineNodeWithContentToolItem: ToolItem = {
   label: NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT,
 
   icon: <MdCheckBoxOutlineBlank size={16} />,
-  tooltip: 'Editable Inline Node with Content (⌘ + N)',
+  tooltip: 'Editable Inline Node with Content (⌘ + ⇧ + E)',
 
   shouldBeDisabled: (editor) => {
     const { selection } = editor.view.state;

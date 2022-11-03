@@ -49,6 +49,14 @@ export enum ExtensionPriority {
   //       a priority higher than it so that it gets inserted without toggling it
   BLOCKQUOTE = 110,
 
+  // NOTE: since EditableInlineNodeWithContent shares the Mod-E keybinding
+  //       with Code, it must have a priority higher than it so that it
+  //       gets inserted without toggling it
+  EDITABLE_INLINE_NODE_WITH_CONTENT = 109,
+
+  // NOTE: for consistency with EditableInlineNodeWithContent
+  NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
+
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when
   //       going through a list Node), the Text Extension runs last. This ensures
