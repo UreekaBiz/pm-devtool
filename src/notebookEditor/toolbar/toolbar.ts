@@ -5,6 +5,7 @@ import { camelToTitleCase, MarkName, NodeName } from 'common';
 import { markBold } from 'notebookEditor/extension/bold';
 import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem, blockquoteToolItem } from 'notebookEditor/extension/blockquote';
 import { markCode } from 'notebookEditor/extension/code';
+import { codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/codeblock';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem, horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule';
@@ -143,6 +144,13 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
     items: [
       blockquoteBorderColorToolItem,
       blockquoteBorderLeftWidthToolItem,
+    ],
+  },
+  [NodeName.CODEBLOCK]: {
+    position: 'start',
+    items: [
+      codeBlockTypeToolItem,
+      codeBlockWrapToolItem,
     ],
   },
   [NodeName.DOC]: {

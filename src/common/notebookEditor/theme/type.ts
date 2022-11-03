@@ -69,6 +69,21 @@ export const DefaultTheme: Theme = {
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
     },
+    [NodeName.CODEBLOCK]: {
+      [AttributeType.PaddingLeft]: '4px',
+      [AttributeType.PaddingRight]: '4px',
+      [AttributeType.PaddingTop]: '4px',
+      [AttributeType.PaddingBottom]: '4px',
+
+      [AttributeType.MarginLeft]: '4px',
+      [AttributeType.MarginRight]: '0px',
+      [AttributeType.MarginTop]: '0.5rem',
+      [AttributeType.MarginBottom]: '0.5rem',
+    },
+    [NodeName.CODEBLOCK_REFERENCE]: {
+      [AttributeType.LeftDelimiter]: '(',
+      [AttributeType.RightDelimiter]: ')',
+    },
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
     [NodeName.HEADING]: {
@@ -160,6 +175,21 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.BorderLeft]: '3px',
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
+    },
+    [NodeName.CODEBLOCK]: {
+      [AttributeType.PaddingLeft]: '4px',
+      [AttributeType.PaddingRight]: '4px',
+      [AttributeType.PaddingTop]: '4px',
+      [AttributeType.PaddingBottom]: '4px',
+
+      [AttributeType.MarginLeft]: '4px',
+      [AttributeType.MarginRight]: '0px',
+      [AttributeType.MarginTop]: '0.5rem',
+      [AttributeType.MarginBottom]: '0.5rem',
+    },
+    [NodeName.CODEBLOCK_REFERENCE]: {
+      [AttributeType.LeftDelimiter]: '[',
+      [AttributeType.RightDelimiter]: ']',
     },
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
