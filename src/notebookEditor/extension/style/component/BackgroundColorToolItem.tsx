@@ -31,5 +31,5 @@ export const BackgroundColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Background Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Background Color' value={inputValue?.toString() ?? ''} colors={textColors} onChange={handleChange} />);
 };

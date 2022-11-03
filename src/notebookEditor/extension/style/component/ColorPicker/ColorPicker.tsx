@@ -14,15 +14,14 @@ const LEFT_ADDON_TEXT = '#';
 // == Interface ===================================================================
 interface Props {
   name: string;
+  colors: Color[][];
 
   value: string;
   onChange: (value: string, focus?: boolean) => void;
-
-  colors: Color[][];
 }
 
 // == Component ===================================================================
-export const ColorPicker: React.FC<Props> = ({ colors, name, onChange, value }) => {
+export const ColorPicker: React.FC<Props> = ({ name, colors, value, onChange }) => {
   // -- State ---------------------------------------------------------------------
   const { commitChange, localValue, resetLocalValue, updateLocalValue } = useLocalValue(value, onChange);
 

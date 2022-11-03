@@ -32,5 +32,5 @@ export const TextColorMarkToolItem: React.FC<Props> = ({ editor, depth }) => {
   };
 
   // == UI ========================================================================
-  return (<ColorPicker name='Text Color' value={inputValue ?? ''} colors={textColors} onChange={handleChange} />);
+  return (<ColorPicker name='Text Color' value={inputValue?.toString() ?? ''} colors={textColors} onChange={handleChange} />);
 };
