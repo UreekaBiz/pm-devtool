@@ -3,6 +3,7 @@ import { Mark as ProseMirrorMark, Node as ProseMirrorNode } from 'prosemirror-mo
 import { camelToTitleCase, MarkName, NodeName } from 'common';
 
 import { markBold } from 'notebookEditor/extension/bold';
+import { blockquoteBackgroundColorToolItem, blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem, blockquoteToolItem } from 'notebookEditor/extension/blockquote';
 import { markCode } from 'notebookEditor/extension/code';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
@@ -115,6 +116,7 @@ const BLOCK_TOOL_ITEMS: ToolItem[] = [
 const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   // -- Standard ------------------------------------------------------------------
   headingLevelToolItem,
+  blockquoteToolItem,
 
   // -- Custom --------------------------------------------------------------------
   // currently nothing
@@ -131,6 +133,14 @@ type UniqueToolItemConfiguration = { position: 'start' | 'end'; items: ToolItem[
 const defaultUniqueToolItemConfiguration: UniqueToolItemConfiguration= { position: 'start', items: [/*none*/] };
 const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration> = {
   // -- Node ----------------------------------------------------------------------
+  [NodeName.BLOCKQUOTE]: {
+    position: 'start',
+    items: [
+      blockquoteBorderColorToolItem,
+      blockquoteBorderLeftWidthToolItem,
+      blockquoteBackgroundColorToolItem,
+    ],
+  },
   [NodeName.DOC]: {
     position: 'end',
     items: [

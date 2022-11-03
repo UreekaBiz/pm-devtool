@@ -1,5 +1,6 @@
 import { MarkSpec, NodeSpec, Schema } from 'prosemirror-model';
 
+import { BlockquoteNodeSpec } from './extension/blockquote';
 import { BoldMarkSpec } from './extension/bold';
 import { CodeMarkSpec } from './extension/code';
 import { DocumentNodeSpec } from './extension/document';
@@ -24,6 +25,7 @@ import { NodeName } from './node';
 // NOTE: the order of appearance of the Nodes dictates their priority
 //       (e.g. since Paragraph is the default Block type, it must appear first)
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
+  [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
   [NodeName.DOC]: DocumentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.IMAGE]: ImageNodeSpec,

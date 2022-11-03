@@ -59,6 +59,16 @@ export const DefaultTheme: Theme = {
   displayName: 'Default',
 
   nodes:{
+    [NodeName.BLOCKQUOTE]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '16px',
+
+      // NOTE: order is not arbitrary
+      [AttributeType.BorderLeft]: '3px',
+      [AttributeType.BorderColor]: '#CCCCCC',
+      [AttributeType.MarginLeft]: '4px',
+    },
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#F3F3F3',
@@ -135,6 +145,16 @@ export const GoogleDocsTheme: Theme = {
   displayName: 'Default',
 
   nodes:{
+    [NodeName.BLOCKQUOTE]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '11pt',
+
+      // NOTE: order of borders is not arbitrary
+      [AttributeType.BorderLeft]: '3px',
+      [AttributeType.BorderColor]: '#CCCCCC',
+      [AttributeType.MarginLeft]: '4px',
+    },
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',

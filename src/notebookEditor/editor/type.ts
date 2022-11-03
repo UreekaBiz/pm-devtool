@@ -1,5 +1,6 @@
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
+import { Blockquote } from 'notebookEditor/extension/blockquote';
 import { Bold } from 'notebookEditor/extension/bold/Bold';
 import { Code } from 'notebookEditor/extension/code';
 import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
@@ -30,6 +31,7 @@ import { Underline } from 'notebookEditor/extension/underline';
  */
 export const editorDefinition: Extension[] = [
   BasicKeymap,
+  Blockquote,
   Bold,
   Code,
   DefaultInputRules,

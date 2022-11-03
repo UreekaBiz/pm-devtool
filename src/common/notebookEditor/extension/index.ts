@@ -1,3 +1,4 @@
+export * from './blockquote';
 export * from './bold';
 export * from './code';
 export * from './document';

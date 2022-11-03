@@ -44,6 +44,10 @@ export enum ExtensionPriority {
   //       keydown handlers run
   EMOJI_SUGGESTION = 116,
 
+  // NOTE: since Blockquote shares the Mod-B keybinding with Bold, it must have
+  //       a priority higher than it so that it gets inserted without toggling it
+  BLOCKQUOTE = 110,
+
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when
   //       going through a list Node), the Text Extension runs last. This ensures

@@ -3,8 +3,9 @@ import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, Node as ProseMirrorNo
 
 import { Attributes, HTMLAttributes } from '../attribute';
 import { NotebookDocumentContent } from '../notebookDocument';
-import { CodeMarkRendererSpec } from '../extension/code';
+import { BlockquoteNodeRendererSpec } from '../extension/blockquote';
 import { BoldMarkRendererSpec } from '../extension/bold';
+import { CodeMarkRendererSpec } from '../extension/code';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { ImageNodeRendererSpec } from '../extension/image';
@@ -30,6 +31,7 @@ import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK
 // ********************************************************************************
 // == Type ========================================================================
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
+  [NodeName.BLOCKQUOTE]: BlockquoteNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DOC]: DocumentNodeRendererSpec,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.IMAGE]: ImageNodeRendererSpec as any/*FIXME!!!*/,
