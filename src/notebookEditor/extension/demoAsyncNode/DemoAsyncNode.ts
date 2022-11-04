@@ -26,7 +26,7 @@ export const DemoAsyncNode = new NodeExtension({
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
     parseDOM: createExtensionParseRules([{ tag: `span[${DATA_NODE_TYPE}="${NodeName.DEMO_ASYNC_NODE}"]` }], getDemoAsyncNodeAttrs(extensionStorage)),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, getDemoAsyncNodeAttrs(extensionStorage))),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, getDemoAsyncNodeAttrs(extensionStorage)), true/*is Leaf*/),
   }),
 
   // -- Storage -------------------------------------------------------------------
@@ -34,7 +34,6 @@ export const DemoAsyncNode = new NodeExtension({
 
   // -- View ----------------------------------------------------------------------
   defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<DemoAsyncNodeController>(editor, node, NodeName.DEMO_ASYNC_NODE, getPos, isDemoAsyncNode, DemoAsyncNodeController),
-
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
