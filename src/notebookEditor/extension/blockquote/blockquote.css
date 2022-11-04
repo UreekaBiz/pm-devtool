@@ -1,4 +1,5 @@
 /* == Blockquote =============================================================== */
+/* -- DOM ---------------------------------------------------------------------- */
 [data-node-type="blockquote"] {
   /*
     ensure customizable border-left property does not override
