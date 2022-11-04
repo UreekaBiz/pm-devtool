@@ -1,7 +1,6 @@
-import { Editor } from 'notebookEditor/editor';
-
 import { computeState, NodeIdentifier, NodeName, VisualId, VisualIdMap } from 'common';
 
+import { Editor } from 'notebookEditor/editor';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
 import { CodeBlockController } from './controller';

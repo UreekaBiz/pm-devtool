@@ -23,6 +23,6 @@ export const codeBlockPlugin = (editor: Editor) => new Plugin<NoPluginState>({
   appendTransaction(transactions, oldState, newState) {
     const { tr } = newState;
     codeBlockOnTransaction(editor, tr);
-    return tr/*not modified*/;
+    return null/*not modified*/;
   },
 });
