@@ -8,16 +8,20 @@ import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
 import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle';
 
-import { Toolbar, ToolItem } from './type';
+import { EditorToolComponentProps, Toolbar, ToolItem } from './type';
 
 // ********************************************************************************
 // == Node ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorNode} */
 export const getNodeToolbar = (node: ProseMirrorNode): Toolbar => {
+
+  const { toolCollections, rightContent } = buildNodeToolCollections(node);
+
   return {
     title: camelToTitleCase(node.type.name),
     name: node.type.name as MarkName/*by definition*/,
-    toolsCollections: buildNodeToolCollections(node),
+    toolsCollections: toolCollections,
+    rightContent,
   };
 };
 
@@ -25,8 +29,10 @@ export const getNodeToolbar = (node: ProseMirrorNode): Toolbar => {
  * build {@link Toolbar} for the given {@link ProseMirrorNode}
  * based on its characteristics
  */
-const buildNodeToolCollections = (node: ProseMirrorNode): ToolItem[][] => {
+const buildNodeToolCollections = (node: ProseMirrorNode): { toolCollections: ToolItem[][], rightContent: React.FC<EditorToolComponentProps> | undefined/*not required by Toolbar*/;  } => {
   const toolCollections: ToolItem[][] = [];
+  let rightContent = undefined/*default*/;
+
   if(node.isTextblock && TEXT_BLOCK_TOOL_ITEMS.length > 0) {
     toolCollections.push(TEXT_BLOCK_TOOL_ITEMS);
   } /* else -- not a TextBlock or no TextBlock ToolItems */
@@ -45,7 +51,11 @@ const buildNodeToolCollections = (node: ProseMirrorNode): ToolItem[][] => {
     position === 'start' ? toolCollections.unshift(uniqueToolItemsObj.items) : toolCollections.push(uniqueToolItemsObj.items);
   } /* else -- no unique tool items for this Node or the ToolItems entry is empty */
 
-  return toolCollections;
+  if(uniqueToolItemsObj.rightContent) {
+    rightContent = uniqueToolItemsObj.rightContent;
+  } /* else -- Toolbar does not require right content */
+
+  return { toolCollections, rightContent };
 };
 
 // == Mark ========================================================================
@@ -111,12 +121,17 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
 
 /**
  * {@link ToolItem}s that should only be added to a specific
- * {@link ProseMirrorNode} or {@link ProseMirrorMark}'s {@link Toolbar}
+ * {@link ProseMirrorNode} or {@link ProseMirrorMark}'s {@link Toolbar}, as
+ * well as the rightContent, if any
  *
  * the given position determines whether they appear at the start or at the
  * end of their neighboring default ToolItems
  */
-type UniqueToolItemConfiguration = { position: 'start' | 'end'; items: ToolItem[]; };
+ type UniqueToolItemConfiguration = {
+  position: 'start' | 'end';
+  items: ToolItem[];
+  rightContent?: React.FC<EditorToolComponentProps>;
+};
 const defaultUniqueToolItemConfiguration: UniqueToolItemConfiguration= { position: 'start', items: [/*none*/] };
 const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration> = {
   // -- Node ----------------------------------------------------------------------
