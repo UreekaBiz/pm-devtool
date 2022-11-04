@@ -1,7 +1,6 @@
-import { Extension } from '@tiptap/core';
+import { ExtensionName, ExtensionPriority } from 'notebookEditor/model/type';
 
-import { ExtensionName, ExtensionPriority, NoOptions, NoStorage } from 'notebookEditor/model/type';
-
+import { Extension } from '../type';
 import { checkDirty } from './checkDirty';
 
 // ********************************************************************************
@@ -11,11 +10,19 @@ import { checkDirty } from './checkDirty';
 //       corresponding common file
 //       (SEE: src/common/notebookEditor/extension/asyncNode.ts)
 // == Extension ===================================================================
-export const AsyncNode = Extension.create<NoOptions, NoStorage>({
+export const AsyncNode = new Extension({
   name: ExtensionName.ASYNC_NODE,
   priority: ExtensionPriority.ASYNC_NODE,
 
+  // -- Input ---------------------------------------------------------------------
+  inputRules: (editor) => [/*none*/],
+
+  // -- Paste ---------------------------------------------------------------------
+  pasteRules: (editor) => [/*none*/],
+
   // -- Transaction ---------------------------------------------------------------
-  // check if any async nodes are considered to be dirty after this transaction
-  onTransaction({ transaction }) { checkDirty(transaction, this.editor); },
+  transactionListener: (editor, tr) => checkDirty(editor, tr),
+
+  // -- Plugin --------------------------------------------------------------------
+  addProseMirrorPlugins: (editor) => [/*none*/],
 });

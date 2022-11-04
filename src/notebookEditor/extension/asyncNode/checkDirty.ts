@@ -1,8 +1,8 @@
-import { Editor } from '@tiptap/core';
 import { Transaction } from 'prosemirror-state';
 
-import { asyncNodes, wereNodesAffectedByTransaction, AsyncNodeStatus, AttributeType, NodeName } from '@ureeka-notebook/web-service';
+import { asyncNodes, wereNodesAffectedByTransaction, AsyncNodeStatus, AttributeType, NodeName } from 'common';
 
+import { Editor } from 'notebookEditor/editor';
 import { getNodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
 import { AbstractAsyncNodeStorageType } from './nodeView/controller';
@@ -22,7 +22,7 @@ const codeBlockAsyncNodeNames = new Set<NodeName>([...asyncNodes, NodeName.CODEB
 // NOTE: these get computed based on the hashes of the references and
 //       the codeBlockReferences that they represent, since the hashes are
 //       what does not change until a new async call is performed
-export const checkDirty = (transaction: Transaction, editor: Editor) => {
+export const checkDirty = (editor: Editor, transaction: Transaction) => {
   if(transaction.doc === transaction.before) return/*no changes*/;
 
   if(!wereNodesAffectedByTransaction(transaction, codeBlockAsyncNodeNames)) return/*not affected*/;

@@ -1,10 +1,6 @@
 import { EditorState, Transaction } from 'prosemirror-state';
 
 // ********************************************************************************
-// == Option & Storage ============================================================
-export type NoOptions = unknown/*alias*/;
-export type NoStorage = unknown/*alias*/;
-
 // == Plugin ======================================================================
 export class NoPluginState {
   constructor() {/*currently nothing*/ }
@@ -13,6 +9,7 @@ export class NoPluginState {
 
 // == Extension ===================================================================
 export enum ExtensionName {
+  ASYNC_NODE = 'asyncNode',
   BASIC_KEYMAP = 'basicKeymap',
   DEFAULT_INPUT_RULES = 'defaultInputRules',
   EMOJI_SUGGESTION = 'emojiSuggestion',
@@ -45,23 +42,29 @@ export enum ExtensionPriority {
   //       keydown handlers run
   EMOJI_SUGGESTION = 116,
 
+  // NOTE: asyncNodes must check if they are dirty after the codeBlocks have
+  //       been modified accordingly (e.g. codeBlockReferences and hashes) have
+  //       been recomputed. Hence this must run before other Extensions
+  ASYNC_NODE = 115,
+
+
   // NOTE: since Blocks make use of several specific Commands, they must not
   //       be executed in default order
-  CODEBLOCK = 115,
+  CODEBLOCK = 114,
 
   // NOTE: since Blocks make use of several specific Commands, they must not
   //       be executed in default order
   // NOTE: since Blockquote shares the Mod-B keybinding with Bold, it must have
   //       a priority higher than it so that it gets inserted without toggling it
-  BLOCKQUOTE = 114,
+  BLOCKQUOTE = 113,
 
   // NOTE: since EditableInlineNodeWithContent shares the Mod-E keybinding
   //       with Code, it must have a priority higher than it so that it
   //       gets inserted without toggling it
-  EDITABLE_INLINE_NODE_WITH_CONTENT = 113,
+  EDITABLE_INLINE_NODE_WITH_CONTENT = 112,
 
   // NOTE: for consistency with EditableInlineNodeWithContent
-  NESTED_VIEW_BLOCK_NODE = 113/*same as EditableInlineNodeWithContent*/,
+  NESTED_VIEW_BLOCK_NODE = 112/*same as EditableInlineNodeWithContent*/,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when

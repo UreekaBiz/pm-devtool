@@ -1,24 +1,27 @@
 import { useToast, Spinner } from '@chakra-ui/react';
-import { Editor } from '@tiptap/core';
 import { useCallback } from 'react';
 import { FiPlay } from 'react-icons/fi';
 
+import { Editor } from 'notebookEditor/editor';
 import { AbstractAsyncNodeController } from 'notebookEditor/extension/asyncNode/nodeView/controller';
 import { RightContentButton } from 'notebookEditor/extension/shared/component/RightContentButton';
-import { useAsyncStatus } from 'shared/hook';
+import { useAsyncStatus } from 'notebookEditor/shared/hook/useAsyncStatus';
 
 // ********************************************************************************
 // NOTE: see NOTE at top of AbstractAsyncNodeController for 'any' type explanation
+// == Interface ===================================================================
 interface Props {
   editor: Editor;
   asyncNodeView: AbstractAsyncNodeController<any, any, any>;
   disabled?: boolean;
 }
+
+// == Component ===================================================================
 export const ExecuteAsyncNodeButton: React.FC<Props> = ({ editor, asyncNodeView, disabled = false }) => {
   const toast = useToast();
   const [status, setStatus] = useAsyncStatus();
 
-  // == Callback ==================================================================
+  // -- Callback ------------------------------------------------------------------
   const executeAsyncNode = useCallback(async () => {
     setStatus('loading');
     editor.view.focus();
@@ -37,7 +40,7 @@ export const ExecuteAsyncNodeButton: React.FC<Props> = ({ editor, asyncNodeView,
     }
   }, [asyncNodeView, editor.view, setStatus, toast]);
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   return (
     <RightContentButton
       isDisabled={status === 'loading' || disabled}

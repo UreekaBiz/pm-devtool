@@ -1,4 +1,4 @@
-import { AsyncNodeType } from '@ureeka-notebook/web-service';
+import { AsyncNodeType } from 'common';
 
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
