@@ -1,5 +1,5 @@
-import { CodeBlock } from 'notebookEditor/codeblock';
-import { CodeBlockReference } from 'notebookEditor/codeBlockReference';
+import { CodeBlock } from 'notebookEditor/extension/codeblock';
+import { CodeBlockReference } from 'notebookEditor/extension/codeBlockReference';
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
 import { Blockquote } from 'notebookEditor/extension/blockquote';

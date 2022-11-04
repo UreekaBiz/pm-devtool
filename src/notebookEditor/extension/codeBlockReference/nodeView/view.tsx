@@ -1,7 +1,7 @@
 import { computeCodeBlockReferenceText, getPosType, isBlank, AttributeType, CodeBlockReferenceNodeType, NodeName, ACTIONABLE_NODE, DEFAULT_CODEBLOCK_REFERENCE_NODE_TEXT, DATA_NODE_TYPE } from 'common';
 
-import { getCodeBlockViewStorage } from 'notebookEditor/codeblock/nodeView';
-import { focusCodeBlock } from 'notebookEditor/codeblock/util';
+import { getCodeBlockViewStorage } from 'notebookEditor/extension/codeblock/nodeView';
+import { focusCodeBlock } from 'notebookEditor/extension/codeblock/util';
 import { Editor } from 'notebookEditor/editor';
 import { createInlineNodeContainer } from 'notebookEditor/extension/util/ui';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';

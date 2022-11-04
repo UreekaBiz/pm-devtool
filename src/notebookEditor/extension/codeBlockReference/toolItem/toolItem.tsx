@@ -2,7 +2,7 @@ import { VscReferences } from 'react-icons/vsc';
 
 import { isNodeSelection, NodeName } from 'common';
 
-import { CodeBlockReferenceChipSelector } from 'notebookEditor/codeblock/toolItem';
+import { CodeBlockReferenceChipSelector } from 'notebookEditor/extension/codeblock/toolItem';
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
