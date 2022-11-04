@@ -1,4 +1,4 @@
-import { createNodeDataAttribute, getRenderAttributes, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeRendererSpec, CodeBlockNodeSpec, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
+import { createNodeDataAttribute, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -56,19 +56,18 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     const id = attrs[AttributeType.Id],
           type = attrs[AttributeType.Type] ?? CodeBlockType.Code/*default*/,
           wrap = attrs[AttributeType.Wrap] ?? false/*default*/;
-
-    // update styles
-    const renderAttributes = getRenderAttributes(NodeName.CODEBLOCK, attrs, CodeBlockNodeRendererSpec, CodeBlockNodeSpec);
-
-    this.dom.setAttribute('style', renderAttributes.style?.toString() ?? ''/*empty string if not defined*/);
-    this.dom.style.whiteSpace = getWrapStyles(wrap);
-
-    // update visual id
     if(!id) return/*nothing to do*/;
-
     const visualId = this.storage.getVisualId(id);
+
+    // update DOM
     this.dom.setAttribute(DATA_VISUAL_ID, visualId);
     this.dom.setAttribute(createNodeDataAttribute(AttributeType.Type), type);
+    this.dom.style.whiteSpace = getWrapStyles(wrap);
+
+    // update Inner Container
+    this.innerContainer.style.fontFamily = type === CodeBlockType.Code ? 'monospace' : 'inherit';
+
+    // update VisualId Container
     this.visualIdContainer.innerHTML = visualId;
   }
 }
