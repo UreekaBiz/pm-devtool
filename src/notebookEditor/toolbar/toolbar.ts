@@ -8,7 +8,7 @@ import { markCode } from 'notebookEditor/extension/code';
 import { codeBlockToolItem, codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/extension/codeblock';
 import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem, codeBlockReferenceToolItem } from 'notebookEditor/extension/codeBlockReference';
 import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, demoAsyncNodeToolItem, DemoAsyncNodeExecuteButtons } from 'notebookEditor/extension/demoAsyncNode';
-import { demoAsyncNode2DelaySlider, demoAsyncNode2ReplaceTextToolItem, DemoAsyncNode2ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode2';
+import { demoAsyncNode2DelaySlider, demoAsyncNode2ReplaceTextToolItem, demoAsyncNode2ToolItem, DemoAsyncNode2ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode2';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem, horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule';
@@ -141,6 +141,7 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   codeBlockToolItem,
   codeBlockReferenceToolItem,
   demoAsyncNodeToolItem,
+  demoAsyncNode2ToolItem,
   editableInlineNodeWithContentToolItem,
   nestedViewBlockNodeToolItem,
 ];
