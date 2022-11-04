@@ -17,7 +17,7 @@ export const codeBlockToolItem: ToolItem = {
   label: NodeName.CODEBLOCK,
 
   icon: <BiCodeAlt size={16} />,
-  tooltip: 'Code Block (⌘ + ⌥ + C)',
+  tooltip: 'Code Block (⌘ + ⇧ + C)',
 
   // Disable tool item if current selected node or its parent is a CodeBlock node
   shouldBeDisabled: (editor) => {

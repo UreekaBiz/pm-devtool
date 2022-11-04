@@ -36,7 +36,7 @@ export class CodeBlockStorage extends NodeViewStorage<CodeBlockController> {
 }
 export const getCodeBlockViewStorage = (editor: Editor): CodeBlockStorage => {
   const storage = editor.storage.get(NodeName.CODEBLOCK);
-  if(!isCodeBlockViewStorage(storage)) throw new Error('Incorrect type of storage for codeBlock');
+  if(!isCodeBlockViewStorage(storage)) throw new Error('Wrong type of storage for CodeBlock');
   return storage;
 };
 const isCodeBlockViewStorage = (storage: any): storage is CodeBlockStorage => 'visualIdMap' in storage;
