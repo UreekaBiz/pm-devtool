@@ -30,10 +30,11 @@ export const createDefaultDemoAsyncNodeAttributes = (): Partial<DemoAsyncNodeAtt
   ...createDefaultAsyncNodeAttributes(),
   [AttributeType.CodeBlockReferences]: [/*empty*/],
   [AttributeType.CodeBlockHashes]: [/*empty*/],
-  [AttributeType.Status]: AsyncNodeStatus.NEVER_EXECUTED,
+  [AttributeType.Status]: DEFAULT_DEMO_ASYNC_NODE_STATUS,
   [AttributeType.Delay]: DEFAULT_DEMO_ASYNC_NODE_DELAY,
   [AttributeType.Text]: DEFAULT_DEMO_ASYNC_NODE_TEXT,
 });
 
+export const DEFAULT_DEMO_ASYNC_NODE_STATUS = AsyncNodeStatus.NEVER_EXECUTED/*alias*/;
 export const DEFAULT_DEMO_ASYNC_NODE_TEXT = 'Not Executed'/*creation default*/;
 export const DEFAULT_DEMO_ASYNC_NODE_DELAY = 4000/*ms*/;

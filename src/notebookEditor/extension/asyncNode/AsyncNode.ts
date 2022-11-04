@@ -1,7 +1,7 @@
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model/type';
 
 import { Extension } from '../type';
-import { checkDirty } from './checkDirty';
+import { checkDirty } from './transaction';
 
 // ********************************************************************************
 // NOTE: AsyncNodes are meant to be an abstraction for all async nodes. As such,

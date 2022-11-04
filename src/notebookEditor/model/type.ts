@@ -1,6 +1,9 @@
 import { EditorState, Transaction } from 'prosemirror-state';
 
 // ********************************************************************************
+// == Option & Storage ============================================================
+export type NoStorage = unknown/*alias*/;
+
 // == Plugin ======================================================================
 export class NoPluginState {
   constructor() {/*currently nothing*/ }

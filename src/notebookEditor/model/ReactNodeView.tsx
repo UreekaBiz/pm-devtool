@@ -21,13 +21,18 @@ export type ReactNodeViewProps<
 
   /** the attributes of the node */
   attrs: Attrs;
+
   /** the nodes that this View corresponds to */
   node: NodeType & Attrs;
 
   /** the corresponding model for the view */
   nodeModel: NodeModel;
+
   /** the node view */
   nodeView: NodeView;
+
+  /** whether the node is selected or not */
+  isSelected: boolean;
 };
 
 export type ReactNodeViewComponentProps<
