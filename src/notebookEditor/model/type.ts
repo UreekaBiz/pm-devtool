@@ -45,17 +45,23 @@ export enum ExtensionPriority {
   //       keydown handlers run
   EMOJI_SUGGESTION = 116,
 
+  // NOTE: since Blocks make use of several specific Commands, they must not
+  //       be executed in default order
+  CODEBLOCK = 115,
+
+  // NOTE: since Blocks make use of several specific Commands, they must not
+  //       be executed in default order
   // NOTE: since Blockquote shares the Mod-B keybinding with Bold, it must have
   //       a priority higher than it so that it gets inserted without toggling it
-  BLOCKQUOTE = 110,
+  BLOCKQUOTE = 114,
 
   // NOTE: since EditableInlineNodeWithContent shares the Mod-E keybinding
   //       with Code, it must have a priority higher than it so that it
   //       gets inserted without toggling it
-  EDITABLE_INLINE_NODE_WITH_CONTENT = 109,
+  EDITABLE_INLINE_NODE_WITH_CONTENT = 113,
 
   // NOTE: for consistency with EditableInlineNodeWithContent
-  NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
+  NESTED_VIEW_BLOCK_NODE = 113/*same as EditableInlineNodeWithContent*/,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when

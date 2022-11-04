@@ -2,8 +2,9 @@ import { generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineComman
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension';
+import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension';
 import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/extension/util';
+import { ExtensionPriority } from 'notebookEditor/model';
 import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule';
 import { keymap } from 'prosemirror-keymap';
 
@@ -20,7 +21,7 @@ const codeBlockRegEx = /```([a-z]+)?[\s\n]$/;
 // == Node ========================================================================
 export const CodeBlock = new NodeExtension({
   name: NodeName.CODEBLOCK,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.CODEBLOCK,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => getCodeBlockAttrs(extensionStorage),
