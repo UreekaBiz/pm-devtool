@@ -1,4 +1,4 @@
-import { asyncNodeStatusToColor, getPosType, AsyncNodeStatus, AttributeType, DemoAsyncNodeType, NodeName, DATA_NODE_TYPE, DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS, DEMO_ASYNC_NODE_DATA_TOOLTIP, DEMO_ASYNC_NODE_TOOLTIP_CONTAINER_CLASS, DEMO_ASYNC_NODE_TOOLTIP_TEXT_CONTAINER_CLASS } from 'common';
+import { asyncNodeStatusToColor, getPosType, AsyncNodeStatus, AttributeType, DemoAsyncNodeType, NodeName, DATA_NODE_TYPE, DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 import { AbstractAsyncNodeView } from 'notebookEditor/extension/asyncNode/nodeView/view';
@@ -17,12 +17,6 @@ export class DemoAsyncNodeView extends AbstractAsyncNodeView<string, DemoAsyncNo
   /** the div that holds the status of the DAN */
   public readonly statusContainer: HTMLDivElement;
 
-  /** the span that holds the tooltip of the DAN */
-  public readonly tooltipContainer: HTMLSpanElement;
-
-  /** the span that holds the Text of the Tooltip */
-  public readonly tooltipTextContainer: HTMLSpanElement;
-
   // -- Lifecycle -----------------------------------------------------------------
   constructor(model: DemoAsyncNodeModel, editor: Editor, node: DemoAsyncNodeType, storage: DemoAsyncNodeStorageType, getPos: getPosType) {
     super(model, editor, node, storage, getPos);
@@ -34,14 +28,6 @@ export class DemoAsyncNodeView extends AbstractAsyncNodeView<string, DemoAsyncNo
     this.statusContainer = document.createElement('div');
     this.statusContainer.classList.add(DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS);
     this.dom.appendChild(this.statusContainer);
-
-    this.tooltipContainer = document.createElement('span');
-    this.tooltipContainer.classList.add(DEMO_ASYNC_NODE_TOOLTIP_CONTAINER_CLASS);
-    this.dom.appendChild(this.tooltipContainer);
-
-    this.tooltipTextContainer = document.createElement('span');
-    this.tooltipTextContainer.classList.add(DEMO_ASYNC_NODE_TOOLTIP_TEXT_CONTAINER_CLASS);
-    this.tooltipContainer.appendChild(this.tooltipTextContainer);
 
     // sync View with current state
     this.updateView();
@@ -72,11 +58,5 @@ export class DemoAsyncNodeView extends AbstractAsyncNodeView<string, DemoAsyncNo
 
     // update status container
     this.statusContainer.style.backgroundColor = statusColor;
-
-    // update Tooltip container
-    this.tooltipContainer.setAttribute(DEMO_ASYNC_NODE_DATA_TOOLTIP, status);
-
-    // update Tooltip Text container
-    this.tooltipTextContainer.innerText = status;
   }
 }

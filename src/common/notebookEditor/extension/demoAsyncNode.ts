@@ -99,7 +99,4 @@ export const DEFAULT_DEMO_ASYNC_NODE_TEXT = 'Not Executed'/*creation default*/;
 export const DEFAULT_DEMO_ASYNC_NODE_DELAY = 4000/*ms*/;
 
 // -- CSS -------------------------------------------------------------------------
-export const DEMO_ASYNC_NODE_DATA_TOOLTIP = 'data-attribute-tooltip';
 export const DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS = 'demoAsyncNodeStatusContainer';
-export const DEMO_ASYNC_NODE_TOOLTIP_CONTAINER_CLASS = 'demoAsyncNodeTooltipContainer';
-export const DEMO_ASYNC_NODE_TOOLTIP_TEXT_CONTAINER_CLASS = 'demoAsyncNodeTooltipTextContainer';
