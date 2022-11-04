@@ -37,7 +37,7 @@ export const CodeBlock = new NodeExtension({
   addStorage: () => new CodeBlockStorage(),
 
   // -- View ----------------------------------------------------------------------
-  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<CodeBlockController>(editor, node, NodeName.IMAGE, getPos, isCodeBlockNode, CodeBlockController),
+  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<CodeBlockController>(editor, node, NodeName.CODEBLOCK, getPos, isCodeBlockNode, CodeBlockController),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [createTextblockTypeInputRule(codeBlockRegEx, getCodeBlockNodeType(editor.view.state.schema))],

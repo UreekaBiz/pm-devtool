@@ -1,3 +1,5 @@
+import { CodeBlock } from 'notebookEditor/codeblock';
+import { CodeBlockReference } from 'notebookEditor/codeBlockReference';
 import { Extension } from 'notebookEditor/extension';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
 import { Blockquote } from 'notebookEditor/extension/blockquote';
@@ -38,6 +40,8 @@ export const editorDefinition: Extension[] = [
   Blockquote,
   Bold,
   Code,
+  CodeBlock,
+  CodeBlockReference,
   DefaultInputRules,
   Document,
   EditableInlineNodeWithContent,

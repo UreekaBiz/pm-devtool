@@ -6,6 +6,7 @@ import { markBold } from 'notebookEditor/extension/bold';
 import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem, blockquoteToolItem } from 'notebookEditor/extension/blockquote';
 import { markCode } from 'notebookEditor/extension/code';
 import { codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/codeblock';
+import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem } from 'notebookEditor/codeBlockReference';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem, horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule';
@@ -151,6 +152,13 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
     items: [
       codeBlockTypeToolItem,
       codeBlockWrapToolItem,
+    ],
+  },
+  [NodeName.CODEBLOCK_REFERENCE]: {
+    position: 'start',
+    items: [
+      codeBlockReferenceDelimiterToolItem,
+      codeBlockReferenceChipSelector,
     ],
   },
   [NodeName.DOC]: {
