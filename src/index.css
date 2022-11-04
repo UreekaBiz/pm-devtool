@@ -65,6 +65,36 @@
 .iconButton.active { background-color: var(--ACTIVE_BUTTON_COLOR); }
 .iconButton:hover  { background-color: var(--HOVER_BUTTON_COLOR); }
 
+/* .. Chip ..................................................................... */
+.chip {
+  transform: translate(0, 0)/*needed to remove the white background while dragging the chip*/;
+  position: relative;
+  padding: 3px 28px 2px 10px;
+  background-color: #4299E1;
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+  cursor: grab;
+}
+
+.chipCloseButton {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(calc(-1px - 50%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 2px;
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color .3s;
+}
+.chipCloseButton:hover { color: rgba(255, 255, 255, 0.7);}
+.chipCloseButton:focus { color: rgba(255, 255, 255, 0.7); }
+
 /* == Utilities ================================================================ */
 /* NOTE: Using class name to override the (seemingly impossible!) styles for the
          input with the accessible props. */
