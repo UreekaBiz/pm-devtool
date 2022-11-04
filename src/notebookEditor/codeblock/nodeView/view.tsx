@@ -69,5 +69,6 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     const visualId = this.storage.getVisualId(id);
     this.dom.setAttribute(DATA_VISUAL_ID, visualId);
     this.dom.setAttribute(createNodeDataAttribute(AttributeType.Type), type);
+    this.visualIdContainer.innerHTML = visualId;
   }
 }

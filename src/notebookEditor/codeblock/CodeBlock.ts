@@ -11,7 +11,6 @@ import { getCodeBlockAttrs } from './attribute';
 import { CodeBlockController } from './nodeView/controller';
 import { CodeBlockStorage } from './nodeView/storage';
 import './codeBlock.css';
-import { codeBlockPlugin } from './plugin';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -48,7 +47,6 @@ export const CodeBlock = new NodeExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
-    codeBlockPlugin(editor),
     keymap({
       // toggle a CodeBlock
       'Shift-Mod-c': () => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
