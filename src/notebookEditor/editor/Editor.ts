@@ -4,8 +4,8 @@ import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 
 import { Attributes, MarkName, NodeName } from 'common';
 
+import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, isNodeExtension, Extension, TransactionListenerType } from 'notebookEditor/extension';
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
-import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, Extension, isNodeExtension } from 'notebookEditor/extension';
 import { inputRulesPlugin, InputRule } from 'notebookEditor/plugin/inputRule';
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule';
 
@@ -23,6 +23,12 @@ export class Editor {
   // .. Private ...................................................................
   /** the {@link Extension}s that will be used by the Editor */
   private extensions: Extension[];
+
+  /**
+   * the {@link TransactionListeners} added by {@link Extensions} that
+   * get triggered after a Transaction has been dispatched
+   */
+  private transactionListeners: TransactionListenerType[];
 
   /** the {@link Schema} that the {@link EditorView}'s will use */
   private schema: Schema;
@@ -55,6 +61,7 @@ export class Editor {
   constructor(extensions: Extension[], updateReactEditorCallback: () => void) {
     // .. Private .................................................................
     this.extensions = sortExtensionsByPriority(extensions);
+    this.transactionListeners = this.initializeTransactionListeners();
     this.schema = this.buildSchemaFromExtensions(this.extensions);
     this.viewMounted = false/*by definition*/;
     this.updateReactEditorCallback = updateReactEditorCallback;
@@ -64,6 +71,18 @@ export class Editor {
     this.element = document.createElement('div')/*placeholder that will be replaced on mount (SEE: EditorContent.tsx)*/;
     this.view = new EditorView(null/*default empty*/, { state: EditorState.create({ schema: this.schema }) });
     this.storage = this.initializeStorage();
+  }
+
+  /** setup the {@link TransactionListener}s for the {@link Editor} */
+  private initializeTransactionListeners() {
+    return this.extensions.reduce<TransactionListenerType[]>((transactionListeners, currentExtension) => {
+      const { transactionListener } = currentExtension.definition;
+      if(transactionListener) {
+        transactionListeners.push(transactionListener);
+      } /* else -- ignore */
+
+      return transactionListeners;
+    }, [/*initially empty*/]);
   }
 
   /** create a {@link Schema} from the given {@link Extension}s */
@@ -90,6 +109,8 @@ export class Editor {
         dispatchTransaction: (tr) => {
           this.view.updateState(this.view.state.apply(tr));
           this.updateReactEditorCallback();
+
+          this.transactionListeners.forEach(listener => listener(this, tr));
         },
 
         nodeViews: this.initializeNodeViews(),
