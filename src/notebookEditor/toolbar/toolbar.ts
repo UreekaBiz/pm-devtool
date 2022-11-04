@@ -143,7 +143,8 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
 
 /**
  * {@link ToolItem}s that should only be added to a specific
- * {@link ProseMirrorNode} or {@link ProseMirrorMark}'s {@link Toolbar}
+ * {@link ProseMirrorNode} or {@link ProseMirrorMark}'s {@link Toolbar}, as
+ * well as the rightContent, if any
  *
  * the given position determines whether they appear at the start or at the
  * end of their neighboring default ToolItems
