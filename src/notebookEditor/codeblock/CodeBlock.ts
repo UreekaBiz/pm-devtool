@@ -8,9 +8,9 @@ import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule';
 import { keymap } from 'prosemirror-keymap';
 
 import { getCodeBlockAttrs } from './attribute';
+import './codeBlock.css';
 import { CodeBlockController } from './nodeView/controller';
 import { CodeBlockStorage } from './nodeView/storage';
-import './codeBlock.css';
 
 // ********************************************************************************
 // == Constant ====================================================================
