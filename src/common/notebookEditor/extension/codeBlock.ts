@@ -53,10 +53,11 @@ export const CodeBlockNodeSpec: NodeSpec = {
 
 // -- Render Spec -----------------------------------------------------------------
 const renderCodeBlockNodeView = (attributes: CodeBlockAttributes, content: string, state: RendererState) => {
-  const id = attributes[AttributeType.Id];
-  const visualId = id ? state[NodeName.CODEBLOCK].visualIds[id] : ''/*no visual id*/;
-  const isWrap = !!attributes[AttributeType.Wrap];
+  const id = attributes[AttributeType.Id],
+        type = attributes[AttributeType.Type] ?? CodeBlockType.Code/*default*/,
+        wrap = attributes[AttributeType.Wrap] ?? false/*default*/;
 
+  const visualId = id ? state[NodeName.CODEBLOCK].visualIds[id] : ''/*no visual id*/;
   const renderAttributes = getRenderAttributes(NodeName.CODEBLOCK, { ...attributes, [AttributeType.Wrap]: ''/*string required -- ignore value*/ }, CodeBlockNodeRendererSpec, CodeBlockNodeSpec);
 
   // CHECK: is there any reason this can't use JSX to define the structure?
@@ -64,7 +65,7 @@ const renderCodeBlockNodeView = (attributes: CodeBlockAttributes, content: strin
   //       (hence it is a single line below)
   // NOTE: createNodeDataTypeAttribute must be used for all nodeRenderSpecs
   //       that define their own renderNodeView
-  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${createNodeDataAttribute(AttributeType.Type)}="${attributes.type}" ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/}"><div><p style="${getWrapStyles(isWrap)}">${content}</p></div></div>`;
+  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${createNodeDataAttribute(AttributeType.Type)}="${attributes.type}" ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/}; white-space: ${getWrapStyles(wrap)}"><div class="${CODEBLOCK_INNER_CONTAINER_CLASS}" style="font-family: ${type === CodeBlockType.Code ? 'monospace' : 'inherit'};">${content}</div><div class="${CODEBLOCK_VISUAL_ID_CONTAINER_CLASS}">${visualId}</div></div>`;
 };
 
 export const CodeBlockNodeRendererSpec: NodeRendererSpec<CodeBlockAttributes> = {
