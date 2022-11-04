@@ -38,7 +38,13 @@ export const UnitPickerInput: React.FC<Props> = ({ name, onChange, valueWithUnit
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     // Save changes when user presses enter
-    if(event.key === 'Enter') saveChange(true/*focus editor*/);
+    if(event.key === 'Enter') {
+      // prevent PM from handling the event
+      event.preventDefault();
+      event.stopPropagation();
+
+      saveChange(true/*focus editor*/);
+    }
   };
 
   // == UI ========================================================================
