@@ -84,6 +84,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.LeftDelimiter]: '(',
       [AttributeType.RightDelimiter]: ')',
     },
+    [NodeName.DEMO_ASYNC_NODE]: {/*no defined value*/},
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
     [NodeName.HEADING]: {
@@ -191,6 +192,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.LeftDelimiter]: '[',
       [AttributeType.RightDelimiter]: ']',
     },
+    [NodeName.DEMO_ASYNC_NODE]: {/*no defined value*/},
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
     [NodeName.HEADING]: {

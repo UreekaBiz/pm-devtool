@@ -7,6 +7,7 @@ import { BoldMarkRendererSpec } from '../extension/bold';
 import { CodeMarkRendererSpec } from '../extension/code';
 import { CodeBlockNodeRendererSpec } from '../extension/codeBlock';
 import { CodeBlockReferenceNodeRendererSpec } from '../extension/codeBlockReference';
+import { DemoAsyncNodeRendererSpec } from '../extension/demoAsyncNode';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { HorizontalRuleNodeRendererSpec } from '../extension/horizontalRule';
@@ -39,6 +40,7 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.CODEBLOCK]: CodeBlockNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DOC]: DocumentNodeRendererSpec,
+  [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeRendererSpec as any/*FIXME!!!*/,

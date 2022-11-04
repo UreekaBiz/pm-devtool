@@ -1,4 +1,4 @@
-import { getRenderAttributes, AttributeType, DemoAsyncNodeAttributes, DemoAsyncNodeComponentJSX, DemoAsyncNodeRendererSpec, DemoAsyncNodeSpec, DemoAsyncNodeType, NodeName } from '@ureeka-notebook/web-service';
+import { getRenderAttributes, AttributeType, DemoAsyncNodeAttributes, DemoAsyncNodeComponentJSX, DemoAsyncNodeRendererSpec, DemoAsyncNodeSpec, DemoAsyncNodeType, NodeName } from 'common';
 
 import { ReactNodeViewComponentProps } from 'notebookEditor/model/ReactNodeView';
 

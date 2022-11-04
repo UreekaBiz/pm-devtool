@@ -1,10 +1,12 @@
-import { CodeBlock } from 'notebookEditor/extension/codeblock';
-import { CodeBlockReference } from 'notebookEditor/extension/codeBlockReference';
 import { Extension } from 'notebookEditor/extension';
+import { AsyncNode } from 'notebookEditor/extension/asyncNode';
 import { BasicKeymap } from 'notebookEditor/extension/basicKeymap';
 import { Blockquote } from 'notebookEditor/extension/blockquote';
 import { Bold } from 'notebookEditor/extension/bold/Bold';
+import { CodeBlock } from 'notebookEditor/extension/codeblock';
+import { CodeBlockReference } from 'notebookEditor/extension/codeBlockReference';
 import { Code } from 'notebookEditor/extension/code';
+import { DemoAsyncNode } from 'notebookEditor/extension/demoAsyncNode';
 import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
 import { Document } from 'notebookEditor/extension/document';
 import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion';
@@ -36,12 +38,14 @@ import { Underline } from 'notebookEditor/extension/underline';
  * the Editor orders them by priority (SEE: Editor.ts)
  */
 export const editorDefinition: Extension[] = [
+  AsyncNode,
   BasicKeymap,
   Blockquote,
   Bold,
   Code,
   CodeBlock,
   CodeBlockReference,
+  DemoAsyncNode,
   DefaultInputRules,
   Document,
   EditableInlineNodeWithContent,

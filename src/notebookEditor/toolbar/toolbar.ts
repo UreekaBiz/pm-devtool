@@ -5,9 +5,9 @@ import { camelToTitleCase, MarkName, NodeName } from 'common';
 import { markBold } from 'notebookEditor/extension/bold';
 import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem, blockquoteToolItem } from 'notebookEditor/extension/blockquote';
 import { markCode } from 'notebookEditor/extension/code';
-import { codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/extension/codeblock';
-import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem } from 'notebookEditor/extension/codeBlockReference';
-import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode';
+import { codeBlockToolItem, codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/extension/codeblock';
+import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem, codeBlockReferenceToolItem } from 'notebookEditor/extension/codeBlockReference';
+import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, demoAsyncNodeToolItem, ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem, horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule';
@@ -137,6 +137,9 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   horizontalRuleToolItem,
 
   // -- Custom --------------------------------------------------------------------
+  codeBlockToolItem,
+  codeBlockReferenceToolItem,
+  demoAsyncNodeToolItem,
   editableInlineNodeWithContentToolItem,
   nestedViewBlockNodeToolItem,
 ];
