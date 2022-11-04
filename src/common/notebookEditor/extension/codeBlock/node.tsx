@@ -2,8 +2,8 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 import * as ReactDOMServer from 'react-dom/server';
 
 import { AttributeType } from '../../attribute';
-import { getReactNodeFromJSX } from '../../htmlRenderer/renderer';
 import { getRenderAttributes } from '../../htmlRenderer/attribute';
+import { getReactNodeFromJSX } from '../../htmlRenderer/jsx';
 import { RendererState } from '../../htmlRenderer/state';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
 import { getAllowedMarks, MarkName } from '../../mark';
