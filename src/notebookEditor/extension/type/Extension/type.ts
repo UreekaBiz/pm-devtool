@@ -1,4 +1,4 @@
-import { Plugin as ProseMirrorPlugin } from 'prosemirror-state';
+import { Plugin as ProseMirrorPlugin, Transaction } from 'prosemirror-state';
 
 import { Editor } from 'notebookEditor/editor';
 import { NodeViewStorage, DialogStorage } from 'notebookEditor/model';
@@ -13,6 +13,9 @@ export const DEFAULT_EXTENSION_PRIORITY = 100;
 /** the type of the Storage used by the Extension */
 export type ExtensionStorageType = NodeViewStorage<any> | DialogStorage | undefined/*Extension does not need storage*/;
 
+/** the type of the optionally defined Transaction listener of an Extension */
+export type TransactionListenerType = (editor: Editor, tr: Transaction) => void;
+
 // == Interface ===================================================================
 export interface ExtensionDefinition {
   name: string;
@@ -20,6 +23,13 @@ export interface ExtensionDefinition {
 
   /** the Storage used by the Extension */
   addStorage?: () => ExtensionStorageType;
+
+  /**
+   * if the Extension must react to Transactions in the editor, then it
+   * can do so through this function. Note that the this is meant to
+   * react to Editor changes, not trigger them
+   */
+  transactionListener?: TransactionListenerType;
 
   /** the InputRules added by the Extension */
   inputRules: (editor: Editor) => InputRule[];
