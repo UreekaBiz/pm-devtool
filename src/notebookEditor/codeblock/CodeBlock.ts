@@ -11,6 +11,7 @@ import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
 import { CodeBlockController } from './nodeView/controller';
 import { CodeBlockStorage } from './nodeView/storage';
+import { codeBlockOnTransaction } from './transaction';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -35,6 +36,9 @@ export const CodeBlock = new NodeExtension({
 
   // -- Storage -------------------------------------------------------------------
   addStorage: () => new CodeBlockStorage(),
+
+  // -- Transaction ---------------------------------------------------------------
+  transactionListener: (editor, tr) => codeBlockOnTransaction(editor, tr),
 
   // -- View ----------------------------------------------------------------------
   defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<CodeBlockController>(editor, node, NodeName.CODEBLOCK, getPos, isCodeBlockNode, CodeBlockController),
