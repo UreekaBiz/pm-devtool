@@ -15,6 +15,7 @@ export enum NodeName {
   CODEBLOCK = 'codeBlock',
   CODEBLOCK_REFERENCE = 'codeBlockReference',
   DEMO_ASYNC_NODE = 'demoAsyncNode',
+  DEMO_ASYNC_NODE_2 = 'demoAsyncNode2',
   DOC = 'document',
   EDITABLE_INLINE_NODE_WITH_CONTENT = 'editableInlineNodeWithContent',
   HEADING = 'heading',

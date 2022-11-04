@@ -7,7 +7,8 @@ import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem, block
 import { markCode } from 'notebookEditor/extension/code';
 import { codeBlockToolItem, codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/extension/codeblock';
 import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem, codeBlockReferenceToolItem } from 'notebookEditor/extension/codeBlockReference';
-import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, demoAsyncNodeToolItem, ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode';
+import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, demoAsyncNodeToolItem, DemoAsyncNodeExecuteButtons } from 'notebookEditor/extension/demoAsyncNode';
+import { demoAsyncNode2DelaySlider, demoAsyncNode2ReplaceTextToolItem, DemoAsyncNode2ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode2';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
 import { headingLevelToolItem } from 'notebookEditor/extension/heading';
 import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem, horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule';
@@ -187,7 +188,15 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
       demoAsyncNodeDelayToolItem,
       demoAsyncNodeChipToolItem,
     ],
-    rightContent: ExecuteButtons,
+    rightContent: DemoAsyncNodeExecuteButtons,
+  },
+  [NodeName.DEMO_ASYNC_NODE_2]: {
+    position: 'start',
+    items: [
+      demoAsyncNode2ReplaceTextToolItem,
+      demoAsyncNode2DelaySlider,
+  ],
+    rightContent: DemoAsyncNode2ExecuteButtons,
   },
   [NodeName.DOC]: {
     position: 'end',

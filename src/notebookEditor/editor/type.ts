@@ -7,6 +7,7 @@ import { CodeBlock } from 'notebookEditor/extension/codeblock';
 import { CodeBlockReference } from 'notebookEditor/extension/codeBlockReference';
 import { Code } from 'notebookEditor/extension/code';
 import { DemoAsyncNode } from 'notebookEditor/extension/demoAsyncNode';
+import { DemoAsyncNode2 } from 'notebookEditor/extension/demoAsyncNode2';
 import { DefaultInputRules } from 'notebookEditor/extension/defaultInputRules';
 import { Document } from 'notebookEditor/extension/document';
 import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion';
@@ -46,6 +47,7 @@ export const editorDefinition: Extension[] = [
   CodeBlock,
   CodeBlockReference,
   DemoAsyncNode,
+  DemoAsyncNode2,
   DefaultInputRules,
   Document,
   EditableInlineNodeWithContent,

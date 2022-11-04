@@ -5,6 +5,7 @@ export * from './code';
 export * from './codeBlock';
 export * from './codeBlockReference';
 export * from './demoAsyncNode';
+export * from './demoAsyncNode2';
 export * from './document';
 export * from './heading';
 export * from './horizontalRule';

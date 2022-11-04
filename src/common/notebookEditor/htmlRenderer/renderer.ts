@@ -8,6 +8,7 @@ import { CodeMarkRendererSpec } from '../extension/code';
 import { CodeBlockNodeRendererSpec } from '../extension/codeBlock';
 import { CodeBlockReferenceNodeRendererSpec } from '../extension/codeBlockReference';
 import { DemoAsyncNodeRendererSpec } from '../extension/demoAsyncNode';
+import { DemoAsyncNode2RendererSpec } from '../extension/demoAsyncNode2';
 import { DocumentNodeRendererSpec } from '../extension/document';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { HorizontalRuleNodeRendererSpec } from '../extension/horizontalRule';
@@ -32,7 +33,6 @@ import { getRenderAttributes, mergeAttributes } from './attribute';
 import { computeState, RendererState } from './state';
 import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK_TYPE, DATA_NODE_TYPE } from './type';
 
-
 // ********************************************************************************
 // == Type ========================================================================
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
@@ -41,6 +41,7 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DOC]: DocumentNodeRendererSpec,
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2RendererSpec as any/*FIXME!!!*/,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeRendererSpec as any/*FIXME!!!*/,

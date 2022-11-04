@@ -10,11 +10,7 @@ import { AbstractAsyncNodeStorageType } from './controller';
 
 // ********************************************************************************
 // == Class =======================================================================
-/**
- * Abstract class that serves as the base model for all async nodes
- *
- * @see: {@link AbstractAsyncNodeController}, {@link AbstractAsyncNodeView}
- */
+/** Abstract class that serves as the base model for all Async nodes */
 export abstract class AbstractAsyncNodeModel<T, NodeType extends AsyncNodeType, Storage extends AbstractAsyncNodeStorageType> extends AbstractNodeModel<AsyncNodeType, AbstractAsyncNodeStorageType> {
   // -- Attribute -----------------------------------------------------------------
   // defines if the current Node is performing an async operation

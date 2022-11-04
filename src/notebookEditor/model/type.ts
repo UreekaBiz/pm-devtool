@@ -55,19 +55,21 @@ export enum ExtensionPriority {
   //       be executed in default order
   CODEBLOCK = 114,
 
-  // NOTE: since Blocks make use of several specific Commands, they must not
-  //       be executed in default order
+  // NOTE: (SEE: ExtensionPriority.CodeBlock)
+  DEMO_ASYNC_NODE_2 = 113,
+
+  // NOTE: (SEE: ExtensionPriority.CodeBlock)
   // NOTE: since Blockquote shares the Mod-B keybinding with Bold, it must have
   //       a priority higher than it so that it gets inserted without toggling it
-  BLOCKQUOTE = 113,
+  BLOCKQUOTE = 112,
 
   // NOTE: since EditableInlineNodeWithContent shares the Mod-E keybinding
   //       with Code, it must have a priority higher than it so that it
   //       gets inserted without toggling it
-  EDITABLE_INLINE_NODE_WITH_CONTENT = 112,
+  EDITABLE_INLINE_NODE_WITH_CONTENT = 111,
 
   // NOTE: for consistency with EditableInlineNodeWithContent
-  NESTED_VIEW_BLOCK_NODE = 112/*same as EditableInlineNodeWithContent*/,
+  NESTED_VIEW_BLOCK_NODE = 111/*same as EditableInlineNodeWithContent*/,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when

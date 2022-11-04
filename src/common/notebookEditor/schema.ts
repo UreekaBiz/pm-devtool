@@ -6,6 +6,7 @@ import { CodeMarkSpec } from './extension/code';
 import { CodeBlockNodeSpec } from './extension/codeBlock';
 import { CodeBlockReferenceNodeSpec } from './extension/codeBlockReference';
 import { DemoAsyncNodeSpec } from './extension/demoAsyncNode';
+import { DemoAsyncNode2Spec } from './extension/demoAsyncNode2';
 import { DocumentNodeSpec } from './extension/document';
 import { EditableInlineNodeWithContentNodeSpec } from './extension/nestedViewNode/editableInlineNodeWithContent';
 import { HeadingNodeSpec } from './extension/heading';
@@ -35,6 +36,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.CODEBLOCK]: CodeBlockNodeSpec,
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeSpec,
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeSpec,
+  [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2Spec,
   [NodeName.DOC]: DocumentNodeSpec,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
