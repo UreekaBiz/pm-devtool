@@ -82,7 +82,7 @@ export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) =>
         overflowY='auto'
         background='white'
       >
-        <CloseButton position='absolute' top='0' right={0} onClick={handleClose} />
+        <CloseButton position='absolute' top={5} right={10} onClick={handleClose} />
         <NotebookViewer content={content} />
       </Box>
     </Portal>

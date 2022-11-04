@@ -7,6 +7,7 @@ import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttribut
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
 import { getCodeBlockReferenceAttrs } from './attribute';
+import './codeBlockReference.css';
 import { insertAndSelectCodeBlockReferenceCommand } from './command';
 import { CodeBlockReferenceController } from './nodeView/controller';
 
