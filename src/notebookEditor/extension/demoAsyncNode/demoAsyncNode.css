@@ -5,9 +5,10 @@
   margin-right: 4px;
   padding: 4px;
   word-break: break-word;
-  border: 1px solid;
   border-radius: 4px;
-  background: #EDF2F7;
+  background-color: #EDF2F7;
+  border: 1px solid;
+  border-color: #CBD5E0;
 }
 
 /* -- Status Container --------------------------------------------------------- */

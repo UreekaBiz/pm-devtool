@@ -52,7 +52,7 @@ export class DemoAsyncNodeView extends AbstractAsyncNodeView<string, DemoAsyncNo
 
     // update DOM
     const isDirty = this.model.getIsDirty();
-    this.dom.style.backgroundColor = isDirty ? 'red' : '#CBD5E0';
+    this.dom.style.borderColor = isDirty ? 'red' : '#CBD5E0'/*default*/;
     this.dom.innerText = text;
 
     // update status container
