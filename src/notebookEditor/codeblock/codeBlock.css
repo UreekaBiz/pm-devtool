@@ -1,0 +1,28 @@
+/* == CodeBlock ================================================================ */
+/* -- Container ---------------------------------------------------------------- */
+[data-node-type="codeBlock"] {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #EDF2F7;
+  border: 1px solid;
+  border-color: #CBD5E0;
+  border-radius: 4px;
+}
+
+/* -- Content DOM -------------------------------------------------------------- */
+[data-node-type="codeBlock"] > .codeBlockInnerContainer {
+  width: 100%;
+  overflow: auto;
+  min-height: 1.5em;
+  font-size: 16px;
+}
+
+/* -- VisualId Container ------------------------------------------------------- */
+[data-node-type="codeBlock"] > .codeBlockVisualIdContainer {
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 8px);
+  transform: translateY(-50%);
+}

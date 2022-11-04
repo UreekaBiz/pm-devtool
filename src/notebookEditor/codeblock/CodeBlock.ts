@@ -10,6 +10,7 @@ import { keymap } from 'prosemirror-keymap';
 import { getCodeBlockAttrs } from './attribute';
 import { CodeBlockController } from './nodeView/controller';
 import { CodeBlockStorage } from './nodeView/storage';
+import './codeBlock.css';
 import { codeBlockPlugin } from './plugin';
 
 // ********************************************************************************

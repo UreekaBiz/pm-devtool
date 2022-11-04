@@ -1,6 +1,6 @@
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes, getWrapStyles } from '../attribute';
+import { getWrapStyles, noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { getRenderAttributes } from '../htmlRenderer/attribute';
 import { RendererState } from '../htmlRenderer/state';
 import { createNodeDataAttribute, createNodeDataTypeAttribute, NodeRendererSpec } from '../htmlRenderer/type';
@@ -52,7 +52,6 @@ export const CodeBlockNodeSpec: NodeSpec = {
 };
 
 // -- Render Spec -----------------------------------------------------------------
-// -- Render Spec -----------------------------------------------------------------
 const renderCodeBlockNodeView = (attributes: CodeBlockAttributes, content: string, state: RendererState) => {
   const id = attributes[AttributeType.Id];
   const visualId = id ? state[NodeName.CODEBLOCK].visualIds[id] : ''/*no visual id*/;
@@ -91,12 +90,9 @@ export const createCodeBlockNode = (schema: NotebookSchemaType, attributes?: Par
 export type CodeBlockJSONNodeType = JSONNode<CodeBlockAttributes> & { type: NodeName.CODEBLOCK; };
 export const isCodeBlockJSONNode = (node: JSONNode): node is CodeBlockJSONNodeType => node.type === NodeName.CODEBLOCK;
 
+// == Util ========================================================================
 // alias for the hash of the Content of a CodeBlock
 export type CodeBlockHash = string;
-
-// the attribute that ensures that VisualId for a CodeBlock appears
-// to the right of the CodeBlock (SEE: index.css)
-export const DATA_VISUAL_ID = 'data-visualid';
 
 // the text that gets shown for Chips when the corresponding
 // codeBlock gets removed, hence invalidating its visualId
@@ -106,3 +102,14 @@ export const REMOVED_CODEBLOCK_VISUALID = 'Removed';
 export const EMPTY_CODEBLOCK_HASH = 'EmptyString';
 
 export enum CodeBlockType { Text = 'Text', Code = 'Code'}
+
+// -- CSS -------------------------------------------------------------------------
+// the attribute that ensures that VisualId for a CodeBlock appears
+// to the right of the CodeBlock (SEE: index.css)
+export const DATA_VISUAL_ID = 'data-visualid';
+
+// class of the div that holds the content of the CodeBlock
+export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
+
+// class of the div that holds the visualId of the CodeBlock
+export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';
