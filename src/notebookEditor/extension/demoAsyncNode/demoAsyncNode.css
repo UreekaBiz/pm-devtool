@@ -1,0 +1,27 @@
+/* == DemoAsyncNode ============================================================ */
+/* -- Container ---------------------------------------------------------------- */
+[data-node-type="demoAsyncNode"] {
+  margin-left: 4px;
+  margin-right: 4px;
+  padding: 4px;
+  word-break: break-word;
+  border: 1px solid;
+  border-radius: 4px;
+  background: #EDF2F7;
+}
+
+/* -- Status Container --------------------------------------------------------- */
+[data-node-type="demoAsyncNode"] > .demoAsyncNodeStatusContainer {
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-left: 0.35em;
+  border-radius: 7.5px;
+}
+
+/* -- Tooltip Container -------------------------------------------------------- */
+[data-node-type="demoAsyncNode"] > .demoAsyncNodeTooltipContainer {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}

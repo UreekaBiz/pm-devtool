@@ -33,9 +33,9 @@ export class CodeBlockReferenceView extends AbstractNodeView<CodeBlockReferenceN
   // -- Creation ------------------------------------------------------------------
   // creates the DOM Element that will be used to hold the View Element
   protected createDomElement(): HTMLElement {
-    const container = createInlineNodeContainer();
-          container.setAttribute(DATA_NODE_TYPE, NodeName.CODEBLOCK_REFERENCE);
-    return container;
+    const dom = createInlineNodeContainer();
+          dom.setAttribute(DATA_NODE_TYPE, NodeName.CODEBLOCK_REFERENCE);
+    return dom;
   }
 
   // creates the DOM Element that will be used to display the Node's Content

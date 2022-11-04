@@ -8,6 +8,7 @@ import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY, defineNodeViewBehavior } from '../type';
 import { getDemoAsyncNodeAttrs } from './attribute';
 import { insertAndSelectDemoAsyncNodeCommand } from './command';
+import './demoAsyncNode.css';
 import { DemoAsyncNodeController } from './nodeView/controller';
 
 // ********************************************************************************

@@ -29,9 +29,9 @@ export class ImageView extends AbstractNodeView<ImageNodeType, ImageStorage, Ima
 
   // -- Creation ------------------------------------------------------------------
   protected createDomElement() {
-    const inlineNodeContainer = createInlineNodeContainer();
-          inlineNodeContainer.setAttribute(DATA_NODE_TYPE, NodeName.IMAGE);
-    return inlineNodeContainer;
+    const dom = createInlineNodeContainer();
+          dom.setAttribute(DATA_NODE_TYPE, NodeName.IMAGE);
+    return dom;
   }
 
   // create the elements used by this Node with default styles
