@@ -1,12 +1,11 @@
 import { Node as ProseMirrorNode, Mark as ProseMirrorMark, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributesTypeFromNodeSpecAttributes, AttributeType } from '../attribute';
-import { NodeRendererSpec } from '../htmlRenderer/type';
-import { getRenderAttributes } from '../htmlRenderer/attribute';
+import { createNodeDataTypeAttribute, NodeRendererSpec } from '../htmlRenderer/type';
 import { getAllowedMarks } from '../mark';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../node/type';
 import { NotebookSchemaType } from '../schema';
-import { AsyncNodeAttributeSpec, AsyncNodeStatus, createDefaultAsyncNodeAttributes } from './asyncNode';
+import { asyncNodeStatusToColor, createDefaultAsyncNodeAttributes, AsyncNodeAttributeSpec, AsyncNodeStatus } from './asyncNode';
 import { CodeBlockHash } from './codeBlock';
 import { CodeBlockReference } from './codeBlockReference';
 
@@ -34,30 +33,32 @@ export type DemoAsyncNodeAttributes = AttributesTypeFromNodeSpecAttributes<typeo
 // == Spec ========================================================================
 // -- Node Spec -------------------------------------------------------------------
 export const DemoAsyncNodeSpec: NodeSpec = {
-  name: NodeName.DEMO_ASYNC_NODE,
-
+  // .. Definition ................................................................
   marks: getAllowedMarks([/*no Marks allowed for DemoAsyncNode*/]),
-
   group: NodeGroup.INLINE,
+
+  // .. Attribute .................................................................
+  attrs: DemoAsyncNodeAttributeSpec,
+
+  // .. Misc ......................................................................
   atom: true/*node does not have directly editable content*/,
-  leaf: true/*node does not have directly editable content*/,
-  inline: true,
-  selectable: true,
   draggable: false,
   defining: true/*maintain original node during replace operations if possible*/,
-
-  attrs: DemoAsyncNodeAttributeSpec,
+  inline: true,
+  leaf: true/*node does not have directly editable content*/,
+  selectable: true,
 };
 
 // -- Render Spec -----------------------------------------------------------------
 const renderDemoAsyncNodeView = (attributes: DemoAsyncNodeAttributes) => {
-  const renderAttributes = getRenderAttributes(NodeName.DEMO_ASYNC_NODE,
-                                              { ...attributes, [AttributeType.Delay]: String(attributes[AttributeType.Delay])/*converting to string since required*/, [AttributeType.CodeBlockHashes]: ''/*not needed*/, [AttributeType.CodeBlockReferences]: ''/*not needed*/ },
-                                              DemoAsyncNodeRendererSpec,
-                                              DemoAsyncNodeSpec);
+  const id = attributes[AttributeType.Id];
+  const status = attributes[AttributeType.Status] ?? AsyncNodeStatus.NEVER_EXECUTED/*default*/;
 
-  // parses the JSX into a static string that can be rendered.
-  return '<div ' + renderAttributes + '>' + attributes[AttributeType.Text] + '</div>';
+  // NOTE: must not contain white space, else the renderer has issues
+  //       (hence it is a single line below)
+  // NOTE: createNodeDataTypeAttribute must be used for all nodeRenderSpecs
+  //       that define their own renderNodeView
+  return `<span id=${id} ${createNodeDataTypeAttribute(NodeName.DEMO_ASYNC_NODE)}><span>${attributes[AttributeType.Text]}</span><div class="${DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS}" style="background-color: ${asyncNodeStatusToColor(status)}" /></span>`;
 };
 
 export const DemoAsyncNodeRendererSpec: NodeRendererSpec<DemoAsyncNodeAttributes> = {

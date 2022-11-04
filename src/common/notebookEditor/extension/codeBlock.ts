@@ -60,7 +60,6 @@ const renderCodeBlockNodeView = (attributes: CodeBlockAttributes, content: strin
   const visualId = id ? state[NodeName.CODEBLOCK].visualIds[id] : ''/*no visual id*/;
   const renderAttributes = getRenderAttributes(NodeName.CODEBLOCK, { ...attributes, [AttributeType.Wrap]: ''/*string required -- ignore value*/ }, CodeBlockNodeRendererSpec, CodeBlockNodeSpec);
 
-  // CHECK: is there any reason this can't use JSX to define the structure?
   // NOTE: must not contain white space, else the renderer has issues
   //       (hence it is a single line below)
   // NOTE: createNodeDataTypeAttribute must be used for all nodeRenderSpecs
