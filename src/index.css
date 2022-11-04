@@ -26,6 +26,13 @@
 /* -- Editor Selection --------------------------------------------------------- */
 .ProseMirror-selectednode { outline: 1px solid #666; }
 
+/* prevent tag added by PM from messing with cursor appearance for inline Nodes  */
+.ProseMirror-separator {
+  display: inline;
+  position: absolute;
+  margin-top: 3px;
+}
+
 /* -- Actionable Node ---------------------------------------------------------- */
 .Editor-actionable [actionable-node]:hover {
   cursor: pointer;
@@ -33,7 +40,7 @@
 
 /* -- Inline Node Container ---------------------------------------------------- */
 .inlineNodeContainer {
-  position: relative;
+  /* position: relative; */
   display: inline;
 }
 

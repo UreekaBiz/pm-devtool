@@ -10,25 +10,11 @@ import { DemoAsyncNodeModel } from './model';
 // ********************************************************************************
 // == Class =======================================================================
 export class DemoAsyncNodeView extends AbstractAsyncNodeView<string, DemoAsyncNodeType, DemoAsyncNodeStorageType, DemoAsyncNodeModel> {
-  // -- Attribute -----------------------------------------------------------------
-  /** the div that holds the Text content of the DAN */
-  public readonly contentDOM: HTMLSpanElement;
-
-  /** the div that holds the status of the DAN */
-  public readonly statusContainer: HTMLDivElement;
-
   // -- Lifecycle -----------------------------------------------------------------
   constructor(model: DemoAsyncNodeModel, editor: Editor, node: DemoAsyncNodeType, storage: DemoAsyncNodeStorageType, getPos: getPosType) {
     super(model, editor, node, storage, getPos);
 
     // -- UI ----------------------------------------------------------------------
-    this.contentDOM = document.createElement('span');
-    this.dom.appendChild(this.contentDOM);
-
-    this.statusContainer = document.createElement('div');
-    this.statusContainer.classList.add(DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS);
-    this.dom.appendChild(this.statusContainer);
-
     // sync View with current state
     this.updateView();
   }
@@ -54,9 +40,12 @@ export class DemoAsyncNodeView extends AbstractAsyncNodeView<string, DemoAsyncNo
     this.dom.style.borderColor = isDirty ? 'red' : '#CBD5E0'/*default*/;
 
     // update contentDOM
-    this.contentDOM.innerText = text;
+    this.dom.innerText = text;
 
     // update status container
-    this.statusContainer.style.backgroundColor = statusColor;
+    const statusContainer = document.createElement('div');
+          statusContainer.classList.add(DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS);
+          statusContainer.style.backgroundColor = statusColor;
+    this.dom.appendChild(statusContainer);
   }
 }
