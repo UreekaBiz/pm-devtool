@@ -35,7 +35,7 @@ const buildNodeToolCollections = (node: ProseMirrorNode): ToolItem[][] => {
     toolCollections.push(BLOCK_TOOL_ITEMS);
   } /* else -- not a Block or no Block ToolItems */
 
-  if(NODE_CREATION_TOOL_ITEMS.length > 0) {
+  if(!node.type.spec.topNode/*do not add to Document*/ && NODE_CREATION_TOOL_ITEMS.length > 0) {
     toolCollections.push(NODE_CREATION_TOOL_ITEMS);
   } /* else -- no Node Creation ToolItems */
 
