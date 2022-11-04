@@ -1,4 +1,4 @@
-import { INLINE_NODE_CONTAINER_CLASS } from 'notebookEditor/theme';
+import { INLINE_NODE_CONTAINER_CLASS } from 'common';
 
 // ********************************************************************************
 /**

@@ -4,11 +4,10 @@ import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { StepMap } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 
-import { chainCommands, getPosType, insertNewlineCommand, NestedViewNodeType, NodeName } from 'common';
+import { chainCommands, getPosType, insertNewlineCommand, NestedViewNodeType, NodeName, PM_SELECTED_CLASS } from 'common';
 
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
-import { PM_SELECTED_CLASS } from 'notebookEditor/theme/theme';
 
 import { nestedViewNodeBehaviorCommand } from '../command';
 import { nestedViewNodePluginKey } from '../plugin';

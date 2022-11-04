@@ -1,10 +1,9 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { NodeView as ProseMirrorNodeView } from 'prosemirror-view';
 
-import { getPosType, isGetPos, AttributeType, NodeName } from 'common';
+import { getPosType, isGetPos, AttributeType, NodeName, PM_SELECTED_CLASS } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
-import { PM_SELECTED_CLASS } from 'notebookEditor/theme';
 
 import { AbstractNodeView } from './AbstractNodeView';
 import { AbstractNodeModel } from './AbstractNodeModel';

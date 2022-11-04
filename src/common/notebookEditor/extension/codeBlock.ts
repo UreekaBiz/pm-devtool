@@ -3,7 +3,7 @@ import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'pros
 import { getWrapStyles, noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { getRenderAttributes } from '../htmlRenderer/attribute';
 import { RendererState } from '../htmlRenderer/state';
-import { createNodeDataAttribute, createNodeDataTypeAttribute, NodeRendererSpec } from '../htmlRenderer/type';
+import { createNodeDataAttribute, createNodeDataTypeAttribute, NodeRendererSpec, PROSEMIRROR_TRAILING_BREAK_CLASS } from '../htmlRenderer/type';
 import { getAllowedMarks, MarkName } from '../mark';
 import { JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../node/type';
 import { NotebookSchemaType } from '../schema';
@@ -65,7 +65,7 @@ const renderCodeBlockNodeView = (attributes: CodeBlockAttributes, content: strin
   //       (hence it is a single line below)
   // NOTE: createNodeDataTypeAttribute must be used for all nodeRenderSpecs
   //       that define their own renderNodeView
-  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${createNodeDataAttribute(AttributeType.Type)}="${attributes.type}" ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/}; white-space: ${getWrapStyles(wrap)}"><div class="${CODEBLOCK_INNER_CONTAINER_CLASS}" style="font-family: ${type === CodeBlockType.Code ? 'monospace' : 'inherit'};">${content}</div><div class="${CODEBLOCK_VISUAL_ID_CONTAINER_CLASS}">${visualId}</div></div>`;
+  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${createNodeDataAttribute(AttributeType.Type)}="${attributes.type}" ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/}; white-space: ${getWrapStyles(wrap)}"><div class="${CODEBLOCK_INNER_CONTAINER_CLASS}" style="font-family: ${getCodeBlockFontStyles(type as CodeBlockType/*by definition*/)};">${content.length > 0 ? content : `<br class="${PROSEMIRROR_TRAILING_BREAK_CLASS}" />`}</div><div class="${CODEBLOCK_VISUAL_ID_CONTAINER_CLASS}">${visualId}</div></div>`;
 };
 
 export const CodeBlockNodeRendererSpec: NodeRendererSpec<CodeBlockAttributes> = {
@@ -104,6 +104,12 @@ export const EMPTY_CODEBLOCK_HASH = 'EmptyString';
 
 export enum CodeBlockType { Text = 'Text', Code = 'Code'}
 
+/**
+ * used to get the font-family styles for the CodeBlock
+ * given its {@link CodeBlockType}
+ */
+export const getCodeBlockFontStyles = (type: CodeBlockType) => type === CodeBlockType.Code ? 'monospace' : 'inherit';
+
 // -- CSS -------------------------------------------------------------------------
 // the attribute that ensures that VisualId for a CodeBlock appears
 // to the right of the CodeBlock (SEE: index.css)
@@ -114,3 +120,4 @@ export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
 
 // class of the div that holds the visualId of the CodeBlock
 export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';
+

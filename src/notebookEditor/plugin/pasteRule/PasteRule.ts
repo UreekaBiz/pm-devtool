@@ -1,7 +1,8 @@
 import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 
+import { PM_CLASS } from 'common';
+
 import { isValidHTMLElement, isValidRegExp } from 'notebookEditor/extension/util';
-import { PM_CLASS } from 'notebookEditor/theme';
 
 // ********************************************************************************
 // == Constant ====================================================================

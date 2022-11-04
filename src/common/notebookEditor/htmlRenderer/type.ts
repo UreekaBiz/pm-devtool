@@ -4,9 +4,29 @@ import { NodeName } from '../node';
 import { RendererState } from './state';
 
 // ********************************************************************************
+// == Constant ====================================================================
 export type HTMLTag = string/*alias*/;
 export type HTMLString = string/*alias*/;
 export const DEFAULT_RENDER_TAG = 'div';
+
+// -- CSS -------------------------------------------------------------------------
+// NOTE: these classes are located in common since the renderer behavior
+//       for a given NodeView might need them
+/**
+ * class added by PM to PM-created < br/> tags that are inserted when
+ * TextBlock Nodes are empty
+ */
+export const PROSEMIRROR_TRAILING_BREAK_CLASS = 'ProseMirror-trailingbreak';
+
+// added to the selected Node by default by ProseMirror
+export const PM_CLASS = 'ProseMirror';
+export const PM_SELECTED_CLASS = `${PM_CLASS}-selectednode`;
+
+/** used by NodeViews */
+export const INLINE_NODE_CONTAINER_CLASS = 'inlineNodeContainer';
+
+/** used by the SelectionHandling Plugin */
+export const SELECTED_TEXT_CLASS = 'selected_text';
 
 // == Node ========================================================================
 export type TagRenderer<A extends Attributes> = HTMLTag | ((attributes: A) => HTMLTag);

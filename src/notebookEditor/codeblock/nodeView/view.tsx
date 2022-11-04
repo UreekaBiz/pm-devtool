@@ -1,4 +1,4 @@
-import { createNodeDataAttribute, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
+import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -65,7 +65,7 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     this.dom.style.whiteSpace = getWrapStyles(wrap);
 
     // update Inner Container
-    this.innerContainer.style.fontFamily = type === CodeBlockType.Code ? 'monospace' : 'inherit';
+    this.innerContainer.style.fontFamily = getCodeBlockFontStyles(type as CodeBlockType/*by definition*/);
 
     // update VisualId Container
     this.visualIdContainer.innerHTML = visualId;
