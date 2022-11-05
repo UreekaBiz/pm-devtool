@@ -9,9 +9,16 @@ import { DemoAsyncNode2Model } from './model';
 // ********************************************************************************
 // == Class =======================================================================
 export class DemoAsyncNode2View extends AbstractAsyncNodeView<string, DemoAsyncNode2Type, DemoAsyncNode2StorageType, DemoAsyncNode2Model> {
+  /** the container where the content of the CodeBlock is rendered */
+  public readonly contentDOM: HTMLElement;
+
   // == Lifecycle =================================================================
   public constructor(model: DemoAsyncNode2Model, editor: Editor, node: DemoAsyncNode2Type, storage: DemoAsyncNode2StorageType, getPos: getPosType) {
     super(model, editor, node, storage, getPos);
+
+    // -- UI ----------------------------------------------------------------------
+    this.contentDOM = document.createElement('div');
+    this.dom.appendChild(this.contentDOM);
 
     // sync View with current state
     this.updateView();

@@ -10,6 +10,7 @@ import { ExtensionPriority } from 'notebookEditor/model/type';
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from '../type';
 import { blockArrowUpCommand, blockArrowDownCommand, blockBackspaceCommand, blockModBackspaceCommand, toggleBlock } from '../util/node';
 import { getDemoAsyncNode2Attrs } from './attribute';
+import './demoAsyncNode2.css';
 import { DemoAsyncNode2Controller } from './nodeView/controller';
 
 // ********************************************************************************
@@ -27,7 +28,7 @@ export const DemoAsyncNode2 = new NodeExtension({
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
     parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.DEMO_ASYNC_NODE_2}"]`, preserveWhitespace: 'full'/*preserve new lines when parsing the content of the DemoAsyncNode2*/ }], getDemoAsyncNode2Attrs(extensionStorage)),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, getDemoAsyncNode2Attrs(extensionStorage)), true/*is Leaf*/),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, getDemoAsyncNode2Attrs(extensionStorage))),
   }),
 
   // -- Storage -------------------------------------------------------------------
