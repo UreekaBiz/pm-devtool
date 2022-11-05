@@ -16,4 +16,12 @@ export class DemoAsyncNode2Controller extends AbstractAsyncNodeController<string
           view = new DemoAsyncNode2View(model, editor, node, storage, getPos);
     super(model, view, editor, node, storage, getPos);
   }
+
+  // .. Mutation ..................................................................
+  /** ignore mutations that modify the attributes of the DAN2 */
+   public ignoreMutation(mutation: MutationRecord | { type: 'selection'; target: Element; }) {
+    // ignore if modifying the Attributes of the Node. This specifically prevents
+    // the logical NodeView getting destroyed whenever the DAN2 is executed
+    return (mutation.type === 'attributes');
+  }
 }
