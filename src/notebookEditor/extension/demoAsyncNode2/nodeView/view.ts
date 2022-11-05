@@ -34,6 +34,18 @@ export class DemoAsyncNode2View extends AbstractAsyncNodeView<string, DemoAsyncN
   // -- Update --------------------------------------------------------------------
   public updateView() {
     // update DOM
-    this.dom.style.background= this.model.getPerformingAsyncOperation() ? 'rgba(0,0,0,0.3)': 'rgba(0,0,0,0.1)';
+    const performingAsyncOperation = this.model.getPerformingAsyncOperation();
+    this.dom.style.background= performingAsyncOperation ? 'rgba(0,0,0,0.3)': 'rgba(0,0,0,0.1)';
+
+    // disable/enable the view if the model is performing an async operation
+    // NOTE: while the Demo2AsyncNode is performing an async operation an
+    //       onTransaction handler (SEE: AsyncNode.ts) prevents any transactions
+    //       that modify the content of the Demo2AsyncNode from being applied
+    this.contentDOM.setAttribute('contenteditable', performingAsyncOperation ? 'false' : 'true');
+
+    // NOTE: ProseMirror adds white-space: normal to non editable nodes, this causes
+    //       the node to lose its white-space while its being executed. The solution
+    //       is to overwrite that property on this specific case. */
+    this.contentDOM.style.whiteSpace = 'pre-wrap';
   }
 }
