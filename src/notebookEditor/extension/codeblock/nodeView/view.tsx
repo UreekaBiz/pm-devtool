@@ -13,7 +13,7 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
   private innerContainer: HTMLDivElement;
 
   /** the container where the content of the CodeBlock is rendered */
-  public readonly contentDOM: HTMLElement;
+  public readonly contentDOM: HTMLDivElement;
 
   /** the div that holds the visualId of the CodeBlock */
   public readonly visualIdContainer: HTMLDivElement;
