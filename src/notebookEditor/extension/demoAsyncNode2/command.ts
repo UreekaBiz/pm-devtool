@@ -6,14 +6,14 @@ import { createReplacedTextMarkMark, AbstractDocumentUpdate, HISTORY_META } from
 /**
  * replaces the Text to replace inside the D2AN and wraps it in
  * the ReplacedTextMark
- * @param d2ANPos the global position of the D2AN in the Document
+ * @param dan2Pos the global position of the D2AN in the Document
  * @param textContent the TextContent fo the D2AN
  * @param textToReplace the Text that will be replaced
  * @param result the result that will be used to replace the textToReplace
  * @returns
  */
-export const asyncReplaceDemoAsyncNode2ContentCommand = (d2ANPos: number, textContent: string, textToReplace: string, result: string): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new AsyncReplaceDemoAsyncNode2ContentDocumentUpdate(d2ANPos, textContent, textToReplace, result).update(state, state.tr), dispatch);
+export const asyncReplaceDemoAsyncNode2ContentCommand = (dan2Pos: number, textContent: string, textToReplace: string, result: string): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new AsyncReplaceDemoAsyncNode2ContentDocumentUpdate(dan2Pos, textContent, textToReplace, result).update(state, state.tr), dispatch);
 export class AsyncReplaceDemoAsyncNode2ContentDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly d2ANPos: number, private readonly textContent: string, private readonly textToReplace: string, private readonly result: string) {/*nothing additional*/}
 

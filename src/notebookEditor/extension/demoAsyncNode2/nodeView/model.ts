@@ -2,6 +2,7 @@ import { AsyncNodeStatus, DemoAsyncNode2Type, AttributeType } from 'common';
 
 import { AbstractAsyncNodeModel } from 'notebookEditor/extension/asyncNode/nodeView/model';
 
+import { asyncReplaceDemoAsyncNode2ContentCommand } from '../command';
 import { DemoAsyncNode2StorageType } from './controller';
 
 // ********************************************************************************
@@ -25,6 +26,26 @@ export class DemoAsyncNode2Model extends AbstractAsyncNodeModel<string, DemoAsyn
   /** check if DAN2 is dirty */
   public isAsyncNodeDirty(): boolean {
     return false/*default*/;
+  }
+
+  /** Replaces the first instance of the text to be replaced with the replacement
+   * text and wrap it around a {@link ReplacedTextMark}. */
+  public async executeAsyncCall(): Promise<boolean> {
+    try {
+      const textContent = this.node.textContent,
+            textToReplace = this.node.attrs[AttributeType.TextToReplace];
+
+      // get the result from the promise
+      const result = await this.createPromise();
+
+      // replace the Text and wrap it around the Mark
+      asyncReplaceDemoAsyncNode2ContentCommand(this.getPos(), textContent, textToReplace, result)(this.editor.view.state, this.editor.view.dispatch);
+    } catch(error) {
+      // node got deleted while performing the replacement call
+      console.warn(error);
+      return false/*view not updated*/;
+    }
+    return true/*view updated*/;
   }
 }
 
