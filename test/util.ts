@@ -1,7 +1,7 @@
+import ist from 'ist';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import { eq } from 'prosemirror-test-builder';
-import ist from "ist";
 
 // ********************************************************************************
 // == Constant ====================================================================
