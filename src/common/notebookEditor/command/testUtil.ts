@@ -3,7 +3,6 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import { eq } from 'prosemirror-test-builder';
 
-
 // ********************************************************************************
 // Command-testing utilities used by test files
 
@@ -30,7 +29,7 @@ export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command
 
   // assert that the selection is the same
   if(result && (getNodeTag(result)[A] !== null && getNodeTag(result)[A] !== undefined)) {
-    ist(state.selection,  selectionFor(result), eq);
+    ist(state.selection, selectionFor(result), eq);
   } /* else -- result is invalid, or the result's  */
 };
 
@@ -85,7 +84,7 @@ export const validateNodeWithTag = (node: ProseMirrorNode): node is ProseMirrorN
  * returns the Tag object in a {@link ProseMirrorNodeWithTag},
  * used for testing purposes
  */
-const getNodeTag = (node: ProseMirrorNodeWithTag): {[name: string]: number | null/*a tag with this name is not set*/; } => {
+const getNodeTag = (node: ProseMirrorNodeWithTag): { [name: string]: number | null/*a tag with this name is not set*/; } => {
   return node.tag;
 };
 
