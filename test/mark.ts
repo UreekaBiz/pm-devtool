@@ -1,7 +1,9 @@
 import { schema, doc, p, em, strong } from 'prosemirror-test-builder';
 import ist from 'ist';
 
-import { createState, toggleMarkCommand, validateNodeWithTag, wrapTest, A, B } from 'common';
+import { toggleMarkCommand } from '../src/common';
+
+import { A, B, wrapTest, validateNodeWithTag, createState } from './util';
 
 // ********************************************************************************
 // == Mark ========================================================================
@@ -33,11 +35,11 @@ describe('toggleMarkCommand', () => {
 
     let state = createState(startState);
     toggleEm(state, tr => state = state.apply(tr));
-    ist(state.storedMarks!.length, 1);
+    ist(state.storedMarks?.length, 1);
     toggleStrong(state, tr => state = state.apply(tr));
-    ist(state.storedMarks!.length, 2);
+    ist(state.storedMarks?.length, 2);
     toggleEm(state, tr => state = state.apply(tr));
-    ist(state.storedMarks!.length, 1);
+    ist(state.storedMarks?.length, 1);
   });
 
   it('skips whitespace at selection ends when adding marks', () => {
