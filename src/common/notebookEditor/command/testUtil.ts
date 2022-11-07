@@ -11,8 +11,8 @@ import { eq } from 'prosemirror-test-builder';
 //       all commands assume them to exist when writing tests
 // strings used to indicate the test tags (to set relevant positions) that are used
 // when writing documents for tests
-export const A = '<A>';
-export const B = '<B>';
+export const A = 'A';
+export const B = 'B';
 
 // == Command =====================================================================
 export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command, result: ProseMirrorNodeWithTag | null) => {
@@ -72,8 +72,8 @@ export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({
  */
 export type ProseMirrorNodeWithTag = ProseMirrorNode & {
   tag: {
-    [A]: number | null/*a tag with this name is not set*/;
-    [B]: number | null/*a tag with this name is not set*/;
+    'A': number | null/*a tag with this name is not set*/;
+    'B': number | null/*a tag with this name is not set*/;
   };
 };
 
