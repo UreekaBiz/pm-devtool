@@ -2,7 +2,7 @@ import { MdFormatQuote } from 'react-icons/md';
 
 import { isNodeSelection, NodeName } from 'common';
 
-import { toggleBlock } from 'notebookEditor/extension/util';
+import { toggleBlock } from 'notebookEditor/command';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { BlockquoteBorderColorToolItem } from './BlockquoteBorderColorToolItem';

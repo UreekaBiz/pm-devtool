@@ -3,7 +3,7 @@ import { generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineComman
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension';
-import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/extension/util';
+import { blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand, toggleBlock } from 'notebookEditor/command';
 import { ExtensionPriority } from 'notebookEditor/model';
 import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule';
 import { keymap } from 'prosemirror-keymap';
