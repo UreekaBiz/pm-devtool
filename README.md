@@ -24,6 +24,10 @@ Watch (start) web:     `npx env-cmd -f .env.local.<user> npm run start`
 There should be no errors or warning seen.
 Defaults to `localhost:3000`
 
+## Testing
+
+Run tests:             `npm test`
+
 ### Clean
 
 ```bash
