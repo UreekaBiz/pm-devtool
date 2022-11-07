@@ -3,14 +3,14 @@ import { Command, EditorState, NodeSelection, Selection, TextSelection, Transact
 import { canSplit, liftTarget, replaceStep, ReplaceStep } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 
-import { isBlank } from '../../util';
-import { Attributes } from '../attribute';
-import { isMarkHolderNode } from '../extension/markHolder';
-import { isTextNode } from '../extension/text';
-import { NodeName } from '../node';
-import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../selection';
-import { AbstractDocumentUpdate } from './type';
-import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt } from './util';
+import { isBlank } from '../../../util';
+import { Attributes } from '../../attribute';
+import { isMarkHolderNode } from '../../extension/markHolder';
+import { isTextNode } from '../../extension/text';
+import { NodeName } from '../../node';
+import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../../selection';
+import { AbstractDocumentUpdate } from '../type';
+import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt } from '../util';
 
 // ********************************************************************************
 // -- Create ----------------------------------------------------------------------

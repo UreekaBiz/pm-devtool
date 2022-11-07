@@ -3,6 +3,8 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import { eq } from 'prosemirror-test-builder';
 
+// Command-testing utilities used by the test suite
+
 // ********************************************************************************
 // == Constant ====================================================================
 // NOTE: These should be used as constants whenever writing tests for sanity, since

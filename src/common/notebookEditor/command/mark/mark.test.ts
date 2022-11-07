@@ -1,9 +1,8 @@
 import { schema, doc, p, em, strong } from 'prosemirror-test-builder';
 import ist from 'ist';
 
-import { toggleMarkCommand } from '../src/common';
-
-import { A, B, wrapTest, validateNodeWithTag, createState } from './util';
+import { createState, validateNodeWithTag, wrapTest, A, B } from '../testUtil';
+import { toggleMarkCommand } from './mark';
 
 // ********************************************************************************
 // == Mark ========================================================================
