@@ -7,11 +7,10 @@ import ist from "ist";
 // == Constant ====================================================================
 // NOTE: These should be used as constants whenever writing tests for sanity, since
 //       all commands assume them to exist when writing tests
-
 // strings used to indicate the test tags (to set relevant positions) that are used
-// when writing documents for tests.
-export const TEST_POSITION_A = '<tpA>';
-export const TEST_POSITION_B = '<tpB>';
+// when writing documents for tests
+export const A = '<A>';
+export const B = '<B>';
 
 // == Command =====================================================================
 export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command, result: ProseMirrorNodeWithTag | null) => {
@@ -26,7 +25,7 @@ export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command
   ist(state.doc, result || doc/*default to comparing with the given Node*/, eq);
 
   // assert that the selection is the same
-  if(result && getNodeTag(result)[TEST_POSITION_A] !== null) {
+  if(result && getNodeTag(result)[A] !== null) {
     ist(state.selection,  selectionFor(result), eq);
   } /* else -- result is invalid, or the result's  */
 };
@@ -34,17 +33,17 @@ export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command
 // == Selection ===================================================================
 /**
  * return a {@link Selection} for a given {@link ProseMirrorNodeWithTag} based on
- * whether the resolved position of the Node's {@link TEST_POSITION_A} tag parent
+ * whether the resolved position of the Node's {@link A} tag parent
  * has inline content or not. If it does not, a {@link NodeSelection}
  * using the resolved testPosA will be returned
  */
 const selectionFor = (doc: ProseMirrorNodeWithTag) => {
-  const testPosA = getNodeTag(doc)[TEST_POSITION_A];
+  const testPosA = getNodeTag(doc)[A];
 
   if(testPosA !== null) {
     const $resolvedTestPosA = doc.resolve(testPosA);
     if($resolvedTestPosA.parent.inlineContent) {
-      const testPosB = getNodeTag(doc)[TEST_POSITION_B];
+      const testPosB = getNodeTag(doc)[B];
       return new TextSelection($resolvedTestPosA, testPosB !== null ? doc.resolve(testPosB) : undefined/*pos was not set*/);
     } else {
       return new NodeSelection($resolvedTestPosA);
@@ -66,13 +65,13 @@ export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({
 // REF: https://github.com/prosemirror/prosemirror-test-builder
 /**
  * type of a {@link ProseMirrorNode} that also has an object called 'tag', that
- * contains (at least) two keys: {@link TEST_POSITION_A} and
- * {@link TEST_POSITION_B}, which are used to mark positions when writing tests
+ * contains (at least) two keys: {@link A} and
+ * {@link B}, which are used to mark positions when writing tests
  */
 export type ProseMirrorNodeWithTag = ProseMirrorNode & {
   tag: {
-    [TEST_POSITION_A]: number | null/*a tag with this name is not set*/;
-    [TEST_POSITION_B]: number | null/*a tag with this name is not set*/;
+    [A]: number | null/*a tag with this name is not set*/;
+    [B]: number | null/*a tag with this name is not set*/;
   };
 };
 
@@ -85,3 +84,12 @@ export const validateNodeWithTag = (node: ProseMirrorNode): node is ProseMirrorN
 const getNodeTag = (node: ProseMirrorNodeWithTag): {[name: string]: number | null/*a tag with this name is not set*/; } => {
   return node.tag;
 };
+
+// == Test ========================================================================
+export const wrapTest = (startState: ProseMirrorNode, command: Command, expectedEndState: ProseMirrorNode) => {
+  if(!validateNodeWithTag(startState)) throw new Error('startState is not a ProseMirrorNodeWithTag');
+  if(!validateNodeWithTag(expectedEndState)) throw new Error('expectedState is not a ProseMirrorNodeWithTag');
+
+  applyCommand(startState, command, expectedEndState);
+};
+
