@@ -10,8 +10,8 @@ import ist from "ist";
 
 // strings used to indicate the test tags (to set relevant positions) that are used
 // when writing documents for tests.
-export const TEST_POSITION_A = 'tpA';
-export const TEST_POSITION_B = 'tpB';
+export const TEST_POSITION_A = '<tpA>';
+export const TEST_POSITION_B = '<tpB>';
 
 // == Command =====================================================================
 export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command, result: ProseMirrorNodeWithTag | null) => {
@@ -60,7 +60,7 @@ const selectionFor = (doc: ProseMirrorNodeWithTag) => {
  * create a {@link EditorState} using the
  * given {@link ProseMirrorNodeWithTag} as the document
  */
-const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({ doc, selection: selectionFor(doc) });
+export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({ doc, selection: selectionFor(doc) });
 
 // -- Tag -------------------------------------------------------------------------
 // REF: https://github.com/prosemirror/prosemirror-test-builder
@@ -69,12 +69,14 @@ const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({ doc, s
  * contains (at least) two keys: {@link TEST_POSITION_A} and
  * {@link TEST_POSITION_B}, which are used to mark positions when writing tests
  */
-type ProseMirrorNodeWithTag = ProseMirrorNode & {
+export type ProseMirrorNodeWithTag = ProseMirrorNode & {
   tag: {
     [TEST_POSITION_A]: number | null/*a tag with this name is not set*/;
     [TEST_POSITION_B]: number | null/*a tag with this name is not set*/;
   };
 };
+
+export const validateNodeWithTag = (node: ProseMirrorNode): node is ProseMirrorNodeWithTag => 'tag' in node;
 
 /**
  * returns the Tag object in a {@link ProseMirrorNodeWithTag},
