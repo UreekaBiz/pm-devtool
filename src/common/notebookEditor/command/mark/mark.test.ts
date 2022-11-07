@@ -11,8 +11,9 @@ describe('toggleMarkCommand', () => {
   const toggleStrong = toggleMarkCommand(schema.marks.strong, {/*no attrs*/});
 
   it('can add a mark', () => {
-    const startState = doc(p(`one ${A}two${B}`));
+    const startState = doc(p(`one <${A}>two<${B}>`));
     const expectedEndState = doc(p('one ', em('two')));
+
     wrapTest(startState, toggleEm, expectedEndState);
   });
 

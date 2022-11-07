@@ -27,7 +27,7 @@ export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command
   ist(state.doc, result || doc/*default to comparing with the given Node*/, eq);
 
   // assert that the selection is the same
-  if(result && getNodeTag(result)[A] !== null) {
+  if(result && (getNodeTag(result)[A] !== null && getNodeTag(result)[A] !== undefined)) {
     ist(state.selection,  selectionFor(result), eq);
   } /* else -- result is invalid, or the result's  */
 };
@@ -42,11 +42,11 @@ export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command
 const selectionFor = (doc: ProseMirrorNodeWithTag) => {
   const testPosA = getNodeTag(doc)[A];
 
-  if(testPosA !== null) {
+  if(testPosA !== null && testPosA !== undefined) {
     const $resolvedTestPosA = doc.resolve(testPosA);
     if($resolvedTestPosA.parent.inlineContent) {
       const testPosB = getNodeTag(doc)[B];
-      return new TextSelection($resolvedTestPosA, testPosB !== null ? doc.resolve(testPosB) : undefined/*pos was not set*/);
+      return new TextSelection($resolvedTestPosA, (testPosB !== null && testPosB !== undefined) ? doc.resolve(testPosB) : undefined/*pos was not set*/);
     } else {
       return new NodeSelection($resolvedTestPosA);
     }
