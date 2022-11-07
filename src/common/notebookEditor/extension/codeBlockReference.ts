@@ -2,7 +2,7 @@ import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'pros
 
 
 import { isBlank } from '../../util';
-import { AttributeType, noNodeOrMarkSpecAttributeDefaultValue, AttributesTypeFromNodeSpecAttributes } from '../attribute';
+import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { RendererState, VisualId } from '../htmlRenderer/state';
 import { createNodeDataTypeAttribute, NodeRendererSpec } from '../htmlRenderer/type';
 import { getAllowedMarks } from '../mark';
