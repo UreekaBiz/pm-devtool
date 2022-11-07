@@ -1,6 +1,6 @@
 import { PluginKey } from 'prosemirror-state';
 import { RefAttributes } from 'react';
-import tippy, { Instance as TippyInstance, Props as TippyProps } from 'tippy.js';
+import tippy, { Instance as TippyInstance, Props as TippyProps } from 'tippy.js/index';
 
 import { insertContentAtCommand } from 'notebookEditor/command/node';
 import { ReactRenderer } from 'notebookEditor/editor/component';
