@@ -1,10 +1,57 @@
 import ist from 'ist';
-import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { Attrs, Node, Schema } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
-import { eq } from 'prosemirror-test-builder';
+import { eq, builders } from 'prosemirror-test-builder';
+
+import { MarkName } from '../mark';
+import { NodeName } from '../node';
+import { SchemaV1 } from '../schema';
 
 // ********************************************************************************
 // Command-testing utilities used by test files
+
+// == Type ========================================================================
+// NOTE: types taken from prosemirror-test-builder since they are not exported
+type Tags = { [tag: string]: number; };
+type ChildSpec = string | Node | { flat: readonly Node[]; tag: Tags; };
+type NodeBuilder = (attrsOrFirstChild?: Attrs | ChildSpec, ...children: ChildSpec[]) => Node;
+type MarkBuilder = (attrsOrFirstChild?: Attrs | ChildSpec, ...children: ChildSpec[]) => ChildSpec;
+
+type NotebookSchemaWithBuildersObjType = {
+  schema: Schema;
+  [nodeOrMarkName: string]: Schema | (NodeBuilder | MarkBuilder);
+}
+
+// == Builder =====================================================================
+/** the Node and Mark Builders used in a Notebook */
+export const getNotebookSchemaWithBuildersObj = (): NotebookSchemaWithBuildersObjType  => {
+  const obj = builders(SchemaV1);
+  if(!hasBuilders(obj)) throw new Error('Notebook Schema does not have Builders');
+  return obj;
+};
+const hasBuilders = (obj: { schema: Schema; [nodeOrMarkName: string]: any/*cannot specify at this level*/; }): obj is NotebookSchemaWithBuildersObjType => {
+  const { schema } = obj;
+  const { nodes, marks } = schema;
+  return Object.keys(nodes).every(nodeName => typeof obj[nodeName] === 'function') && Object.keys(marks).every(markName => typeof obj[markName] === 'function');
+};
+
+/** get specific NodeBuilders */
+export const getNotebookSchemaNodeBuilders = (nodeNames: NodeName[]) =>
+  Object.entries(getNotebookSchemaWithBuildersObj()).reduce<{ [nodeName: string]: NodeBuilder; }>((acc, [nodeName, builder]) => {
+    if(nodeNames.includes(nodeName as NodeName)) {
+      acc[nodeName] = builder as NodeBuilder/*by definition*/;
+    } /* else -- nodeName was not requested, do not include */
+    return acc;
+  }, {/*default empty*/});
+
+/** get specific MarkBuilders */
+export const getNotebookSchemaMarkBuilders = (markNames: MarkName[]) =>
+  Object.entries(getNotebookSchemaWithBuildersObj()).reduce<{ [markName: string]: MarkBuilder; }>((acc, [markName, builder]) => {
+    if(markNames.includes(markName as MarkName)) {
+      acc[markName] = builder as MarkBuilder/*by definition*/;
+    } /* else -- markName was not requested, do not include */
+    return acc;
+  }, {/*default empty*/});
 
 // == Constant ====================================================================
 // NOTE: These should be used as constants whenever writing tests for sanity, since
@@ -29,7 +76,7 @@ export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command
 
   // assert that the selection is the same
   if(result && (getNodeTag(result)[A] !== null && getNodeTag(result)[A] !== undefined)) {
-    ist(state.selection, selectionFor(result), eq);
+    ist(state.selection,  selectionFor(result), eq);
   } /* else -- result is invalid, or the result's  */
 };
 
@@ -67,29 +114,29 @@ export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({
 // -- Tag -------------------------------------------------------------------------
 // REF: https://github.com/prosemirror/prosemirror-test-builder
 /**
- * type of a {@link ProseMirrorNode} that also has an object called 'tag', that
+ * type of a {@link Node} that also has an object called 'tag', that
  * contains (at least) two keys: {@link A} and
  * {@link B}, which are used to mark positions when writing tests
  */
-export type ProseMirrorNodeWithTag = ProseMirrorNode & {
+export type ProseMirrorNodeWithTag = Node & {
   tag: {
     'A': number | null/*a tag with this name is not set*/;
     'B': number | null/*a tag with this name is not set*/;
   };
 };
 
-export const validateNodeWithTag = (node: ProseMirrorNode): node is ProseMirrorNodeWithTag => 'tag' in node;
+export const validateNodeWithTag = (node: Node): node is ProseMirrorNodeWithTag => 'tag' in node;
 
 /**
  * returns the Tag object in a {@link ProseMirrorNodeWithTag},
  * used for testing purposes
  */
-const getNodeTag = (node: ProseMirrorNodeWithTag): { [name: string]: number | null/*a tag with this name is not set*/; } => {
+const getNodeTag = (node: ProseMirrorNodeWithTag): {[name: string]: number | null/*a tag with this name is not set*/; } => {
   return node.tag;
 };
 
 // == Test ========================================================================
-export const wrapTest = (startState: ProseMirrorNode, command: Command, expectedEndState: ProseMirrorNode) => {
+export const wrapTest = (startState: Node, command: Command, expectedEndState: Node) => {
   if(!validateNodeWithTag(startState)) throw new Error('startState is not a ProseMirrorNodeWithTag');
   if(!validateNodeWithTag(expectedEndState)) throw new Error('expectedState is not a ProseMirrorNodeWithTag');
 

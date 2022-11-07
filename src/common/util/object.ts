@@ -1,4 +1,5 @@
-import { cloneDeep, set } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import set from 'lodash/set';
 
 import { isBlank } from './string';
 
