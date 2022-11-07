@@ -2,11 +2,11 @@ import { MarkType, NodeType } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { AttrStep } from 'prosemirror-transform';
 
-import { Attributes, AttributeType } from '../../attribute';
-import { isMarkName, MarkName } from '../../mark';
-import { isNodeName, NodeName } from '../../node';
-import { AbstractDocumentUpdate, HISTORY_META } from '../type';
-import { getSelectedNode, SelectionDepth } from '../../selection';
+import { Attributes, AttributeType } from '../attribute';
+import { isMarkName, MarkName } from '../mark';
+import { isNodeName, NodeName } from '../node';
+import { AbstractDocumentUpdate, HISTORY_META } from './type';
+import { getSelectedNode, SelectionDepth } from '../selection';
 
 // ********************************************************************************
 /**
