@@ -50,6 +50,70 @@ describe('selectNodeForwardCommand', () => {
   });
 });
 
+// -- Wrap ------------------------------------------------------------------------
+describe('wrapInCommand', () => {
+  const wrapInBlockquote = wrapInCommand(blockquouteType, {/*no attrs*/});
+
+  it('can wrap a Paragraph', () => {
+    const startState = docBuilder(paragraphBuilder(`fo<${A}>o`));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')));
+    wrapTest(startState, wrapInBlockquote, expectedEndState);
+  });
+
+  it('wraps multiple Paragraphs', () => {
+    const startState = docBuilder(paragraphBuilder(`fo<${A}>o`), paragraphBuilder('bar'), paragraphBuilder(`ba<${B}>z`), paragraphBuilder('quux'));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder('bar'), paragraphBuilder('baz')), paragraphBuilder('quux'));
+    wrapTest(startState, wrapInBlockquote, expectedEndState);
+  });
+
+  it('wraps an already wrapped node', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`fo<${A}>o`)));
+    const expectedEndState = docBuilder(blockquoteBuilder(blockquoteBuilder(paragraphBuilder('foo'))));
+    wrapTest(startState, wrapInBlockquote, expectedEndState);
+  });
+
+  // TODO: redefine and handle test once Lists are added
+  // it('can wrap a Node Selection', () => {
+  //   const startState = docBuilder(`<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('foo'))));
+  //   const expectedEndState = docBuilder(blockquoteBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('foo')))));
+  //   wrapTest(startState, wrapInBlockquote, expectedEndState);
+  // });
+});
+
+// -- Lift ------------------------------------------------------------------------
+describe('liftEmptyBlockNodeCommand', () => {
+  it('splits the parent block when there are sibling before', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>`), paragraphBuilder('bar')));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), blockquoteBuilder(paragraphBuilder(), paragraphBuilder('bar')));
+    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
+  });
+
+  it('lifts the last child out of its parent', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>`)));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), paragraphBuilder());
+    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
+  });
+
+  it('lifts an only child', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), blockquoteBuilder(paragraphBuilder(`<${A}>`)));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), paragraphBuilder(`<${A}>`));
+    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
+  });
+
+  // TODO: redefine and handle test once Lists are added
+  // it('does not violate schema constraints', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
+  //   const expectedEndState = null/*same state*/;
+  //   wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
+  // });
+
+  // it('lifts out of a list', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder(`<${A}>`))));
+  //   const expectedEndState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder());
+  //   wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
+  // });
+});
+
 // -- Join ------------------------------------------------------------------------
 describe('joinBackwardCommand', () => {
   it('can join paragraphs', () => {
@@ -158,68 +222,4 @@ describe('joinBackwardCommand', () => {
     ist(joinBackwardCommand(state, tr => state = state.apply(tr)));
     ist(state.doc.toString(), 'doc(block(paragraph(\"ab\")))');
   });
-});
-
-// -- Wrap ------------------------------------------------------------------------
-describe('wrapInCommand', () => {
-  const wrapInBlockquote = wrapInCommand(blockquouteType, {/*no attrs*/});
-
-  it('can wrap a Paragraph', () => {
-    const startState = docBuilder(paragraphBuilder(`fo<${A}>o`));
-    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')));
-    wrapTest(startState, wrapInBlockquote, expectedEndState);
-  });
-
-  it('wraps multiple Paragraphs', () => {
-    const startState = docBuilder(paragraphBuilder(`fo<${A}>o`), paragraphBuilder('bar'), paragraphBuilder(`ba<${B}>z`), paragraphBuilder('quux'));
-    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder('bar'), paragraphBuilder('baz')), paragraphBuilder('quux'));
-    wrapTest(startState, wrapInBlockquote, expectedEndState);
-  });
-
-  it('wraps an already wrapped node', () => {
-    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`fo<${A}>o`)));
-    const expectedEndState = docBuilder(blockquoteBuilder(blockquoteBuilder(paragraphBuilder('foo'))));
-    wrapTest(startState, wrapInBlockquote, expectedEndState);
-  });
-
-  // TODO: redefine and handle test once Lists are added
-  // it('can wrap a Node Selection', () => {
-  //   const startState = docBuilder(`<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('foo'))));
-  //   const expectedEndState = docBuilder(blockquoteBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('foo')))));
-  //   wrapTest(startState, wrapInBlockquote, expectedEndState);
-  // });
-});
-
-// -- Lift ------------------------------------------------------------------------
-describe('liftEmptyBlockNodeCommand', () => {
-  it('splits the parent block when there are sibling before', () => {
-    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>`), paragraphBuilder('bar')));
-    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), blockquoteBuilder(paragraphBuilder(), paragraphBuilder('bar')));
-    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
-  });
-
-  it('lifts the last child out of its parent', () => {
-    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>`)));
-    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), paragraphBuilder());
-    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
-  });
-
-  it('lifts an only child', () => {
-    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), blockquoteBuilder(paragraphBuilder(`<${A}>`)));
-    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), paragraphBuilder(`<${A}>`));
-    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
-  });
-
-  // TODO: redefine and handle test once Lists are added
-  // it('does not violate schema constraints', () => {
-  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
-  //   const expectedEndState = null/*same state*/;
-  //   wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
-  // });
-
-  // it('lifts out of a list', () => {
-  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder(`<${A}>`))));
-  //   const expectedEndState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder());
-  //   wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
-  // });
 });
