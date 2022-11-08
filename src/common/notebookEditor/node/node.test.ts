@@ -2,13 +2,13 @@ import ist from 'ist';
 import { Schema } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 
-import { getNotebookSchemaNodeBuilders, joinBackwardCommand, wrapTest, A } from '../command';
+import { getNotebookSchemaNodeBuilders, joinBackwardCommand, selectNodeBackwardCommand, wrapTest, A } from '../command';
 import { NodeName } from './type';
 
 // ********************************************************************************
 // == Constant ====================================================================
 const {
-  [NodeName.BLOCKQUOTE]: blockquouteBuilder,
+  [NodeName.BLOCKQUOTE]: blockquoteBuilder,
   [NodeName.DOC]: docBuilder,
   [NodeName.HORIZONTAL_RULE]: horizontalRuleBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
@@ -16,7 +16,22 @@ const {
 } = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.DOC, NodeName.HORIZONTAL_RULE, NodeName.PARAGRAPH]);
 
 // == Node ========================================================================
-// -- Join  Backward --------------------------------------------------------------
+// -- Select ----------------------------------------------------------------------
+describe('selectNodeBackward', () => {
+  it('does not select the Node before the cut'/*since no Blocks are meant to be selectable in a Notebook*/, () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('a')), blockquoteBuilder(paragraphBuilder(`<${A}>b`)));
+    const expectedEndState = startState/*same state*/;
+    wrapTest(startState, selectNodeBackwardCommand, expectedEndState);
+  });
+
+  it('does nothing when not at the start of the textblock', () => {
+    const startState = docBuilder(paragraphBuilder(`a<${A}>b`));
+    const expectedEndState = null/*none*/;
+    wrapTest(startState, selectNodeBackwardCommand, expectedEndState);
+  });
+});
+
+// -- Join ------------------------------------------------------------------------
 describe('joinBackward', () => {
   it('can join paragraphs', () => {
     const startState = docBuilder(paragraphBuilder('hi'), paragraphBuilder(`<${A}>there`));
@@ -25,26 +40,26 @@ describe('joinBackward', () => {
   });
 
   it('can join out of a nested node', () => {
-    const startState = docBuilder(paragraphBuilder('hi'), blockquouteBuilder(paragraphBuilder(`<${A}>there`)));
+    const startState = docBuilder(paragraphBuilder('hi'), blockquoteBuilder(paragraphBuilder(`<${A}>there`)));
     const expectedEndState = docBuilder(paragraphBuilder('hi'), paragraphBuilder('there'));
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
   it('moves a block into an adjacent wrapper', () => {
-    const startState = docBuilder(blockquouteBuilder(paragraphBuilder('hi')), paragraphBuilder(`<${A}>there`));
-    const expectedEndState = docBuilder(blockquouteBuilder(paragraphBuilder('hi'), paragraphBuilder('there')));
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('hi')), paragraphBuilder(`<${A}>there`));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('hi'), paragraphBuilder('there')));
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
   it('moves a block into an adjacent wrapper from another wrapper', () => {
-    const startState = docBuilder(blockquouteBuilder(paragraphBuilder('hi')), blockquouteBuilder(paragraphBuilder(`<${A}>there`)));
-    const expectedEndState = docBuilder(blockquouteBuilder(paragraphBuilder('hi'), paragraphBuilder('there')));
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('hi')), blockquoteBuilder(paragraphBuilder(`<${A}>there`)));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('hi'), paragraphBuilder('there')));
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
   it('joins the wrapper to a subsequent one if applicable', () => {
-    const startState = docBuilder(blockquouteBuilder(paragraphBuilder('hi')), paragraphBuilder(`<${A}>there`), blockquouteBuilder(paragraphBuilder('x')));
-    const expectedEndState = docBuilder(blockquouteBuilder(paragraphBuilder('hi'), paragraphBuilder('there'), paragraphBuilder('x')));
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('hi')), paragraphBuilder(`<${A}>there`), blockquoteBuilder(paragraphBuilder('x')));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('hi'), paragraphBuilder('there'), paragraphBuilder('x')));
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
@@ -94,14 +109,14 @@ describe('joinBackward', () => {
   });
 
   it('lifts before it deletes', () => {
-    const startState = docBuilder(horizontalRuleBuilder, blockquouteBuilder(paragraphBuilder(`<${A}>there`)));
+    const startState = docBuilder(horizontalRuleBuilder, blockquoteBuilder(paragraphBuilder(`<${A}>there`)));
     const expectedEndState = docBuilder(horizontalRuleBuilder, paragraphBuilder('there'));
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
   it('does nothing at start of doc', () => {
     const startState = docBuilder(paragraphBuilder(`<${A}>foo`));
-    const expectedEndState = null;
+    const expectedEndState = null/*none*/;
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
@@ -124,10 +139,5 @@ describe('joinBackward', () => {
     ist(joinBackwardCommand(state, tr => state = state.apply(tr)));
     ist(state.doc.toString(), 'doc(block(paragraph(\"ab\")))');
   });
-
-  // it('', () => {
-  //   const startState = null;
-  //   const expectedEndState = null;
-  //   wrapTest(startState, joinBackwardCommand, expectedEndState);
-  // });
 });
+
