@@ -4,12 +4,14 @@ import { InputWithUnitNodeToolItem } from 'notebookEditor/extension/shared/compo
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
-// == Component ===================================================================
+// == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/ }
+
+// == Component ===================================================================
 export const BlockquoteBorderLeftWidthToolItem: React.FC<Props> = ({ editor, depth }) => {
   const { selection } = editor.view.state;
   const { $anchor } = selection;
-  if(!isBlockquoteNode($anchor.parent)) throw new Error(`Invalid BlockquoteBorderLeftWidthToolItem render: ${JSON.stringify(selection)}`);
+  if(!isBlockquoteNode($anchor.node(depth))) throw new Error(`Invalid BlockquoteBorderLeftWidthToolItem render: ${JSON.stringify(selection)}`);
 
   // == UI ========================================================================
   return (

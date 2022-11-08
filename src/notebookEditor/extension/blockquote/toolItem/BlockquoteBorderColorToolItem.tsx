@@ -5,12 +5,14 @@ import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
-// == Component ===================================================================
+// == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/ }
-export const BlockquoteBorderColorToolItem: React.FC<Props> = ({ editor }) => {
+
+// == Component ===================================================================
+export const BlockquoteBorderColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   const { selection } = editor.view.state;
   const { $anchor } = selection;
-  if(!isBlockquoteNode($anchor.parent)) throw new Error(`Invalid BlockquoteBorderColorToolItem render: ${JSON.stringify(selection)}`);
+  if(!isBlockquoteNode($anchor.node(depth))) throw new Error(`Invalid BlockquoteBorderLeftWidthToolItem render: ${JSON.stringify(selection)}`);
 
   // == Handler ===================================================================
   const handleBorderColorChange = (value: string) => {
