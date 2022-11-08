@@ -2,7 +2,6 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { NodeRendererSpec } from '../htmlRenderer/type';
-import { getAllowedMarks, MarkName } from '../mark';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../node';
 import { NotebookSchemaType } from '../schema';
 
@@ -24,8 +23,7 @@ export type BlockquoteAttributes = AttributesTypeFromNodeSpecAttributes<typeof B
 // -- Node Spec -------------------------------------------------------------------
 export const BlockquoteNodeSpec: NodeSpec = {
   // .. Definition ................................................................
-  content: `${NodeGroup.INLINE}*`,
-  marks: getAllowedMarks([MarkName.BOLD, MarkName.CODE, MarkName.ITALIC, MarkName.STRIKETHROUGH, MarkName.SUB_SCRIPT, MarkName.SUPER_SCRIPT, MarkName.TEXT_STYLE, MarkName.UNDERLINE]),
+  content: `${NodeGroup.BLOCK}+`,
   group: `${NodeGroup.BLOCK}`,
 
   // .. Attribute .................................................................
@@ -34,7 +32,6 @@ export const BlockquoteNodeSpec: NodeSpec = {
   // .. Misc ......................................................................
   defining: true/*(SEE: https://prosemirror.net/docs/ref/#model.NodeSpec.defining)*/,
   selectable: false/*cannot be set as NodeSelection*/,
-  whitespace: 'pre'/*preserve newlines*/,
 };
 
 // -- Render Spec -----------------------------------------------------------------
