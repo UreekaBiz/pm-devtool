@@ -38,12 +38,6 @@ describe('deleteSelection', () => {
   });
 
   it('moves selection before deleted node at end', () => {
-    const startState = null;
-    const expectedEndState = null;
-    wrapTest(startState, deleteSelectionCommand, expectedEndState);
-  });
-
-  it('', () => {
     const startState = docBuilder(paragraphBuilder('a'), `<${A}>`, paragraphBuilder('b'));
     const expectedEndState = docBuilder(paragraphBuilder(`a<${A}>`));
     wrapTest(startState, deleteSelectionCommand, expectedEndState);
