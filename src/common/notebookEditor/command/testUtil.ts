@@ -63,7 +63,12 @@ export const A = 'A';
 export const B = 'B';
 
 // == Command =====================================================================
-export const applyCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command, result: ProseMirrorNodeWithTag | null) => {
+/**
+ * apply the given {@link Command} to the given {@link ProseMirrorNodeWithTag}
+ * to test its effects, expecting the given {@link ProseMirrorNodeWithTag} to be
+ * the result of the Command
+ */
+export const applyTestCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command, result: ProseMirrorNodeWithTag | null) => {
   // create a state
   let state = createState(doc);
 
@@ -125,7 +130,7 @@ export type ProseMirrorNodeWithTag = Node & {
   };
 };
 
-export const validateNodeWithTag = (node: Node): node is ProseMirrorNodeWithTag => 'tag' in node;
+export const validateNodeWithTag = (node: Node | null): node is ProseMirrorNodeWithTag => node !== null && 'tag' in node;
 
 /**
  * returns the Tag object in a {@link ProseMirrorNodeWithTag},
@@ -136,10 +141,14 @@ const getNodeTag = (node: ProseMirrorNodeWithTag): {[name: string]: number | nul
 };
 
 // == Test ========================================================================
-export const wrapTest = (startState: Node, command: Command, expectedEndState: Node) => {
+/**
+ * Wrap a test so that the given {@link ProseMirrorNodeWithTag}sa
+ * are guaranteed to have the Tag property
+ */
+export const wrapTest = (startState: Node | null, command: Command, expectedEndState: Node | null) => {
   if(!validateNodeWithTag(startState)) throw new Error('startState is not a ProseMirrorNodeWithTag');
   if(!validateNodeWithTag(expectedEndState)) throw new Error('expectedState is not a ProseMirrorNodeWithTag');
 
-  applyCommand(startState, command, expectedEndState);
+  applyTestCommand(startState, command, expectedEndState);
 };
 
