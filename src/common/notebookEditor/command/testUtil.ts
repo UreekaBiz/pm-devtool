@@ -130,7 +130,11 @@ export type ProseMirrorNodeWithTag = Node & {
   };
 };
 
-export const validateNodeWithTag = (node: Node | null): node is ProseMirrorNodeWithTag => node !== null && 'tag' in node;
+/**
+ * check that the given {@link Node} is either a
+ * {@link ProseMirrorNodeWithTag} or specifically null
+ */
+export const validateNodeWithTag = (node: Node | null): node is ProseMirrorNodeWithTag => node === null || 'tag' in node;
 
 /**
  * returns the Tag object in a {@link ProseMirrorNodeWithTag},
