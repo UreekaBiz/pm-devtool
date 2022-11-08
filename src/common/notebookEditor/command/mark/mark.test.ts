@@ -21,7 +21,6 @@ describe('toggleMarkCommand', () => {
   it('can add a mark', () => {
     const startState = docBuilder(paragraphBuilder(`one <${A}>two<${B}>`));
     const expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two')));
-
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
@@ -53,14 +52,12 @@ describe('toggleMarkCommand', () => {
   it('skips whitespace at selection ends when adding marks', () => {
     const startState = docBuilder(paragraphBuilder(`one<${A}> two  <${B}>three`));
     const expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two'), '  three'));
-
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
   it('does not skip whitespace-only selections', () => {
     const startState = docBuilder(paragraphBuilder(`one<${A}> <${B}>two`));
     const expectedEndState = docBuilder(paragraphBuilder('one', italicBuilder(' '), 'two'));
-
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 });
