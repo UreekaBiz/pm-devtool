@@ -1,6 +1,6 @@
 import { getNotebookSchemaNodeBuilders, wrapTest, A, B } from '../testUtil';
 import { NodeName } from '../../node/type';
-import { deleteSelectionCommand } from './selection';
+import { deleteSelectionCommand, selectNodeBackwardCommand, selectNodeForwardCommand } from './selection';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -11,8 +11,38 @@ const {
   [NodeName.PARAGRAPH]: paragraphBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.DOC, NodeName.HORIZONTAL_RULE, NodeName.PARAGRAPH]);
 
+// == Node ========================================================================
+describe('selectNodeBackwardCommand', () => {
+  it('does not select the Node before the cut'/*since no Blocks are meant to be selectable in a Notebook*/, () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('a')), blockquoteBuilder(paragraphBuilder(`<${A}>b`)));
+    const expectedEndState = startState/*same state*/;
+    wrapTest(startState, selectNodeBackwardCommand, expectedEndState);
+  });
+
+  it('does nothing when not at the start of the textblock', () => {
+    const startState = docBuilder(paragraphBuilder(`a<${A}>b`));
+    const expectedEndState = null/*same as starting state*/;
+    wrapTest(startState, selectNodeBackwardCommand, expectedEndState);
+  });
+});
+
+describe('selectNodeForwardCommand', () => {
+  // TODO: redefine and handle test once Lists are added
+  // it('selects the next Node', () => {
+  //   const startState = docBuilder(paragraphBuilder(`foo<${A}>`), unorderedListBuilder(listItemBuilder(paragraphBuilder('bar'), unorderedListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
+  //   const expectedEndState = docBuilder(paragraphBuilder(`foo<${A}>`), `<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('bar'), unorderedListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
+  //   wrapTest(startState, selectNodeForwardCommand, expectedEndState);
+  // });
+
+  it('does nothing at the end of the document', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>`));
+    const expectedEndState = null/*same as starting state*/;
+    wrapTest(startState, selectNodeForwardCommand, expectedEndState);
+  });
+});
+
 // == Delete ======================================================================
-describe('deleteSelection', () => {
+describe('deleteSelectionCommand', () => {
   it('deletes part of a Text Node', () => {
     const startState = docBuilder(paragraphBuilder(`f<${A}>o<${B}>o`));
     const expectedEndState = docBuilder(paragraphBuilder('fo'));
