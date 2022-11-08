@@ -2,8 +2,8 @@ import ist from 'ist';
 import { Schema } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 
-import { getNotebookSchemaNodeBuilders, joinBackwardCommand, selectNodeBackwardCommand, wrapTest, A } from '../command';
-import { NodeName } from './type';
+import { getNotebookSchemaNodeBuilders, joinBackwardCommand, selectNodeBackwardCommand, wrapTest, A } from '..';
+import { NodeName } from '../../node/type';
 
 // ********************************************************************************
 // == Constant ====================================================================
