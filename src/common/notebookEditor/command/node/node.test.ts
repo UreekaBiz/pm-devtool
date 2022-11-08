@@ -4,7 +4,7 @@ import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { NodeName } from '../../node/type';
 import { getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B } from '../testUtil';
-import { joinBackwardCommand, liftEmptyBlockNodeCommand, wrapInCommand } from './node';
+import { joinBackwardCommand, liftCommand, liftEmptyBlockNodeCommand, wrapInCommand } from './node';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -50,6 +50,52 @@ describe('wrapInCommand', () => {
 });
 
 // -- Lift ------------------------------------------------------------------------
+describe('liftCommand', () => {
+
+  it('lifts out of a parent block', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`<${A}>foo`)));
+    const expectedEndState = docBuilder(paragraphBuilder(`<${A}>foo`));
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
+
+  it('splits the parent block when necessary', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>bar`), paragraphBuilder('baz')));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')), paragraphBuilder('bar'), blockquoteBuilder(paragraphBuilder('baz')));
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
+
+  it('does nothing for a top-level block', () => {
+    const startState = docBuilder(paragraphBuilder(`<${A}>foo`));
+    const expectedEndState = null/*same state*/;
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
+
+  // TODO: redefine and handle test once Lists are added
+  // it('can lift out of a list', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
+  //   const expectedEndState = docBuilder(paragraphBuilder('foo'));
+  //   wrapTest(startState, liftCommand, expectedEndState);
+  // });
+
+  // it('lifts out of the innermost parent', () => {
+  //   const startState = docBuilder(blockquoteBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`foo<${A}>`)))));
+  //   const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder(`foo<${A}>`)));
+  //   wrapTest(startState, liftCommand, expectedEndState);
+  // });
+
+  // it('can lift a node selection', () => {
+  //   const startState = docBuilder(blockquoteBuilder(`<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('foo')))));
+  //   const expectedEndState = docBuilder(`<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('foo'))));
+  //   wrapTest(startState, liftCommand, expectedEndState);
+  // });
+
+  // it('lifts out of a nested list', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('one'), unorderedListBuilder(listItemBuilder(paragraphBuilder(`<${A}>sub1`)), listItemBuilder(paragraphBuilder('sub2')))), listItemBuilder(paragraphBuilder('two'))));
+  //   const expectedEndState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('one'), paragraphBuilder(`<${A}>sub1`), unorderedListBuilder(listItemBuilder(paragraphBuilder('sub2')))), listItemBuilder(paragraphBuilder('two'))));
+  //   wrapTest(startState, liftCommand, expectedEndState);
+  // });
+});
+
 describe('liftEmptyBlockNodeCommand', () => {
   it('splits the parent block when there are sibling before', () => {
     const startState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>`), paragraphBuilder('bar')));
