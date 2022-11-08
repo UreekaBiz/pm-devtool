@@ -11,7 +11,7 @@ const {
   [NodeName.PARAGRAPH]: paragraphBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.DOC, NodeName.HORIZONTAL_RULE, NodeName.PARAGRAPH]);
 
-// == Selection ===================================================================
+// == Delete ======================================================================
 describe('deleteSelection', () => {
   it('deletes part of a Text Node', () => {
     const startState = docBuilder(paragraphBuilder(`f<${A}>o<${B}>o`));
