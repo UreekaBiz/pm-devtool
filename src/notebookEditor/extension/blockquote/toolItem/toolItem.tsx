@@ -1,8 +1,8 @@
 import { MdFormatQuote } from 'react-icons/md';
 
-import { isNodeSelection, NodeName } from 'common';
+import { getBlockquoteNodeType, isNodeSelection, toggleWrapCommand, NodeName } from 'common';
 
-import { toggleBlock } from 'notebookEditor/command';
+import { toolItemCommandWrapper } from 'notebookEditor/command';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { BlockquoteBorderColorToolItem } from './BlockquoteBorderColorToolItem';
@@ -21,7 +21,7 @@ export const blockquoteToolItem: ToolItem = {
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
   shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
   isActive: (editor) => editor.isNodeOrMarkActive(NodeName.BLOCKQUOTE),
-  onClick: (editor) => toggleBlock(editor, NodeName.BLOCKQUOTE, {/*no attrs*/}),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleWrapCommand(getBlockquoteNodeType(editor.view.state.schema), {/*no attrs*/})),
 };
 
 export const blockquoteBorderColorToolItem: ToolItem =  {

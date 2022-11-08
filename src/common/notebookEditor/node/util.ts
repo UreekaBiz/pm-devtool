@@ -1,7 +1,8 @@
 import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
-import { Selection, Transaction } from 'prosemirror-state';
+import { EditorState, Selection, Transaction } from 'prosemirror-state';
 
-import { AttributeType } from '../attribute';
+import { objectIncludes } from '../../util';
+import { Attributes, AttributeType } from '../attribute';
 import { DocumentNodeType } from '../extension/document';
 import { mapOldStartAndOldEndThroughHistory } from '../step';
 import { getNodeName, NodeIdentifier, NodeName } from './type';
@@ -150,6 +151,34 @@ const getNodesBetween = (rootNode: ProseMirrorNode, from: number, to: number, no
   });
 
   return nodesOfType;
+};
+
+/**
+ * check if a Node of the given {@link NodeName} is
+ * currently present in the given {@link EditorState}'s Selection
+ */
+ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes: Attributes): boolean => {
+  const { from, to, empty } = state.selection;
+  const nodesWithRange: { node: ProseMirrorNode; from: number; to: number; }[] = [];
+
+  state.doc.nodesBetween(from, to, (node, pos) => {
+    if(node.isText) return/*nothing to do*/;
+
+    const relativeFrom = Math.max(from, pos);
+    const relativeTo = Math.min(to, pos + node.nodeSize);
+
+    nodesWithRange.push({ node, from: relativeFrom, to: relativeTo });
+  });
+
+  const selectionRange = to - from;
+  const matchedNodeRanges = nodesWithRange
+    .filter(nodeWithRange => nodeName === nodeWithRange.node.type.name)
+    .filter(nodeWithRange => objectIncludes(nodeWithRange.node.attrs, attributes));
+
+  if(empty) return !!matchedNodeRanges.length/*no matched nodes*/;
+
+  const range = matchedNodeRanges.reduce((sum, nodeRange) => sum + nodeRange.to - nodeRange.from, 0/*initial*/);
+  return range >= selectionRange;
 };
 
 // -- Creation --------------------------------------------------------------------

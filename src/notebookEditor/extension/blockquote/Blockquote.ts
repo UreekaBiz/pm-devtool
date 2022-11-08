@@ -1,8 +1,8 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getBlockquoteNodeType, getNodeOutputSpec, BlockquoteNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
+import { getBlockquoteNodeType, getNodeOutputSpec, BlockquoteNodeSpec, NodeName, DATA_NODE_TYPE, toggleWrapCommand } from 'common';
 
-import { toggleBlock } from 'notebookEditor/command';
+import { shortcutCommandWrapper } from 'notebookEditor/command';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 import {  createWrappingInputRule } from 'notebookEditor/plugin/inputRule';
 
@@ -41,8 +41,8 @@ export const Blockquote = new NodeExtension({
   addProseMirrorPlugins: (editor) => [
     keymap({
       // Toggle Blockquote
-      'Mod-Shift-b': () => toggleBlock(editor, NodeName.BLOCKQUOTE, {/*no attrs*/ }),
-      'Mod-Shift-B': () => toggleBlock(editor, NodeName.BLOCKQUOTE, {/*no attrs*/ }),
+      'Mod-Shift-b': () => shortcutCommandWrapper(editor, toggleWrapCommand(getBlockquoteNodeType(editor.view.state.schema), {/*no attrs*/})),
+      'Mod-Shift-B': () => shortcutCommandWrapper(editor, toggleWrapCommand(getBlockquoteNodeType(editor.view.state.schema), {/*no attrs*/})),
     }),
   ],
 });

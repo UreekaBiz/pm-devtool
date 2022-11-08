@@ -164,3 +164,56 @@ export const findSameMarkInArray = (marks: readonly ProseMirrorMark[], markType:
  * same type as the given {@link MarkType} and have the same attributes
  */
 export const isSameMarkInArray = (marks: readonly ProseMirrorMark[], markType: MarkType, attributes: Record<AttributeType | string, any> = {}) => !!findSameMarkInArray(marks, markType, attributes);
+
+
+/**
+ * check if a Node of the given {@link NodeName} is
+ * currently present in the given {@link EditorState}'s Selection
+ */
+ export const isMarkActive = (state: EditorState, markName: MarkName, attributes: Attributes): boolean => {
+  const { empty, ranges } = state.selection;
+
+  if(empty) {
+    return !!(state.storedMarks || state.selection.$from.marks())
+      .filter((mark) => mark.type.name === markName)
+      .find(mark => objectIncludes(mark.attrs, attributes));
+  } /* else -- Selection is not empty */
+
+  let selectionRange = 0/*default*/;
+  const markRanges: MarkRange[] = [/*default empty*/];
+
+  ranges.forEach(({ $from, $to }) => {
+    const from = $from.pos;
+    const to = $to.pos;
+
+    state.doc.nodesBetween(from, to, (node, pos) => {
+      if(!node.isText && !node.marks.length) return/*nothing to do*/;
+
+      const relativeFrom = Math.max(from, pos);
+      const relativeTo = Math.min(to, pos + node.nodeSize);
+      const range = relativeTo - relativeFrom;
+      selectionRange += range;
+
+      markRanges.push(...node.marks.map(mark => ({ mark, from: relativeFrom, to: relativeTo })));
+    });
+  });
+  if(selectionRange === 0/*default*/) return false/*no selected Range*/;
+
+  const matchedMarkRange = markRanges
+    .filter(markRange => markRange.mark.type.name === markName)
+    .filter(markRange => objectIncludes(markRange.mark.attrs, attributes))
+    .reduce((sum, markRange) => sum + markRange.to - markRange.from, 0/*initial*/);
+
+  // compute Range of Marks that exclude the looked-for Mark
+  const excludedRange = markRanges
+    .filter(markRange => markRange.mark.type.name !== markName && markRange.mark.type.excludes(state.schema.marks[markName]))
+    .reduce((sum, markRange) => sum + markRange.to - markRange.from, 0/*initial*/);
+
+  // only include excludedRange if there was a match
+  let range = matchedMarkRange/*default*/;
+  if(matchedMarkRange > 0) {
+    range += excludedRange;
+  } /* else -- there was no match */
+
+  return range >= selectionRange;
+};

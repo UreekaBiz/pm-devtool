@@ -1,13 +1,13 @@
-import { Fragment, Slice } from 'prosemirror-model';
+import { Fragment, NodeType, Slice } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
-import { canSplit, liftTarget, replaceStep, ReplaceStep } from 'prosemirror-transform';
+import { canSplit, findWrapping, liftTarget, replaceStep, ReplaceStep } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 
 import { isBlank } from '../../../util';
 import { Attributes } from '../../attribute';
 import { isMarkHolderNode } from '../../extension/markHolder';
 import { isTextNode } from '../../extension/text';
-import { NodeName } from '../../node';
+import { isNodeActive, NodeName } from '../../node';
 import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../../selection';
 import { AbstractDocumentUpdate } from '../type';
 import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt } from '../util';
@@ -263,7 +263,77 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+// -- Wrap ------------------------------------------------------------------------
+export const toggleWrapCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new ToggleWrapDocumentUpdate(nodeType, attrs).update(state, state.tr), dispatch);
+export class ToggleWrapDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor(private readonly nodeType: NodeType, private readonly attrs: Partial<Attributes>) {/*nothing additional*/}
+  /*
+    * modify the given Transaction such that the Selection is wrapped in a Node
+    * of the given type with the given Attributes
+    */
+  public update(editorState: EditorState, tr: Transaction) {
+    const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, this.attrs);
+
+    if(nodeActive) {
+      return new LiftDocumentUpdate(this.nodeType).update(editorState, editorState.tr);
+    } /* else -- wrap */
+
+    return new WrapInDocumentUpdate(this.nodeType, this.attrs).update(editorState, tr);
+  }
+}
+
+/** wrap the Selection in a Node of the given type with the given Attributes */
+export const wrapInCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new WrapInDocumentUpdate(nodeType, attrs).update(state, state.tr), dispatch);
+export class WrapInDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor(private readonly nodeType: NodeType, private readonly attrs: Partial<Attributes>) {/*nothing additional*/}
+  /*
+   * modify the given Transaction such that the Selection is wrapped in a Node
+   * of the given type with the given Attributes
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const { $from, $to } = editorState.selection;
+
+    const range = $from.blockRange($to);
+    const wrapping = range && findWrapping(range, this.nodeType, this.attrs);
+    if(!wrapping) return false/*no valid wrapping was found*/;
+
+    tr.wrap(range, wrapping).scrollIntoView();
+
+    return tr/*updated*/;
+  }
+}
+
 // -- Lift ------------------------------------------------------------------------
+/**
+ * lift the selected block, or the closest ancestor block of the
+ * selection that can be lifted, out of its parent Node
+ */
+export const liftCommand = (nodeType: NodeType): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LiftDocumentUpdate(nodeType).update(state, state.tr), dispatch);
+export class LiftDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor(private readonly nodeType: NodeType) {/*nothing additional*/}
+  /*
+   * modify the given Transaction such that the selected Block or
+   * the closest ancestor Block of the Selection that can be lifted
+   * is lifted out of its parent Node
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, {/*no attrs*/});
+    if(!nodeActive) return false/*Node is not present, nothing to lift*/;
+
+    const { $from, $to } = editorState.selection;
+    const range = $from.blockRange($to);
+
+    const targetDepth = range && liftTarget(range);
+    if(!range || targetDepth === null) return false/*no depth at which to lift the Block*/;
+
+    tr.lift(range, targetDepth).scrollIntoView();
+    return tr/*updated*/;
+  }
+}
+
 // REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
 // If the cursor is in an empty Text Block that can be lifted, lift it.
 export const liftEmptyBlockNodeCommand: Command = (state, dispatch) =>
