@@ -4,22 +4,24 @@ import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { NodeName } from '../../node/type';
 import { selectNodeBackwardCommand } from '../selection';
-import { getNotebookSchemaNodeBuilders, wrapTest, A } from '../testUtil';
-import { joinBackwardCommand } from './node';
+import { getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B } from '../testUtil';
+import { joinBackwardCommand, wrapInCommand } from './node';
 
 // ********************************************************************************
 // == Constant ====================================================================
+const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj();
+const { blockquote: blockquouteType } = notebookSchemaWithBuildersObj.schema.nodes;
+
 const {
   [NodeName.BLOCKQUOTE]: blockquoteBuilder,
   [NodeName.DOC]: docBuilder,
   [NodeName.HORIZONTAL_RULE]: horizontalRuleBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
-
 } = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.DOC, NodeName.HORIZONTAL_RULE, NodeName.PARAGRAPH]);
 
 // == Node ========================================================================
 // -- Select ----------------------------------------------------------------------
-describe('selectNodeBackward', () => {
+describe('selectNodeBackwardCommand', () => {
   it('does not select the Node before the cut'/*since no Blocks are meant to be selectable in a Notebook*/, () => {
     const startState = docBuilder(blockquoteBuilder(paragraphBuilder('a')), blockquoteBuilder(paragraphBuilder(`<${A}>b`)));
     const expectedEndState = startState/*same state*/;
@@ -33,8 +35,7 @@ describe('selectNodeBackward', () => {
   });
 });
 
-describe('selectNodeForward', () => {
-  // --------------------------------------------------------------------------------
+describe('selectNodeForwardCommand', () => {
   // TODO: redefine and handle test once Lists are added
   // it('selects the next Node', () => {
   //   const startState = docBuilder(paragraphBuilder(`foo<${A}>`), unorderedListBuilder(listItemBuilder(paragraphBuilder('bar'), unorderedListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
@@ -50,7 +51,7 @@ describe('selectNodeForward', () => {
 });
 
 // -- Join ------------------------------------------------------------------------
-describe('joinBackward', () => {
+describe('joinBackwardCommand', () => {
   it('can join paragraphs', () => {
     const startState = docBuilder(paragraphBuilder('hi'), paragraphBuilder(`<${A}>there`));
     const expectedEndState = docBuilder(paragraphBuilder('hithere'));
@@ -159,3 +160,34 @@ describe('joinBackward', () => {
   });
 });
 
+// -- Wrap ------------------------------------------------------------------------
+describe('wrapInCommand', () => {
+  const wrapInBlockquote = wrapInCommand(blockquouteType, {/*no attrs*/});
+
+  it('can wrap a Paragraph', () => {
+    const startState = docBuilder(paragraphBuilder(`fo<${A}>o`));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo')));
+    wrapTest(startState, wrapInBlockquote, expectedEndState);
+  });
+
+  it('wraps multiple Paragraphs', () => {
+    const startState = docBuilder(paragraphBuilder(`fo<${A}>o`), paragraphBuilder('bar'), paragraphBuilder(`ba<${B}>z`), paragraphBuilder('quux'));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('foo'), paragraphBuilder('bar'), paragraphBuilder('baz')), paragraphBuilder('quux'));
+    wrapTest(startState, wrapInBlockquote, expectedEndState);
+  });
+
+  it('wraps an already wrapped node', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`fo<${A}>o`)));
+    const expectedEndState = docBuilder(blockquoteBuilder(blockquoteBuilder(paragraphBuilder('foo'))));
+    wrapTest(startState, wrapInBlockquote, expectedEndState);
+  });
+
+  // TODO: redefine and handle test once Lists are added
+  // it('can wrap a Node Selection', () => {
+  //   const startState = docBuilder(`<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('foo'))));
+  //   const expectedEndState = docBuilder(blockquoteBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('foo')))));
+  //   wrapTest(startState, wrapInBlockquote, expectedEndState);
+  // });
+});
+
+// -- Lift ------------------------------------------------------------------------
