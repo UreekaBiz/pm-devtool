@@ -14,13 +14,13 @@ export const BlockquoteBorderColorToolItem: React.FC<Props> = ({ editor, depth }
   const { $anchor } = selection;
   if(!isBlockquoteNode($anchor.node(depth))) throw new Error(`Invalid BlockquoteBorderLeftWidthToolItem render: ${JSON.stringify(selection)}`);
 
-  // == Handler ===================================================================
+  // -- Handler -------------------------------------------------------------------
   const handleBorderColorChange = (value: string) => {
     updateSingleNodeAttributesCommand(NodeName.BLOCKQUOTE, $anchor.before(depth)/*the Blockquote itself*/, { [AttributeType.BorderColor]: value })(editor.view.state, editor.view.dispatch);
     editor.view.focus();
   };
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   const borderColorValue = $anchor.parent.attrs[AttributeType.BorderColor];
   return (
     <ColorPickerTool

@@ -1,6 +1,6 @@
-import { isBlockquoteNode, AttributeType, NodeName } from 'common';
+import { AttributeType, isBlockquoteNode, NodeName, updateSingleNodeAttributesCommand } from 'common';
 
-import { InputWithUnitNodeToolItem } from 'notebookEditor/extension/shared/component/InputWithUnitToolItem';
+import { InputWithUnitTool } from 'notebookEditor/extension/shared/component/InputWithUnitToolItem/InputWithUnitTool';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
@@ -11,16 +11,23 @@ interface Props extends EditorToolComponentProps {/*no additional*/ }
 export const BlockquoteBorderLeftWidthToolItem: React.FC<Props> = ({ editor, depth }) => {
   const { selection } = editor.view.state;
   const { $anchor } = selection;
-  if(!isBlockquoteNode($anchor.node(depth))) throw new Error(`Invalid BlockquoteBorderLeftWidthToolItem render: ${JSON.stringify(selection)}`);
 
-  // == UI ========================================================================
+  const blockquoteNode = $anchor.node(depth);
+  if(!isBlockquoteNode(blockquoteNode)) throw new Error(`Invalid BlockquoteBorderLeftWidthToolItem render: ${JSON.stringify(selection)}`);
+
+  // -- Handler -------------------------------------------------------------------
+  const handleChange = (value: string) => {
+    updateSingleNodeAttributesCommand(NodeName.BLOCKQUOTE, $anchor.before(depth)/*the Blockquote itself*/, { [AttributeType.BorderLeft]: value })(editor.view.state, editor.view.dispatch);
+    editor.view.focus();
+  };
+
+  // -- UI ------------------------------------------------------------------------
+  const value = blockquoteNode.attrs[AttributeType.BorderLeft] ?? ''/*none*/;
   return (
-    <InputWithUnitNodeToolItem
+    <InputWithUnitTool
       name='Border Width'
-      nodeName={NodeName.BLOCKQUOTE}
-      attributeType={AttributeType.BorderLeft}
-      editor={editor}
-      depth={depth}
+      value={value}
+      onChange={handleChange}
     />
   );
 };
