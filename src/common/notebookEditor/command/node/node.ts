@@ -276,7 +276,7 @@ export class ToggleWrapDocumentUpdate implements AbstractDocumentUpdate {
     const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, this.attrs);
 
     if(nodeActive) {
-      return new LiftDocumentUpdate(this.nodeType).update(editorState, editorState.tr);
+      return new LiftBlockDocumentUpdate(this.nodeType, this.attrs).update(editorState, editorState.tr);
     } /* else -- wrap */
 
     return new WrapInDocumentUpdate(this.nodeType, this.attrs).update(editorState, tr);
@@ -310,19 +310,16 @@ export class WrapInDocumentUpdate implements AbstractDocumentUpdate {
  * lift the selected block, or the closest ancestor block of the
  * selection that can be lifted, out of its parent Node
  */
-export const liftCommand = (nodeType: NodeType): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftDocumentUpdate(nodeType).update(state, state.tr), dispatch);
+export const liftCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LiftDocumentUpdate().update(state, state.tr), dispatch);
 export class LiftDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly nodeType: NodeType) {/*nothing additional*/}
+  public constructor() {/*nothing additional*/}
   /*
    * modify the given Transaction such that the selected Block or
    * the closest ancestor Block of the Selection that can be lifted
    * is lifted out of its parent Node
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, {/*no attrs*/});
-    if(!nodeActive) return false/*Node is not present, nothing to lift*/;
-
     const { $from, $to } = editorState.selection;
     const range = $from.blockRange($to);
 
@@ -331,6 +328,23 @@ export class LiftDocumentUpdate implements AbstractDocumentUpdate {
 
     tr.lift(range, targetDepth).scrollIntoView();
     return tr/*updated*/;
+  }
+}
+
+/** lift the selected Block if it is of the given type and has the given attributes */
+export const liftBlockNodeCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LiftBlockDocumentUpdate(nodeType, attrs).update(state, state.tr), dispatch);
+export class LiftBlockDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor(private readonly nodeType: NodeType, attrs: Partial<Attributes>) {/*nothing additional*/}
+  /*
+   * modify the given transaction such that the selected Block if it is of the given
+   * type and has the given attributes
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, {/*no attrs*/});
+    if(!nodeActive) return false/*specified Node is not present, nothing to lift*/;
+
+    return new LiftDocumentUpdate().update(editorState, tr);
   }
 }
 
