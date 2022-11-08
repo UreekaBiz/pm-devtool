@@ -16,7 +16,7 @@ export const BlockquoteBorderColorToolItem: React.FC<Props> = ({ editor, depth }
 
   // == Handler ===================================================================
   const handleBorderColorChange = (value: string) => {
-    updateSingleNodeAttributesCommand(NodeName.BLOCKQUOTE, $anchor.pos - $anchor.parentOffset - 1/*the Blockquote itself*/, { [AttributeType.BorderColor]: value })(editor.view.state, editor.view.dispatch);
+    updateSingleNodeAttributesCommand(NodeName.BLOCKQUOTE, $anchor.before(depth)/*the Blockquote itself*/, { [AttributeType.BorderColor]: value })(editor.view.state, editor.view.dispatch);
     editor.view.focus();
   };
 
