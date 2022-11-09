@@ -6,8 +6,8 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { TableRole } from 'common';
 
-import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from '../../../../notebookEditor/extension/table/util';
-import { isTableMap, TableMap } from '../../../../notebookEditor/extension/table/TableMap';
+import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from './util';
+import { isTableMap, TableMap } from './TableMap';
 
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire
