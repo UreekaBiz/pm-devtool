@@ -75,7 +75,7 @@ describe('splitBlockCommand', () => {
     wrapTest(startState, splitBlockCommand, expectedEndState);
   });
 
-  const headingSchema = new Schema({ nodes: notebookSchema.spec.nodes.update(NodeName.HEADING, { content: 'inline*', marks: ''/*no marks*/ }).update('doc', { content: `${NodeName.HEADING} ${NodeGroup.BLOCK}*` }) });
+  const headingSchema = new Schema({ nodes: notebookSchema.spec.nodes.update(NodeName.HEADING, { content: 'inline*', marks: ''/*no marks*/ }).update('doc', { content: `${NodeName.HEADING} ${NodeGroup.BLOCK}*` }),  marks: notebookSchema.spec.marks });
   const hDocBuilder = (A: number) => {
     const hDoc = headingSchema.node('doc', null/*no attrs*/, [ headingSchema.node(NodeName.HEADING, { [AttributeType.Level]: 1 }, headingSchema.text('foobar'))]);
     (hDoc as ProseMirrorNodeWithTag).tag = { A, B: null/*none*/ };
