@@ -19,7 +19,6 @@ import { getTableNodeTypes } from '../../../../../notebookEditor/extension/table
 // clipped to the Selection's rectangle, optionally repeating the
 // pasted cells when they are smaller than the Selection
 
-
 /**
  * get a rectangular area of Cells from a Slice, or null if the outer Nodes
  * of the Slice are not Table Cells or Rows
@@ -63,14 +62,11 @@ export const pastedCells = (slice: Slice) => {
   return ensureRectangular(schema, rows);
 };
 
-// : (Schema, [Fragment]) → {width: number, height: number, rows: [Fragment]}
-// Compute the width and height of a set of cells, and make sure each
-// row has the same number of cells.
 /**
  * compute the width and height of a set of Cells and make sure each Row
  * has the same number of Cells
  */
-function ensureRectangular(schema: Schema, rows: Fragment[]) {
+const ensureRectangular = (schema: Schema, rows: Fragment[]) => {
   const widths: number[] = [];
   for(let i = 0; i < rows.length; i++) {
     const row = rows[i];
@@ -106,7 +102,8 @@ function ensureRectangular(schema: Schema, rows: Fragment[]) {
   }
 
   return { height: rows.length, width, rows };
-}
+};
+
 export const fitSlice = (nodeType: NodeType, slice: Slice) => {
   const node = nodeType.createAndFill();
   if(!node) throw new Error(`could not create a node of type ${nodeType.name}`);
