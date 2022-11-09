@@ -10,6 +10,7 @@ import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNod
 // ********************************************************************************
 // == Constant ====================================================================
 const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj();
+
 const { schema: notebookSchema } = notebookSchemaWithBuildersObj;
 const { blockquote: blockquouteType } = notebookSchema.nodes;
 
