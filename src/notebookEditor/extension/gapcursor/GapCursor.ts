@@ -1,6 +1,6 @@
 import { gapCursor } from 'prosemirror-gapcursor';
 
-import { ExtensionName } from 'notebookEditor/model';
+import { ExtensionName } from 'common';
 
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import './gapcursor.css';

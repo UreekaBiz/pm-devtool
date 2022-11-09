@@ -1,4 +1,4 @@
-import { ExtensionName } from 'notebookEditor/model/type';
+import { ExtensionName } from 'common';
 
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { inBetweenInlineAtomsPlugin, blurredSelectionPlugin } from './plugin';
