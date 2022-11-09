@@ -1,18 +1,21 @@
+import { MarkName } from 'common/notebookEditor/mark';
 import ist from 'ist';
 import { Schema } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { AttributeType } from '../../attribute';
 import { NodeGroup, NodeName } from '../../node/type';
-import { getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../testUtil';
-import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNodeCommand, splitBlockCommand, wrapInCommand } from './node';
+import { toggleMarkCommand } from '../mark';
+import { createState, getNotebookSchemaMarkBuilders, getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../testUtil';
+import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNodeCommand, splitBlockCommand, splitBlockKeepMarksCommand, wrapInCommand } from './node';
 
 // ********************************************************************************
 // == Constant ====================================================================
 const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj();
-
 const { schema: notebookSchema } = notebookSchemaWithBuildersObj;
+
 const { blockquote: blockquouteType } = notebookSchema.nodes;
+const { bold: boldType } = notebookSchema.marks;
 
 const {
   [NodeName.BLOCKQUOTE]: blockquoteBuilder,
@@ -23,6 +26,8 @@ const {
   [NodeName.HORIZONTAL_RULE]: horizontalRuleBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.CODEBLOCK, NodeName.DOC, NodeName.HEADING, NodeName.HORIZONTAL_RULE, NodeName.IMAGE, NodeName.PARAGRAPH]);
+
+const { [MarkName.BOLD]: boldBuilder, [MarkName.ITALIC]: italicBuilder } = getNotebookSchemaMarkBuilders([MarkName.BOLD, MarkName.ITALIC]);
 
 // == Test ========================================================================
 // -- Split -----------------------------------------------------------------------
@@ -109,6 +114,24 @@ describe('splitBlockCommand', () => {
     const startState = doc;
     const expectedEndState = schema.node('doc', null/*no attrs*/, [schema.node('paragraph', null/*no attrs*/, [schema.text('he')]), schema.node('paragraph', null/*no attrs*/, [schema.text('llo')])]);
     wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+});
+
+describe('splitBlockKeepMarksCommand', () => {
+  it('keeps marks when used after marked text', () => {
+    const startStateDoc = docBuilder(paragraphBuilder(boldBuilder(`foo<${A}>`), 'bar'));
+    let state = createState(startStateDoc as ProseMirrorNodeWithTag);
+
+    splitBlockKeepMarksCommand(state, tr => state = state.apply(tr));
+    ist(state.storedMarks!.length, 1/*stored Bold*/);
+  });
+
+  it('preserves the stored marks', () => {
+    const startStateDoc = docBuilder(paragraphBuilder(italicBuilder(`foo<${A}>`)));
+    let state = createState(startStateDoc as ProseMirrorNodeWithTag);
+    toggleMarkCommand(boldType, {/*no attrs*/})(state, tr => state = state.apply(tr));
+    splitBlockKeepMarksCommand(state, tr => state = state.apply(tr));
+    ist(state.storedMarks!.length, 2/*stored Bold and Italic*/);
   });
 });
 
