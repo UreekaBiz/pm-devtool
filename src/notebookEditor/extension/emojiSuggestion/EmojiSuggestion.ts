@@ -1,5 +1,6 @@
 
-import { ExtensionName, ExtensionPriority } from 'notebookEditor/model/type';
+import { ExtensionName, ExtensionPriority } from 'common';
+
 import { suggestionPlugin } from 'notebookEditor/plugin/suggestion/suggestionPlugin';
 
 import { Extension } from '../type';

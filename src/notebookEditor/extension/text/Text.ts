@@ -1,9 +1,8 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { NodeName, TextNodeSpec } from 'common';
+import { ExtensionPriority, NodeName, TextNodeSpec } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { ExtensionPriority } from 'notebookEditor/model';
 
 import { NodeExtension } from '../type/NodeExtension';
 import { insertTabCommand } from './command';
