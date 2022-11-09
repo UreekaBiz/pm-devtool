@@ -1,6 +1,6 @@
-import { getNodeOutputSpec, MarkHolderNodeSpec, NodeName, DATA_NODE_TYPE, DEFAULT_EXTENSION_PRIORITY } from 'common';
+import { getNodeOutputSpec, MarkHolderNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { createExtensionParseRules, NodeExtension } from '../type';
+import { createExtensionParseRules, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { MarkHolderAttrs } from './attribute';
 import { markHolderPlugin } from './plugin';
 

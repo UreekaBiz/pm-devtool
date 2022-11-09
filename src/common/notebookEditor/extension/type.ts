@@ -1,8 +1,4 @@
 // ********************************************************************************
-// == Constant ====================================================================
-/** priority used by Extensions whose order of execution is not relevant*/
-export const DEFAULT_EXTENSION_PRIORITY = 100;
-
 // == Extension ===================================================================
 export enum ExtensionName {
   BASIC_KEYMAP = 'basicKeymap',

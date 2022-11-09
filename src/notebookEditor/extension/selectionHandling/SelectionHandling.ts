@@ -1,6 +1,6 @@
-import { ExtensionName, DEFAULT_EXTENSION_PRIORITY } from 'common';
+import { ExtensionName } from 'common';
 
-import { Extension } from '../type';
+import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 import { inBetweenInlineAtomsPlugin, blurredSelectionPlugin } from './plugin';
 
 // ********************************************************************************

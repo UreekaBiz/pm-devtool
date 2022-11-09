@@ -5,6 +5,10 @@ import { NodeViewStorage, DialogStorage } from 'notebookEditor/model';
 import { InputRule } from 'notebookEditor/plugin/inputRule';
 import { PasteRule } from 'notebookEditor/plugin/pasteRule';
 
+// == Constant ====================================================================
+/** priority used by Extensions whose order of execution is not relevant*/
+export const DEFAULT_EXTENSION_PRIORITY = 100;
+
 // == Type ========================================================================
 /** the type of the Storage used by the Extension */
 export type ExtensionStorageType = NodeViewStorage<any> | DialogStorage | undefined/*Extension does not need storage*/;

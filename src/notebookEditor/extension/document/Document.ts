@@ -1,4 +1,6 @@
-import { DocumentNodeSpec, NodeName, DEFAULT_EXTENSION_PRIORITY } from 'common';
+import { DocumentNodeSpec, NodeName } from 'common';
+
+import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type';
 
 import { NodeExtension } from '../type';
 
