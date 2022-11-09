@@ -127,7 +127,7 @@ export class TableMap {
         bottom++;
       }
 
-      return new Rect(left, top, right, bottom);
+      return new TableRect(left, top, right, bottom);
     }
 
     throw new RangeError('No cell with offset ' + pos + ' found');
@@ -165,7 +165,7 @@ export class TableMap {
     }
   }
 
-  /** get the {@link Rect} spanning the two given Cells */
+  /** get the {@link TableRect} spanning the two given Cells */
   public rectBetween(a: number, b: number) {
     const { left: leftA, right: rightA, top: topA, bottom: bottomA } = this.findCell(a);
     const { left: leftB, right: rightB, top: topB, bottom: bottomB } = this.findCell(b);
@@ -175,14 +175,14 @@ export class TableMap {
     const maxRight = Math.max(rightA, rightB);
     const maxBottom = Math.max(bottomA, bottomB);
 
-    return new Rect(minLeft, minTop, maxRight, maxBottom);
+    return new TableRect(minLeft, minTop, maxRight, maxBottom);
   }
 
   /**
    * return the position of all Cells that have the top left corner
-   * in the given {@link Rect}
+   * in the given {@link TableRect}
    */
-  public cellsInRect(rect: Rect) {
+  public cellsInRect(rect: TableRect) {
     const result: number[] = [];
     const seen: { [key: number]: boolean; } = {};
 
@@ -233,6 +233,7 @@ export class TableMap {
   }
 }
 
+// == Util ========================================================================
 /** compute a {@link TableMap} */
 const computeMap = (table: ProseMirrorNode) => {
   if(table.type.spec.tableRole !== 'table') {
@@ -414,7 +415,7 @@ const freshColWidth = (attrs: Partial<Attributes>): number[] => {
 };
 
 // == Rect Class ==================================================================
-export class Rect {
+export class TableRect {
   // -- Attribute -----------------------------------------------------------------
   left: number;
   top: number;
