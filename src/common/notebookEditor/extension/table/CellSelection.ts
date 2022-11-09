@@ -6,7 +6,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { TableRole } from 'common';
 
-import { inSameTable, pointsAtCell, setAttr, removeColSpan } from '../../../../notebookEditor/extension/table/util';
+import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from '../../../../notebookEditor/extension/table/util';
 import { isTableMap, TableMap } from '../../../../notebookEditor/extension/table/TableMap';
 
 // This file defines a ProseMirror selection subclass that models
@@ -149,7 +149,7 @@ export class CellSelection extends Selection {
             } /* else -- neither extraLeft nor extraRight are bigger than 0*/
 
             if(cellRect.top < rect.top || cellRect.bottom > rect.bottom) {
-              const attrs = cell && setAttr(cell.attrs, 'rowspan', Math.min(cellRect.bottom, rect.bottom) - Math.max(cellRect.top, rect.top));
+              const attrs = cell && setTableNodeAttributes(cell.attrs, 'rowspan', Math.min(cellRect.bottom, rect.bottom) - Math.max(cellRect.top, rect.top));
 
               if(cell && cellRect.top < rect.top) { cell = cell.type.createAndFill(attrs); }
               else { cell = cell && cell.type.create(attrs, cell.content); }
