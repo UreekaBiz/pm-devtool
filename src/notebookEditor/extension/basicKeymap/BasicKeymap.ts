@@ -6,6 +6,7 @@ import { ExtensionName } from 'notebookEditor/model';
 import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule';
 
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { basicKeymapPlugin } from './plugin';
 
 // ********************************************************************************
 // REF: https://github.com/ProseMirror/prosemirror-example-setup/blob/master/src/keymap.ts
@@ -24,6 +25,7 @@ export const BasicKeymap = new Extension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [
+    basicKeymapPlugin(),
     keymap({
       'Enter': chainCommands(liftEmptyBlockNodeCommand, splitBlockKeepMarksCommand),
       'Backspace': chainCommands(undoInputRuleCommand, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),

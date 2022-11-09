@@ -20,7 +20,7 @@ export const MarkHolder = new NodeExtension({
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
     parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.MARK_HOLDER}"]` }], MarkHolderAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/ }),
+    toDOM: (node) => getNodeOutputSpec(node, {/*no additional attrs*/ }, true/*is Leaf*/),
   }),
 
   // -- Input ---------------------------------------------------------------------
