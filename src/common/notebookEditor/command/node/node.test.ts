@@ -2,14 +2,16 @@ import ist from 'ist';
 import { Schema } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 
+import { AttributeType } from '../../attribute';
 import { NodeName } from '../../node/type';
-import { getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B } from '../testUtil';
-import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNodeCommand, wrapInCommand } from './node';
+import { getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../testUtil';
+import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNodeCommand, splitBlockCommand, wrapInCommand } from './node';
 
 // ********************************************************************************
 // == Constant ====================================================================
 const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj();
-const { blockquote: blockquouteType } = notebookSchemaWithBuildersObj.schema.nodes;
+const { schema: notebookSchema } = notebookSchemaWithBuildersObj;
+const { blockquote: blockquouteType } = notebookSchema.nodes;
 
 const {
   [NodeName.BLOCKQUOTE]: blockquoteBuilder,
@@ -21,7 +23,94 @@ const {
   [NodeName.PARAGRAPH]: paragraphBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.CODEBLOCK, NodeName.DOC, NodeName.HEADING, NodeName.HORIZONTAL_RULE, NodeName.IMAGE, NodeName.PARAGRAPH]);
 
-// == Node ========================================================================
+// == Test ========================================================================
+// -- Split -----------------------------------------------------------------------
+describe('splitBlock', () => {
+  it('splits a Paragraph at the end', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>`));
+    const expectedEndState = docBuilder(paragraphBuilder('foo'), paragraphBuilder());
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  it('split a Paragraph in the middle', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>bar`));
+    const expectedEndState = docBuilder(paragraphBuilder('foo'), paragraphBuilder('bar'));
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  it('splits a Paragraph from a Heading', () => {
+    const startState = docBuilder(headingBuilder(`foo<${A}>`));
+    const expectedEndState = docBuilder(headingBuilder('foo'), paragraphBuilder());
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  it('splits a Heading in two when in the middle', () => {
+    const startState = docBuilder(headingBuilder(`foo<${A}>bar`));
+    const expectedEndState = docBuilder(headingBuilder('foo'), headingBuilder('bar'));
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  it('deletes selected content', () => {
+    const startState = docBuilder(paragraphBuilder(`fo<${A}>ob<${B}>ar`));
+    const expectedEndState = docBuilder(paragraphBuilder('fo'), paragraphBuilder('ar'));
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  // TODO: redefine and handle once Lists are added
+  // it('splits a parent Block when a Node is selected', () => {
+  //   const startState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('a')), `<${A}>`, listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
+  //   const expectedEndState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('a'))), orderedListBuilder(listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
+  //   wrapTest(startState, splitBlockCommand, expectedEndState);
+  // });
+
+  // it('does not split the parent block when at the start', () => {
+  //   const startState = docBuilder(orderedListBuilder(`<${A}>`, listItemBuilder(paragraphBuilder('a')), listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
+  //   const expectedEndState = null/*same state*/;
+  //   wrapTest(startState, splitBlockCommand, expectedEndState);
+  // });
+
+  it('splits off a normal Paragraph when splitting at the start of a Text Block', () => {
+    const startState = docBuilder(headingBuilder(`<${A}>foo`));
+    const expectedEndState = docBuilder(paragraphBuilder(), headingBuilder('foo'));
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  const headingSchema = new Schema({ nodes: notebookSchema.spec.nodes.update(NodeName.HEADING, { content: 'inline*', marks: '_'/*all marks*/ }).update('doc', { content: 'heading block*' }) });
+  const hDocBuilder = (A: number) => {
+    const hDoc = headingSchema.node('doc', null/*no attrs*/, [ headingSchema.node(NodeName.HEADING, { [AttributeType.Level]: 1 }, headingSchema.text('foobar'))]);
+    (hDoc as ProseMirrorNodeWithTag).tag = { A, B: null/*none*/ };
+    return hDoc;
+  };
+  it('splits a Paragraph from a Heading when a double Heading is not allowed', () => {
+    const startState = hDocBuilder(4/*pos*/);
+    const expectedEndState = headingSchema.node('doc', null/*no attrs*/, [headingSchema.node('heading', { [AttributeType.Level]: 1 }, headingSchema.text('foo')), headingSchema.node('paragraph', null/*no attrs*/, headingSchema.text('bar'))]);
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  it('will not try to reset the type of an empty leftover when the schema forbids it', () => {
+    const startState = hDocBuilder(1/*pos*/);
+    const expectedEndState = headingSchema.node('doc', null/*no attrs*/, [headingSchema.node('heading', { [AttributeType.Level]: 1 }), headingSchema.node('paragraph', null/*no attrs*/, headingSchema.text('foobar'))]);
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+
+  it('prefers Text Blocks', () => {
+    const schema = new Schema({
+      nodes: {
+        doc: { content: 'paragraph* section*' },
+        paragraph: { content: 'text*', toDOM() { return ['p', 0/*content*/]; } },
+        section: { content: 'paragraph+', toDOM() { return ['section', 0/*content*/]; } },
+        text: {/*no spec*/},
+      },
+    });
+    const doc = schema.node('doc', null/*no attrs*/, [schema.node('paragraph', null/*no attrs*/, [schema.text('hello')])]);
+    (doc as ProseMirrorNodeWithTag).tag = { A: 3, B: null/*none*/ };
+
+    const startState = doc;
+    const expectedEndState = schema.node('doc', null/*no attrs*/, [schema.node('paragraph', null/*no attrs*/, [schema.text('he')]), schema.node('paragraph', null/*no attrs*/, [schema.text('llo')])]);
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
+});
+
 // -- Wrap ------------------------------------------------------------------------
 describe('wrapInCommand', () => {
   const wrapInBlockquote = wrapInCommand(blockquouteType, {/*no attrs*/});

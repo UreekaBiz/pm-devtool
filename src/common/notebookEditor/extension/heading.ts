@@ -74,7 +74,6 @@ export const HeadingNodeSpec: Readonly<NodeSpec> = {
   // .. Misc ......................................................................
   selectable: false/*cannot be set as NodeSelection*/,
   defining: true,
-
 };
 
 // -- Render Spec -----------------------------------------------------------------
