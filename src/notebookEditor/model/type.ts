@@ -50,7 +50,6 @@ export enum ExtensionPriority {
   //       been recomputed. Hence this must run before other Extensions
   ASYNC_NODE = 115,
 
-
   // NOTE: since Blocks make use of several specific Commands, they must not
   //       be executed in default order
   CODEBLOCK = 114,

@@ -30,30 +30,39 @@ import { NodeName } from './node';
 // ********************************************************************************
 // == NodeSpec ====================================================================
 // NOTE: the order of appearance of the Nodes dictates their priority
-//       (e.g. since Paragraph is the default Block type, it must appear first)
+//       hence it should match ExtensionPriority for any Nodes or Marks
+//       (SEE: ExtensionPriority)
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
-  [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
+  // -- priority ordered ----------------------------------------------------------
+  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.CODEBLOCK]: CodeBlockNodeSpec,
+  [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2Spec,
+  [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
+  [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeSpec,
+  [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeSpec,
+
+  // -- priority does not matter --------------------------------------------------
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeSpec,
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeSpec,
-  [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2Spec,
   [NodeName.DOC]: DocumentNodeSpec,
-  [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeSpec,
   [NodeName.IMAGE]: ImageNodeSpec,
-  [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
-  [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeSpec,
+
+  // -- priority at last ----------------------------------------------------------
   [NodeName.TEXT]: TextNodeSpec,
 };
 
 // == MarkSpec ====================================================================
 export const MarkSpecs: Record<MarkName, MarkSpec> = {
+  // -- priority ordered ----------------------------------------------------------
+  [MarkName.LINK]: LinkMarkSpec,
+
+  // -- priority does not matter --------------------------------------------------
   [MarkName.BOLD]: BoldMarkSpec,
   [MarkName.CODE]: CodeMarkSpec,
   [MarkName.ITALIC]: ItalicMarkSpec,
-  [MarkName.LINK]: LinkMarkSpec,
   [MarkName.REPLACED_TEXT_MARK]: ReplacedTextMarkMarkSpec,
   [MarkName.SUB_SCRIPT]: SubScriptMarkSpec,
   [MarkName.SUPER_SCRIPT]: SuperScriptMarkSpec,
