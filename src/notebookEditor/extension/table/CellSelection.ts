@@ -5,7 +5,7 @@ import { Mappable, Mapping } from 'prosemirror-transform';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { inSameTable, pointsAtCell, setAttr, removeColSpan } from './util';
-import { TableMap } from './TableMap';
+import { isTableMap, TableMap } from './TableMap';
 
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire
@@ -59,22 +59,23 @@ export class CellSelection extends Selection {
    * single cell
    */
   constructor($anchorCell: ResolvedPos, $headCell: ResolvedPos = $anchorCell/*default to the same cell*/) {
-    const table = $anchorCell.node(-1/*Table ancestor*/),
-      map = TableMap.get(table),
-      start = $anchorCell.start(-1/*Table ancestor depth*/);
+    const table = $anchorCell.node(-1/*Table ancestor*/);
+    const map = TableMap.get(table);
+    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
 
+    const start = $anchorCell.start(-1/*Table ancestor depth*/);
     const rect = map.rectBetween($anchorCell.pos - start, $headCell.pos - start);
     const doc = $anchorCell.node(0);
     const cells = map.cellsInRect(rect).filter((pos: number) => pos !== $headCell.pos - start);
 
-    // Make the head cell the first range, so that it counts as the
-    // primary part of the selection
+    // make the head Cell the first range so that it counts
+    // as the primary part of the Selection
     cells.unshift($headCell.pos - start);
-    const ranges = cells.map((pos: number) => {
+    const ranges = cells.filter(pos => table.nodeAt(pos)).map((pos: number) => {
       const cell = table.nodeAt(pos);
       const from = pos + start + 1;
 
-      return cell && new SelectionRange(doc.resolve(from), doc.resolve(from + cell.content.size));
+      return new SelectionRange(doc.resolve(from), doc.resolve(from + cell/*guaranteed by filter*/!.content.size));
     });
 
     super(ranges[0].$from, ranges[0].$to, ranges);
@@ -105,9 +106,12 @@ export class CellSelection extends Selection {
 
   /** returns a rectangular {@link Slice} of table rows containing the selected cells */
   public content() {
-    const table = this.$anchorCell.node(-1),
-      map = TableMap.get(table),
-      start = this.$anchorCell.start(-1);
+    const table = this.$anchorCell.node(-1);
+
+    const map = TableMap.get(table);
+    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
+
+    const start = this.$anchorCell.start(-1);
 
     const rect = map.rectBetween(this.$anchorCell.pos - start, this.$headCell.pos - start);
     const seen: { [key: number]: boolean; } = {};
@@ -189,9 +193,11 @@ export class CellSelection extends Selection {
   /** execute the given callback for each cell in the Selection */
   public forEachCell(callback: (node: ProseMirrorNode | null, pos: number) => void) {
     const table = this.$anchorCell.node(-1);
-    const map = TableMap.get(table);
-    const start = this.$anchorCell.start(-1);
 
+    const map = TableMap.get(table);
+    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
+
+    const start = this.$anchorCell.start(-1);
     const cells = map.cellsInRect(map.rectBetween(this.$anchorCell.pos - start, this.$headCell.pos - start));
     for(let i = 0; i < cells.length; i++) {
       callback(table.nodeAt(cells[i]), start + cells[i]);
@@ -220,8 +226,9 @@ export class CellSelection extends Selection {
    */
   static colSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
     const map = TableMap.get($anchorCell.node(-1));
-    const start = $anchorCell.start(-1);
+    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
 
+    const start = $anchorCell.start(-1);
     const anchorRect = map.findCell($anchorCell.pos - start);
     const headRect = map.findCell($headCell.pos - start);
 
@@ -254,6 +261,8 @@ export class CellSelection extends Selection {
    */
   isRowSelection() {
     const map = TableMap.get(this.$anchorCell.node(-1));
+    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
+
     const start = this.$anchorCell.start(-1);
 
     const anchorLeft = map.colCount(this.$anchorCell.pos - start);
@@ -281,8 +290,9 @@ export class CellSelection extends Selection {
    */
   public static rowSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
     const map = TableMap.get($anchorCell.node(-1));
-    const start = $anchorCell.start(-1);
+    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
 
+    const start = $anchorCell.start(-1);
     const anchorRect = map.findCell($anchorCell.pos - start);
     const headRect = map.findCell($headCell.pos - start);
 
@@ -434,8 +444,9 @@ export const normalizeSelection = (state: EditorState, tr: Transaction, allowTab
       normalize = CellSelection.rowSelection($cell, $cell);
     } else if(!allowTableNodeSelection) {
       const map = TableMap.get(selection.node);
-      const start = selection.from + 1;
+      if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
 
+      const start = selection.from + 1;
       const lastCell = start + map.map[map.width * map.height - 1];
       normalize = CellSelection.create(doc, start + 1, lastCell);
     }

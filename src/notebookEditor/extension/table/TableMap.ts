@@ -234,6 +234,9 @@ export class TableMap {
 }
 
 // == Util ========================================================================
+/** utility to ensure that an object is a TableMap */
+export const isTableMap = (obj: any): obj is TableMap => 'width' in obj && 'height' in obj && 'map' in obj && 'problems' in obj;
+
 /** compute a {@link TableMap} */
 const computeMap = (table: ProseMirrorNode) => {
   if(table.type.spec.tableRole !== 'table') {
