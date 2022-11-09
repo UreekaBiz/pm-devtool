@@ -4,7 +4,7 @@ import { Transform } from 'prosemirror-transform';
 
 import { removeColSpan, setTableNodeAttributes, CellSelection, TableMap, TableRole, NodeName, AttributeType, DispatchType, TableRect, isTableMap } from 'common';
 
-import { getTableNodeTypes } from './schema';
+import { getTableNodeTypes } from '../../../../../notebookEditor/extension/table/schema';
 
 // ********************************************************************************
 // utilities used for Table Node copy/paste handling.
