@@ -180,7 +180,7 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // -- Split -----------------------------------------------------------------------
-// split the Block at the Selection
+/** split the Block at the Selection */
 export const splitBlockCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SplitBlockDocumentUpdate().update(state, state.tr), dispatch);
 export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
@@ -260,6 +260,31 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
 
     tr.scrollIntoView();
     return tr/*updated*/;
+  }
+}
+
+/** split the Block at the Selection keeping active Marks */
+export const splitBlockKeepMarksCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SplitBlockKeepMarksDocumentUpdate().update(state, state.tr), dispatch);
+export class SplitBlockKeepMarksDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/}
+
+  /**
+   * modify the given Transaction such that the Block at
+   * the current Selection is split and the Marks are kept
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const startingMarks = editorState.storedMarks || (editorState.selection.$to.parentOffset && editorState.selection.$from.marks());
+    const updatedTr = new SplitBlockDocumentUpdate().update(editorState, tr);
+
+    if(updatedTr) {
+      if(startingMarks) {
+        updatedTr.ensureMarks(startingMarks);
+      } /* else -- there were no Marks before splitting the block */
+      return updatedTr;
+    } /* else -- return default */
+
+    return false/*default*/;
   }
 }
 
