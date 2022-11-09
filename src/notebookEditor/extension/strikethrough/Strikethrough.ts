@@ -1,12 +1,12 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getMarkOutputSpec, getStrikethroughMarkType, StrikethroughMarkSpec, MarkName } from 'common';
+import { getMarkOutputSpec, getStrikethroughMarkType, StrikethroughMarkSpec, MarkName, DEFAULT_EXTENSION_PRIORITY } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createMarkInputRule } from 'notebookEditor/plugin/inputRule';
 import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
 
-import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { MarkExtension } from '../type';
 import { safeParseTag } from '../util/parse';
 import { toggleStrikethroughCommand } from './command';
 

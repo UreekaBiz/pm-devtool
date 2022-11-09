@@ -1,8 +1,8 @@
-import { ExtensionName } from 'common';
+import { ExtensionName, DEFAULT_EXTENSION_PRIORITY } from 'common';
 
 import { defaultInputRules } from 'notebookEditor/plugin/inputRule';
 
-import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { Extension } from '../type';
 
 // ********************************************************************************
 // == Node ========================================================================

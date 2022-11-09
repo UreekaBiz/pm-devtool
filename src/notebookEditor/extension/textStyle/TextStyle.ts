@@ -1,6 +1,6 @@
-import { getMarkOutputSpec, TextStyleMarkSpec, MarkName } from 'common';
+import { getMarkOutputSpec, TextStyleMarkSpec, MarkName, DEFAULT_EXTENSION_PRIORITY } from 'common';
 
-import { getExtensionAttributesObject, MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { getExtensionAttributesObject, MarkExtension } from '../type';
 import { isValidHTMLElement, safeParseTag } from '../util/parse';
 import { TextStyleAttrs } from './attribute';
 

@@ -1,8 +1,8 @@
 import { gapCursor } from 'prosemirror-gapcursor';
 
-import { ExtensionName } from 'common';
+import { ExtensionName, DEFAULT_EXTENSION_PRIORITY } from 'common';
 
-import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { Extension } from '../type';
 import './gapcursor.css';
 
 // ********************************************************************************

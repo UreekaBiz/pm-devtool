@@ -1,10 +1,10 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockCommand, ExtensionName } from 'common';
+import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockCommand, ExtensionName, DEFAULT_EXTENSION_PRIORITY } from 'common';
 
 import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule';
 
-import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { Extension } from '../type';
 
 // ********************************************************************************
 // REF: https://github.com/ProseMirror/prosemirror-example-setup/blob/master/src/keymap.ts
