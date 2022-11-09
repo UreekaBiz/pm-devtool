@@ -4,7 +4,7 @@ import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { NodeName } from '../../node/type';
 import { getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B } from '../testUtil';
-import { joinBackwardCommand, liftCommand, liftEmptyBlockNodeCommand, wrapInCommand } from './node';
+import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNodeCommand, wrapInCommand } from './node';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -13,10 +13,13 @@ const { blockquote: blockquouteType } = notebookSchemaWithBuildersObj.schema.nod
 
 const {
   [NodeName.BLOCKQUOTE]: blockquoteBuilder,
+  [NodeName.CODEBLOCK]: codeBlockBuilder,
   [NodeName.DOC]: docBuilder,
+  [NodeName.HEADING]: headingBuilder,
+  [NodeName.IMAGE]: imageBuilder,
   [NodeName.HORIZONTAL_RULE]: horizontalRuleBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.DOC, NodeName.HORIZONTAL_RULE, NodeName.PARAGRAPH]);
+} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.CODEBLOCK, NodeName.DOC, NodeName.HEADING, NodeName.HORIZONTAL_RULE, NodeName.IMAGE, NodeName.PARAGRAPH]);
 
 // == Node ========================================================================
 // -- Wrap ------------------------------------------------------------------------
@@ -41,7 +44,7 @@ describe('wrapInCommand', () => {
     wrapTest(startState, wrapInBlockquote, expectedEndState);
   });
 
-  // TODO: redefine and handle test once Lists are added
+  // TODO: redefine and handle once Lists are added
   // it('can wrap a Node Selection', () => {
   //   const startState = docBuilder(`<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('foo'))));
   //   const expectedEndState = docBuilder(blockquoteBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('foo')))));
@@ -70,7 +73,7 @@ describe('liftCommand', () => {
     wrapTest(startState, liftCommand, expectedEndState);
   });
 
-  // TODO: redefine and handle test once Lists are added
+  // TODO: redefine and handle once Lists are added
   // it('can lift out of a list', () => {
   //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
   //   const expectedEndState = docBuilder(paragraphBuilder('foo'));
@@ -115,7 +118,7 @@ describe('liftEmptyBlockNodeCommand', () => {
     wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
   });
 
-  // TODO: redefine and handle test once Lists are added
+  // TODO: redefine and handle once Lists are added
   // it('does not violate schema constraints', () => {
   //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
   //   const expectedEndState = null/*same state*/;
@@ -161,8 +164,7 @@ describe('joinBackwardCommand', () => {
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
-  // --------------------------------------------------------------------------------
-  // TODO: redefine and handle these tests once Lists are added
+  // TODO: redefine and handle once Lists are added
   // it('moves a block into a list item', () => {
   //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder(`<${A}>there`));
   //   const expectedEndState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
@@ -199,7 +201,6 @@ describe('joinBackwardCommand', () => {
   //   wrapTest(startState, joinBackwardCommand, expectedEndState);
   // });
 
-  // --------------------------------------------------------------------------------
   it('deletes leaf nodes before', () => {
     const startState = docBuilder(horizontalRuleBuilder, paragraphBuilder(`<${A}>there`));
     const expectedEndState = docBuilder(paragraphBuilder('there'));
@@ -236,5 +237,98 @@ describe('joinBackwardCommand', () => {
     let state = EditorState.create({ doc, selection: TextSelection.near(doc.resolve(7/*expected pos*/)) });
     ist(joinBackwardCommand(state, tr => state = state.apply(tr)));
     ist(state.doc.toString(), 'doc(block(paragraph(\"ab\")))');
+  });
+});
+
+describe('joinForwardCommand', () => {
+  it('joins two Text Blocks', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>`), paragraphBuilder('bar'));
+    const expectedEndState = docBuilder(paragraphBuilder('foobar'));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('keeps type of second Node when first is empty', () => {
+    const startState = docBuilder(paragraphBuilder('x'), paragraphBuilder(`<${A}>`), headingBuilder('hi'));
+    const expectedEndState = docBuilder(paragraphBuilder('x'), headingBuilder(`<${A}>hi`));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('clears nodes from joined Node that would not be allowed in target Node', () => {
+    const startState = docBuilder(codeBlockBuilder(`foo<${A}>`), paragraphBuilder('bar', imageBuilder()));
+    const expectedEndState = docBuilder(codeBlockBuilder(`foo<${A}>bar`));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('does nothing at the end of the Document', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>`));
+    const expectedEndState = null/*same state*/;
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('deletes a leaf Node after the current Block', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>`), horizontalRuleBuilder(), paragraphBuilder('bar'));
+    const expectedEndState = docBuilder(paragraphBuilder('foo'), paragraphBuilder('bar'));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  // TODO: redefine and handle once Lists are added
+  // it('pulls the next Block into the current ListItem', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`)), listItemBuilder(paragraphBuilder('b'))));
+  //   const expectedEndState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('a'), paragraphBuilder('b'))));
+  //   wrapTest(startState, joinForwardCommand, expectedEndState);
+  // });
+
+  // it('joins two Blocks inside of a ListItem', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`), paragraphBuilder('b'))));
+  //   const expectedEndState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('ab'))));
+  //   wrapTest(startState, joinForwardCommand, expectedEndState);
+  // });
+
+  // it('joins two lists', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`hi<${A}>`))), unorderedListBuilder(listItemBuilder(paragraphBuilder('there'))));
+  //   const expectedEndState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
+  //   wrapTest(startState, joinForwardCommand, expectedEndState);
+  // });
+
+  // it('does nothing in a nested node at the end of the document', () => {
+  //   const startState = docBuilder(unorderedListBuilder(listItemBuilder(paragraphBuilder(`there<${A}>`))));
+  //   const expectedEndState = null/*same state*/;
+  //   wrapTest(startState, joinForwardCommand, expectedEndState);
+  // });
+
+  // it('does nothing when it cannot join', () => {
+  //   const startState = docBuilder(paragraphBuilder(`foo<${A}>`), unorderedListBuilder(listItemBuilder(paragraphBuilder('bar'), unorderedListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
+  //   const expectedEndState = null/*same state*/;
+  //   wrapTest(startState, joinForwardCommand, expectedEndState);
+  // });
+
+  it('pulls the next block into a Blockquote', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`foo<${A}>`)), paragraphBuilder('bar'));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder(`foo<${A}>`), paragraphBuilder('bar')));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('joins two Blockquotes', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`hi<${A}>`)), blockquoteBuilder(paragraphBuilder('there')));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('hi'), paragraphBuilder('there')));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('pulls the next block outside of a wrapping Blockquote', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>`), blockquoteBuilder(paragraphBuilder('bar')));
+    const expectedEndState = docBuilder(paragraphBuilder('foo'), paragraphBuilder('bar'));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('deletes a leaf Node at the end of the Document', () => {
+    const startState = docBuilder(paragraphBuilder(`there<${A}>`), horizontalRuleBuilder());
+    const expectedEndState = docBuilder(paragraphBuilder('there'));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
+
+  it('moves before it deletes a leaf Node', () => {
+    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`there<${A}>`)), horizontalRuleBuilder());
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder('there'), horizontalRuleBuilder()));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
   });
 });
