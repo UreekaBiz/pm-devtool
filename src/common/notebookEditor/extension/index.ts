@@ -6,4 +6,3 @@ export * from './paragraph';
 export * from './strikethrough';
 export * from './text';
 export * from './textStyle';
-export * from './type';
