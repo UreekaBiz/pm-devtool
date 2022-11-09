@@ -1,13 +1,11 @@
 import { Attrs, Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
-import { EditorState, PluginKey } from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 
 import { isNodeSelection, Attributes, AttributeType, TableRole, CellSelection } from 'common';
 
 import { isTableMap, TableMap } from './TableMap';
 
 // ********************************************************************************
-export const selectingCellsPluginKey = new PluginKey('selectingCells');
-
 // == Table =======================================================================
 /** check if the head of the {@link EditorState} Selection is in a Table */
 export const isInTable = (state: EditorState) => {
