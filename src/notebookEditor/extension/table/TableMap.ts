@@ -1,6 +1,6 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { Attributes, AttributeType } from 'common';
+import { Attributes, AttributeType, TableRole } from 'common';
 
 // ********************************************************************************
 // this code builds up a descriptive structure for a given
@@ -239,7 +239,7 @@ export const isTableMap = (obj: any): obj is TableMap => 'width' in obj && 'heig
 
 /** compute a {@link TableMap} */
 const computeMap = (table: ProseMirrorNode) => {
-  if(table.type.spec.tableRole !== 'table') {
+  if(table.type.spec.tableRole !== TableRole.Table) {
     throw new RangeError('Not a table node: ' + table.type.name);
   } /* else -- given Node is a Table Node */
 

@@ -21,6 +21,7 @@ export * from './replacedTextMark';
 export * from './strikethrough';
 export * from './subScript';
 export * from './superScript';
+export * from './table';
 export * from './text';
 export * from './textStyle';
 export * from './underline';

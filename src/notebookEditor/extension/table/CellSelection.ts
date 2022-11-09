@@ -4,6 +4,8 @@ import { Selection, TextSelection, NodeSelection, SelectionRange, Transaction, E
 import { Mappable, Mapping } from 'prosemirror-transform';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
+import { TableRole } from 'common';
+
 import { inSameTable, pointsAtCell, setAttr, removeColSpan } from './util';
 import { isTableMap, TableMap } from './TableMap';
 
@@ -361,8 +363,8 @@ class CellBookmark implements SelectionBookmark {
     let $anchorCell = doc.resolve(this.anchor),
       $headCell = doc.resolve(this.head);
     if(
-      $anchorCell.parent.type.spec.tableRole == 'row' &&
-      $headCell.parent.type.spec.tableRole == 'row' &&
+      $anchorCell.parent.type.spec.tableRole === TableRole.Row &&
+      $headCell.parent.type.spec.tableRole === TableRole.Row &&
       $anchorCell.index() < $anchorCell.parent.childCount &&
       $headCell.index() < $headCell.parent.childCount &&
       inSameTable($anchorCell, $headCell)
@@ -413,7 +415,7 @@ const isTextSelectionAcrossCells = ({ $from, $to }: { $from: ResolvedPos; $to: R
 
   for(let i = $from.depth; i > 0; i--) {
     let node = $from.node(i);
-    if(node.type.spec.tableRole === 'cell' || node.type.spec.tableRole === 'header_cell') {
+    if(node.type.spec.tableRole === TableRole.Cell || node.type.spec.tableRole === TableRole.HeaderCell) {
       fromCellBoundaryNode = node;
       break;
     } /* else -- specs do not specify tableRole */
@@ -421,7 +423,7 @@ const isTextSelectionAcrossCells = ({ $from, $to }: { $from: ResolvedPos; $to: R
 
   for(let i = $to.depth; i > 0; i--) {
     let node = $to.node(i);
-    if(node.type.spec.tableRole === 'cell' || node.type.spec.tableRole === 'header_cell') {
+    if(node.type.spec.tableRole === TableRole.Cell || node.type.spec.tableRole === TableRole.HeaderCell) {
       toCellBoundaryNode = node;
       break;
     } /* else -- specs do not specify tableRole */
