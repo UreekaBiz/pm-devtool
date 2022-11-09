@@ -26,7 +26,7 @@ export class NestedViewNodePluginState {
   ) {/*nothing additional*/}
 
   // produce a new Plugin state
-  apply = (tr: Transaction, thisPluginState: NestedViewNodePluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
+  public apply = (tr: Transaction, thisPluginState: NestedViewNodePluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
     this.prevprevCursorPos = this.prevCursorPos;
     this.prevCursorPos = oldEditorState.selection.from;
     return this/*state updated*/;
