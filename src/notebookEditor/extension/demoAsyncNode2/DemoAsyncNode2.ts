@@ -1,8 +1,8 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { generateNodeId, getNodeOutputSpec, isDemoAsyncNode2, insertNewlineCommand, selectBlockNodeContentCommand, AttributeType, DemoAsyncNode2Spec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
+import { chainCommands, generateNodeId, getNodeOutputSpec, isDemoAsyncNode2, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, DemoAsyncNode2Spec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { applyDocumentUpdates, blockArrowUpCommand, blockArrowDownCommand, blockBackspaceCommand, blockModBackspaceCommand, shortcutCommandWrapper, toggleBlock } from 'notebookEditor/command';
+import { applyDocumentUpdates, blockArrowUpCommand, blockBackspaceCommand, blockModBackspaceCommand, shortcutCommandWrapper, toggleBlock } from 'notebookEditor/command';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 
@@ -54,9 +54,9 @@ export const DemoAsyncNode2 = new NodeExtension({
       // maintain expected Mod-Backspace behavior
       'Mod-Backspace': () => shortcutCommandWrapper(editor, blockModBackspaceCommand(NodeName.DEMO_ASYNC_NODE_2)),
 
-      // set GapCursor if necessary
-      'ArrowUp': () => shortcutCommandWrapper(editor, blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2)),
-      'ArrowDown': () => shortcutCommandWrapper(editor, blockArrowDownCommand(NodeName.DEMO_ASYNC_NODE_2)),
+      // set GapCursor or Selection at start or end of Block if necessary
+      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('start')),
+      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('end')),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.DEMO_ASYNC_NODE_2)),

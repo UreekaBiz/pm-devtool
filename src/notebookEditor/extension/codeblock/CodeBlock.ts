@@ -1,9 +1,9 @@
-import { generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectBlockNodeContentCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE, getCodeBlockNodeType } from 'common';
+import { chainCommands, getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension';
-import { blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand, toggleBlock } from 'notebookEditor/command';
+import { blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, toggleBlock } from 'notebookEditor/command';
 import { ExtensionPriority } from 'notebookEditor/model';
 import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule';
 import { keymap } from 'prosemirror-keymap';
@@ -63,9 +63,9 @@ export const CodeBlock = new NodeExtension({
       // maintain expected Mod-Backspace behavior
       'Mod-Backspace': () => shortcutCommandWrapper(editor, blockModBackspaceCommand(NodeName.CODEBLOCK)),
 
-      // set GapCursor if necessary
-      'ArrowUp': () => shortcutCommandWrapper(editor, blockArrowUpCommand(NodeName.CODEBLOCK)),
-      'ArrowDown': () => shortcutCommandWrapper(editor, blockArrowDownCommand(NodeName.CODEBLOCK)),
+      // set GapCursor or Selection at start or end of Block if necessary
+      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('start')),
+      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('end')),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),
