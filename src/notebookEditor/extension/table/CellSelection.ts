@@ -5,7 +5,7 @@ import { Mappable, Mapping } from 'prosemirror-transform';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { inSameTable, pointsAtCell, setAttr, removeColSpan } from './util';
-import { TableMap } from './tablemap';
+import { TableMap } from './TableMap';
 
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire

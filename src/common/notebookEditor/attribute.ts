@@ -96,6 +96,11 @@ export enum AttributeType {
   // .. MarkHolder ................................................................
   StoredMarks = 'storedMarks',
 
+  // .. Table .....................................................................
+  ColSpan = 'columnSpan',
+  ColWidth = 'columnWidth',
+  RowSpan = 'rowSpan',
+
   // .. Ordered List ..............................................................
   // NOTE: corresponds to the 'start' HTML attribute from the 'ol' HTML tag
   StartValue = 'start',
