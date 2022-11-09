@@ -1,7 +1,7 @@
 import { history, redo, undo } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 
-import { ExtensionName } from 'common';
+import { ExtensionName } from 'notebookEditor/model';
 
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 

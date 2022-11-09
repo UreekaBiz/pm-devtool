@@ -1,7 +1,8 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockCommand, ExtensionName } from 'common';
+import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockCommand } from 'common';
 
+import { ExtensionName } from 'notebookEditor/model';
 import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule';
 
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
