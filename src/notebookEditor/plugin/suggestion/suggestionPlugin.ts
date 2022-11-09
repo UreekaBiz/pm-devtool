@@ -35,7 +35,7 @@ class SuggestionState {
   ) {/*nothing additional*/}
 
   // produce a new Plugin state
-  apply = (tr: Transaction, thisPluginState: SuggestionState, oldEditorState: EditorState, newEditorState: EditorState, editor: Editor, suggestionOptions: SuggestionOptions) => {
+  public apply = (tr: Transaction, thisPluginState: SuggestionState, oldEditorState: EditorState, newEditorState: EditorState, editor: Editor, suggestionOptions: SuggestionOptions) => {
     // NOTE: checking for strict boolean values since a value of 'undefined'
     //       should not modify this prop of the SuggestionState,
     //       as various Transactions without the Metadata can be dispatched in between
