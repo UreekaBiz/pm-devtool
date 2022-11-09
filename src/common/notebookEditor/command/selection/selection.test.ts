@@ -1,6 +1,6 @@
 import { getNotebookSchemaNodeBuilders, wrapTest, A, B } from '../testUtil';
 import { NodeName } from '../../node/type';
-import { deleteSelectionCommand, selectNodeBackwardCommand, selectNodeForwardCommand } from './selection';
+import { deleteSelectionCommand, selectNodeBackwardCommand, selectNodeForwardCommand, selectTextBlockStartOrEndCommand } from './selection';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -38,6 +38,38 @@ describe('selectNodeForwardCommand', () => {
     const startState = docBuilder(paragraphBuilder(`foo<${A}>`));
     const expectedEndState = null/*same as starting state*/;
     wrapTest(startState, selectNodeForwardCommand, expectedEndState);
+  });
+});
+
+describe('selectTextBlockStartOrEndCommand', () => {
+  it('can move the cursor when the Selection is empty', () => {
+    let startState = docBuilder(paragraphBuilder(`one <${A}>two`));
+    let expectedEndState = docBuilder(paragraphBuilder(`<${A}>one two`));
+    wrapTest(startState, selectTextBlockStartOrEndCommand('start'), expectedEndState);
+
+    startState = docBuilder(paragraphBuilder(`one <${A}>two`));
+    expectedEndState = docBuilder(paragraphBuilder(`one two<${A}>`));
+    wrapTest(startState, selectTextBlockStartOrEndCommand('end'), expectedEndState);
+  });
+
+  it('can move the cursor when the Selection is not empty', () => {
+    let startState = docBuilder(paragraphBuilder(`one <${A}>two<${B}>`));
+    let expectedEndState = docBuilder(paragraphBuilder(`<${A}>one two`));
+    wrapTest(startState, selectTextBlockStartOrEndCommand('start'), expectedEndState);
+
+    startState = docBuilder(paragraphBuilder(`one <${A}>two<${B}>`));
+    expectedEndState = docBuilder(paragraphBuilder(`one two<${A}>`));
+    wrapTest(startState, selectTextBlockStartOrEndCommand('end'), expectedEndState);
+  });
+
+  it('can move the cursor when the selection crosses multiple text blocks', () => {
+    let startState = docBuilder(paragraphBuilder(`one <${A}>two`), paragraphBuilder(`three<${B}> four`));
+    let expectedEndState = docBuilder(paragraphBuilder(`<${A}>one two`), paragraphBuilder('three four'));
+    wrapTest(startState, selectTextBlockStartOrEndCommand('start'), expectedEndState);
+
+    startState = docBuilder(paragraphBuilder(`one <${A}>two`), paragraphBuilder(`three<${B}> four`));
+    expectedEndState = docBuilder(paragraphBuilder('one two'), paragraphBuilder(`three four<${A}>`));
+    wrapTest(startState, selectTextBlockStartOrEndCommand('end'), expectedEndState);
   });
 });
 

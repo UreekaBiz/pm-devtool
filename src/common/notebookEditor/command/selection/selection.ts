@@ -53,6 +53,31 @@ export class SetTextSelectionDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+export const selectTextBlockStartOrEndCommand = (side: 'start' | 'end'): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SelectTextBlockStartOrEndDocumentUpdate(side).update(state, state.tr), dispatch);
+export class SelectTextBlockStartOrEndDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor(private readonly side: 'start' | 'end') {/*nothing additional*/}
+
+  /**
+   * modify the given Transaction such that the Selection is set
+   * at the start or end of the current TextBlock
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const { selection } = editorState;
+    const $pos = this.side === 'start' ? selection.$from : selection.$to;
+
+    let depth = $pos.depth;
+    while($pos.node(depth).isInline) {
+      if(!depth) return false/*reached 0, depth of the Doc*/;
+      depth--;
+    }
+    if(!$pos.node(depth).isTextblock) return false/*highest depth available is not a TextBlock*/;
+
+    tr.setSelection(TextSelection.create(editorState.doc, this.side === 'start' ? $pos.start(depth) : $pos.end(depth)));
+    return tr/*updated*/;
+  }
+}
+
 /** set a NodeSelection at the given position */
 export const setNodeSelectionCommand = (nodePos: number): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SetNodeSelectionDocumentUpdate(nodePos).update(state, state.tr), dispatch);
