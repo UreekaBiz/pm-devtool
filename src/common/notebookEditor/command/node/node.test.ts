@@ -3,7 +3,7 @@ import { Schema } from 'prosemirror-model';
 import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { AttributeType } from '../../attribute';
-import { NodeName } from '../../node/type';
+import { NodeGroup, NodeName } from '../../node/type';
 import { getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../testUtil';
 import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNodeCommand, splitBlockCommand, wrapInCommand } from './node';
 
@@ -25,7 +25,7 @@ const {
 
 // == Test ========================================================================
 // -- Split -----------------------------------------------------------------------
-describe('splitBlock', () => {
+describe('splitBlockCommand', () => {
   it('splits a Paragraph at the end', () => {
     const startState = docBuilder(paragraphBuilder(`foo<${A}>`));
     const expectedEndState = docBuilder(paragraphBuilder('foo'), paragraphBuilder());
@@ -63,7 +63,7 @@ describe('splitBlock', () => {
   //   wrapTest(startState, splitBlockCommand, expectedEndState);
   // });
 
-  // it('does not split the parent block when at the start', () => {
+  // it('does not split the parent Block when at the start', () => {
   //   const startState = docBuilder(orderedListBuilder(`<${A}>`, listItemBuilder(paragraphBuilder('a')), listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
   //   const expectedEndState = null/*same state*/;
   //   wrapTest(startState, splitBlockCommand, expectedEndState);
@@ -75,7 +75,7 @@ describe('splitBlock', () => {
     wrapTest(startState, splitBlockCommand, expectedEndState);
   });
 
-  const headingSchema = new Schema({ nodes: notebookSchema.spec.nodes.update(NodeName.HEADING, { content: 'inline*', marks: '_'/*all marks*/ }).update('doc', { content: 'heading block*' }) });
+  const headingSchema = new Schema({ nodes: notebookSchema.spec.nodes.update(NodeName.HEADING, { content: 'inline*', marks: ''/*no marks*/ }).update('doc', { content: `${NodeName.HEADING} ${NodeGroup.BLOCK}*` }) });
   const hDocBuilder = (A: number) => {
     const hDoc = headingSchema.node('doc', null/*no attrs*/, [ headingSchema.node(NodeName.HEADING, { [AttributeType.Level]: 1 }, headingSchema.text('foobar'))]);
     (hDoc as ProseMirrorNodeWithTag).tag = { A, B: null/*none*/ };
