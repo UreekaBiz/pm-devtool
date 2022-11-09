@@ -6,8 +6,8 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { TableRole } from 'common';
 
-import { inSameTable, pointsAtCell, setAttr, removeColSpan } from './util';
-import { isTableMap, TableMap } from './TableMap';
+import { inSameTable, pointsAtCell, setAttr, removeColSpan } from '../../../../notebookEditor/extension/table/util';
+import { isTableMap, TableMap } from '../../../../notebookEditor/extension/table/TableMap';
 
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire
@@ -261,7 +261,7 @@ export class CellSelection extends Selection {
    * return true if the Selection goes all the way from the left to
    * the right of the Table
    */
-  isRowSelection() {
+  public isRowSelection() {
     const map = TableMap.get(this.$anchorCell.node(-1));
     if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
 
@@ -354,12 +354,12 @@ class CellBookmark implements SelectionBookmark {
 
   // -- Method --------------------------------------------------------------------
   /** (SEE: {@link SelectionBookmark} map) */
-  map(mapping: Mappable) {
+  public map(mapping: Mappable) {
     return new CellBookmark(mapping.map(this.anchor), mapping.map(this.head));
   }
 
   /** (SEE: {@link SelectionBookmark} resolve) */
-  resolve(doc: ProseMirrorNode) {
+  public resolve(doc: ProseMirrorNode) {
     let $anchorCell = doc.resolve(this.anchor),
       $headCell = doc.resolve(this.head);
     if(
