@@ -3,7 +3,7 @@ import { EditorState } from 'prosemirror-state';
 
 import { isNodeSelection, Attributes, AttributeType, TableRole, CellSelection } from 'common';
 
-import { isTableMap, TableMap } from './TableMap';
+import { isTableMap, TableMap } from '../TableMap';
 
 // ********************************************************************************
 // == Table =======================================================================

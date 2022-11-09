@@ -1,6 +1,7 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { Attributes, AttributeType, TableRole } from 'common';
+import { Attributes, AttributeType } from '../../attribute';
+import { TableRole, TableProblem } from './type';
 
 // ********************************************************************************
 // this code builds up a descriptive structure for a given
@@ -14,10 +15,10 @@ import { Attributes, AttributeType, TableRole } from 'common';
 // to or gotten from this structure by that amount
 
 // == Type ========================================================================
-type CollisionProblemType = { type: 'collision'; row: number; pos: number; n: number; };
-type ColWidthMismatchProblemType = { type: 'colwidth mismatch'; pos: number; colwidth: number[]; };
-type MissingProblemType = { type: 'missing'; row: number; n: number; };
-type OverlongRowspanProblemType = { type: 'overlong_rowspan'; pos: number; n: number; };
+type CollisionProblemType = { type: TableProblem.Collision; row: number; pos: number; n: number; };
+type ColWidthMismatchProblemType = { type: TableProblem.ColWidthMistMatch; pos: number; colwidth: number[]; };
+type MissingProblemType = { type: TableProblem.Missing; row: number; n: number; };
+type OverlongRowspanProblemType = { type: TableProblem.OverlongRowSpan; pos: number; n: number; };
 type ProblemType = CollisionProblemType | ColWidthMismatchProblemType | MissingProblemType | OverlongRowspanProblemType;
 
 // == Cache =======================================================================
@@ -271,7 +272,7 @@ const computeMap = (table: ProseMirrorNode) => {
 
       for(let h = 0; h < rowspan; h++) {
         if(h + row >= height) {
-          problems.push({ type: 'overlong_rowspan', pos, n: rowspan - h });
+          problems.push({ type: TableProblem.OverlongRowSpan, pos, n: rowspan - h });
           break;
         } /* else -- h + row is not bigger than or equal to height */
 
@@ -279,7 +280,7 @@ const computeMap = (table: ProseMirrorNode) => {
         const start = mapPos + h * width;
         for(let w = 0; w < colspan; w++) {
           if(map[start + w] == 0) { map[start + w] = pos; }
-          else { problems.push({ type: 'collision', row, pos, n: colspan - w }); }
+          else { problems.push({ type: TableProblem.Collision, row, pos, n: colspan - w }); }
 
           const colW = colwidth && colwidth[w];
           if(colW) {
@@ -310,7 +311,7 @@ const computeMap = (table: ProseMirrorNode) => {
     }
 
     if(missing) {
-      problems.push({ type: 'missing', row, n: missing });
+      problems.push({ type: TableProblem.Missing, row, n: missing });
     } /* else -- no missing problems */
 
     pos++;
@@ -396,7 +397,7 @@ const findBadColWidths = (map: TableMap, colWidths: number[], table: ProseMirror
     }
 
     if(updated) {
-      map.problems.unshift({ type: 'colwidth mismatch', pos, colwidth: updated });
+      map.problems.unshift({ type: TableProblem.ColWidthMistMatch, pos, colwidth: updated });
     } /* else -- updated is default (null) */
   }
 };
