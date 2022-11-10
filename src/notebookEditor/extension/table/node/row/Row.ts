@@ -1,26 +1,24 @@
-import { getNodeOutputSpec, NodeName, HeaderCellNodeSpec, DATA_NODE_TYPE } from 'common';
+import { getNodeOutputSpec, NodeName, RowNodeSpec, DATA_NODE_TYPE } from 'common';
 
 import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type';
 
-import { HeaderCellAttrs } from './attribute';
-
 // ********************************************************************************
 // == Node ========================================================================
-export const HeaderCell = new NodeExtension({
+export const Row = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.HEADER_CELL,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Attribute -----------------------------------------------------------------
-  defineNodeAttributes: (extensionStorage) => HeaderCellAttrs,
+  defineNodeAttributes: (extensionStorage) => ({/*no attrs*/}),
 
   // -- Spec ----------------------------------------------------------------------
-  partialNodeSpec: { ...HeaderCellNodeSpec },
+  partialNodeSpec: { ...RowNodeSpec },
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([{ tag: `th[${DATA_NODE_TYPE}="${NodeName.HEADER_CELL}"]` }, { tag: 'th' }], HeaderCellAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, HeaderCellAttrs)),
+    parseDOM: createExtensionParseRules([{ tag: `tr[${DATA_NODE_TYPE}="${NodeName.ROW}"]` }, { tag: 'tr' }], {/*no attrs*/}),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, {/*no attrs*/})),
   }),
 
   // -- Input ---------------------------------------------------------------------

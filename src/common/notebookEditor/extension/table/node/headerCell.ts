@@ -19,7 +19,7 @@ export type HeaderCellAttributes = AttributesTypeFromNodeSpecAttributes<typeof H
 
 // ================================================================================
 // -- Node Spec -------------------------------------------------------------------
-export const HeaderNodeSpec: NodeSpec = {
+export const HeaderCellNodeSpec: NodeSpec = {
   // .. Definition ................................................................
   content: `${NodeGroup.BLOCK}+`,
   tableRole: TableRole.HeaderCell,
