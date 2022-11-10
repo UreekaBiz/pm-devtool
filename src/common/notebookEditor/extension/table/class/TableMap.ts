@@ -1,6 +1,6 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { Attributes, AttributeType } from '../../attribute';
+import { Attributes, AttributeType } from '../../../attribute';
 import { TableRole, TableProblem } from './type';
 
 // ********************************************************************************

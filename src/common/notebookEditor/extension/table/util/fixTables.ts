@@ -2,8 +2,7 @@ import { EditorState, PluginKey, Transaction } from 'prosemirror-state';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { NodeName } from '../../../node';
-import { TableMap } from '../TableMap';
-import { TableProblem, TableRole } from '../type';
+import { TableMap, TableRole, TableProblem } from '../class';
 import { setTableNodeAttributes, removeColSpan } from '../util';
 
 import { tableNodeTypes } from './schema';

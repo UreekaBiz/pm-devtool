@@ -1,7 +1,7 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { AllSelection, EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
 
-import { CellSelection } from './extension/table/CellSelection';
+import { CellSelection } from './extension/table/class';
 
 // ********************************************************************************
 // == Type ========================================================================

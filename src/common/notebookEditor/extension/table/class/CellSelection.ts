@@ -6,7 +6,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { TableRole } from 'common';
 
-import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from './util';
+import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from '../util';
 import { TableMap } from './TableMap';
 
 // This file defines a ProseMirror selection subclass that models
