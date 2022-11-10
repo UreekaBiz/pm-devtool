@@ -1,4 +1,4 @@
-import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
+import { Fragment, Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
 
 import { objectIncludes } from '../../util';
@@ -27,6 +27,28 @@ export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier)
     return false/*don't bother to descend since already found*/;
   });
   return nodeFound;
+};
+
+/**
+ * look for the closest parent Node that matches the given {@link Predicate}
+ * and return a {@link FindParentNodeClosestToPosReturnType} object
+ * with information about the found Node
+ */
+type NodePredicate = (node: ProseMirrorNode) => boolean;
+type FindParentNodeClosestToPosReturnObjType = { pos: number; start: number; depth: number; node: ProseMirrorNode; } | undefined
+export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePredicate): FindParentNodeClosestToPosReturnObjType => {
+  for(let i = $pos.depth; i > 0; i -= 1) {
+    const node = $pos.node(i);
+    if(predicate(node)) {
+      return {
+        pos: i > 0 ? $pos.before(i) : 0,
+        start: $pos.start(i),
+        depth: i,
+        node,
+      };
+    } /* else -- ignore Node */
+  }
+  return/*undefined*/;
 };
 
 /**
