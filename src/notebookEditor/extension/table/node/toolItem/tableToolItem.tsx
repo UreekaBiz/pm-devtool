@@ -170,3 +170,16 @@ export const toggleHeaderInFirstColumnToolItem: ToolItem = {
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderColumn),
 };
+
+// --------------------------------------------------------------------------------
+export const generalTableToolItems = [
+  deleteTableToolItem,
+  deleteRowToolItem,,
+  addRowAboveToolItem,
+  addRowBelowToolItem,
+  deleteColumnToolItem,
+  addColumnBeforeToolItem,
+  addColumnAfterToolItem,
+  toggleHeaderInFirstRowToolItem,
+  toggleHeaderInFirstColumnToolItem,
+];

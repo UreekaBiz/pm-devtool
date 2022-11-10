@@ -102,3 +102,13 @@ export const toggleHeaderCellToolItem: ToolItem = {
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderCell),
 };
+
+// --------------------------------------------------------------------------------
+export const cellToolItems = [
+  goToPreviousCellToolItem,
+  goToNextCellToolItem,
+  mergeCellsToolItem,
+  splitCellsToolItem,
+  mergeOrSplitCellsToolItem,,
+  toggleHeaderCellToolItem,
+];
