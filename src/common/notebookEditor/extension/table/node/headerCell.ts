@@ -13,7 +13,7 @@ import { TableRole } from '../class';
 const HeaderCellAttributeSpec = {
   [AttributeType.ColSpan]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
   [AttributeType.RowSpan]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
-  [AttributeType.ColWidth]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
+  [AttributeType.ColWidth]: noNodeOrMarkSpecAttributeDefaultValue<number[]>(),
 };
 export type HeaderCellAttributes = AttributesTypeFromNodeSpecAttributes<typeof HeaderCellAttributeSpec>;
 

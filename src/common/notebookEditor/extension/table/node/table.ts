@@ -51,7 +51,7 @@ export type TableJSONNodeType = JSONNode<TableAttributes> & { type: NodeName.TAB
 export const isTableJSONNode = (node: JSONNode): node is TableJSONNodeType => node.type === NodeName.TABLE;
 
 // == Util ========================================================================
-export const HANDLE_DETECTION_AREA = 5/*px*/;
+export const TABLE_HANDLE_DETECTION_AREA = 5/*px*/;
 export const TABLE_DEFAULT_ROWS = 3;
 export const TABLE_DEFAULT_COLUMNS = 3;
 export const TABLE_DEFAULT_WITH_HEDER_ROW = true;
