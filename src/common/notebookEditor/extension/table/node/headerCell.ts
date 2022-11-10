@@ -10,30 +10,30 @@ import { TableRole } from '../class';
 // == Attribute ===================================================================
 // NOTE: must be present on the MarkSpec below
 // NOTE: this value must have matching types -- the ones defined in the Extension
-const CellAttributeSpec = {
+const HeaderCellAttributeSpec = {
   [AttributeType.ColSpan]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
   [AttributeType.RowSpan]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
   [AttributeType.ColWidth]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
 };
-export type CellAttributes = AttributesTypeFromNodeSpecAttributes<typeof CellAttributeSpec>;
+export type HeaderCellAttributes = AttributesTypeFromNodeSpecAttributes<typeof HeaderCellAttributeSpec>;
 
-// == Spec ========================================================================
+// ================================================================================
 // -- Node Spec -------------------------------------------------------------------
-export const CellNodeSpec: Readonly<NodeSpec> = {
+export const HeaderNodeSpec: NodeSpec = {
   // .. Definition ................................................................
   content: `${NodeGroup.BLOCK}+`,
-  tableRole: TableRole.Cell,
+  tableRole: TableRole.HeaderCell,
 
   // .. Attribute .................................................................
-  attrs: CellAttributeSpec,
+  attrs: HeaderCellAttributeSpec,
 
   // .. Misc ......................................................................
   isolating: true,
 };
 
 // -- Render Spec -----------------------------------------------------------------
-export const CellNodeRendererSpec: NodeRendererSpec<CellAttributes> = {
-  tag: 'td',
+export const HeaderCellNodeRendererSpec: NodeRendererSpec<HeaderCellAttributes> = {
+  tag: 'th',
 
   attributes: {/*use the default renderer on all Attributes*/},
 };
@@ -42,18 +42,17 @@ export const CellNodeRendererSpec: NodeRendererSpec<CellAttributes> = {
 // -- Node Type -------------------------------------------------------------------
 // NOTE: this is the only way since PM does not provide a way to specify the type
 //       of the Attributes
-export type CellNodeType = ProseMirrorNode & { attrs: CellAttributes; };
-export const isCellNode = (node: ProseMirrorNode): node is CellNodeType => node.type.name === NodeName.CELL;
+export type HeaderCellNodeType = ProseMirrorNode & { attrs: HeaderCellAttributes; };
+export const isHeaderCellNode = (node: ProseMirrorNode): node is HeaderCellNodeType => node.type.name === NodeName.HEADER_CELL;
 
-export const getCellNodeType = (schema: NotebookSchemaType) => schema.nodes[NodeName.CELL];
-export const createCellNode = (schema: NotebookSchemaType, attributes?: Partial<CellAttributes>, content?: ProseMirrorNodeContent, marks?: ProseMirrorMark[]) =>
-  getCellNodeType(schema).create(attributes, content, marks);
+export const getHeaderCellNodeType = (schema: NotebookSchemaType) => schema.nodes[NodeName.HEADER_CELL];
+export const createHeaderCellNode = (schema: NotebookSchemaType, attributes?: Partial<HeaderCellAttributes>, content?: ProseMirrorNodeContent, marks?: ProseMirrorMark[]) =>
+  getHeaderCellNodeType(schema).create(attributes, content, marks);
 
 // -- JSON Node Type --------------------------------------------------------------
-export type CellJSONNodeType = JSONNode<CellAttributes> & { type: NodeName.CELL; };
-export const isCellJSONNode = (node: JSONNode): node is CellJSONNodeType => node.type === NodeName.CELL;
+export type HeaderCellJSONNodeType = JSONNode<HeaderCellAttributes> & { type: NodeName.HEADER_CELL; };
+export const isHeaderCellJSONNode = (node: JSONNode): node is HeaderCellJSONNodeType => node.type === NodeName.HEADER_CELL;
 
 // == Util ========================================================================
-export const MIN_CELL_WIDTH = 25/*px*/;
-export const CELL_ROW_SPAN = 1/*px*/;
-export const CELL_COL_SPAN = 1/*px*/;
+export const HEADER_ROW_SPAN = 1/*px*/;
+export const HEADER_COL_SPAN = 1/*px*/;
