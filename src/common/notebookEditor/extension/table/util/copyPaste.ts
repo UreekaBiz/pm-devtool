@@ -2,9 +2,7 @@ import { Slice, Fragment, Node as ProseMirrorNode, NodeType, Schema } from 'pros
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
-import { removeColSpan, setTableNodeAttributes, CellSelection, TableMap, TableRole, NodeName, AttributeType, DispatchType, TableRect } from 'common';
-
-import { getTableNodeTypes } from '../../../../../notebookEditor/extension/table/schema';
+import { getTableNodeTypes, removeColSpan, setTableNodeAttributes, CellSelection, TableMap, TableRole, NodeName, AttributeType, DispatchType, TableRect } from 'common';
 
 // ********************************************************************************
 // utilities used for Table Node copy/paste handling.

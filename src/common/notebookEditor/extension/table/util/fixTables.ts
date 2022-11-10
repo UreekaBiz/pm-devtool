@@ -1,12 +1,11 @@
 import { EditorState, PluginKey, Transaction } from 'prosemirror-state';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
+import { AttributeType } from '../../../attribute';
 import { NodeName } from '../../../node';
 import { TableMap, TableRole, TableProblem } from '../class';
+import { getTableNodeTypes } from '../node';
 import { setTableNodeAttributes, removeColSpan } from '../util';
-
-import { tableNodeTypes } from './schema';
-import { AttributeType } from 'common/notebookEditor/attribute';
 
 // helpers for normalizing Table Nodes, ensuring no Cells overlap and that each
 // row has the same width, using problems reported by TableMap
@@ -134,9 +133,14 @@ export function fixTable(state: EditorState, table: ProseMirrorNode, tablePos: n
         tableNodeTypeName = row.firstChild.type.spec.tableRole;
       } /* else -- not the first child fo the row */
 
-      let nodes: ProseMirrorNode[] = [];
+      const nodes: ProseMirrorNode[] = [];
       for(let j = 0; j < add; j++) {
-        nodes.push(tableNodeTypes(state.schema)[tableNodeTypeName].createAndFill());
+        const requiredType = getTableNodeTypes(state.schema)[tableNodeTypeName];
+        const requiredNode = requiredType.createAndFill();
+
+        if(requiredNode) {
+          nodes.push(requiredNode);
+        } /* else -- could not create Node, do not add*/
       }
 
       let side = (i == 0 || first == i - 1) && last == i ? pos + 1 : end - 1;
