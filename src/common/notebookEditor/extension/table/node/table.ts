@@ -1,4 +1,4 @@
-import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
+import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec, NodeType, Schema } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../../attribute';
 import { NodeRendererSpec } from '../../../htmlRenderer/type';
@@ -57,3 +57,25 @@ export const TABLE_DEFAULT_COLUMNS = 3;
 export const TABLE_DEFAULT_WITH_HEDER_ROW = true;
 
 export const TABLE_CONTAINER_CLASS = 'tableWrapper';
+
+/**
+ * returns the {@link NodeType}s in the given {@link Schema} that
+ * have a {@link TableRole} in their definition
+ */
+export const getTableNodeTypes = (schema: Schema): { [nodeName: string]: NodeType; } => {
+  let result = schema.cached.tableNodeTypes;
+  if(!result) {
+    result = schema.cached.tableNodeTypes = {/*default empty*/};
+
+    for(let name in schema.nodes) {
+      const tableType = schema.nodes[name];
+      const { tableRole } = tableType.spec;
+
+      if(tableRole) {
+        result[tableRole] = tableType;
+      } /* else -- Node has no tableRole */
+    }
+  }
+
+  return result;
+};
