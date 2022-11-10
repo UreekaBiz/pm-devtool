@@ -27,6 +27,7 @@ export enum NodeName {
   NESTED_VIEW_BLOCK_NODE = 'nestedViewBlockNode',
   ROW = 'row',
   PARAGRAPH = 'paragraph',
+  TABLE = 'table',
   TEXT = 'text',
 }
 export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
