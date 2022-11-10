@@ -3,8 +3,9 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { AttributeType } from '../../../attribute';
 import { NodeName } from '../../../node';
-import { TableMap, TableRole, TableProblem } from '../class';
+import { TableMap } from '../class';
 import { getTableNodeTypes } from '../node';
+import { TableProblem, TableRole } from '../type';
 import { setTableNodeAttributes, removeColSpan } from '../util';
 
 // helpers for normalizing Table Nodes, ensuring no Cells overlap and that each

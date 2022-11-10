@@ -4,7 +4,7 @@ import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFro
 import { NodeRendererSpec } from '../../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../../node/type';
 import { NotebookSchemaType } from '../../../schema';
-import { TableRole } from '../class';
+import { TableRole } from '../type';
 
 // ********************************************************************************
 // == Attribute ===================================================================

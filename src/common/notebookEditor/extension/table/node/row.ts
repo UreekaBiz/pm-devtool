@@ -2,7 +2,7 @@ import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'pros
 
 import { JSONNode, NodeName, ProseMirrorNodeContent } from '../../../node/type';
 import { NotebookSchemaType } from '../../../schema';
-import { TableRole } from '../class';
+import { TableRole } from '../type';
 
 // ********************************************************************************
 // == Attribute ===================================================================
