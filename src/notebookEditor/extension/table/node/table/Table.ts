@@ -1,12 +1,13 @@
-import { DATA_NODE_TYPE, getNodeOutputSpec, NodeName, TableNodeSpec } from 'common';
-
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
-import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
 // import { keymap } from 'prosemirror-keymap';
-// import { tableColumnResizingPlugin } from '../../plugin/tableColumnResizing';
 
-import { TableView } from '../../tableview';
+import { getNodeOutputSpec, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE } from 'common';
+
+import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
+import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
+
+import { tableColumnResizingPlugin } from '../../plugin/tableColumnResizing';
 import { getTableAttrs } from './attribute';
+import { TableController } from './nodeView';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -28,7 +29,10 @@ export const Table = new NodeExtension({
   }),
 
   // -- Storage -------------------------------------------------------------------
-  addStorage: () => new NodeViewStorage<TableView>(),
+  addStorage: () => new NodeViewStorage<TableController>(),
+
+  // -- View ----------------------------------------------------------------------
+  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<TableController>(editor, node, NodeName.TABLE, getPos, isTableNode, TableController),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
@@ -57,7 +61,7 @@ export const Table = new NodeExtension({
     //   'Mod-Delete': deleteTableWhenAllCellsSelected,
 
     // }),
-    // tableColumnResizingPlugin(),
+    tableColumnResizingPlugin(),
     // tableEditing({ allowTableNodeSelection: this.options.allowTableNodeSelection }),
   ],
 });

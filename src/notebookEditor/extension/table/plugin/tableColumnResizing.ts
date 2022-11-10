@@ -1,10 +1,11 @@
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
-import { AttributeType, cellAround, pointsAtCell, setTableNodeAttributes, TableMap, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
+import { AttributeType, cellAround, pointsAtCell, setTableNodeAttributes, TableMap, TableNodeType, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
 
-import { TableView, updateColumns } from '../tableview';
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
+
+import { updateTableColumns } from '../node/table/util';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -52,7 +53,7 @@ class TableResizeState {
 export const tableColumnResizingPluginKey = new PluginKey<TableResizeState>('tableColumnResizing');
 
 // == Plugin ======================================================================
-export const tableColumnResizingPlugin = ({ handleWidth = 5, cellMinWidth = 25, View = TableView, lastColumnResizable = true } = {}) => new Plugin<TableResizeState>({
+export const tableColumnResizingPlugin = ({ handleWidth = 5, cellMinWidth = 25, lastColumnResizable = true } = {}) => new Plugin<TableResizeState>({
   key: tableColumnResizingPluginKey,
   state: {
     init(_, state) {
@@ -289,7 +290,8 @@ const displayColumnWidth = (view: EditorView, cell: number, width: number, cellM
     dom = dom.parentNode;
   }
 
-  updateColumns(table, dom.firstChild, dom, cellMinWidth, col, width);
+  if(!isValidHTMLElement(dom) || !dom.firstChild) return/*nothing to do*/;
+  updateTableColumns(table as TableNodeType/*by definition*/, dom.firstChild as HTMLTableColElement/*by contract*/, dom as HTMLTableElement/*by contract*/, cellMinWidth, col, width);
 };
 
 /** return an array of n zeroes */
