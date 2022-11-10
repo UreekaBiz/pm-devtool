@@ -383,6 +383,10 @@ export class TableRect {
   right: number;
   bottom: number;
 
+  table: ProseMirrorNode | null | undefined;
+  tableMap: TableMap | null | undefined;
+  tableStart: number | null | undefined;
+
   // -- Lifecycle -----------------------------------------------------------------
   constructor(left: number, top: number, right: number, bottom: number) {
     this.left = left;

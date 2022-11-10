@@ -25,6 +25,7 @@ export enum NodeName {
   IMAGE = 'image',
   MARK_HOLDER = 'markHolder',
   NESTED_VIEW_BLOCK_NODE = 'nestedViewBlockNode',
+  ROW = 'row',
   PARAGRAPH = 'paragraph',
   TEXT = 'text',
 }
