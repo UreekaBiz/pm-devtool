@@ -1,10 +1,27 @@
-import { Command } from 'prosemirror-state';
+import { Command, TextSelection } from 'prosemirror-state';
 
-import { findParentNodeClosestToPos, isCellNode, isCellSelection, isHeaderCellNode, isTableNode } from 'common';
+import { findParentNodeClosestToPos, isCellNode, isCellSelection, isHeaderCellNode, isTableNode, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { deleteTable } from '../../command';
+import { createTable } from './util';
 
 // ********************************************************************************
+// == Create ======================================================================
+export const insertTableCommand = ({ rows = TABLE_DEFAULT_ROWS, cols = TABLE_DEFAULT_COLUMNS, withHeaderRow = TABLE_DEFAULT_WITH_HEDER_ROW } = {/*default no attrs*/}): Command => (state, dispatch) => {
+  if(!dispatch) return false;
+
+  const { tr } = state ;
+  const node = createTable(state.schema, rows, cols, withHeaderRow);
+  const offset = tr.selection.anchor + 1/*inside the table*/;
+
+  tr.replaceSelectionWith(node)
+    .scrollIntoView()
+    .setSelection(TextSelection.near(tr.doc.resolve(offset)));
+
+  return true;
+};
+
+// == Delete ======================================================================
 /** delete a Table if all its Cells are currently selected */
 export const deleteTableWhenAllCellsSelected: Command = (state, dispatch) => {
   const { selection } = state;
