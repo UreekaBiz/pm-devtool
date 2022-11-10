@@ -432,9 +432,9 @@ const isTextSelectionAcrossCells = ({ $from, $to }: { $from: ResolvedPos; $to: R
   return (fromCellBoundaryNode !== toCellBoundaryNode && $to.parentOffset === 0);
 };
 
-export const normalizeSelection = (state: EditorState, tr: Transaction, allowTableNodeSelection: boolean) => {
-  const selection = (tr || state).selection;
-  const doc = (tr || state).doc;
+export const normalizeSelection = (newState: EditorState, allowTableNodeSelection: boolean, tr?: Transaction) => {
+  const selection = (tr || newState).selection;
+  const doc = (tr || newState).doc;
   let normalize;
   let role;
 
@@ -457,7 +457,7 @@ export const normalizeSelection = (state: EditorState, tr: Transaction, allowTab
   } else if(selection instanceof TextSelection && isTextSelectionAcrossCells(selection)) {
     normalize = TextSelection.create(doc, selection.$from.start(), selection.$from.end());
   }
-  if(normalize) (tr || (tr = state.tr)).setSelection(normalize);
+  if(normalize) (tr || (tr = newState.tr)).setSelection(normalize);
   return tr;
 };
 

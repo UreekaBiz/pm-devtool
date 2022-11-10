@@ -49,18 +49,18 @@ const changedDescendants = (oldDoc: ProseMirrorNode, currentDoc: ProseMirrorNode
  * then that is assumed to hold a previous, known-good State, which
  * will be used to avoid re-scanning unchanged parts of the Document
  */
-export const fixTables = (state: EditorState, oldState: EditorState) => {
+export const fixTables = (oldState: EditorState, newState: EditorState) => {
   let tr: Transaction | undefined = undefined/*default*/;
   const check = (node: ProseMirrorNode, pos: number) =>  {
     if(node.type.spec.tableRole === TableRole.Table) {
-      tr = fixTable(state, node, pos, tr);
+      tr = fixTable(newState, node, pos, tr);
     } /* else -- not a Node with a TableRole, ignore */
   };
 
   if(!oldState) {
-    state.doc.descendants(check);
-  } else if(oldState.doc !== state.doc) {
-    changedDescendants(oldState.doc, state.doc, 0/*no offset*/, check);
+    newState.doc.descendants(check);
+  } else if(oldState.doc !== newState.doc) {
+    changedDescendants(oldState.doc, newState.doc, 0/*no offset*/, check);
   }
 
   return tr;

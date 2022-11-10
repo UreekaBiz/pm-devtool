@@ -1,16 +1,13 @@
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
-import { AttributeType, cellAround, isTableMap, pointsAtCell, setTableNodeAttributes, TableMap } from 'common';
+import { AttributeType, cellAround, isTableMap, pointsAtCell, setTableNodeAttributes, TableMap, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { TableView, updateColumns } from '../tableview';
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const TABLE_NODENAME = 'TABLE';
-const TD_NODENAME = 'TD';
-const TH_NODENAME = 'TH';
 const RESIZE_HANDLE_CLASS = 'dom-resize-handle';
 
 // == Class =======================================================================
