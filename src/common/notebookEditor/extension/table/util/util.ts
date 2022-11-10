@@ -3,7 +3,7 @@ import { EditorState } from 'prosemirror-state';
 
 import { isNodeSelection, Attributes, AttributeType, TableRole, CellSelection } from 'common';
 
-import { isTableMap, TableMap } from '../TableMap';
+import { TableMap } from '../TableMap';
 
 // ********************************************************************************
 // == Table =======================================================================
@@ -28,8 +28,6 @@ export const inSameTable = ($a: ResolvedPos, $b: ResolvedPos) => {
 /** return the column count of the Table at the given {@link ResolvedPos} */
 export const colCount = ($pos: ResolvedPos) => {
   const map = TableMap.get($pos.node(-1));
-  if(!isTableMap(map)) return 0/*by definition*/;
-
   return map.colCount($pos.pos - $pos.start(-1));
 };
 
@@ -135,8 +133,6 @@ export const moveCellForward = ($pos: ResolvedPos) => $pos.nodeAfter && $pos.nod
 
 export const findCell = ($pos: ResolvedPos) => {
   const map = TableMap.get($pos.node(-1));
-  if(!isTableMap(map)) throw new Error('expected map to be a TableMap and its not');
-
   return map.findCell($pos.pos - $pos.start(-1));
 };
 
@@ -144,8 +140,6 @@ export const nextCell = ($pos: ResolvedPos, axis: 'horizontal' | 'vertical', dir
   const start = $pos.start(-1);
 
   const map = TableMap.get($pos.node(-1));
-  if(!isTableMap(map)) throw new Error('expected map to be a TableMap and its not');
-
   const moved = map.nextCell($pos.pos - start, axis, dir);
   return moved === null ? null : $pos.node(0).resolve(start + moved);
 };

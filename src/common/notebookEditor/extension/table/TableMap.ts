@@ -22,52 +22,12 @@ type OverlongRowspanProblemType = { type: TableProblem.OverlongRowSpan; pos: num
 type ProblemType = CollisionProblemType | ColWidthMismatchProblemType | MissingProblemType | OverlongRowspanProblemType;
 
 // == Cache =======================================================================
-let readFromCache: (key: ProseMirrorNode) => ProseMirrorNode | TableMap | undefined;
-let addToCache: (key: ProseMirrorNode, value: TableMap) => ProseMirrorNode | TableMap;
-
-// prefer using a WeakMap to cache TableMaps. Fall back on a
-// fixed-size cache if that's not supported
-if(typeof WeakMap !== 'undefined') {
-  const cache = new WeakMap<ProseMirrorNode, TableMap>();
-
-  readFromCache = (key: ProseMirrorNode) => cache.get(key);
-
-  addToCache = (key: ProseMirrorNode, value: TableMap) => {
-    cache.set(key, value);
-    return value;
-  };
-
-} else {
-  // array-cache where indexes that are divisible by 2 (or that are zero)
-  // are Tables and indexes that are not are their respective TableMaps
-  const cache: (ProseMirrorNode | TableMap)[] = [];
-  const cacheSize = 10;
-  let cachePos = 0;
-
-  readFromCache = (key: ProseMirrorNode) => {
-    for(let i = 0; i < cache.length; i += 2) {
-      if(cache[i] === key) {
-        return cache[i + 1];
-      } /* else -- keep iterating */
-    }
-
-    return undefined/*not found in the cache*/;
-  };
-
-  addToCache = (key: ProseMirrorNode, value: TableMap) => {
-    if(cachePos === cacheSize) {
-      cachePos = 0;
-    } /* else -- do not reset cachePos */
-
-    cachePos += 1;
-    cache[cachePos] = key;
-
-    cachePos += 1;
-    cache[cachePos] = value;
-
-    return cache[cachePos];
-  };
-}
+const cache = new WeakMap<ProseMirrorNode, TableMap>();
+const readFromCache = (key: ProseMirrorNode) => cache.get(key);
+const addToCache = (key: ProseMirrorNode, value: TableMap) => {
+  cache.set(key, value);
+  return value;
+};
 
 // == TableMap Class ==============================================================
 // ::- A table map describes the structure of a given table. To avoid
@@ -235,9 +195,6 @@ export class TableMap {
 }
 
 // == Util ========================================================================
-/** utility to ensure that an object is a TableMap */
-export const isTableMap = (obj: any): obj is TableMap => 'width' in obj && 'height' in obj && 'map' in obj && 'problems' in obj;
-
 /** compute a {@link TableMap} */
 const computeMap = (table: ProseMirrorNode) => {
   if(table.type.spec.tableRole !== TableRole.Table) {

@@ -2,7 +2,7 @@ import { Slice, Fragment, Node as ProseMirrorNode, NodeType, Schema } from 'pros
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
-import { removeColSpan, setTableNodeAttributes, CellSelection, TableMap, TableRole, NodeName, AttributeType, DispatchType, TableRect, isTableMap } from 'common';
+import { removeColSpan, setTableNodeAttributes, CellSelection, TableMap, TableRole, NodeName, AttributeType, DispatchType, TableRect } from 'common';
 
 import { getTableNodeTypes } from '../../../../../notebookEditor/extension/table/schema';
 
@@ -305,7 +305,6 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
   if(!table) return/*nothing to do*/;
 
   let map = TableMap.get(table);
-  if(!isTableMap(map)) return/*nothing to do*/;
 
   const { top, left } = rect;
   const right = left + cells.width;

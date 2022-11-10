@@ -3,7 +3,7 @@ import { Slice, Fragment, ResolvedPos } from 'prosemirror-model';
 import { Command, EditorState, Selection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { cellAround, clipCells, fitSlice, isCellSelection, insertCells, inSameTable, isTableMap, isInTable, nextCell, selectionCell, pastedCells, CellSelection, DispatchType, NodeName, TableMap, TableRole, isTextSelection, TD_NODENAME, TH_NODENAME } from 'common';
+import { cellAround, clipCells, fitSlice, isCellSelection, insertCells, inSameTable, isTextSelection, isInTable, nextCell, selectionCell, pastedCells, CellSelection, DispatchType, NodeName, TableMap, TableRole, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { getTableNodeTypes } from './schema';
 import { tableEditingPluginKey } from './plugin/tableEditing';
@@ -114,8 +114,6 @@ export const handlePaste = (view: EditorView, event: ClipboardEvent, slice: Slic
 
     const table = selection.$anchorCell.node(-1);
     const map = TableMap.get(table);
-    if(!isTableMap(map)) return false/*do not handle*/;
-
     const start = selection.$anchorCell.start(-1);
 
     const rect = map.rectBetween(selection.$anchorCell.pos - start, selection.$headCell.pos - start);
@@ -128,8 +126,6 @@ export const handlePaste = (view: EditorView, event: ClipboardEvent, slice: Slic
     if(!$cell) return false/*do not handle*/;
 
     const map = TableMap.get($cell.node(-1));
-    if(!isTableMap(map)) return false/*do not handle*/;
-
     const start = $cell.start(-1);
     insertCells(view.state, view.dispatch, start, map.findCell($cell.pos - start), cells);
     return true/*handled*/;

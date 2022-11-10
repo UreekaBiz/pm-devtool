@@ -7,7 +7,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 import { TableRole } from 'common';
 
 import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from './util';
-import { isTableMap, TableMap } from './TableMap';
+import { TableMap } from './TableMap';
 
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire
@@ -63,8 +63,6 @@ export class CellSelection extends Selection {
   constructor($anchorCell: ResolvedPos, $headCell: ResolvedPos = $anchorCell/*default to the same cell*/) {
     const table = $anchorCell.node(-1/*Table ancestor*/);
     const map = TableMap.get(table);
-    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
-
     const start = $anchorCell.start(-1/*Table ancestor depth*/);
     const rect = map.rectBetween($anchorCell.pos - start, $headCell.pos - start);
     const doc = $anchorCell.node(0);
@@ -111,8 +109,6 @@ export class CellSelection extends Selection {
     const table = this.$anchorCell.node(-1);
 
     const map = TableMap.get(table);
-    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
-
     const start = this.$anchorCell.start(-1);
 
     const rect = map.rectBetween(this.$anchorCell.pos - start, this.$headCell.pos - start);
@@ -197,8 +193,6 @@ export class CellSelection extends Selection {
     const table = this.$anchorCell.node(-1);
 
     const map = TableMap.get(table);
-    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
-
     const start = this.$anchorCell.start(-1);
     const cells = map.cellsInRect(map.rectBetween(this.$anchorCell.pos - start, this.$headCell.pos - start));
     for(let i = 0; i < cells.length; i++) {
@@ -228,8 +222,6 @@ export class CellSelection extends Selection {
    */
   static colSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
     const map = TableMap.get($anchorCell.node(-1));
-    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
-
     const start = $anchorCell.start(-1);
     const anchorRect = map.findCell($anchorCell.pos - start);
     const headRect = map.findCell($headCell.pos - start);
@@ -263,8 +255,6 @@ export class CellSelection extends Selection {
    */
   public isRowSelection() {
     const map = TableMap.get(this.$anchorCell.node(-1));
-    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
-
     const start = this.$anchorCell.start(-1);
 
     const anchorLeft = map.colCount(this.$anchorCell.pos - start);
@@ -292,8 +282,6 @@ export class CellSelection extends Selection {
    */
   public static rowSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
     const map = TableMap.get($anchorCell.node(-1));
-    if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
-
     const start = $anchorCell.start(-1);
     const anchorRect = map.findCell($anchorCell.pos - start);
     const headRect = map.findCell($headCell.pos - start);
@@ -446,8 +434,6 @@ export const normalizeSelection = (newState: EditorState, allowTableNodeSelectio
       normalize = CellSelection.rowSelection($cell, $cell);
     } else if(!allowTableNodeSelection) {
       const map = TableMap.get(selection.node);
-      if(!isTableMap(map)) throw new Error('expected map a TableMap and its not');
-
       const start = selection.from + 1;
       const lastCell = start + map.map[map.width * map.height - 1];
       normalize = CellSelection.create(doc, start + 1, lastCell);

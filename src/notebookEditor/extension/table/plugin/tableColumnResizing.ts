@@ -1,7 +1,7 @@
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
-import { AttributeType, cellAround, isTableMap, pointsAtCell, setTableNodeAttributes, TableMap, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
+import { AttributeType, cellAround, pointsAtCell, setTableNodeAttributes, TableMap, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { TableView, updateColumns } from '../tableview';
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
@@ -112,7 +112,6 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
         const table = $cell.node(-1);
 
         const map = TableMap.get(table);
-        if(!isTableMap(map)) throw new Error('expected map to be a TableMap and its not');
 
         const start = $cell.start(-1);
         const col = map.colCount($cell.pos - start) + $cell.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
@@ -218,8 +217,6 @@ const edgeCell = (view: EditorView, event: MouseEvent, side: 'left' | 'right') =
   } /* else -- side is left */
 
   const map = TableMap.get($cell.node(-1));
-  if(!isTableMap(map)) throw new Error('expected map to be a TableMap and its not');
-
   const start = $cell.start(-1);
   const index = map.map.indexOf($cell.pos - start);
 
@@ -248,8 +245,6 @@ const updateColumnWidth = (view: EditorView, cell: number, width: number) => {
   const table = $cell.node(-1);
 
   const map = TableMap.get(table);
-  if(!isTableMap(map)) throw new Error('expected map to be a TableMap and its not');
-
   const start = $cell.start(-1);
 
   const col = map.colCount($cell.pos - start) + $cell.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
@@ -286,8 +281,6 @@ const displayColumnWidth = (view: EditorView, cell: number, width: number, cellM
   const table = $cell.node(-1);
 
   const map = TableMap.get(table);
-  if(!isTableMap(map)) throw new Error('expected map to be a TableMap and its not');
-
   const start = $cell.start(-1);
   const col = map.colCount($cell.pos - start) + $cell.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
 
@@ -319,8 +312,6 @@ export const handleDecorations = (state: EditorState, cell: number) => {
   } /* else -- there is a Table to decorate */
 
   const map = TableMap.get(table);
-  if(!isTableMap(map)) throw new Error('expected map to be a TableMap and its not');
-
   const start = $cell.start(-1);
   const col = map.colCount($cell.pos - start) + $cell.nodeAfter?.attrs[AttributeType.ColSpan];
 

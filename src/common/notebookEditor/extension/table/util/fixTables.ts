@@ -1,13 +1,13 @@
 import { EditorState, PluginKey, Transaction } from 'prosemirror-state';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { isTableMap, TableMap } from '../TableMap';
+import { NodeName } from '../../../node';
+import { TableMap } from '../TableMap';
 import { TableProblem, TableRole } from '../type';
 import { setTableNodeAttributes, removeColSpan } from '../util';
 
 import { tableNodeTypes } from './schema';
 import { AttributeType } from 'common/notebookEditor/attribute';
-import { NodeName } from 'common/notebookEditor/node';
 
 // helpers for normalizing Table Nodes, ensuring no Cells overlap and that each
 // row has the same width, using problems reported by TableMap
@@ -72,7 +72,7 @@ export const fixTables = (oldState: EditorState, newState: EditorState) => {
  */
 export function fixTable(state: EditorState, table: ProseMirrorNode, tablePos: number, tr?: Transaction) {
   const map = TableMap.get(table);
-  if(!isTableMap(map) || !map.problems) return tr/*nothing to do*/;
+  if(!map.problems) return tr/*nothing to do*/;
 
   if(!tr) {
     tr = state.tr;
