@@ -36,39 +36,43 @@ export enum ExtensionPriority {
   // SEE: notebookEditor/type.ts
   PARAGRAPH = 118,
 
+  // NOTE: since the Plugins added by Tables handle Keydown and Mouse events,
+  // .     they should run before other Plugins
+  TABLE = 117,
+
   // NOTE: Link must have a higher priority than other marks so that it gets
   //       preference over them when creating, pasting or applying parse rules
-  LINK = 117/*T&E*/,
+  LINK = 116/*T&E*/,
 
   // NOTE: since Suggestions have specific behavior for the Enter and arrow
   //       keydown events, they must run before other Extensions with these
   //       keydown handlers run
-  EMOJI_SUGGESTION = 116,
+  EMOJI_SUGGESTION = 115,
 
   // NOTE: asyncNodes must check if they are dirty after the codeBlocks have
   //       been modified accordingly (e.g. codeBlockReferences and hashes) have
   //       been recomputed. Hence this must run before other Extensions
-  ASYNC_NODE = 115,
+  ASYNC_NODE = 114,
 
   // NOTE: since Blocks make use of several specific Commands, they must not
   //       be executed in default order
-  CODEBLOCK = 114,
+  CODEBLOCK = 113,
 
   // NOTE: (SEE: ExtensionPriority.CodeBlock)
-  DEMO_ASYNC_NODE_2 = 113,
+  DEMO_ASYNC_NODE_2 = 112,
 
   // NOTE: (SEE: ExtensionPriority.CodeBlock)
   // NOTE: since Blockquote shares the Mod-B keybinding with Bold, it must have
   //       a priority higher than it so that it gets inserted without toggling it
-  BLOCKQUOTE = 112,
+  BLOCKQUOTE = 111,
 
   // NOTE: since EditableInlineNodeWithContent shares the Mod-E keybinding
   //       with Code, it must have a priority higher than it so that it
   //       gets inserted without toggling it
-  EDITABLE_INLINE_NODE_WITH_CONTENT = 111,
+  EDITABLE_INLINE_NODE_WITH_CONTENT = 110,
 
   // NOTE: for consistency with EditableInlineNodeWithContent
-  NESTED_VIEW_BLOCK_NODE = 111/*same as EditableInlineNodeWithContent*/,
+  NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when
