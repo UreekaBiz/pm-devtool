@@ -1,11 +1,11 @@
 import ist from 'ist';
 // import { Slice } from 'prosemirror-model';
-// import { Command, EditorState } from 'prosemirror-state';
+import { Command, EditorState } from 'prosemirror-state';
 // import { eq } from 'prosemirror-test-builder';
 
-import { emptyCellBuilder, getNotebookSchemaNodeBuilders, CellSelection, NodeName } from 'common';
+import { emptyCellBuilder, isCellSelection, getNotebookSchemaNodeBuilders, CellSelection, NodeName } from 'common';
 
-// import { addRowBefore, addRowAfter, addColumnAfter, addColumnBefore } from '../node';
+import { addRowBefore, addRowAfter } from '../node';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -28,38 +28,41 @@ describe('CellSelection', () => {
     )
   );
 
-  // const executeCommand = (anchor: number, head: number, command: Command) => {
-  //   let state = EditorState.create({ doc: tableDoc, selection: CellSelection.create(tableDoc, anchor, head) });
-  //   command(state, (tr) => (state = state.apply(tr)));
-  //   return state;
-  // };
+  const executeCellSelectionTestCommand = (anchor: number, head: number, command: Command) => {
+    let state = EditorState.create({ doc: tableDoc, selection: CellSelection.create(tableDoc, anchor, head) });
+    command(state, (tr) => (state = state.apply(tr)));
+    return state;
+  };
 
   it('will put its head/anchor around the head cell', () => {
-    let s = CellSelection.create(tableDoc, 2, 24);
-    ist(s.anchor, 25);
-    ist(s.head, 27);
+    let selection = CellSelection.create(tableDoc, 2, 24);
+    ist(selection.anchor, 25);
+    ist(selection.head, 27);
 
-    s = CellSelection.create(tableDoc, 24, 2);
-    ist(s.anchor, 3);
-    ist(s.head, 5);
+    selection = CellSelection.create(tableDoc, 24, 2);
+    ist(selection.anchor, 3);
+    ist(selection.head, 5);
 
-    s = CellSelection.create(tableDoc, 10, 30);
-    ist(s.anchor, 31);
-    ist(s.head, 33);
+    selection = CellSelection.create(tableDoc, 10, 30);
+    ist(selection.anchor, 31);
+    ist(selection.head, 33);
 
-    s = CellSelection.create(tableDoc, 30, 10);
-    ist(s.anchor, 11);
-    ist(s.head, 13);
+    selection = CellSelection.create(tableDoc, 30, 10);
+    ist(selection.anchor, 11);
+    ist(selection.head, 13);
   });
 
-//   it('extends a row selection when adding a row', () => {
-//     let sel = executeCommand(34, 6, addRowBefore).selection;
-//     ist(sel.$anchorCell.pos, 48);
-//     ist(sel.$headCell.pos, 6);
-//     sel = executeCommand(6, 30, addRowAfter).selection;
-//     ist(sel.$anchorCell.pos, 6);
-//     ist(sel.$headCell.pos, 44);
-//   });
+  it('extends a row selection when adding a row', () => {
+    let selection = executeCellSelectionTestCommand(34, 6, addRowBefore).selection;
+    if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
+    ist(selection.$anchorCell.pos, 48);
+    ist(selection.$headCell.pos, 6);
+
+    selection = executeCellSelectionTestCommand(6, 30, addRowAfter).selection;
+    if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
+    ist(selection.$anchorCell.pos, 6);
+    ist(selection.$headCell.pos, 44);
+  });
 
 //   it('extends a col selection when adding a column', () => {
 //     let sel = executeCommand(16, 24, addColumnAfter).selection;
