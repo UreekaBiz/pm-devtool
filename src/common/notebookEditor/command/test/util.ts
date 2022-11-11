@@ -60,7 +60,11 @@ export const getNotebookSchemaMarkBuilders = (markNames: MarkName[]) =>
 // strings used to indicate the test tags (to set relevant positions) that are used
 // when writing documents for tests
 export const A = 'A';
+export const ANCHOR = 'cursor';
 export const B = 'B';
+export const CURSOR = 'cursor';
+export const HEAD = 'head';
+export const NODE = 'node';
 
 // == Command =====================================================================
 /**
@@ -125,8 +129,7 @@ export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({
  */
 export type ProseMirrorNodeWithTag = Node & {
   tag: {
-    'A': number | null/*a tag with this name is not set*/;
-    'B': number | null/*a tag with this name is not set*/;
+    [key: string]: number | null/*a tag with this name is not set*/;
   };
 };
 
