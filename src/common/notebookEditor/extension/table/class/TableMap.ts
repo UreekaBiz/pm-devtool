@@ -142,7 +142,8 @@ export class TableMap {
 
   /**
    * return the position of all Cells that have the top left corner
-   * in the given {@link TableRect}
+   * in the given {@link TableRect}. Recall that the positions are
+   * such that they are relative to the start of the Table
    */
   public cellsInRect(rect: TableRect) {
     const result: number[] = [];
