@@ -5,6 +5,7 @@ import { Mappable, Mapping } from 'prosemirror-transform';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 
+import { AttributeType } from '../../../attribute';
 import { isNodeSelection, isTextSelection } from '../../../selection';
 import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from '../util';
 import { TableRole } from '../type';
@@ -135,7 +136,7 @@ export class CellSelection extends Selection {
               if(extraLeft > 0) attrs = removeColSpan(attrs, 0, extraLeft);
 
               if(extraRight > 0) {
-                attrs = removeColSpan(attrs, attrs.colspan - extraRight, extraRight);
+                attrs = removeColSpan(attrs, attrs[AttributeType.ColSpan] - extraRight, extraRight);
               } /* else -- extraRight is not bigger than 0 */
 
               if(cellRect.left < rect.left) {
@@ -263,8 +264,8 @@ export class CellSelection extends Selection {
 
     if(Math.min(anchorLeft, headLeft) > 0) return false/*by definition*/;
 
-    let anchorRight = anchorLeft + this.$anchorCell.nodeAfter?.attrs.colspan,
-      headRight = headLeft + this.$headCell.nodeAfter?.attrs.colspan;
+    let anchorRight = anchorLeft + this.$anchorCell.nodeAfter?.attrs[AttributeType.ColSpan],
+      headRight = headLeft + this.$headCell.nodeAfter?.attrs[AttributeType.ColSpan];
 
     return Math.max(anchorRight, headRight) == map.width;
   }

@@ -179,7 +179,7 @@ export const addRow = (tr: Transaction, { tableMap, tableStart, table }: Optiona
 
       const { attrs } = node;
       tr.setNodeMarkup(tableStart + pos, null/*maintain type*/, setTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] + 1));
-      col += attrs.colspan - 1;
+      col += attrs[AttributeType.ColSpan] - 1;
     } else {
       const type =
         refRow == null
@@ -246,7 +246,7 @@ export const removeRow = (tr: Transaction, { tableMap, table, tableStart }: Opti
 
       const { attrs } = cell;
       tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + tableStart), null/*maintain type*/, setTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] - 1));
-      col += attrs.colspan - 1;
+      col += attrs[AttributeType.ColSpan] - 1;
 
     } else if(row < tableMap.width && pos == tableMap.map[index + tableMap.width]) {
       // if it continues in the Row below, it has to be moved down
@@ -258,7 +258,7 @@ export const removeRow = (tr: Transaction, { tableMap, table, tableStart }: Opti
 
       const newPos = tableMap.positionAt(row + 1, col, table);
       tr.insert(tr.mapping.slice(mapFrom).map(tableStart + newPos), cellCopy);
-      col += cell.attrs.colspan - 1;
+      col += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- do nothing */
   }
 };
@@ -374,7 +374,7 @@ export const mergeCells = (state: EditorState, dispatch: DispatchType) => {
     }
 
     if(!mergedPos || !mergedCell) return false/*could not merge Cells*/;
-    tr.setNodeMarkup(mergedPos + rect.tableStart, null, setTableNodeAttributes(addColSpan(mergedCell.attrs, mergedCell.attrs.colspan, rect.right - rect.left - mergedCell.attrs.colspan), AttributeType.RowSpan, rect.bottom - rect.top));
+    tr.setNodeMarkup(mergedPos + rect.tableStart, null, setTableNodeAttributes(addColSpan(mergedCell.attrs, mergedCell.attrs[AttributeType.ColSpan], rect.right - rect.left - mergedCell.attrs[AttributeType.ColSpan]), AttributeType.RowSpan, rect.bottom - rect.top));
 
     if(content.size) {
       let end = mergedPos + 1 + mergedCell.content.size;

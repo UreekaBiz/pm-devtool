@@ -204,10 +204,11 @@ const computeMap = (table: ProseMirrorNode) => {
   const width = findWidth(table),
         height = table.childCount;
 
-  let map = [],
-    mapPos = 0,
-    problems: ProblemType[/*default empty*/] = [],
-    colWidths: number[] = [];
+  const map = [];
+  let mapPos = 0/*default*/;
+
+  const problems: ProblemType[/*default empty*/] = [];
+  const colWidths: number[] = [];
 
   for(let i = 0, e = width * height; i < e; i++) {
     map[i] = 0;
@@ -218,28 +219,29 @@ const computeMap = (table: ProseMirrorNode) => {
     pos++;
 
     for(let i = 0; ; i++) {
-      while(mapPos < map.length && map[mapPos] != 0) {
+      while(mapPos < map.length && map[mapPos] !== 0) {
         mapPos++;
       }
 
       if(i === rowNode.childCount) break;
 
       const cellNode = rowNode.child(i);
-      const { colspan, rowspan, colwidth } = cellNode.attrs;
-
-      for(let h = 0; h < rowspan; h++) {
+      const colSpan = cellNode.attrs[AttributeType.ColSpan];
+      const rowSpan = cellNode.attrs[AttributeType.RowSpan];
+      const colWidth = cellNode.attrs[AttributeType.ColWidth];
+      for(let h = 0; h < rowSpan; h++) {
         if(h + row >= height) {
-          problems.push({ type: TableProblem.OverlongRowSpan, pos, n: rowspan - h });
+          problems.push({ type: TableProblem.OverlongRowSpan, pos, n: rowSpan - h });
           break;
         } /* else -- h + row is not bigger than or equal to height */
 
 
         const start = mapPos + h * width;
-        for(let w = 0; w < colspan; w++) {
+        for(let w = 0; w < colSpan; w++) {
           if(map[start + w] == 0) { map[start + w] = pos; }
-          else { problems.push({ type: TableProblem.Collision, row, pos, n: colspan - w }); }
+          else { problems.push({ type: TableProblem.Collision, row, pos, n: colSpan - w }); }
 
-          const colW = colwidth && colwidth[w];
+          const colW = colWidth && colWidth[w];
           if(colW) {
             const widthIndex = ((start + w) % width) * 2;
             const prev = colWidths[widthIndex];
@@ -254,7 +256,7 @@ const computeMap = (table: ProseMirrorNode) => {
         }
       }
 
-      mapPos += colspan;
+      mapPos += colSpan;
       pos += cellNode.nodeSize;
     }
 

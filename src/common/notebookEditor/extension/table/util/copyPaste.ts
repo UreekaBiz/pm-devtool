@@ -68,10 +68,14 @@ const ensureRectangular = (schema: Schema, rows: Fragment[]) => {
   const widths: number[] = [];
   for(let i = 0; i < rows.length; i++) {
     const row = rows[i];
+
     for(let j = row.childCount - 1; j >= 0; j--) {
-      let { rowspan, colspan } = row.child(j).attrs;
-      for(let r = i; r < i + rowspan; r++)
-        widths[r] = (widths[r] || 0) + colspan;
+      const colSpan = row.child(j).attrs[AttributeType.ColSpan];
+      const rowSpan = row.child(j).attrs[AttributeType.RowSpan];
+
+      for(let r = i; r < i + rowSpan; r++) {
+        widths[r] = (widths[r] || 0) + colSpan;
+      }
     }
   }
 
@@ -112,7 +116,7 @@ export const fitSlice = (nodeType: NodeType, slice: Slice) => {
 
 /**
  * clip or extend (repeat) the given set of Cells to cover the given
- * width and height. Will clip rowspan/colspan cells at the edges when they
+ * width and height. Will clip rowSpan/colSpan cells at the edges when they
  * stick out
  */
 export const clipCells = ({ width, height, rows }: { width: number; height: number; rows: Fragment[]; }, newWidth: number, newHeight: number) => {
