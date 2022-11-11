@@ -85,7 +85,7 @@ export const applyTestCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Com
 
   // assert that the selection is the same
   if(result && (getNodeTag(result)[A] !== null && getNodeTag(result)[A] !== undefined)) {
-    ist(state.selection,  selectionFor(result), eq);
+    ist(state.selection,  selectionForTest(result), eq);
   } /* else -- result is invalid, or the result's  */
 };
 
@@ -96,7 +96,7 @@ export const applyTestCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Com
  * has inline content or not. If it does not, a {@link NodeSelection}
  * using the resolved testPosA will be returned
  */
-const selectionFor = (doc: ProseMirrorNodeWithTag) => {
+const selectionForTest = (doc: ProseMirrorNodeWithTag) => {
   const testPosA = getNodeTag(doc)[A];
 
   if(testPosA !== null && testPosA !== undefined) {
@@ -118,7 +118,7 @@ const selectionFor = (doc: ProseMirrorNodeWithTag) => {
  * create a {@link EditorState} using the
  * given {@link ProseMirrorNodeWithTag} as the document
  */
-export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({ doc, selection: selectionFor(doc) });
+export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({ doc, selection: selectionForTest(doc) });
 
 // -- Tag -------------------------------------------------------------------------
 // REF: https://github.com/prosemirror/prosemirror-test-builder

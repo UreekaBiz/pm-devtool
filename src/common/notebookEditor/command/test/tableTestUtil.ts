@@ -5,7 +5,7 @@ import { NodeName } from '../../node/type';
 import { CellSelection } from '../../extension/table/class';
 import { cellAround } from '../../extension/table/util';
 import { AttributeType } from '../../attribute';
-import { getNotebookSchemaNodeBuilders, validateNodeWithTag, ANCHOR, CURSOR, HEAD, NODE } from './util';
+import { getNotebookSchemaNodeBuilders, validateNodeWithTag, ANCHOR, CURSOR, HEAD, NODE } from './testUtil';
 
 // ********************************************************************************
 // Command-testing utilities used by Table related test files
@@ -17,12 +17,7 @@ const {
   [NodeName.PARAGRAPH]: paragraphBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.PARAGRAPH]);
 
-
-const resolveCell = (doc: ProseMirrorNode, tag: number) => {
-  if(!tag) return null;
-  return cellAround(doc.resolve(tag));
-};
-
+// -- Cell ------------------------------------------------------------------------
 export const cellBuilder = (colSpan: number, rowSpan: number) => {
   return defaultCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, paragraphBuilder('x'));
 };
@@ -33,6 +28,7 @@ export const cellWithCursorBuilder = defaultCellBuilder(paragraphBuilder(`x<${CU
 export const cellWithAnchorBuilder = defaultCellBuilder(paragraphBuilder(`x<${ANCHOR}>`));
 export const cellWithHeadBuilder = defaultCellBuilder(paragraphBuilder(`x<${HEAD}>`));
 
+// -- HeaderCell ------------------------------------------------------------------
 export const headerCellBuilder = (colSpan: number, rowSpan: number) => {
   return defaultHeaderCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, paragraphBuilder('x'));
 };
@@ -40,7 +36,9 @@ export const defaultDimensionHeaderCellBuilder = headerCellBuilder(1, 1);
 export const emptyHeaderCellBuilder = defaultCellBuilder(paragraphBuilder());
 export const headerCellWithCursorBuilder = defaultHeaderCellBuilder(paragraphBuilder(`x<${CURSOR}>`));
 
-export const selectionForTable = (doc: ProseMirrorNode) => {
+// == Util ========================================================================
+// -- Table -----------------------------------------------------------------------
+export const selectionForTableTest = (doc: ProseMirrorNode) => {
   if(!validateNodeWithTag(doc)) throw new Error('expected doc to have the Tag object and it does not');
 
   const cursor = doc.tag[CURSOR];
@@ -62,3 +60,9 @@ export const selectionForTable = (doc: ProseMirrorNode) => {
 
   return/*undefined*/;
 };
+// -- Cell ------------------------------------------------------------------------
+const resolveCell = (doc: ProseMirrorNode, tag: number) => {
+  if(!tag) return null;
+  return cellAround(doc.resolve(tag));
+};
+
