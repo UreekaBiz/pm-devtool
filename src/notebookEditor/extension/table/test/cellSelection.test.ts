@@ -15,7 +15,6 @@ const {
   [NodeName.TABLE]: tableBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.DOC, NodeName.ROW, NodeName.TABLE]);
 
-
 // == Test ========================================================================
 describe('CellSelection', () => {
   // NOTE: the inline comments below are the positions of the
