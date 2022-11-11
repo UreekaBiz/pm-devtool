@@ -5,7 +5,7 @@ import { Command, EditorState } from 'prosemirror-state';
 
 import { emptyCellBuilder, isCellSelection, getNotebookSchemaNodeBuilders, CellSelection, NodeName } from 'common';
 
-import { addRowBefore, addRowAfter } from '../node';
+import { addRowBeforeCommand, addRowAfterCommand } from '../node';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -52,12 +52,12 @@ describe('CellSelection', () => {
   });
 
   it('extends a row selection when adding a row', () => {
-    let selection = executeCellSelectionTestCommand(34, 6, addRowBefore).selection;
+    let selection = executeCellSelectionTestCommand(34, 6, addRowBeforeCommand).selection;
     if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
     ist(selection.$anchorCell.pos, 48);
     ist(selection.$headCell.pos, 6);
 
-    selection = executeCellSelectionTestCommand(6, 30, addRowAfter).selection;
+    selection = executeCellSelectionTestCommand(6, 30, addRowAfterCommand).selection;
     if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
     ist(selection.$anchorCell.pos, 6);
     ist(selection.$headCell.pos, 44);

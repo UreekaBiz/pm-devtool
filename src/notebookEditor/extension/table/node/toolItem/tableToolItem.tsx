@@ -7,7 +7,7 @@ import { isCellSelection, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, T
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
 
-import { addColumnAfter, addColumnBefore, addRowAfter, addRowBefore, createAndInsertTableCommand, deleteColumn, deleteRow, deleteTable } from '../table/command';
+import { addColumnAfter, addColumnBefore, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumn, deleteRow, deleteTable } from '../table/command';
 import { toggleHeaderRow, toggleHeaderColumn } from '../headerCell/command';
 
 //*********************************************************************************
@@ -78,7 +78,7 @@ export const addRowAboveToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addRowBefore),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addRowBeforeCommand),
 };
 
 export const addRowBelowToolItem: ToolItem = {
@@ -94,7 +94,7 @@ export const addRowBelowToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addRowAfter),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addRowAfterCommand),
 };
 
 // -- Column ----------------------------------------------------------------------

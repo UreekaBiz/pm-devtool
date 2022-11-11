@@ -132,30 +132,46 @@ export const deleteColumn = (state: EditorState, dispatch: DispatchType) => {
 
 // == Row =========================================================================
 /** add a Table Row before the Selection */
-export const addRowBefore = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
+export const addRowBeforeCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new AddRowBeforeDocumentUpdate().update(state, state.tr), dispatch);
+export class AddRowBeforeDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
 
-  if(dispatch) {
-    const rect = selectedRect(state);
+  /**
+   * modify the given Transaction such
+   * a Table Row is added before the Selection
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isInTable(editorState)) return false/*nothing to do*/;
+
+    const rect = selectedRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
-    dispatch(addRow(state.tr, rect, rect.top));
+    const updatedTr = addRow(tr, rect, rect.top);
+    return updatedTr/*updated*/;
   }
-  return true;
-};
+}
 
 /** add a Table Row after the Selection */
-export const addRowAfter = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
+export const addRowAfterCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new AddRowAfterDocumentUpdate().update(state, state.tr), dispatch);
+export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
 
-  if(dispatch) {
-    const rect = selectedRect(state);
+  /**
+   * modify the given Transaction such
+   * a Table Row is added after the Selection
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isInTable(editorState)) return false/*nothing to do*/;
+
+    const rect = selectedRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
-    dispatch(addRow(state.tr, rect, rect.bottom));
+    const updatedTr = addRow(tr, rect, rect.bottom);
+    return updatedTr/*updated*/;
   }
-  return true;
-};
+}
 
 /** remove the selected Rows from a Table */
 export const deleteRow = (state: EditorState, dispatch: DispatchType) => {
