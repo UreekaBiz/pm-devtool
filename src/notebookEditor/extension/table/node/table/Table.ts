@@ -9,7 +9,7 @@ import { tableColumnResizingPlugin } from '../../plugin/tableColumnResizing';
 import { tableEditingPlugin } from '../../plugin/tableEditing';
 import { goToCell } from '../cell/command';
 import { getTableAttrs } from './attribute';
-import { addRowAfter, deleteTableWhenAllCellsSelected } from './command';
+import { addRowAfterCommand, deleteTableWhenAllCellsSelected } from './command';
 import { TableController } from './nodeView';
 import './table.css';
 
@@ -54,13 +54,13 @@ export const Table = new NodeExtension({
           return true;
         } /* else -- cannot go to the next Cell */
 
-        if(!addRowAfter(editor.view.state, undefined/*just check*/)) {
+        if(!addRowAfterCommand(editor.view.state, undefined/*just check*/)) {
           return false;
         } /* else -- can add a row after, do so and then go to next Cell */
 
         return true;
         // TODO: handle with DocumentUpdates
-        // return this.editor.chain().addRowAfter().goToCell().run();
+        // return this.editor.chain().addRowAfterCommand().goToCell().run();
       },
       'Shift-Tab': () => goToCell('previous')(editor.view.state, editor.view.dispatch),
       'Backspace': deleteTableWhenAllCellsSelected,
