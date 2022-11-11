@@ -74,7 +74,7 @@ export const tableColumnResizingPlugin = ({ handleWidth = 5, cellMinWidth = 25, 
 
     // -- Event -------------------------------------------------------------------
     handleDOMEvents: {
-      mousemove: (view, event) => handleMouseMove(view, event, handleWidth, cellMinWidth, lastColumnResizable),
+      mousemove: (view, event) => handleMouseMove(view, event, handleWidth, lastColumnResizable),
       mouseleave: (view) => handleMouseLeave(view),
       mousedown: (view, event) => handleMouseDown(view, event, cellMinWidth),
     },
@@ -90,7 +90,7 @@ export const tableColumnResizingPlugin = ({ handleWidth = 5, cellMinWidth = 25, 
 });
 
 // == Handler =====================================================================
-const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: number, cellMinWidth: number, lastColumnResizable: boolean) => {
+const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: number, lastColumnResizable: boolean) => {
   const pluginState = tableColumnResizingPluginKey.getState(view.state);
 
   if(pluginState && (!pluginState.dragging)) {

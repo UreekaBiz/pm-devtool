@@ -58,6 +58,7 @@ export const TABLE_DEFAULT_WITH_HEDER_ROW = true;
 
 export const TABLE_CONTAINER_CLASS = 'tableWrapper';
 
+// --------------------------------------------------------------------------------
 /**
  * returns the {@link NodeType}s in the given {@link Schema} that
  * have a {@link TableRole} in their definition

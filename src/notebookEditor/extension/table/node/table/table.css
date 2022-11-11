@@ -31,7 +31,7 @@
   pointer-events: none;
   z-index: 2;
 }
-.ProseMirror table .column-resize-handle {
+.ProseMirror table .resize-cursor {
   position: absolute;
   width: 4px;
   top: 0;
