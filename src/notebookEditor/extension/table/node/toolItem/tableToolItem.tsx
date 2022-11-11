@@ -7,8 +7,8 @@ import { isCellSelection, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, T
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
 
-import { addColumnAfter, addColumnBefore, addRowAfter, addRowBefore, deleteColumn, deleteRow, deleteTable, toggleHeaderColumn, toggleHeaderRow } from '../../command';
-import { createAndInsertTableCommand } from '../table';
+import { addColumnAfter, addColumnBefore, addRowAfter, addRowBefore, createAndInsertTableCommand, deleteColumn, deleteRow, deleteTable } from '../table/command';
+import { toggleHeaderRow, toggleHeaderColumn } from '../headerCell/command';
 
 //*********************************************************************************
 // == Tool Items ==================================================================

@@ -1,9 +1,12 @@
 import { Attrs, Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
-import { getHeaderCellNodeType, isNodeSelection, Attributes, AttributeType, TableRole, CellSelection } from 'common';
 
-import { TableMap } from '../class';
+import { Attributes, AttributeType } from '../../../attribute';
+import { isCellSelection, isNodeSelection } from '../../../selection';
+import { CellSelection, TableMap, TableRect } from '../class';
+import { getHeaderCellNodeType } from '../node/headerCell';
+import { TableRole } from '../type';
 
 // ********************************************************************************
 // == Table =======================================================================
@@ -142,6 +145,30 @@ export const nextCell = ($pos: ResolvedPos, axis: 'horizontal' | 'vertical', dir
   const map = TableMap.get($pos.node(-1));
   const moved = map.nextCell($pos.pos - start, axis, dir);
   return moved === null ? null : $pos.node(0).resolve(start + moved);
+};
+
+// == Rect ========================================================================
+/**
+ * get the selected Rectangle in a Table if any, adding the TableMap,
+ * TableNode, and TableStartOffset to the object for convenience.
+ */
+ export const selectedRect = (state: EditorState) => {
+  const { selection } = state;
+  const $pos = selectionCell(state);
+  if(!$pos) return null/*selection not in a Cell*/;
+
+  const table = $pos.node(-1);
+  const tableStart = $pos.start(-1);
+  const tableMap = TableMap.get(table);
+
+  let rect: TableRect;
+  if(isCellSelection(selection)) { rect = tableMap.rectBetween(selection.$anchorCell.pos - tableStart, selection.$headCell.pos - tableStart); }
+  else { rect = tableMap.findCell($pos.pos - tableStart); }
+
+  rect.tableStart = tableStart;
+  rect.tableMap = tableMap;
+  rect.table = table;
+  return rect;
 };
 
 // == Attr ========================================================================

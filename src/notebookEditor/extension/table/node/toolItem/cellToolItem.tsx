@@ -8,8 +8,8 @@ import { isCellSelection, NodeName } from 'common';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
 
-import { goToCell, mergeCells, splitCell, toggleHeaderCell } from '../../command';
-import { mergeOrSplitCommand } from '../cell/command';
+import { goToCell, mergeCells, mergeOrSplitCommand, splitCell } from '../cell/command';
+import { toggleHeaderCell } from '../headerCell/command';
 
 //*********************************************************************************
 // == ToolItems ===================================================================

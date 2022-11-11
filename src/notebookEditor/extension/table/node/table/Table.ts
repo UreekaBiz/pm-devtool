@@ -7,9 +7,9 @@ import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
 
 import { tableColumnResizingPlugin } from '../../plugin/tableColumnResizing';
 import { tableEditingPlugin } from '../../plugin/tableEditing';
-import { addRowAfter, goToCell } from '../../command';
+import { goToCell } from '../cell/command';
 import { getTableAttrs } from './attribute';
-import { deleteTableWhenAllCellsSelected } from './command';
+import { addRowAfter, deleteTableWhenAllCellsSelected } from './command';
 import { TableController } from './nodeView';
 import './table.css';
 
