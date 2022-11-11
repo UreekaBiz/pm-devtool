@@ -21,7 +21,7 @@ import { markSubScript } from 'notebookEditor/extension/subScript';
 import { markSuperScript } from 'notebookEditor/extension/superScript';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
 import { markUnderline } from 'notebookEditor/extension/underline';
-import { cellToolItems, generalTableToolItems } from 'notebookEditor/extension/table/node/toolItem';
+import { cellToolItems, generalTableToolItems, tableToolItem } from 'notebookEditor/extension/table';
 import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle';
 
 import { EditorToolComponentProps, Toolbar, ToolItem } from './type';
@@ -137,6 +137,7 @@ const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   headingLevelToolItem,
   blockquoteToolItem,
   horizontalRuleToolItem,
+  tableToolItem,
 
   // -- Custom --------------------------------------------------------------------
   codeBlockToolItem,
