@@ -58,7 +58,7 @@ class TableEditingState {
  * The Extension adding this Plugin should have a high priority, since it handles
  * Mouse and Arrow key events
  */
-export const tableEditingPlugin = ({ allowTableNodeSelection = false/*default*/ } = {}) =>
+export const tableEditingPlugin = (allowTableNodeSelection = false/*default*/) =>
   new Plugin<TableEditingState>({
     // -- State -------------------------------------------------------------------
     key: tableEditingPluginKey,

@@ -2,13 +2,13 @@ import { MdOutlineTableChart } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, RiInsertRowBottom, RiInsertRowTop, RiMore2Line, RiMoreLine } from 'react-icons/ri';
 
-import { isCellSelection, NodeName } from 'common';
+import { isCellSelection, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
 
 import { addColumnAfter, addColumnBefore, addRowAfter, addRowBefore, deleteColumn, deleteRow, deleteTable, toggleHeaderColumn, toggleHeaderRow } from '../../command';
-import { insertTableCommand } from '../table';
+import { createAndInsertTableCommand } from '../table';
 
 //*********************************************************************************
 // == Tool Items ==================================================================
@@ -27,7 +27,7 @@ export const tableToolItem: ToolItem = {
     return false;
   },
   shouldShow: (editor) => true,
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, insertTableCommand({ rows: 3, cols: 3, withHeaderRow: false })),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, createAndInsertTableCommand(TABLE_DEFAULT_ROWS, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_WITH_HEDER_ROW)),
 };
 
 // -- Table -----------------------------------------------------------------------

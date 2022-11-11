@@ -45,7 +45,7 @@ export const Table = new NodeExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
-    tableEditingPlugin({ allowTableNodeSelection: false/*do not allow*/ }),
+    tableEditingPlugin(false/*do not allow Table Node Selection*/),
     tableColumnResizingPlugin(),
     keymap({
       'Tab': () => {
