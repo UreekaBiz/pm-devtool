@@ -3,7 +3,7 @@ import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { addColSpan, cellAround, cellWrapping, getTableNodeTypes, isCellSelection, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes, AttributeType, CellSelection, DispatchType, TableRect } from 'common';
 
-// == Cell ========================================================================
+// ********************************************************************************
 /**
  * merge the selected Cells into a single Cell, only available
  * when the selected Cell's outline forms a Rectangle

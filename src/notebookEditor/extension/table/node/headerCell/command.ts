@@ -3,33 +3,7 @@ import { EditorState } from 'prosemirror-state';
 
 import { getTableNodeTypes, isInTable, selectedRect, TableRect, NodeName, DispatchType } from 'common';
 
-// == Header ======================================================================
-const isHeaderEnabledByType = (type: 'column' | 'row', rect: TableRect, types: { [nodeName: string]: NodeType; }) => {
-  if(!rect.table || !rect.tableMap) return false/*no tablemap available*/;
-
-  // Get cell positions for first row or first column
-  const cellPositions = rect.tableMap.cellsInRect({
-    left: 0,
-    top: 0,
-    right: type === 'row' ? rect.tableMap.width : 1,
-    bottom: type === 'column' ? rect.tableMap.height : 1,
-    table: undefined,
-    tableMap: undefined,
-    tableStart: undefined,
-  });
-
-  for(let i = 0; i < cellPositions.length; i++) {
-    const cell = rect.table.nodeAt(cellPositions[i]);
-
-    if(cell && cell.type !== types[NodeName.HEADER_CELL]) {
-      return false;
-    } /* else -- cell does not exist or is not a Header Cell */
-  }
-
-  return true/*default*/;
-};
-
-// :: (string, ?{ useDeprecatedLogic: bool }) → (EditorState, dispatch: ?(tr: Transaction)) → bool
+// ********************************************************************************
 /** toggles between row/column Header and normal Cells (only applies to first row/column) */
 export const toggleHeader = (type: 'column' | 'row' | 'cell') => (state: EditorState, dispatch: DispatchType) => {
   if(!isInTable(state)) return false/*nothing to do*/;
@@ -90,4 +64,28 @@ export const toggleHeaderColumn = toggleHeader('column');
 /** toggles whether the selected Cells are HeaderCells */
 export const toggleHeaderCell = toggleHeader('cell');
 
+// == Util ========================================================================
+const isHeaderEnabledByType = (type: 'column' | 'row', rect: TableRect, types: { [nodeName: string]: NodeType; }) => {
+  if(!rect.table || !rect.tableMap) return false/*no tablemap available*/;
 
+  // Get cell positions for first row or first column
+  const cellPositions = rect.tableMap.cellsInRect({
+    left: 0,
+    top: 0,
+    right: type === 'row' ? rect.tableMap.width : 1,
+    bottom: type === 'column' ? rect.tableMap.height : 1,
+    table: undefined,
+    tableMap: undefined,
+    tableStart: undefined,
+  });
+
+  for(let i = 0; i < cellPositions.length; i++) {
+    const cell = rect.table.nodeAt(cellPositions[i]);
+
+    if(cell && cell.type !== types[NodeName.HEADER_CELL]) {
+      return false;
+    } /* else -- cell does not exist or is not a Header Cell */
+  }
+
+  return true/*default*/;
+};
