@@ -147,7 +147,7 @@ export class CellSelection extends Selection {
             } /* else -- neither extraLeft nor extraRight are bigger than 0*/
 
             if(cellRect.top < rect.top || cellRect.bottom > rect.bottom) {
-              const attrs = cell && setTableNodeAttributes(cell.attrs, 'rowspan', Math.min(cellRect.bottom, rect.bottom) - Math.max(cellRect.top, rect.top));
+              const attrs = cell && setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.min(cellRect.bottom, rect.bottom) - Math.max(cellRect.top, rect.top));
 
               if(cell && cellRect.top < rect.top) { cell = cell.type.createAndFill(attrs); }
               else { cell = cell && cell.type.create(attrs, cell.content); }
@@ -212,8 +212,8 @@ export class CellSelection extends Selection {
 
     if(Math.min(anchorTop, headTop) > 0) return false/*by definition*/;
 
-    const anchorBot = anchorTop + this.$anchorCell.nodeAfter?.attrs.rowspan;
-    const headBot = headTop + this.$headCell.nodeAfter?.attrs.rowspan;
+    const anchorBot = anchorTop + this.$anchorCell.nodeAfter?.attrs[AttributeType.RowSpan];
+    const headBot = headTop + this.$headCell.nodeAfter?.attrs[AttributeType.RowSpan];
 
     return Math.max(anchorBot, headBot) == this.$headCell.node(-1).childCount;
   }

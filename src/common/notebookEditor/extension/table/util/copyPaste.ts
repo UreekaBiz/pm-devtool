@@ -137,7 +137,7 @@ export const clipCells = ({ width, height, rows }: { width: number; height: numb
         cells.push(cell);
         col += cell.attrs[AttributeType.ColSpan];
 
-        for(let j = 1; j < cell.attrs.rowspan; j++) {
+        for(let j = 1; j < cell.attrs[AttributeType.RowSpan]; j++) {
           added[row + j] = (added[row + j] || 0) + cell.attrs[AttributeType.ColSpan];
         }
       }
@@ -155,7 +155,7 @@ export const clipCells = ({ width, height, rows }: { width: number; height: numb
 
       for(let j = 0; j < source.childCount; j++) {
         let cell = source.child(j);
-        if(row + cell.attrs.rowspan > newHeight) {
+        if(row + cell.attrs[AttributeType.RowSpan] > newHeight) {
           cell = cell.type.create(setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.max(1, newHeight - cell.attrs[AttributeType.RowSpan])), cell.content);
         } /* else -- no need to recreate Cell */
         cells.push(cell);
@@ -256,7 +256,7 @@ const isolateHorizontal = (tr: Transaction, map: TableMap, table: ProseMirrorNod
       const { top: cellTop, left: cellLeft } = map.findCell(pos);
       tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + start), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, top - cellTop));
 
-      const newCell = cell.type.createAndFill(setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cellTop + cell.attrs.rowspan - top));
+      const newCell = cell.type.createAndFill(setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cellTop + cell.attrs[AttributeType.RowSpan] - top));
       if(!newCell) continue/*could not create Cell, do nothing*/;
 
       tr.insert(tr.mapping.slice(mapFrom).map(map.positionAt(top, cellLeft, table)), newCell);
@@ -293,7 +293,7 @@ const isolateVertical = (tr: Transaction, map: TableMap, table: ProseMirrorNode,
       if(!newCell) continue/*could not create Cell, do nothing*/;
 
       tr.insert(updatePos + cell.nodeSize, newCell);
-      row += cell.attrs.rowspan - 1;
+      row += cell.attrs[AttributeType.RowSpan] - 1;
     }
   }
 

@@ -109,7 +109,7 @@ export const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: O
       const start = tr.mapping.slice(mapStart).map(tableStart + pos);
       tr.delete(start, start + cell.nodeSize);
     }
-    row += cell.attrs.rowspan;
+    row += cell.attrs[AttributeType.RowSpan];
   }
 };
 
@@ -171,7 +171,7 @@ export const addRow = (tr: Transaction, { tableMap, tableStart, table }: Optiona
 
   for(let col = 0, index = tableMap.width * row; col < tableMap.width; col++, index++) {
 
-    // covered by a rowspan cell
+    // covered by a rowSpan cell
     if(row > 0 && row < tableMap.height && tableMap.map[index] === tableMap.map[index - tableMap.width]) {
       const pos = tableMap.map[index];
       const node = table.nodeAt(pos);

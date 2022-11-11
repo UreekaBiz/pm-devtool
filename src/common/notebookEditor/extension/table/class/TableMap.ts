@@ -176,7 +176,7 @@ export class TableMap {
         let index = col + row * this.width;
         const rowEndIndex = (row + 1) * this.width;
 
-        // skip past cells from previous rows (via rowspan)
+        // skip past cells from previous rows (via rowSpan)
         while(index < rowEndIndex && this.map[index] < rowStart) {
           index++;
         }
