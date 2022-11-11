@@ -109,6 +109,6 @@ export const cellToolItems = [
   goToNextCellToolItem,
   mergeCellsToolItem,
   splitCellsToolItem,
-  mergeOrSplitCellsToolItem,,
+  mergeOrSplitCellsToolItem,
   toggleHeaderCellToolItem,
 ];

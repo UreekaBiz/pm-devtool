@@ -21,6 +21,7 @@ import { markSubScript } from 'notebookEditor/extension/subScript';
 import { markSuperScript } from 'notebookEditor/extension/superScript';
 import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
 import { markUnderline } from 'notebookEditor/extension/underline';
+import { cellToolItems, generalTableToolItems } from 'notebookEditor/extension/table/node/toolItem';
 import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle';
 
 import { EditorToolComponentProps, Toolbar, ToolItem } from './type';
@@ -169,6 +170,10 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
       blockquoteBorderLeftWidthToolItem,
     ],
   },
+  [NodeName.CELL]: {
+    position: 'start',
+    items: [...cellToolItems],
+  },
   [NodeName.CODEBLOCK]: {
     position: 'start',
     items: [
@@ -207,6 +212,10 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
     ],
   },
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: defaultUniqueToolItemConfiguration,
+  [NodeName.HEADER_CELL]: {
+    position: 'start',
+    items: [...cellToolItems],
+  },
   [NodeName.HEADING]: defaultUniqueToolItemConfiguration,
   [NodeName.HORIZONTAL_RULE]: {
     position: 'start',
@@ -231,7 +240,12 @@ const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfiguration
   },
   [NodeName.MARK_HOLDER]: defaultUniqueToolItemConfiguration,
   [NodeName.NESTED_VIEW_BLOCK_NODE]: defaultUniqueToolItemConfiguration,
+  [NodeName.ROW]: defaultUniqueToolItemConfiguration,
   [NodeName.PARAGRAPH]: defaultUniqueToolItemConfiguration,
+  [NodeName.TABLE]: {
+    position: 'start',
+    items: [...generalTableToolItems],
+  },
   [NodeName.TEXT]: defaultUniqueToolItemConfiguration,
 
   // -- Mark ----------------------------------------------------------------------

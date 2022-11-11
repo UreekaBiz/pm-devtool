@@ -172,9 +172,9 @@ export const toggleHeaderInFirstColumnToolItem: ToolItem = {
 };
 
 // --------------------------------------------------------------------------------
-export const generalTableToolItems = [
+export const generalTableToolItems: ToolItem[] = [
   deleteTableToolItem,
-  deleteRowToolItem,,
+  deleteRowToolItem,
   addRowAboveToolItem,
   addRowBelowToolItem,
   deleteColumnToolItem,
