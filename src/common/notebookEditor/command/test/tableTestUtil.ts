@@ -12,7 +12,6 @@ import { getNotebookSchemaNodeBuilders, validateNodeWithTag, ANCHOR, CURSOR, HEA
 // Command-testing utilities used by Table related test files
 
 // == Constant ====================================================================
-const defaultCellAttrs = { [AttributeType.ColSpan]: CELL_COL_SPAN, [AttributeType.RowSpan]: CELL_ROW_SPAN };
 const {
   [NodeName.CELL]: defaultCellBuilder,
   [NodeName.HEADER_CELL]: defaultHeaderCellBuilder,
@@ -20,6 +19,8 @@ const {
 } = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.PARAGRAPH]);
 
 // -- Cell ------------------------------------------------------------------------
+const defaultCellAttrs = { [AttributeType.ColSpan]: CELL_COL_SPAN, [AttributeType.RowSpan]: CELL_ROW_SPAN };
+
 export const defaultDimensionWithParagraphCellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
 export const emptyCellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder());
 export const cellWithCursorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${CURSOR}>`));

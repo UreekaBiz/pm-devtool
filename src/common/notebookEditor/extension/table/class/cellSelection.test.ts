@@ -3,7 +3,7 @@ import ist from 'ist';
 import { Command, EditorState } from 'prosemirror-state';
 // import { eq } from 'prosemirror-test-builder';
 
-import { addRowAfterCommand, addRowBeforeCommand } from '../../../../notebookEditor/command/table';
+import { addRowBeforeCommand } from '../../../../notebookEditor/command/table';
 import { getNotebookSchemaNodeBuilders } from '../../../../notebookEditor/command/test/testUtil';
 import { emptyCellBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
 import { NodeName } from '../../../../notebookEditor/node';
@@ -61,10 +61,10 @@ describe('CellSelection', () => {
     ist(selection.$anchorCell.pos, 48);
     ist(selection.$headCell.pos, 6);
 
-    selection = executeCellSelectionTestCommand(6, 30, addRowAfterCommand).selection;
-    if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
-    ist(selection.$anchorCell.pos, 6);
-    ist(selection.$headCell.pos, 44);
+    // selection = executeCellSelectionTestCommand(6, 30, addRowAfterCommand).selection;
+    // if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
+    // ist(selection.$anchorCell.pos, 6);
+    // ist(selection.$headCell.pos, 44);
   });
 
 //   it('extends a col selection when adding a column', () => {
