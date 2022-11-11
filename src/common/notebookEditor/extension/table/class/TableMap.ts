@@ -128,9 +128,9 @@ export class TableMap {
   }
 
   /** get the {@link TableRect} spanning the two given Cells */
-  public rectBetween(a: number, b: number) {
-    const { left: leftA, right: rightA, top: topA, bottom: bottomA } = this.findCell(a);
-    const { left: leftB, right: rightB, top: topB, bottom: bottomB } = this.findCell(b);
+  public rectBetween(firstCellPos: number, secondCellPos: number) {
+    const { left: leftA, right: rightA, top: topA, bottom: bottomA } = this.findCell(firstCellPos);
+    const { left: leftB, right: rightB, top: topB, bottom: bottomB } = this.findCell(secondCellPos);
 
     const minLeft = Math.min(leftA, leftB);
     const minTop = Math.min(topA, topB);

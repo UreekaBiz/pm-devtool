@@ -57,12 +57,12 @@ describe('CellSelection', () => {
 
   it('extends a row selection when adding a row', () => {
     let selection = executeCellSelectionTestCommand(34, 6, addRowBeforeCommand).selection;
-    if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
+    if(!isCellSelection(selection)) throw new Error('expected a CellSelection');
     ist(selection.$anchorCell.pos, 48);
     ist(selection.$headCell.pos, 6);
 
     // selection = executeCellSelectionTestCommand(6, 30, addRowAfterCommand).selection;
-    // if(!isCellSelection(selection)) throw new Error('Expected CellSelection');
+    // if(!isCellSelection(selection)) throw new Error('expected a CellSelection');
     // ist(selection.$anchorCell.pos, 6);
     // ist(selection.$headCell.pos, 44);
   });

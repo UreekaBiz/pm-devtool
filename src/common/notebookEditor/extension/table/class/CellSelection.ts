@@ -58,9 +58,9 @@ export class CellSelection extends Selection {
   // -- Lifecycle -----------------------------------------------------------------
   /**
    * a {@link CellSelection} is identified by its anchor and head cells.
-   * The positions given to the constructor should point before
+   * the positions given to the constructor should point before
    * two cells in the same table. They may be the same, to select a
-   * single cell
+   * single Cell
    */
   constructor($anchorCell: ResolvedPos, $headCell: ResolvedPos = $anchorCell/*default to the same cell*/) {
     const table = $anchorCell.node(-1/*Table ancestor*/);
