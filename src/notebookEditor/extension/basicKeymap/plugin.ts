@@ -1,7 +1,7 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { selectTextBlockStartOrEndCommand } from 'common';
+import { selectTextBlockStartOrEndCommand, NodeName } from 'common';
 
 // == Constant ====================================================================
 const HOME = 'Home';
@@ -21,11 +21,13 @@ export const basicKeymapPlugin = () => new Plugin({
      * beginning or end of the parent TextBlock respectively
      */
     handleKeyDown: (view: EditorView, event: KeyboardEvent) => {
+      const currentNodeName = view.state.selection.$anchor.parent.type.name as NodeName/*by definition*/;
+
       if(event.code === HOME) {
-        selectTextBlockStartOrEndCommand('start')(view.state, view.dispatch);
+        selectTextBlockStartOrEndCommand('start', currentNodeName)(view.state, view.dispatch);
         return true/*event handled*/;
       } else if(event.code === END) {
-        selectTextBlockStartOrEndCommand('end')(view.state, view.dispatch);
+        selectTextBlockStartOrEndCommand('end', currentNodeName)(view.state, view.dispatch);
         return true/*event handled*/;
       } else {
         return false/*let the event be handled elsewhere*/;
