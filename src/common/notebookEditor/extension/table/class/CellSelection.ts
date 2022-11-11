@@ -1,13 +1,14 @@
 
 import { Fragment, Node as ProseMirrorNode, ResolvedPos, Slice } from 'prosemirror-model';
-import { Selection, TextSelection, NodeSelection, SelectionRange, Transaction, EditorState } from 'prosemirror-state';
+import { Selection, TextSelection, SelectionRange, Transaction, EditorState } from 'prosemirror-state';
 import { Mappable, Mapping } from 'prosemirror-transform';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 
+import { isNodeSelection, isTextSelection } from '../../../selection';
 import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from '../util';
-import { TableMap } from './TableMap';
 import { TableRole } from '../type';
+import { TableMap } from './TableMap';
 
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire
@@ -426,24 +427,32 @@ export const normalizeSelection = (newState: EditorState, allowTableNodeSelectio
   let normalize;
   let role;
 
-  if(selection instanceof NodeSelection && (role = selection.node.type.spec.tableRole)) {
-    if(role == 'cell' || role == 'header_cell') {
+  if(isNodeSelection(selection) && (role = selection.node.type.spec.tableRole)) {
+    if(role === TableRole.Cell || role == TableRole.HeaderCell) {
       normalize = CellSelection.create(doc, selection.from);
-    } else if(role == 'row') {
-      let $cell = doc.resolve(selection.from + 1);
+
+    } else if(role == TableRole.Row) {
+      const $cell = doc.resolve(selection.from + 1);
       normalize = CellSelection.rowSelection($cell, $cell);
+
     } else if(!allowTableNodeSelection) {
       const map = TableMap.get(selection.node);
       const start = selection.from + 1;
       const lastCell = start + map.map[map.width * map.height - 1];
       normalize = CellSelection.create(doc, start + 1, lastCell);
-    }
-  } else if(selection instanceof TextSelection && isCellBoundarySelection(selection)) {
+    } /* else -- role is not Cell, HeaderCell and cannot select Table Node */
+
+  } else if(isTextSelection(selection) && isCellBoundarySelection(selection)) {
     normalize = TextSelection.create(doc, selection.from);
-  } else if(selection instanceof TextSelection && isTextSelectionAcrossCells(selection)) {
+  } else if(isTextSelection(selection) && isTextSelectionAcrossCells(selection)) {
     normalize = TextSelection.create(doc, selection.$from.start(), selection.$from.end());
-  }
-  if(normalize) (tr || (tr = newState.tr)).setSelection(normalize);
+  } /* else -- no TextSelection, not a CellBoundarySelection, or TextSelection is not across cells */
+
+
+  if(normalize) {
+    (tr || (tr = newState.tr)).setSelection(normalize);
+  } /* else -- do not normalize */
+
   return tr;
 };
 

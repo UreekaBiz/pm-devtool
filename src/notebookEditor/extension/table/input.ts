@@ -3,9 +3,8 @@ import { Slice, Fragment, ResolvedPos } from 'prosemirror-model';
 import { Command, EditorState, Selection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { cellAround, clipCells, fitSlice, isCellSelection, insertCells, inSameTable, isTextSelection, isInTable, nextCell, selectionCell, pastedCells, CellSelection, DispatchType, NodeName, TableMap, TableRole, TD_NODENAME, TH_NODENAME } from 'common';
+import { cellAround, clipCells, fitSlice, getTableNodeTypes, isCellSelection, insertCells, inSameTable, isTextSelection, isInTable, nextCell, selectionCell, pastedCells, CellSelection, DispatchType, NodeName, TableMap, TableRole, TD_NODENAME, TH_NODENAME } from 'common';
 
-import { getTableNodeTypes } from './schema';
 import { tableEditingPluginKey } from './plugin/tableEditing';
 import { isValidHTMLElement } from '../util';
 

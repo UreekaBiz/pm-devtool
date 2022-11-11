@@ -68,7 +68,7 @@ export const tableEditingPlugin = ({ allowTableNodeSelection = false/*default*/ 
     },
 
     // -- Transaction -------------------------------------------------------------
-    appendTransaction: (_, oldState, newState) => normalizeSelection(newState, allowTableNodeSelection, fixTables(oldState, newState), allowTableNodeSelection),
+    appendTransaction: (_, oldState, newState) => normalizeSelection(newState, allowTableNodeSelection, fixTables(oldState, newState)),
 
     // -- Prop --------------------------------------------------------------------
     props: {

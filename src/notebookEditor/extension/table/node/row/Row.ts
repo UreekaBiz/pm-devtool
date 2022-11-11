@@ -6,7 +6,7 @@ import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension,
 // == Node ========================================================================
 export const Row = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
-  name: NodeName.HEADER_CELL,
+  name: NodeName.ROW,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Attribute -----------------------------------------------------------------

@@ -1,7 +1,7 @@
 import { Attrs, Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
-import { isNodeSelection, Attributes, AttributeType, TableRole, CellSelection } from 'common';
+import { getHeaderCellNodeType, isNodeSelection, Attributes, AttributeType, TableRole, CellSelection } from 'common';
 
 import { TableMap } from '../class';
 

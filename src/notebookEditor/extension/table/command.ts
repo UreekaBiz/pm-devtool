@@ -1,8 +1,7 @@
 import { Fragment, Node as ProseMirrorNode, NodeType, ResolvedPos } from 'prosemirror-model';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
-import { addColSpan, cellAround, cellWrapping, columnIsHeader, isCellSelection, isInTable, moveCellForward, removeColSpan, selectionCell, setTableNodeAttributes, CellSelection, AttributeType, DispatchType, NodeName, TableMap, TableRole, TableRect } from 'common';
-import { getTableNodeTypes } from './schema';
+import { addColSpan, cellAround, cellWrapping, columnIsHeader, getTableNodeTypes, isCellSelection, isInTable, moveCellForward, removeColSpan, selectionCell, setTableNodeAttributes, CellSelection, AttributeType, DispatchType, NodeName, TableMap, TableRole, TableRect } from 'common';
 
 // ********************************************************************************
 // == Type ========================================================================
