@@ -1,6 +1,7 @@
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { JSONNode, NodeName, ProseMirrorNodeContent } from '../../../node/type';
+import { NodeRendererSpec } from '../../../htmlRenderer/type';
 import { NotebookSchemaType } from '../../../schema';
 import { TableRole } from '../type';
 
@@ -14,6 +15,13 @@ export const RowNodeSpec: NodeSpec = {
   // .. Definition ................................................................
   content: `(${NodeName.CELL} | ${NodeName.HEADER_CELL})*`,
   tableRole: TableRole.Row,
+};
+
+// -- Render Spec -----------------------------------------------------------------
+export const RowNodeRendererSpec: NodeRendererSpec<RowAttributes> = {
+  tag: 'tr',
+
+  attributes: {/*use the default renderer on all Attributes*/},
 };
 
 // == Type ========================================================================

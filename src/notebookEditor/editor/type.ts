@@ -28,6 +28,10 @@ import { SelectionHandling } from 'notebookEditor/extension/selectionHandling';
 import { Strikethrough } from 'notebookEditor/extension/strikethrough';
 import { SubScript } from 'notebookEditor/extension/subScript';
 import { SuperScript } from 'notebookEditor/extension/superScript';
+import { Cell } from 'notebookEditor/extension/table/node/cell';
+import { HeaderCell } from 'notebookEditor/extension/table/node/headerCell';
+import { Row } from 'notebookEditor/extension/table/node/row';
+import { Table } from 'notebookEditor/extension/table/node/table';
 import { Text } from 'notebookEditor/extension/text';
 import { TextStyle } from 'notebookEditor/extension/textStyle';
 import { Underline } from 'notebookEditor/extension/underline';
@@ -43,6 +47,7 @@ export const editorDefinition: Extension[] = [
   BasicKeymap,
   Blockquote,
   Bold,
+  Cell,
   Code,
   CodeBlock,
   CodeBlockReference,
@@ -53,8 +58,9 @@ export const editorDefinition: Extension[] = [
   EditableInlineNodeWithContent,
   EmojiSuggestion,
   GapCursor,
-  History,
+  HeaderCell,
   Heading,
+  History,
   HorizontalRule,
   Image,
   Italic,
@@ -64,10 +70,12 @@ export const editorDefinition: Extension[] = [
   NestedViewNode,
   Paragraph,
   ReplacedTextMark,
+  Row,
   SelectionHandling,
   SubScript,
   SuperScript,
   Strikethrough,
+  Table,
   Text,
   TextStyle,
   Underline,

@@ -24,6 +24,10 @@ import { StrikethroughMarkRendererSpec } from '../extension/strikethrough';
 import { isTextJSONNode, TextNodeRendererSpec } from '../extension/text';
 import { SubScriptMarkRendererSpec } from '../extension/subScript';
 import { SuperScriptMarkRendererSpec } from '../extension/superScript';
+import { CellNodeRendererSpec } from '../extension/table/node/cell';
+import { HeaderCellNodeRendererSpec } from '../extension/table/node/headerCell';
+import { RowNodeRendererSpec } from '../extension/table/node/row';
+import { TableNodeRendererSpec } from '../extension/table/node/table';
 import { TextStyleMarkRendererSpec } from '../extension/textStyle';
 import { UnderlineMarkRendererSpec } from '../extension/underline';
 import { getMarkName, JSONMark, MarkName } from '../mark';
@@ -37,18 +41,22 @@ import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK
 // == Type ========================================================================
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.BLOCKQUOTE]: BlockquoteNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.CELL]: CellNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.CODEBLOCK]: CodeBlockNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DOC]: DocumentNodeRendererSpec,
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2RendererSpec as any/*FIXME!!!*/,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.HEADER_CELL]: HeaderCellNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.IMAGE]: ImageNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.MARK_HOLDER]: MarkHolderNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.ROW]: RowNodeRendererSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.TABLE]: TableNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.TEXT]: TextNodeRendererSpec,
 };
 

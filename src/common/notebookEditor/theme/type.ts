@@ -69,6 +69,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
     },
+    [NodeName.CELL]: {/*no defined value*/},
     [NodeName.CODEBLOCK]: {
       [AttributeType.PaddingLeft]: '4px',
       [AttributeType.PaddingRight]: '4px',
@@ -98,6 +99,7 @@ export const DefaultTheme: Theme = {
     },
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
+    [NodeName.HEADER_CELL]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#F3F3F3',
       [AttributeType.MarginLeft]: '4px',
@@ -117,6 +119,7 @@ export const DefaultTheme: Theme = {
     },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
+    [NodeName.ROW]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#000000',
@@ -126,6 +129,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginTop]: '0.5rem',
       [AttributeType.MarginBottom]: '0.5rem',
     },
+    [NodeName.TABLE]: {/*no defined value*/},
     [NodeName.TEXT]:{/*no defined value*/},
   },
 
@@ -188,6 +192,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
     },
+    [NodeName.CELL]: {/*no defined value*/},
     [NodeName.CODEBLOCK]: {
       [AttributeType.PaddingLeft]: '4px',
       [AttributeType.PaddingRight]: '4px',
@@ -217,6 +222,7 @@ export const GoogleDocsTheme: Theme = {
     },
     [NodeName.DOC]: {/*no defined value*/},
     [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
+    [NodeName.HEADER_CELL]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.MarginLeft]: '4px',
@@ -235,6 +241,7 @@ export const GoogleDocsTheme: Theme = {
     },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
+    [NodeName.ROW]: {/*no defined value*/},
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#353744',
@@ -244,6 +251,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.MarginTop]: '0.5rem',
       [AttributeType.MarginBottom]: '0.5rem',
     },
+    [NodeName.TABLE]: {/*no defined value*/},
     [NodeName.TEXT]:{/*no defined value*/},
   },
 

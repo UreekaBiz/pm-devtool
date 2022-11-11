@@ -21,6 +21,10 @@ import { ReplacedTextMarkMarkSpec } from './extension/replacedTextMark';
 import { SubScriptMarkSpec } from './extension/subScript';
 import { SuperScriptMarkSpec } from './extension/superScript';
 import { StrikethroughMarkSpec } from './extension/strikethrough';
+import { TableNodeSpec } from './extension/table/node/table';
+import { CellNodeSpec } from './extension/table/node/cell';
+import { HeaderCellNodeSpec } from './extension/table/node/headerCell';
+import { RowNodeSpec } from './extension/table/node/row';
 import { TextNodeSpec } from './extension/text';
 import { TextStyleMarkSpec } from './extension/textStyle';
 import { UnderlineMarkSpec } from './extension/underline';
@@ -35,6 +39,7 @@ import { NodeName } from './node';
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
   // -- priority ordered ----------------------------------------------------------
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
+  [NodeName.TABLE]: TableNodeSpec,
   [NodeName.CODEBLOCK]: CodeBlockNodeSpec,
   [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2Spec,
   [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
@@ -42,13 +47,16 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeSpec,
 
   // -- priority does not matter --------------------------------------------------
+  [NodeName.CELL]: CellNodeSpec,
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeSpec,
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeSpec,
   [NodeName.DOC]: DocumentNodeSpec,
+  [NodeName.HEADER_CELL]: HeaderCellNodeSpec,
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeSpec,
   [NodeName.IMAGE]: ImageNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
+  [NodeName.ROW]: RowNodeSpec,
 
   // -- priority at last ----------------------------------------------------------
   [NodeName.TEXT]: TextNodeSpec,
