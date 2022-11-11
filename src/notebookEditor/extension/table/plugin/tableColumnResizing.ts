@@ -39,7 +39,7 @@ class TableResizeState {
 
       if(!pointsAtCell(tr.doc.resolve(handle))) {
         handle = -1;
-      }
+      } /* else -- not pointing at a Cell */
 
       const newState = new TableResizeState(handle, this.dragging);
       return newState;
@@ -313,17 +313,18 @@ export const handleDecorations = (state: EditorState, cell: number) => {
     return DecorationSet.empty;
   } /* else -- there is a Table to decorate */
 
-  const map = TableMap.get(table);
+  const tableMap = TableMap.get(table);
   const start = $cell.start(-1);
-  const col = map.colCount($cell.pos - start) + $cell.nodeAfter?.attrs[AttributeType.ColSpan];
+  const col = tableMap.colCount($cell.pos - start) + $cell.nodeAfter?.attrs[AttributeType.ColSpan];
 
-  for(let row = 0; row < map.height; row++) {
-    const index = col + row * map.width - 1;
+  for(let row = 0; row < tableMap.height; row++) {
+    const index = col + row * tableMap.width - 1;
+
     // for positions that have either a different cell or the end of the
     // Table to their right, and either the top of the table or a
     // different cell above them, add a decoration
-    if((col == map.width || map.map[index] != map.map[index + 1]) && (row == 0 || map.map[index - 1] != map.map[index - 1 - map.width])) {
-      const cellPos = map.map[index];
+    if((col === tableMap.width || tableMap.map[index] !== tableMap.map[index + 1]) && (row === 0 || tableMap.map[index - 1] !== tableMap.map[index - 1 - tableMap.width])) {
+      const cellPos = tableMap.map[index];
 
       const node = table.nodeAt(cellPos);
       const nodeSize = node?.nodeSize || 0/*default*/;
