@@ -17,7 +17,6 @@
 .ProseMirror table td > *, .ProseMirror table th > * { margin-bottom: 0; }
 .ProseMirror table th {
   background-color: #f1f3f5;
-  font-weight: bold;
   text-align: left;
 }
 .ProseMirror table .selectedCell:after {
