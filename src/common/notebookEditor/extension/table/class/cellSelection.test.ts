@@ -3,7 +3,13 @@ import ist from 'ist';
 import { Command, EditorState } from 'prosemirror-state';
 // import { eq } from 'prosemirror-test-builder';
 
-import { addRowAfterCommand, addRowBeforeCommand, emptyCellBuilder, isCellSelection, getNotebookSchemaNodeBuilders, CellSelection, NodeName } from 'common';
+import { addRowAfterCommand, addRowBeforeCommand } from '../../../../notebookEditor/command/table';
+import { getNotebookSchemaNodeBuilders } from '../../../../notebookEditor/command/test/testUtil';
+import { emptyCellBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
+import { NodeName } from '../../../../notebookEditor/node';
+import { isCellSelection } from '../../../../notebookEditor/selection';
+
+import { CellSelection } from './CellSelection';
 
 // ********************************************************************************
 // == Constant ====================================================================
