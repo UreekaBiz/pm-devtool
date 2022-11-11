@@ -19,7 +19,7 @@ export const createTable = (schema: NotebookSchemaType, rowsCount: number, colsC
     if(!cellType || !headerType) throw new Error('Cell or Header type not defined defined. Check that the correct names are being used');
 
     const cell = createCell(cellType, cellContent);
-    if(!cell) throw new Error('Cell not created successfully when it was meant to.');
+    if(!cell) throw new Error('Cell not created successfully when it was meant to');
     cells.push(cell);
 
     if(withHeaderRow) {
