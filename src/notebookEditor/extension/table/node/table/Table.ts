@@ -11,6 +11,7 @@ import { addRowAfter, goToCell } from '../../command';
 import { getTableAttrs } from './attribute';
 import { deleteTableWhenAllCellsSelected } from './command';
 import { TableController } from './nodeView';
+import './table.css';
 
 // ********************************************************************************
 // == Node ========================================================================

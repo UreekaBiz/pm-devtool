@@ -1,0 +1,51 @@
+/* == Table ==================================================================== */
+.ProseMirror table {
+  table-layout: fixed;
+  width: 95%;
+  margin: 10px;
+  border-collapse: collapse;
+  overflow: hidden;
+}
+.ProseMirror table td, .ProseMirror table th {
+  position: relative;
+  vertical-align: top;
+  box-sizing: border-box;
+  min-width: 1em;
+  padding: 3px 5px;
+  border: 2px solid #ced4da;
+}
+.ProseMirror table td > *, .ProseMirror table th > * { margin-bottom: 0; }
+.ProseMirror table th {
+  background-color: #f1f3f5;
+  font-weight: bold;
+  text-align: left;
+}
+.ProseMirror table .selectedCell:after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(200, 200, 255, 0.4);
+  content: '';
+  pointer-events: none;
+  z-index: 2;
+}
+.ProseMirror table .column-resize-handle {
+  position: absolute;
+  width: 4px;
+  top: 0;
+  right: -2px;
+  bottom: -2px;
+  background-color: #adf;
+  pointer-events: none;
+}
+.ProseMirror table p { margin: 0; }
+.tableWrapper {
+  padding: 1rem 0;
+  overflow-x: auto;
+}
+.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
