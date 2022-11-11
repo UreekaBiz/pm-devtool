@@ -1,4 +1,4 @@
-import { getNotebookSchemaNodeBuilders, wrapTest, A, B } from '../testUtil';
+import { getNotebookSchemaNodeBuilders, wrapTest, A, B } from '../test/util';
 import { NodeName } from '../../node/type';
 import { deleteSelectionCommand, selectNodeBackwardCommand, selectNodeForwardCommand, selectTextBlockStartOrEndCommand } from './selection';
 

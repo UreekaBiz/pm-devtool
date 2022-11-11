@@ -3,9 +3,9 @@ import { Attrs, Node, Schema } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import { eq, builders } from 'prosemirror-test-builder';
 
-import { MarkName } from '../mark';
-import { NodeName } from '../node';
-import { SchemaV1 } from '../schema';
+import { MarkName } from '../../mark';
+import { NodeName } from '../../node';
+import { SchemaV1 } from '../../schema';
 
 // ********************************************************************************
 // Command-testing utilities used by test files

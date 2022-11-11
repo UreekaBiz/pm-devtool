@@ -2,7 +2,7 @@ import ist from 'ist';
 
 import { MarkName } from '../../../notebookEditor/mark';
 import { NodeName } from '../../../notebookEditor/node';
-import { createState, validateNodeWithTag, wrapTest, A, B, getNotebookSchemaWithBuildersObj, getNotebookSchemaNodeBuilders, getNotebookSchemaMarkBuilders } from '../testUtil';
+import { createState, validateNodeWithTag, wrapTest, A, B, getNotebookSchemaWithBuildersObj, getNotebookSchemaNodeBuilders, getNotebookSchemaMarkBuilders } from '../test/util';
 import { toggleMarkCommand } from './mark';
 
 // ********************************************************************************

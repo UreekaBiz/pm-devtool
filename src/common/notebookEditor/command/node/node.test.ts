@@ -6,7 +6,7 @@ import { EditorState, TextSelection } from 'prosemirror-state';
 import { AttributeType } from '../../attribute';
 import { NodeGroup, NodeName } from '../../node/type';
 import { toggleMarkCommand } from '../mark';
-import { createState, getNotebookSchemaMarkBuilders, getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../testUtil';
+import { createState, getNotebookSchemaMarkBuilders, getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../test/util';
 import { joinBackwardCommand, joinForwardCommand, liftCommand, liftEmptyBlockNodeCommand, splitBlockCommand, splitBlockKeepMarksCommand, wrapInCommand } from './node';
 
 // ********************************************************************************

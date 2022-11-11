@@ -3,6 +3,6 @@ export  * from './attribute';
 export  * from './mark';
 export  * from './node';
 export  * from './selection';
-export  * from './testUtil';
+export  * from './test/util';
 export  * from './type';
 export  * from './util';
