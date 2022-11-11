@@ -15,40 +15,14 @@ import { setTableNodeAttributes, removeColSpan } from '../util';
 // == Constant ====================================================================
 const fixTablesKey = new PluginKey('fix-tables');
 
-// == Util ========================================================================
-/**
- * iterate through the Nodes that changed in a Document comparing it to the
- * previous one
- */
-const changedDescendants = (oldDoc: ProseMirrorNode, currentDoc: ProseMirrorNode, offset: number, callback: (node: ProseMirrorNode, offset: number) => void) => {
-  const oldSize = oldDoc.childCount;
-  const curSize = currentDoc.childCount;
-
-  outerLoop: for(let i = 0, j = 0; i < curSize; i++) {
-    const child = currentDoc.child(i);
-    for(let scan = j, e = Math.min(oldSize, i + 3); scan < e; scan++) {
-      if(oldDoc.child(scan) == child) {
-        j = scan + 1;
-        offset += child.nodeSize;
-        continue outerLoop;
-      } /* else -- does not equal the child, do nothing special */
-    }
-
-    callback(child, offset);
-
-    if(j < oldSize && oldDoc.child(j).sameMarkup(child)) { changedDescendants(oldDoc.child(j), child, offset + 1, callback); }
-    else { child.nodesBetween(0, child.content.size, callback, offset + 1); }
-    offset += child.nodeSize;
-  }
-};
-
+// == Fix =========================================================================
 /**
  * inspect all Tables in the given State's Document and return a
  * Transaction that fixes them, if necessary. If 'oldState' is given
  * then that is assumed to hold a previous, known-good State, which
  * will be used to avoid re-scanning unchanged parts of the Document
  */
-export const fixTables = (oldState: EditorState, newState: EditorState) => {
+ export const fixTables = (oldState: EditorState, newState: EditorState) => {
   let tr: Transaction | undefined = undefined/*default*/;
   const check = (node: ProseMirrorNode, pos: number) =>  {
     if(node.type.spec.tableRole === TableRole.Table) {
@@ -69,7 +43,7 @@ export const fixTables = (oldState: EditorState, newState: EditorState) => {
  * fix the given Table if necessary. Will append to the Transaction
  * it was given (i.e. if non null), or create a new one if necessary
  */
-export function fixTable(state: EditorState, table: ProseMirrorNode, tablePos: number, tr?: Transaction) {
+ export const fixTable = (state: EditorState, table: ProseMirrorNode, tablePos: number, tr?: Transaction) => {
   const map = TableMap.get(table);
   if(!map.problems) return tr/*nothing to do*/;
 
@@ -151,4 +125,32 @@ export function fixTable(state: EditorState, table: ProseMirrorNode, tablePos: n
     pos = end;
   }
   return tr.setMeta(fixTablesKey, { fixTables: true });
-}
+};
+
+// == Util ========================================================================
+/**
+ * iterate through the Nodes that changed in a Document comparing it to the
+ * previous one
+ */
+const changedDescendants = (oldDoc: ProseMirrorNode, currentDoc: ProseMirrorNode, offset: number, callback: (node: ProseMirrorNode, offset: number) => void) => {
+  const oldSize = oldDoc.childCount;
+  const curSize = currentDoc.childCount;
+
+  outerLoop: for(let i = 0, j = 0; i < curSize; i++) {
+    const child = currentDoc.child(i);
+    for(let scan = j, e = Math.min(oldSize, i + 3); scan < e; scan++) {
+      if(oldDoc.child(scan) == child) {
+        j = scan + 1;
+        offset += child.nodeSize;
+        continue outerLoop;
+      } /* else -- does not equal the child, do nothing special */
+    }
+
+    callback(child, offset);
+
+    if(j < oldSize && oldDoc.child(j).sameMarkup(child)) { changedDescendants(oldDoc.child(j), child, offset + 1, callback); }
+    else { child.nodesBetween(0, child.content.size, callback, offset + 1); }
+    offset += child.nodeSize;
+  }
+};
+
