@@ -18,6 +18,7 @@
 .ProseMirror table th {
   background-color: #f1f3f5;
   text-align: left;
+  font-weight: normal;
 }
 .ProseMirror table .selectedCell:after {
   position: absolute;
