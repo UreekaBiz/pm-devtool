@@ -31,21 +31,21 @@ class TableEditingState {
   public apply = (tr: Transaction, thisPluginState: TableEditingState, oldEditorState: EditorState, newEditorState: EditorState) => {
     const meta = tr.getMeta(tableEditingPluginKey);
     if(meta !== null) {
-      if(meta === -1) { return null; }
-      else { return meta; }
+      if(meta === -1) { this.currentValue = null; return this; }
+      else { this.currentValue = meta; return this; }
     } /* else -- meta is null */
 
     if(thisPluginState.currentValue === null) {
-      return this.currentValue;
+      return this;
     } /* else -- currentValue is not null */
 
     if(!tr.docChanged) {
-      return this.currentValue;
+      return this;
     } /* else -- the doc changed */
 
     const { deleted, pos } = tr.mapping.mapResult(thisPluginState.currentValue);
-    if(deleted) { return null; }
-    else { return pos; }
+    if(deleted) { this.currentValue = null; return this; }
+    else { this.currentValue = pos; return this; }
   };
 }
 

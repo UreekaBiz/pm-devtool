@@ -1,6 +1,6 @@
 import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { getTableNodeTypes, AttributeType, NotebookSchemaType, TableNodeType, NodeName } from 'common';
+import { generateNodeId, getTableNodeTypes, AttributeType, NotebookSchemaType, TableNodeType, NodeName } from 'common';
 
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
 
@@ -10,8 +10,8 @@ import { createCell } from '../cell/util';
 // == Create ======================================================================
 export const createTable = (schema: NotebookSchemaType, rowsCount: number, colsCount: number, withHeaderRow: boolean, cellContent?: Fragment | ProseMirrorNode | Array<ProseMirrorNode>): ProseMirrorNode => {
   const types = getTableNodeTypes(schema);
-  const headerCells = [];
-  const cells = [];
+  const headerCells: ProseMirrorNode[] = [];
+  const cells: ProseMirrorNode[] = [];
 
   for(let index = 0; index < colsCount; index += 1) {
     const cellType = types[NodeName.CELL];
@@ -35,7 +35,7 @@ export const createTable = (schema: NotebookSchemaType, rowsCount: number, colsC
     rows.push(types.row.createChecked(null/*no attrs*/, withHeaderRow && index === 0 ? headerCells : cells));
   }
 
-  return types.table.createChecked(null/*no attrs*/, rows);
+  return types.table.createChecked({ [AttributeType.Id]: generateNodeId() }, rows);
 };
 
 // == Update ======================================================================

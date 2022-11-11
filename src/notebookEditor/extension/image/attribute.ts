@@ -8,7 +8,7 @@ import { setAttributeParsingBehavior, uniqueIdParsingBehavior } from '../util';
 // NOTE: extracted so that it can be used by both the attributes of the Extension
 //       and added to all ParseRules of the parseDOM property
 export const getImageAttrs = (storage: ExtensionStorageType): NodeExtensionAttributes<ImageAttributes> =>  ({
-// creates a new Id for the Node when it is created
+  // creates a new Id for the Node when it is created
   [AttributeType.Id]:  uniqueIdParsingBehavior(storage),
 
   // whether or not this Image has been uploaded to Storage
