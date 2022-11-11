@@ -2,6 +2,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { Attributes, AttributeType } from '../../../attribute';
 import { TableRole, TableProblem } from '../type';
+import { TableRect } from './TableRect';
 
 // ********************************************************************************
 // this code builds up a descriptive structure for a given
@@ -377,23 +378,3 @@ const freshColWidth = (attrs: Partial<Attributes>): number[] => {
   return result;
 };
 
-// == Rect Class ==================================================================
-export class TableRect {
-  // -- Attribute -----------------------------------------------------------------
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-
-  table: ProseMirrorNode | null | undefined;
-  tableMap: TableMap | null | undefined;
-  tableStart: number | null | undefined;
-
-  // -- Lifecycle -----------------------------------------------------------------
-  constructor(left: number, top: number, right: number, bottom: number) {
-    this.left = left;
-    this.top = top;
-    this.right = right;
-    this.bottom = bottom;
-  }
-}
