@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getNodeOutputSpec, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE } from 'common';
+import { getNodeOutputSpec, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
 
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
 import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
@@ -47,7 +47,7 @@ export const Table = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     tableEditingPlugin(false/*do not allow Table Node Selection*/),
-    tableColumnResizingPlugin(),
+    tableColumnResizingPlugin(TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH, false/*do not make the last Column resizable*/),
     keymap({
       'Tab': () => {
         if(goToCell('next')(editor.view.state, editor.view.dispatch)) {

@@ -53,7 +53,7 @@ class TableResizeState {
 export const tableColumnResizingPluginKey = new PluginKey<TableResizeState>('tableColumnResizing');
 
 // == Plugin ======================================================================
-export const tableColumnResizingPlugin = ({ handleWidth = 5, cellMinWidth = 25, lastColumnResizable = true } = {}) => new Plugin<TableResizeState>({
+export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: number, lastColumnResizable: boolean) => new Plugin<TableResizeState>({
   key: tableColumnResizingPluginKey,
   state: {
     init(_, state) {
