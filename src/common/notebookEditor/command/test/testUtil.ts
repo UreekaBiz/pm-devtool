@@ -23,9 +23,15 @@ type NotebookSchemaWithBuildersObjType = {
 }
 
 // == Builder =====================================================================
-/** the Node and Mark Builders used in a Notebook */
-export const getNotebookSchemaWithBuildersObj = (): NotebookSchemaWithBuildersObjType  => {
-  const obj = builders(SchemaV1);
+/**
+ * the Node and Mark Builders used in a Notebook
+ * the schema can be given if specific attributes must be set as defaults for the
+ * builders, since the fact that the attributes are split between service-common
+ * and web can break Commands that expect the default value of the Node or Mark
+ * to be present
+ */
+export const getNotebookSchemaWithBuildersObj = (schema: Schema = SchemaV1): NotebookSchemaWithBuildersObjType  => {
+  const obj = builders(schema);
   if(!hasBuilders(obj)) throw new Error('Notebook Schema does not have Builders');
   return obj;
 };
@@ -36,8 +42,8 @@ const hasBuilders = (obj: { schema: Schema; [nodeOrMarkName: string]: any/*canno
 };
 
 /** get specific NodeBuilders */
-export const getNotebookSchemaNodeBuilders = (nodeNames: NodeName[]) =>
-  Object.entries(getNotebookSchemaWithBuildersObj()).reduce<{ [nodeName: string]: NodeBuilder; }>((acc, [nodeName, builder]) => {
+export const getNotebookSchemaNodeBuilders = (nodeNames: NodeName[], schema: Schema = SchemaV1) =>
+  Object.entries(getNotebookSchemaWithBuildersObj(schema)).reduce<{ [nodeName: string]: NodeBuilder; }>((acc, [nodeName, builder]) => {
     if(nodeNames.includes(nodeName as NodeName)) {
       acc[nodeName] = builder as NodeBuilder/*by definition*/;
     } /* else -- nodeName was not requested, do not include */
@@ -45,8 +51,8 @@ export const getNotebookSchemaNodeBuilders = (nodeNames: NodeName[]) =>
   }, {/*default empty*/});
 
 /** get specific MarkBuilders */
-export const getNotebookSchemaMarkBuilders = (markNames: MarkName[]) =>
-  Object.entries(getNotebookSchemaWithBuildersObj()).reduce<{ [markName: string]: MarkBuilder; }>((acc, [markName, builder]) => {
+export const getNotebookSchemaMarkBuilders = (markNames: MarkName[], schema: Schema = SchemaV1) =>
+  Object.entries(getNotebookSchemaWithBuildersObj(schema)).reduce<{ [markName: string]: MarkBuilder; }>((acc, [markName, builder]) => {
     if(markNames.includes(markName as MarkName)) {
       acc[markName] = builder as MarkBuilder/*by definition*/;
     } /* else -- markName was not requested, do not include */

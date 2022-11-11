@@ -1,6 +1,7 @@
-import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { Node as ProseMirrorNode, Schema } from 'prosemirror-model';
 import { NodeSelection, TextSelection } from 'prosemirror-state';
 
+import { NodeSpecs, SchemaV1 } from '../../../notebookEditor/schema';
 import { NodeName } from '../../node/type';
 import { CellSelection } from '../../extension/table/class';
 import { CELL_COL_SPAN, CELL_ROW_SPAN } from '../../extension/table/node/cell';
@@ -12,13 +13,39 @@ import { getNotebookSchemaNodeBuilders, validateNodeWithTag, ANCHOR, CURSOR, HEA
 // Command-testing utilities used by Table related test files
 
 // == Constant ====================================================================
+// ensure that Cell and HeaderCell have defined attributes without being in web
+// so that tests match the real scenario
+// (SEE: getNotebookSchemaWithBuildersObj)
+const defaultCellAttrs = { [AttributeType.ColSpan]: CELL_COL_SPAN, [AttributeType.RowSpan]: CELL_ROW_SPAN };
+const modifiedSchemaNodeSpec = {
+  ...NodeSpecs,
+  [NodeName.CELL]: {
+    ...SchemaV1.nodes[NodeName.CELL].spec,
+    attrs: {
+      [AttributeType.ColSpan]: { default: CELL_COL_SPAN },
+      [AttributeType.RowSpan]: { default: CELL_ROW_SPAN },
+    },
+  },
+  [NodeName.HEADER_CELL]: {
+    ...SchemaV1.nodes[NodeName.HEADER_CELL].spec,
+    attrs: {
+      [AttributeType.ColSpan]: { default: CELL_COL_SPAN },
+      [AttributeType.RowSpan]: { default: CELL_ROW_SPAN },
+    },
+  },
+};
+export const schemaWithCellAttrs = new Schema({
+  topNode: SchemaV1.topNodeType.name,
+  marks: SchemaV1.spec.marks,
+  nodes: modifiedSchemaNodeSpec,
+});
+
 const {
   [NodeName.CELL]: defaultCellBuilder,
   [NodeName.HEADER_CELL]: defaultHeaderCellBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.PARAGRAPH]);
+} = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.PARAGRAPH], schemaWithCellAttrs);
 
-const defaultCellAttrs = { [AttributeType.ColSpan]: CELL_COL_SPAN, [AttributeType.RowSpan]: CELL_ROW_SPAN };
 
 // -- Cell ------------------------------------------------------------------------
 export const cellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
