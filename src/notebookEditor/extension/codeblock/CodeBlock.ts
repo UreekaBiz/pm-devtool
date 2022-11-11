@@ -64,8 +64,8 @@ export const CodeBlock = new NodeExtension({
       'Mod-Backspace': () => shortcutCommandWrapper(editor, blockModBackspaceCommand(NodeName.CODEBLOCK)),
 
       // set GapCursor or Selection at start or end of Block if necessary
-      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('start')),
-      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('end')),
+      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('start', NodeName.CODEBLOCK)),
+      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('end', NodeName.CODEBLOCK)),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),

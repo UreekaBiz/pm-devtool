@@ -53,10 +53,10 @@ export class SetTextSelectionDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
-export const selectTextBlockStartOrEndCommand = (side: 'start' | 'end'): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SelectTextBlockStartOrEndDocumentUpdate(side).update(state, state.tr), dispatch);
+export const selectTextBlockStartOrEndCommand = (side: 'start' | 'end', nodeName: NodeName): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SelectTextBlockStartOrEndDocumentUpdate(side, nodeName).update(state, state.tr), dispatch);
 export class SelectTextBlockStartOrEndDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly side: 'start' | 'end') {/*nothing additional*/}
+  public constructor(private readonly side: 'start' | 'end', private readonly nodeName: NodeName) {/*nothing additional*/}
 
   /**
    * modify the given Transaction such that the Selection is set
@@ -64,7 +64,9 @@ export class SelectTextBlockStartOrEndDocumentUpdate implements AbstractDocument
    */
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = editorState;
+
     const $pos = this.side === 'start' ? selection.$from : selection.$to;
+    if(($pos.parent.type.name !== this.nodeName)) return false/*should not be handled by this Node*/;
 
     let depth = $pos.depth;
     while($pos.node(depth).isInline) {

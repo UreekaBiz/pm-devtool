@@ -55,8 +55,8 @@ export const DemoAsyncNode2 = new NodeExtension({
       'Mod-Backspace': () => shortcutCommandWrapper(editor, blockModBackspaceCommand(NodeName.DEMO_ASYNC_NODE_2)),
 
       // set GapCursor or Selection at start or end of Block if necessary
-      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('start')),
-      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('end')),
+      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('start', NodeName.DEMO_ASYNC_NODE_2)),
+      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('end', NodeName.DEMO_ASYNC_NODE_2)),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.DEMO_ASYNC_NODE_2)),
