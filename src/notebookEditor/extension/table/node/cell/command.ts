@@ -1,55 +1,9 @@
 import { Fragment, Node as ProseMirrorNode, NodeType, ResolvedPos } from 'prosemirror-model';
-import { Command, EditorState, TextSelection } from 'prosemirror-state';
+import { EditorState, TextSelection } from 'prosemirror-state';
 
 import { addColSpan, cellAround, cellWrapping, getTableNodeTypes, isCellSelection, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes, AttributeType, CellSelection, DispatchType, TableRect } from 'common';
 
 // == Cell ========================================================================
-export const mergeOrSplitCommand: Command = (state, dispatch) => {
-  if(mergeCells(state, dispatch))
-    return true/*cells can be merged*/;
-  /* else -- cells cannot be merged, split */
-
-  return splitCell(state, dispatch);
-};
-
-const isEmpty = (cell: ProseMirrorNode) => {
-  const { content: cellContent } = cell;
-
-  return (cellContent.childCount === 1
-    && cellContent.firstChild
-    && cellContent.firstChild.isTextblock
-    && cellContent.firstChild.childCount === 0
-  );
-};
-
-const cellsOverlapRectangle = (map: number[], width: number, height: number, rect: TableRect) => {
-  let indexTop = rect.top * width + rect.left;
-  let indexLeft = indexTop;
-
-  let indexBottom = (rect.bottom - 1) * width + rect.left;
-  let indexRight = indexTop + (rect.right - rect.left - 1);
-
-  for(let i = rect.top; i < rect.bottom; i++) {
-    if((rect.left > 0 && map[indexLeft] === map[indexLeft - 1]) || (rect.right < width && map[indexRight] === map[indexRight + 1])) {
-      return true;
-    } /* else -- keep looking */
-    indexLeft += width;
-    indexRight += width;
-  }
-
-  for(let i = rect.left; i < rect.right; i++) {
-    if((rect.top > 0 && map[indexTop] === map[indexTop - width]) || (rect.bottom < height && map[indexBottom] === map[indexBottom + width])) {
-      return true;
-    } /* else -- keep looking */
-
-    indexTop++;
-    indexBottom++;
-  }
-
-
-  return false/*default*/;
-};
-
 /**
  * merge the selected Cells into a single Cell, only available
  * when the selected Cell's outline forms a Rectangle
@@ -86,7 +40,7 @@ export const mergeCells = (state: EditorState, dispatch: DispatchType) => {
           mergedPos = cellPos;
           mergedCell = cell;
         } else {
-          if(!isEmpty(cell)) content = content.append(cell.content);
+          if(!isCellEmpty(cell)) content = content.append(cell.content);
           let mapped = tr.mapping.map(cellPos + rect.tableStart);
           tr.delete(mapped, mapped + cell.nodeSize);
         }
@@ -98,7 +52,7 @@ export const mergeCells = (state: EditorState, dispatch: DispatchType) => {
 
     if(content.size) {
       let end = mergedPos + 1 + mergedCell.content.size;
-      let start = isEmpty(mergedCell) ? mergedPos + 1 : end;
+      let start = isCellEmpty(mergedCell) ? mergedPos + 1 : end;
       tr.replaceWith(start + rect.tableStart, end + rect.tableStart, content);
     } /* else -- no need to replace mergedCell's content */
 
@@ -119,14 +73,13 @@ export const splitCell = (state: EditorState, dispatch: DispatchType) => {
     return nodeTypes[node.type.spec.tableRole];
   })(state, dispatch);
 };
-
 /**
  * split a selected Cell whose rowSpan or colSpan is greater than one
  * into smaller Cell with the Cell type (th, td) returned by the
  * given getCellType function
  */
 type GetCellTypeFunctionType = ({ row, col, node }: { row: number; col: number; node: ProseMirrorNode; }) => NodeType;
-export const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (state: EditorState, dispatch: DispatchType) => {
+const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (state: EditorState, dispatch: DispatchType) => {
   const { selection } = state;
   let cellNode, cellPos;
 
@@ -203,31 +156,23 @@ export const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) 
   return true/*handled*/;
 };
 
-/**
- * sets the given attribute to the given value, and is only available
- * when the currently selected Cell does not already have that attribute
- * set to that value
- */
-export const setCellAttr = (name: string, value: any) => (state: EditorState, dispatch: DispatchType) => {
+/** select the previous or the next Cell in a Table */
+export const goToCell = (direction:  'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
   if(!isInTable(state)) return false/*nothing to do*/;
 
   const $cell = selectionCell(state);
-  if(!$cell) return false/*no resolved CellPos available*/;
-  if($cell.nodeAfter?.attrs[name] === value) return false/*attribute already has this value*/;
+  if(!$cell) return false/*nothing to do*/;
+
+  const cell = findCell($cell, direction);
+  if(!cell) return false/*nothing to do*/;
 
   if(dispatch) {
-    const { selection, tr } = state;
-    if(isCellSelection(selection)) {
-      selection.forEachCell((node, pos) => {
-        if(!node) return/*nothing to do*/;
+    const $cell = state.doc.resolve(cell);
+    const $movedForwardCell = moveCellForward($cell);
+    if(!$movedForwardCell) return false/*nothing to do*/;
 
-        if(node.attrs[name] !== value) {
-          tr.setNodeMarkup(pos, null/*maintain type*/, setTableNodeAttributes(node.attrs, name, value));
-        } /* else -- already has this value, do not change */
-      });
-    } else {
-      tr.setNodeMarkup($cell.pos, null/*maintain type*/, setTableNodeAttributes($cell.nodeAfter?.attrs ?? {/*no attrs*/}, name, value));
-    }
+    const { tr } = state;
+    tr.setSelection(TextSelection.between($cell, $movedForwardCell)).scrollIntoView();
 
     dispatch(tr);
   }
@@ -235,7 +180,46 @@ export const setCellAttr = (name: string, value: any) => (state: EditorState, di
   return true;
 };
 
-const findNextCell = ($cell: ResolvedPos, dir: 'previous' | 'next') => {
+// == Util ========================================================================
+const isCellEmpty = (cell: ProseMirrorNode) => {
+  const { content: cellContent } = cell;
+
+  return (cellContent.childCount === 1
+    && cellContent.firstChild
+    && cellContent.firstChild.isTextblock
+    && cellContent.firstChild.childCount === 0
+  );
+};
+
+const cellsOverlapRectangle = (map: number[], width: number, height: number, rect: TableRect) => {
+  let indexTop = rect.top * width + rect.left;
+  let indexLeft = indexTop;
+
+  let indexBottom = (rect.bottom - 1) * width + rect.left;
+  let indexRight = indexTop + (rect.right - rect.left - 1);
+
+  for(let i = rect.top; i < rect.bottom; i++) {
+    if((rect.left > 0 && map[indexLeft] === map[indexLeft - 1]) || (rect.right < width && map[indexRight] === map[indexRight + 1])) {
+      return true;
+    } /* else -- keep looking */
+    indexLeft += width;
+    indexRight += width;
+  }
+
+  for(let i = rect.left; i < rect.right; i++) {
+    if((rect.top > 0 && map[indexTop] === map[indexTop - width]) || (rect.bottom < height && map[indexBottom] === map[indexBottom + width])) {
+      return true;
+    } /* else -- keep looking */
+
+    indexTop++;
+    indexBottom++;
+  }
+
+
+  return false/*default*/;
+};
+
+const findCell = ($cell: ResolvedPos, dir: 'previous' | 'next') => {
   if(dir === 'previous') {
     const { nodeBefore } = $cell;
     if(nodeBefore) {
@@ -269,28 +253,3 @@ const findNextCell = ($cell: ResolvedPos, dir: 'previous' | 'next') => {
 
   return/*undefined*/;
 };
-
-/** select the previous or the next Cell in a Table */
-export const goToCell = (direction:  'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
-
-  const $cell = selectionCell(state);
-  if(!$cell) return false/*nothing to do*/;
-
-  const cell = findNextCell($cell, direction);
-  if(!cell) return false/*nothing to do*/;
-
-  if(dispatch) {
-    const $cell = state.doc.resolve(cell);
-    const $movedForwardCell = moveCellForward($cell);
-    if(!$movedForwardCell) return false/*nothing to do*/;
-
-    const { tr } = state;
-    tr.setSelection(TextSelection.between($cell, $movedForwardCell)).scrollIntoView();
-
-    dispatch(tr);
-  }
-
-  return true;
-};
-

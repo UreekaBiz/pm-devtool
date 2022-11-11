@@ -1,14 +1,13 @@
 import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { IoMdSquareOutline } from 'react-icons/io';
 import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
-import { TiArrowSync } from 'react-icons/ti';
 
 import { isCellSelection, NodeName } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
 
-import { goToCell, mergeCells, mergeOrSplitCommand, splitCell } from '../cell/command';
+import { goToCell, mergeCells, splitCell } from '../cell/command';
 import { toggleHeaderCell } from '../headerCell/command';
 
 //*********************************************************************************
@@ -73,24 +72,6 @@ export const splitCellsToolItem: ToolItem = {
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCell),
 };
 
-export const mergeOrSplitCellsToolItem: ToolItem = {
-  toolType: 'button',
-  name: 'Merge or Split',
-  label: 'Merge or Split',
-  icon: <TiArrowSync size={16} />,
-  tooltip: 'Merge or Split',
-
-  shouldBeDisabled: (editor) => {
-    const { selection } = editor.view.state;
-    if((editor.isNodeOrMarkActive(NodeName.CELL) || editor.isNodeOrMarkActive(NodeName.HEADER_CELL)) && isCellSelection(selection)) return false;
-    /* else -- user does not have many cells selected */
-
-    return true;
-  },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, mergeOrSplitCommand),
-};
-
 export const toggleHeaderCellToolItem: ToolItem = {
   toolType: 'button',
   name: 'Toggle Header in Cell',
@@ -109,6 +90,5 @@ export const cellToolItems = [
   goToNextCellToolItem,
   mergeCellsToolItem,
   splitCellsToolItem,
-  mergeOrSplitCellsToolItem,
   toggleHeaderCellToolItem,
 ];
