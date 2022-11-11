@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getNodeOutputSpec, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
+import { addRowAfterCommand, deleteTableWhenAllCellsSelected, getNodeOutputSpec, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
 
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
 import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
@@ -9,7 +9,6 @@ import { tableColumnResizingPlugin } from '../../plugin/tableColumnResizing';
 import { tableEditingPlugin } from '../../plugin/tableEditing';
 import { goToCell } from '../cell/command';
 import { getTableAttrs } from './attribute';
-import { addRowAfterCommand, deleteTableWhenAllCellsSelected } from './command';
 import { TableController } from './nodeView';
 import './table.css';
 

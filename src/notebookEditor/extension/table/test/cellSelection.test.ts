@@ -3,9 +3,7 @@ import ist from 'ist';
 import { Command, EditorState } from 'prosemirror-state';
 // import { eq } from 'prosemirror-test-builder';
 
-import { emptyCellBuilder, isCellSelection, getNotebookSchemaNodeBuilders, CellSelection, NodeName } from 'common';
-
-import { addRowBeforeCommand, addRowAfterCommand } from '../node';
+import { addRowAfterCommand, addRowBeforeCommand, emptyCellBuilder, isCellSelection, getNotebookSchemaNodeBuilders, CellSelection, NodeName } from 'common';
 
 // ********************************************************************************
 // == Constant ====================================================================

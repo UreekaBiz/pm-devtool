@@ -1,5 +1,6 @@
 import { Fragment, Node as ProseMirrorNode, NodeType } from 'prosemirror-model';
 
+// ********************************************************************************
 export const createCell = (cellType: NodeType, cellContent?: Fragment | ProseMirrorNode | Array<ProseMirrorNode>): ProseMirrorNode | null | undefined => {
   if(cellContent) {
     return cellType.createChecked(null, cellContent);
