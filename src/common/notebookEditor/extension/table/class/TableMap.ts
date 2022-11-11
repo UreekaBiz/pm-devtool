@@ -297,12 +297,12 @@ const computeMap = (table: ProseMirrorNode) => {
 
 /** find the width of a Table Node */
 const findWidth = (table: ProseMirrorNode) => {
-  let width = -1;
-  let hasRowSpan = false;
+  let width = -1/*default*/;
+  let hasRowSpan = false/*default*/;
 
   for(let row = 0; row < table.childCount; row++) {
     let rowNode = table.child(row);
-    let rowWidth = 0;
+    let rowWidth = 0/*default*/;
 
     if(hasRowSpan) {
       for(let j = 0; j < row; j++) {
@@ -310,7 +310,9 @@ const findWidth = (table: ProseMirrorNode) => {
 
         for(let i = 0; i < prevRow.childCount; i++) {
           const cell = prevRow.child(i);
-          if(j + cell.attrs[AttributeType.RowSpan] > row) rowWidth += cell.attrs[AttributeType.ColSpan];
+          if(j + cell.attrs[AttributeType.RowSpan] > row) {
+            rowWidth += cell.attrs[AttributeType.ColSpan];
+          } /* else -- no need to increase rowWidth */
         }
       }
     } /* else -- no rowSpan */
@@ -323,14 +325,12 @@ const findWidth = (table: ProseMirrorNode) => {
       } /* else -- rowSpan is not greater than 1 */
     }
 
-
     if(width === -1) {
       width = rowWidth;
-    } else if(width != rowWidth) {
+    } else if(width !== rowWidth) {
       width = Math.max(width, rowWidth);
     } /* else -- do not change default width */
   }
-
   return width;
 };
 
