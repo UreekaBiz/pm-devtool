@@ -42,7 +42,6 @@
 }
 .ProseMirror table p { margin: 0; }
 .tableWrapper {
-  padding: 1rem 0;
   overflow-x: auto;
 }
 .resize-cursor {
