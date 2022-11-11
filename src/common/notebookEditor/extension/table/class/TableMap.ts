@@ -16,7 +16,7 @@ import { TableRole, TableProblem } from '../type';
 
 // == Type ========================================================================
 type CollisionProblemType = { type: TableProblem.Collision; row: number; pos: number; n: number; };
-type ColWidthMismatchProblemType = { type: TableProblem.ColWidthMistMatch; pos: number; colwidth: number[]; };
+type ColWidthMismatchProblemType = { type: TableProblem.ColWidthMistMatch; pos: number; colWidth: number[]; };
 type MissingProblemType = { type: TableProblem.Missing; row: number; n: number; };
 type OverlongRowspanProblemType = { type: TableProblem.OverlongRowSpan; pos: number; n: number; };
 type ProblemType = CollisionProblemType | ColWidthMismatchProblemType | MissingProblemType | OverlongRowspanProblemType;
@@ -356,7 +356,7 @@ const findBadColWidths = (map: TableMap, colWidths: number[], table: ProseMirror
     }
 
     if(updated) {
-      map.problems.unshift({ type: TableProblem.ColWidthMistMatch, pos, colwidth: updated });
+      map.problems.unshift({ type: TableProblem.ColWidthMistMatch, pos, colWidth: updated });
     } /* else -- updated is default (null) */
   }
 };

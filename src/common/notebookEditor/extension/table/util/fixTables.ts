@@ -106,7 +106,7 @@ export function fixTable(state: EditorState, table: ProseMirrorNode, tablePos: n
       const cell = table.nodeAt(problem.pos);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + problem.pos), null/*maintain type*/, setTableNodeAttributes(cell.attrs, 'colwidth', problem.colwidth));
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + problem.pos), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.ColWidth, problem.colWidth));
     }
   }
 

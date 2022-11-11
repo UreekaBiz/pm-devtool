@@ -432,7 +432,7 @@ export const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) 
   if(dispatch) {
     let baseAttrs = cellNode.attrs;
     const attrs = [];
-    const colwidth = baseAttrs[AttributeType.ColWidth];
+    const colWidth = baseAttrs[AttributeType.ColWidth];
 
     if(baseAttrs[AttributeType.RowSpan] > 1) {
       baseAttrs = setTableNodeAttributes(baseAttrs, AttributeType.RowSpan, 1);
@@ -446,7 +446,7 @@ export const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) 
     if(!rect || !rect.table || !rect.tableMap || !rect.tableStart) return false/*no selected Rectangle in Table*/;
 
     for(let i = 0; i < rect.right - rect.left; i++) {
-      attrs.push(colwidth ? setTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colwidth && colwidth[i] ? [colwidth[i]] : null): baseAttrs);
+      attrs.push(colWidth ? setTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colWidth && colWidth[i] ? [colWidth[i]] : null): baseAttrs);
     }
 
     const { tr } = state;

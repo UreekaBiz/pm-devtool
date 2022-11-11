@@ -263,13 +263,13 @@ const updateColumnWidth = (view: EditorView, cell: number, width: number) => {
     const index = attrs[AttributeType.ColSpan] === 1
       ? 0
       : col - map.colCount(pos);
-    if(attrs.colwidth && attrs.colwidth[index] == width) continue/*no need to do anything*/;
+    if(attrs[AttributeType.ColWidth] && attrs[AttributeType.ColWidth][index] == width) continue/*no need to do anything*/;
 
-    const colwidth = attrs.colwidth
-      ? attrs.colwidth.slice()
+    const colWidth = attrs[AttributeType.ColWidth]
+      ? attrs[AttributeType.ColWidth].slice()
       : zeroes(attrs[AttributeType.ColSpan]);
-    colwidth[index] = width;
-    tr.setNodeMarkup(start + pos, null/*do not change type*/, setTableNodeAttributes(attrs, AttributeType.ColWidth, colwidth));
+    colWidth[index] = width;
+    tr.setNodeMarkup(start + pos, null/*do not change type*/, setTableNodeAttributes(attrs, AttributeType.ColWidth, colWidth));
   }
 
   if(tr.docChanged) {
