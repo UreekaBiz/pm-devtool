@@ -98,11 +98,9 @@ export class CellSelection extends Selection {
     ) {
       const tableChanged = this.$anchorCell.node(-1) !== $anchorCell.node(-1);
 
-      if(tableChanged && this.isRowSelection())
-        return CellSelection.rowSelection($anchorCell, $headCell);
-      else if(tableChanged && this.isColSelection())
-        return CellSelection.colSelection($anchorCell, $headCell);
-      else return new CellSelection($anchorCell, $headCell);
+      if(tableChanged && this.isRowSelection()) { return CellSelection.rowSelection($anchorCell, $headCell); }
+      else if(tableChanged && this.isColSelection()) { return CellSelection.colSelection($anchorCell, $headCell); }
+      else { return new CellSelection($anchorCell, $headCell); }
     }
     return TextSelection.between($anchorCell, $headCell);
   }
@@ -249,6 +247,7 @@ export class CellSelection extends Selection {
       } /* else -- head rect's bottom is not smaller than the height of the map*/
     }
 
+    console.log('colSelection');
     return new CellSelection($anchorCell, $headCell);
   }
 
@@ -359,9 +358,11 @@ class CellBookmark implements SelectionBookmark {
       $anchorCell.index() < $anchorCell.parent.childCount &&
       $headCell.index() < $headCell.parent.childCount &&
       inSameTable($anchorCell, $headCell)
-    )
+    ) {
       return new CellSelection($anchorCell, $headCell);
-    else return Selection.near($headCell, 1);
+    } else {
+      return Selection.near($headCell, 1);
+    }
   }
 }
 

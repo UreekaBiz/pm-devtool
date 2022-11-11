@@ -33,7 +33,7 @@ describe('CellSelection', () => {
 
   const executeCellSelectionTestCommand = (anchor: number, head: number, testedCommand: Command) => {
     let state = EditorState.create({ doc: tableDoc, selection: CellSelection.create(tableDoc, anchor, head) });
-    testedCommand(state, (tr) => (state = state.apply(tr)));
+    testedCommand(state, (tr) => state = state.apply(tr));
     return state;
   };
 
