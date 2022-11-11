@@ -290,7 +290,7 @@ const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectPr
   const cells: ProseMirrorNode[] = [];
   let refRow: number | null = row > 0 ? -1 : 0;
   if(rowIsHeader(tableMap, table, row + refRow)) {
-    refRow = row == 0 || row === tableMap.height ? null : 0;
+    refRow = row === 0 || row === tableMap.height ? null : 0;
   } /* else -- row is not a Header */
 
   for(let col = 0, index = tableMap.width * row; col < tableMap.width; col++, index++) {
@@ -307,7 +307,7 @@ const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectPr
     } else {
       const type =
         refRow == null
-          ? getTableNodeTypes(table.type.schema).cell
+          ? getTableNodeTypes(table.type.schema)[NodeName.CELL]
           : table.nodeAt(tableMap.map[index + refRow * tableMap.width])?.type;
 
       if(type) {
@@ -318,7 +318,6 @@ const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectPr
       } /* else -- no type to create */
     }
   }
-
   tr.insert(rowPos, getTableNodeTypes(table.type.schema)[NodeName.ROW].create(null/*no attrs*/, cells));
   return tr;
 };

@@ -65,23 +65,23 @@ export class CellSelection extends Selection {
   constructor($anchorCell: ResolvedPos, $headCell: ResolvedPos = $anchorCell/*default to the same cell*/) {
     const table = $anchorCell.node(-1/*Table ancestor*/);
     const map = TableMap.get(table);
-    const start = $anchorCell.start(-1/*Table ancestor depth*/);
+    const startOfTable = $anchorCell.start(-1/*Table ancestor depth*/);
 
-    const rect = map.rectBetween($anchorCell.pos - start, $headCell.pos - start);
+    const rect = map.rectBetween($anchorCell.pos - startOfTable, $headCell.pos - startOfTable);
     const doc = $anchorCell.node(0);
-    const cells = map.cellsInRect(rect).filter((pos: number) => pos !== $headCell.pos - start);
+    const cells = map.cellsInRect(rect).filter((pos: number) => pos !== $headCell.pos - startOfTable);
 
     // make the head Cell the first range so that it counts
     // as the primary part of the Selection
-    cells.unshift($headCell.pos - start);
+    cells.unshift($headCell.pos - startOfTable);
     const ranges = cells.filter(pos => table.nodeAt(pos)).map((pos: number) => {
       const cell = table.nodeAt(pos);
-      const from = pos + start + 1;
+      const from = pos + startOfTable + 1;
 
       return new SelectionRange(doc.resolve(from), doc.resolve(from + cell/*guaranteed by filter*/!.content.size));
     });
 
-    super(ranges[0].$from, ranges[0].$to, ranges);
+    super(ranges[0/*head Cell*/].$from, ranges[0/*head Cell*/].$to, ranges);
     this.$anchorCell = $anchorCell;
     this.$headCell = $headCell;
   }
