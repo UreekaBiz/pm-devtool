@@ -76,8 +76,119 @@ export const deleteTableWhenAllCellsSelected: Command = (state, dispatch) => {
 };
 
 // == Column ======================================================================
+/** add a column before the column with the Selection */
+export const addColumnBefore = (state: EditorState, dispatch: DispatchType) => {
+  if(!isInTable(state)) return false/*nothing to do*/;
+
+  if(dispatch) {
+    const rect = selectedRect(state);
+    if(!rect) return false/*no selected Rectangle in Table*/;
+
+    dispatch(addColumn(state.tr, rect, rect.left));
+  }
+  return true;
+};
+
+/** add a column after the column with the Selection */
+export const addColumnAfter = (state: EditorState, dispatch: DispatchType) => {
+  if(!isInTable(state)) return false/*nothing to do*/;
+
+  if(dispatch) {
+    const rect = selectedRect(state);
+    if(!rect) return false/*no selected Rectangle in Table*/;
+
+    dispatch(addColumn(state.tr, rect, rect.right));
+  }
+  return true;
+};
+
+/** remove the selected columns from a Table */
+export const deleteColumn = (state: EditorState, dispatch: DispatchType) => {
+  if(!isInTable(state)) return false/*nothing to do*/;
+
+  if(dispatch) {
+    const rect = selectedRect(state);
+    if(!rect) return false/*no selected Rectangle in Table*/;
+    if(!rect.table || !rect.tableMap || !rect.tableStart) return false/*cannot use Rect*/;
+
+    if(rect.left === 0 && rect.right === rect.tableMap.width) return false/*do nothing*/;
+
+    const { tr } = state;
+    for(let i = rect.right - 1; ; i--) {
+      removeColumn(tr, rect, i);
+      if(i === rect.left) break/*nothing left to do*/;
+
+      rect.table = rect.tableStart ? tr.doc.nodeAt(rect.tableStart - 1) : tr.doc;
+      if(!rect.table) return false/*Table does not exist*/;
+
+      rect.tableMap = TableMap.get(rect.table);
+    }
+
+    dispatch(tr);
+  }
+
+  return true/*handled*/;
+};
+
+// == Row =========================================================================
+/** add a Table Row before the Selection */
+export const addRowBefore = (state: EditorState, dispatch: DispatchType) => {
+  if(!isInTable(state)) return false/*nothing to do*/;
+
+  if(dispatch) {
+    const rect = selectedRect(state);
+    if(!rect) return false/*no selected Rectangle in Table*/;
+
+    dispatch(addRow(state.tr, rect, rect.top));
+  }
+  return true;
+};
+
+/** add a Table Row after the Selection */
+export const addRowAfter = (state: EditorState, dispatch: DispatchType) => {
+  if(!isInTable(state)) return false/*nothing to do*/;
+
+  if(dispatch) {
+    const rect = selectedRect(state);
+    if(!rect) return false/*no selected Rectangle in Table*/;
+
+    dispatch(addRow(state.tr, rect, rect.bottom));
+  }
+  return true;
+};
+
+/** remove the selected Rows from a Table */
+export const deleteRow = (state: EditorState, dispatch: DispatchType) => {
+  if(!isInTable(state)) return false/*nothing to do*/;
+
+  if(dispatch) {
+    const rect = selectedRect(state);
+    if(!rect || !rect.table || !rect.tableMap) return false/*no selected Rectangle in Table*/;
+    if(rect.top === 0 && rect.bottom === rect.tableMap.height) return false/*nothing to do*/;
+
+    const { tr } = state;
+    for(let i = rect.bottom - 1; ; i--) {
+      removeRow(tr, rect, i);
+      if(i === rect.top) break/*nothing left to do*/;
+
+      rect.table = rect.tableStart
+        ? tr.doc.nodeAt(rect.tableStart - 1)
+        : tr.doc;
+      if(!rect.table) break/*nothing to do */;
+
+      rect.tableMap = TableMap.get(rect.table);
+    }
+
+    dispatch(tr);
+  }
+
+  return true/*handled*/;
+};
+
+// == Util ========================================================================
+// -- Column ----------------------------------------------------------------------
 /** add a Column at the given position in a Table Node */
-export const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
+const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
   if(!table || !tableMap || !tableStart) return tr/*do nothing*/;
 
   let referenceColumn: number | null = col > 0 ? -1 : 0;
@@ -116,33 +227,7 @@ export const addColumn = (tr: Transaction, { table, tableMap, tableStart }: Opti
   return tr;
 };
 
-/** add a column before the column with the Selection */
-export const addColumnBefore = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
-
-  if(dispatch) {
-    const rect = selectedRect(state);
-    if(!rect) return false/*no selected Rectangle in Table*/;
-
-    dispatch(addColumn(state.tr, rect, rect.left));
-  }
-  return true;
-};
-
-/** add a column after the column with the Selection */
-export const addColumnAfter = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
-
-  if(dispatch) {
-    const rect = selectedRect(state);
-    if(!rect) return false/*no selected Rectangle in Table*/;
-
-    dispatch(addColumn(state.tr, rect, rect.right));
-  }
-  return true;
-};
-
-export const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
+const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
   if(!table || !tableMap || !tableStart) return/*do nothing*/;
 
   const mapStart = tr.mapping.maps.length;
@@ -164,36 +249,8 @@ export const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: O
   }
 };
 
-/** remove the selected columns from a Table */
-export const deleteColumn = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
-
-  if(dispatch) {
-    const rect = selectedRect(state);
-    if(!rect) return false/*no selected Rectangle in Table*/;
-    if(!rect.table || !rect.tableMap || !rect.tableStart) return false/*cannot use Rect*/;
-
-    if(rect.left === 0 && rect.right === rect.tableMap.width) return false/*do nothing*/;
-
-    const { tr } = state;
-    for(let i = rect.right - 1; ; i--) {
-      removeColumn(tr, rect, i);
-      if(i === rect.left) break/*nothing left to do*/;
-
-      rect.table = rect.tableStart ? tr.doc.nodeAt(rect.tableStart - 1) : tr.doc;
-      if(!rect.table) return false/*Table does not exist*/;
-
-      rect.tableMap = TableMap.get(rect.table);
-    }
-
-    dispatch(tr);
-  }
-
-  return true/*handled*/;
-};
-
-// == Row =========================================================================
-export const rowIsHeader = (map: TableMap, table: ProseMirrorNode, row: number) => {
+// -- Row -------------------------------------------------------------------------
+const rowIsHeader = (map: TableMap, table: ProseMirrorNode, row: number) => {
   const headerCellType = getTableNodeTypes(table.type.schema)[NodeName.HEADER_CELL];
 
   for(let col = 0; col < map.width; col++) {
@@ -206,7 +263,7 @@ export const rowIsHeader = (map: TableMap, table: ProseMirrorNode, row: number) 
   return true/*row is Header*/;
 };
 
-export const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectProps, row: number) => {
+const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectProps, row: number) => {
   if(!tableMap || !tableStart || !table) return tr/*do nothing*/;
 
   let rowPos: number | null | undefined = tableStart;
@@ -250,33 +307,7 @@ export const addRow = (tr: Transaction, { tableMap, tableStart, table }: Optiona
   return tr;
 };
 
-/** add a Table Row before the Selection */
-export const addRowBefore = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
-
-  if(dispatch) {
-    const rect = selectedRect(state);
-    if(!rect) return false/*no selected Rectangle in Table*/;
-
-    dispatch(addRow(state.tr, rect, rect.top));
-  }
-  return true;
-};
-
-/** add a Table Row after the Selection */
-export const addRowAfter = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
-
-  if(dispatch) {
-    const rect = selectedRect(state);
-    if(!rect) return false/*no selected Rectangle in Table*/;
-
-    dispatch(addRow(state.tr, rect, rect.bottom));
-  }
-  return true;
-};
-
-export const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRectProps, row: number) => {
+const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRectProps, row: number) => {
   if(!table || !tableMap || !tableStart) return/*do nothing*/;
 
   let rowPos = 0;
@@ -312,32 +343,4 @@ export const removeRow = (tr: Transaction, { tableMap, table, tableStart }: Opti
       col += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- do nothing */
   }
-};
-
-/** remove the selected Rows from a Table */
-export const deleteRow = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
-
-  if(dispatch) {
-    const rect = selectedRect(state);
-    if(!rect || !rect.table || !rect.tableMap) return false/*no selected Rectangle in Table*/;
-    if(rect.top === 0 && rect.bottom === rect.tableMap.height) return false/*nothing to do*/;
-
-    const { tr } = state;
-    for(let i = rect.bottom - 1; ; i--) {
-      removeRow(tr, rect, i);
-      if(i === rect.top) break/*nothing left to do*/;
-
-      rect.table = rect.tableStart
-        ? tr.doc.nodeAt(rect.tableStart - 1)
-        : tr.doc;
-      if(!rect.table) break/*nothing to do */;
-
-      rect.tableMap = TableMap.get(rect.table);
-    }
-
-    dispatch(tr);
-  }
-
-  return true/*handled*/;
 };
