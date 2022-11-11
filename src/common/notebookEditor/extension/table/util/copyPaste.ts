@@ -46,13 +46,13 @@ export const pastedCells = (slice: Slice) => {
       const left = i ? 0/*default*/ : Math.max(0, openStart - 1);
       const right = i < content.childCount - 1 ? 0/*default*/ : Math.max(0, openEnd - 1);
       if(left || right) {
-        cells = fitSlice(getTableNodeTypes(schema).row, new Slice(cells, left, right)).content;
+        cells = fitSlice(getTableNodeTypes(schema)[NodeName.ROW], new Slice(cells, left, right)).content;
       } /* else -- both left and right are 0 */
 
       rows.push(cells);
     }
   } else if(firstChildRole === TableRole.Cell || firstChildRole === TableRole.HeaderCell) {
-    rows.push(openStart || openEnd ? fitSlice(getTableNodeTypes(schema).row, new Slice(content, openStart, openEnd)).content : content);
+    rows.push(openStart || openEnd ? fitSlice(getTableNodeTypes(schema)[NodeName.ROW], new Slice(content, openStart, openEnd)).content : content);
   } else {
     return null/*nothing to do*/;
   }
@@ -224,7 +224,7 @@ const growTable = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start
       }
     }
 
-    const emptyRow = tableTypes.row.create(null/*no attrs*/, Fragment.from(cells));
+    const emptyRow = tableTypes[NodeName.ROW].create(null/*no attrs*/, Fragment.from(cells));
     const rows = [];
     for(let i = map.height; i < height; i++) {
       rows.push(emptyRow);
@@ -307,7 +307,6 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
   if(!table) return/*nothing to do*/;
 
   let map = TableMap.get(table);
-
   const { top, left } = rect;
   const right = left + cells.width;
   const bottom = top + cells.height;
