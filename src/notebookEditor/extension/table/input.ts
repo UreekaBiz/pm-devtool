@@ -170,12 +170,13 @@ export const handleMouseDown = (view: EditorView, startEvent: MouseEvent) => {
   };
 
   const move = (event: Event) => {
-    if(!event.target || !isValidHTMLElement(event.target)) return;
+    if(!event.target || !isValidHTMLElement(event.target)) return/*nothing to do*/;
 
-    const anchor = tableEditingPluginKey.getState(view.state);
+    const pluginState = tableEditingPluginKey.getState(view.state);
+    const anchor = pluginState?.currentValue;
     let $anchor;
 
-    if(anchor !== null) {
+    if(anchor) {
       // continuing an existing cross-cell selection
       $anchor = view.state.doc.resolve(anchor);
 

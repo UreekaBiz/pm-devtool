@@ -11,7 +11,7 @@ import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleMouseDow
 // transaction, the shapes of tables are normalized to be rectangular
 // and not contain overlapping cells.
 
-export const tableEditingPluginKey = new PluginKey('tableEditingPluginKey');
+export const tableEditingPluginKey = new PluginKey<TableEditingState>('tableEditingPluginKey');
 
 // == Class =======================================================================
 class TableEditingState {
