@@ -247,7 +247,6 @@ export class CellSelection extends Selection {
       } /* else -- head rect's bottom is not smaller than the height of the map*/
     }
 
-    console.log('colSelection');
     return new CellSelection($anchorCell, $headCell);
   }
 
