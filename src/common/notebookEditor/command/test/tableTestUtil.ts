@@ -18,10 +18,12 @@ const {
   [NodeName.PARAGRAPH]: paragraphBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.PARAGRAPH]);
 
-// -- Cell ------------------------------------------------------------------------
 const defaultCellAttrs = { [AttributeType.ColSpan]: CELL_COL_SPAN, [AttributeType.RowSpan]: CELL_ROW_SPAN };
 
-export const defaultDimensionWithParagraphCellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
+// -- Cell ------------------------------------------------------------------------
+export const cellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
+export const cellWithDimensionBuilder = (colSpan: number, rowSpan: number) => defaultCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, paragraphBuilder('x'));
+
 export const emptyCellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder());
 export const cellWithCursorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${CURSOR}>`));
 export const cellWithAnchorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${ANCHOR}>`));
