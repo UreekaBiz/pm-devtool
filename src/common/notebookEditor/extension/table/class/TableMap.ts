@@ -81,7 +81,7 @@ export class TableMap {
       let right = left + 1;
       let bottom = top + 1;
 
-      for(let j = 1; right < this.width && this.map[i + j] == curPos; j++) {
+      for(let j = 1; right < this.width && this.map[i + j] === curPos; j++) {
         right++;
       }
 
@@ -92,7 +92,7 @@ export class TableMap {
       return new TableRect(left, top, right, bottom);
     }
 
-    throw new RangeError('No cell with offset ' + pos + ' found');
+    throw new RangeError('findCell: No cell with offset ' + pos + ' found');
   }
 
   /** find the left side of the Cell at the given position */
@@ -103,7 +103,7 @@ export class TableMap {
       } /* else -- map at pos is not the looked-for position */
     }
 
-    throw new RangeError('No cell with offset ' + pos + ' found');
+    throw new RangeError('colCount: No cell with offset ' + pos + ' found');
   }
 
   /**

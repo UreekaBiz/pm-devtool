@@ -66,6 +66,7 @@ export class CellSelection extends Selection {
     const table = $anchorCell.node(-1/*Table ancestor*/);
     const map = TableMap.get(table);
     const start = $anchorCell.start(-1/*Table ancestor depth*/);
+
     const rect = map.rectBetween($anchorCell.pos - start, $headCell.pos - start);
     const doc = $anchorCell.node(0);
     const cells = map.cellsInRect(rect).filter((pos: number) => pos !== $headCell.pos - start);
@@ -318,8 +319,8 @@ export class CellSelection extends Selection {
   }
 
   /** create a {@link CellSelection} */
-  public static create(doc: ProseMirrorNode, anchorCell: number, headCell = anchorCell): CellSelection {
-    return new CellSelection(doc.resolve(anchorCell), doc.resolve(headCell));
+  public static create(doc: ProseMirrorNode, anchorCellPos: number, headCellPos = anchorCellPos): CellSelection {
+    return new CellSelection(doc.resolve(anchorCellPos), doc.resolve(headCellPos));
   }
 
   /** (SEE: {@link Selection} getBookMark) */

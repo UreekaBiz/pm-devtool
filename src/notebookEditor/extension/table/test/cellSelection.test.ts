@@ -38,12 +38,15 @@ describe('CellSelection', () => {
     let s = CellSelection.create(tableDoc, 2, 24);
     ist(s.anchor, 25);
     ist(s.head, 27);
+
     s = CellSelection.create(tableDoc, 24, 2);
     ist(s.anchor, 3);
     ist(s.head, 5);
+
     s = CellSelection.create(tableDoc, 10, 30);
     ist(s.anchor, 31);
     ist(s.head, 33);
+
     s = CellSelection.create(tableDoc, 30, 10);
     ist(s.anchor, 11);
     ist(s.head, 13);
