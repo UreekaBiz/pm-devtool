@@ -76,7 +76,8 @@ export const tableEditingPlugin = (allowTableNodeSelection = false/*default*/) =
       handleDOMEvents: { mousedown: handleMouseDown },
 
       createSelectionBetween(view) {
-        if(tableEditingPluginKey.getState(view.state) != null) {
+        const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue;
+        if(tableEditingStateValue) {
           return view.state.selection;
         } /* else -- state is null */
 

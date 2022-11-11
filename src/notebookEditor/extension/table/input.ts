@@ -138,7 +138,9 @@ export const handleMouseDown = (view: EditorView, startEvent: MouseEvent) => {
   // create a CellSelection between the given anchor and the position under the mouse
   const setCellSelection = ($anchor: ResolvedPos, event: Event) => {
     let $head = cellUnderMouse(view, event);
-    const starting = tableEditingPluginKey.getState(view.state) === null;
+
+    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue
+    const starting = tableEditingStateValue === null || tableEditingStateValue === undefined ;
 
     if(!$head || !inSameTable($anchor, $head)) {
       if(starting) { $head = $anchor; }
@@ -164,7 +166,8 @@ export const handleMouseDown = (view: EditorView, startEvent: MouseEvent) => {
     view.root.removeEventListener('dragstart', stop);
     view.root.removeEventListener('mousemove', move);
 
-    if(tableEditingPluginKey.getState(view.state) !== null) {
+    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue;
+    if(tableEditingStateValue) {
       view.dispatch(view.state.tr.setMeta(tableEditingPluginKey, -1));
     } /* else -- no tableEditing state */
   };
@@ -174,8 +177,8 @@ export const handleMouseDown = (view: EditorView, startEvent: MouseEvent) => {
 
     const pluginState = tableEditingPluginKey.getState(view.state);
     const anchor = pluginState?.currentValue;
-    let $anchor;
 
+    let $anchor;
     if(anchor) {
       // continuing an existing cross-cell selection
       $anchor = view.state.doc.resolve(anchor);
