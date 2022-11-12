@@ -18,7 +18,7 @@ const { [NodeName.DOC]: docBuilder, [NodeName.PARAGRAPH]: paragraphBuilder } = g
 // == Test ========================================================================
 describe('CellSelection', () => {
   // NOTE: the inline comments below are the positions of the
-  // .     start of the Cell Nodes
+  //       start of the Cell Nodes
   const tableDoc = docBuilder(
     defaultTableBuilder(
         defaultRowBuilder(/* 2*/ emptyCellBuilder, /* 6*/ emptyCellBuilder, /*10*/ emptyCellBuilder),
