@@ -86,7 +86,6 @@ export const selectionForTableTest = (doc: ProseMirrorNode) => {
   if($cellAnchor) {
     const head = doc.tag[HEAD];
     if(!head) throw new Error('expected head tag to exist in doc and it does not');
-
     return new CellSelection($cellAnchor, resolveCell(doc, head) || undefined);
   } /* else -- could not resolve cell at given anchor */
 

@@ -66,8 +66,9 @@ export const getNotebookSchemaMarkBuilders = (markNames: MarkName[], schema: Sch
 // strings used to indicate the test tags (to set relevant positions) that are used
 // when writing documents for tests
 export const A = 'A';
-export const ANCHOR = 'cursor';
 export const B = 'B';
+
+export const ANCHOR = 'anchor';
 export const CURSOR = 'cursor';
 export const HEAD = 'head';
 export const NODE = 'node';
