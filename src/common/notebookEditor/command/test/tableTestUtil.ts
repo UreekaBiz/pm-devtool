@@ -13,8 +13,8 @@ import { getNotebookSchemaNodeBuilders, validateNodeWithTag, ANCHOR, CURSOR, HEA
 // Command-testing utilities used by Table related test files
 
 // == Constant ====================================================================
-// ensure that Cell and HeaderCell have defined attributes without being in web
-// so that tests match the real scenario
+// ensure that Table Nodes  have defined attributes and content expressions
+// without being in web so that tests match the real scenario
 // (SEE: getNotebookSchemaWithBuildersObj)
 const defaultCellAttrs = { [AttributeType.ColSpan]: CELL_COL_SPAN, [AttributeType.RowSpan]: CELL_ROW_SPAN };
 const modifiedSchemaNodeSpec = {
@@ -33,8 +33,16 @@ const modifiedSchemaNodeSpec = {
       [AttributeType.RowSpan]: { default: CELL_ROW_SPAN },
     },
   },
+  [NodeName.ROW]: {
+    ...SchemaV1.nodes[NodeName.ROW].spec,
+    content: `(${NodeName.CELL} | ${NodeName.HEADER_CELL})*`,
+  },
+  [NodeName.TABLE]: {
+    ...SchemaV1.nodes[NodeName.TABLE].spec,
+    content: `${NodeName.ROW}+`,
+  },
 };
-export const schemaWithCellAttrs = new Schema({
+const schemaWithCellAttrs = new Schema({
   topNode: SchemaV1.topNodeType.name,
   marks: SchemaV1.spec.marks,
   nodes: modifiedSchemaNodeSpec,
@@ -43,8 +51,10 @@ export const schemaWithCellAttrs = new Schema({
 export const {
   [NodeName.CELL]: defaultCellBuilder,
   [NodeName.HEADER_CELL]: defaultHeaderCellBuilder,
+  [NodeName.ROW]: defaultRowBuilder,
+  [NodeName.TABLE]: defaultTableBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.PARAGRAPH], schemaWithCellAttrs);
+} = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.ROW, NodeName.TABLE, NodeName.PARAGRAPH], schemaWithCellAttrs);
 
 
 // -- Cell ------------------------------------------------------------------------

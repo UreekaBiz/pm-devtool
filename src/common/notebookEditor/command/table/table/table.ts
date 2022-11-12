@@ -317,14 +317,14 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
 
   let referenceColumn: number | null = col > 0 ? -1 : 0;
   if(columnIsHeader(tableMap, table, col + referenceColumn)) {
-    referenceColumn = col == 0 || col == tableMap.width ? null : 0;
+    referenceColumn = col === 0 || col === tableMap.width ? null : 0;
   } /* else -- computed column is not a Header */
 
   for(let row = 0; row < tableMap.height; row++) {
     const index = row * tableMap.width + col;
 
     // if the position falls inside a column spanning Cell
-    if(col > 0 && col < tableMap.width && tableMap.map[index - 1] == tableMap.map[index]) {
+    if(col > 0 && col < tableMap.width && tableMap.map[index - 1] === tableMap.map[index]) {
       let pos = tableMap.map[index];
       const cell = table.nodeAt(pos);
       if(!cell) continue/*nothing to do*/;
@@ -341,6 +341,7 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
 
       const mappedPos = tableMap.positionAt(row, col, table);
       const nodeOfType = type?.createAndFill();
+
       if(nodeOfType) {
         tr.insert(tr.mapping.map(tableStart + mappedPos), nodeOfType);
       } /* else -- could not create Node, do not insert anything */
