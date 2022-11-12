@@ -76,31 +76,47 @@ export const deleteTableWhenAllCellsSelected: Command = (state, dispatch) => {
 };
 
 // == Column ======================================================================
-/** add a column before the column with the Selection */
-export const addColumnBefore = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
+/** add a column before the column with the current Selection */
+export const addColumnBeforeCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new AddColumnBeforeDocumentUpdate().update(state, state.tr), dispatch);
+export class AddColumnBeforeDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
 
-  if(dispatch) {
-    const rect = selectedRect(state);
+  /**
+   * modify the given Transaction such that a column is added
+   * before the column with the current Selection
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isInTable(editorState)) return false/*nothing to do*/;
+
+    const rect = selectedRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
-    dispatch(addColumn(state.tr, rect, rect.left));
+    const updatedTr = addColumn(tr, rect, rect.left);
+    return updatedTr;
   }
-  return true;
-};
+}
 
-/** add a column after the column with the Selection */
-export const addColumnAfter = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
+/** add a column after the column with the current Selection */
+export const addColumnAfterCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new AddColumnAfterDocumentUpdate().update(state, state.tr), dispatch);
+export class AddColumnAfterDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
 
-  if(dispatch) {
-    const rect = selectedRect(state);
+  /**
+   * modify the given Transaction such that a column is added
+   * after the column with the current Selection
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isInTable(editorState)) return false/*nothing to do*/;
+
+    const rect = selectedRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
-    dispatch(addColumn(state.tr, rect, rect.right));
+    const updatedTr = addColumn(tr, rect, rect.right);
+    return updatedTr;
   }
-  return true;
-};
+}
 
 /** remove the selected columns from a Table */
 export const deleteColumn = (state: EditorState, dispatch: DispatchType) => {
