@@ -40,7 +40,7 @@ export const schemaWithCellAttrs = new Schema({
   nodes: modifiedSchemaNodeSpec,
 });
 
-const {
+export const {
   [NodeName.CELL]: defaultCellBuilder,
   [NodeName.HEADER_CELL]: defaultHeaderCellBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
