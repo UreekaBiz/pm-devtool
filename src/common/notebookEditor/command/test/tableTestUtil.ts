@@ -53,23 +53,27 @@ export const {
   [NodeName.HEADER_CELL]: defaultHeaderCellBuilder,
   [NodeName.ROW]: defaultRowBuilder,
   [NodeName.TABLE]: defaultTableBuilder,
-  [NodeName.PARAGRAPH]: paragraphBuilder,
+
+  // NOTE: contentMatch objects used by PM make comparison
+  //       by object type instead of by properties (e.g. names of Nodes/Marks)
+  //       hence, use this paragraphBuilder when testing Table Commands
+  [NodeName.PARAGRAPH]: tableParagraphBuilder,
 } = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.ROW, NodeName.TABLE, NodeName.PARAGRAPH], schemaWithCellAttrs);
 
 
 // -- Cell ------------------------------------------------------------------------
-export const cellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
-export const cellWithDimensionBuilder = (colSpan: number, rowSpan: number) => defaultCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, paragraphBuilder('x'));
+export const cellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder('x'));
+export const cellWithDimensionBuilder = (colSpan: number, rowSpan: number) => defaultCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, tableParagraphBuilder('x'));
 
-export const emptyCellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder());
-export const cellWithCursorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${CURSOR}>`));
-export const cellWithAnchorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${ANCHOR}>`));
-export const cellWithHeadBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${HEAD}>`));
+export const emptyCellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder());
+export const cellWithCursorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${CURSOR}>`));
+export const cellWithAnchorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${ANCHOR}>`));
+export const cellWithHeadBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${HEAD}>`));
 
 // -- HeaderCell ------------------------------------------------------------------
-export const headerCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
-export const emptyHeaderCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, paragraphBuilder());
-export const headerCellWithCursorBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${CURSOR}>`));
+export const headerCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder('x'));
+export const emptyHeaderCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder());
+export const headerCellWithCursorBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${CURSOR}>`));
 
 // == Util ========================================================================
 // -- Table -----------------------------------------------------------------------

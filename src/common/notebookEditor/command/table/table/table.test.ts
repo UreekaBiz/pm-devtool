@@ -5,13 +5,13 @@ import { eq } from 'prosemirror-test-builder';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
-import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder,  emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, headerCellWithCursorBuilder, selectionForTableTest } from '../../test/tableTestUtil';
+import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder,  emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, headerCellWithCursorBuilder, selectionForTableTest, tableParagraphBuilder } from '../../test/tableTestUtil';
 import { getNotebookSchemaNodeBuilders, CURSOR, NODE } from '../../test/testUtil';
 import { addColumnAfterCommand } from './table';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const { [NodeName.DOC]: docBuilder, [NodeName.PARAGRAPH]: paragraphBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC, NodeName.PARAGRAPH]);
+const { [NodeName.DOC]: docBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC]);
 
 // == Table =======================================================================
 const executeTableTestCommand = (doc: ProseMirrorNode, command: Command, resultingDoc: ProseMirrorNode | null) => {
@@ -200,20 +200,20 @@ describe('addColumnAfterCommand', () => {
     ));
 
   it('does nothing outside of a Table', () =>
-    executeTableTestCommand(docBuilder(paragraphBuilder(`foo<${CURSOR}>`)), addColumnAfterCommand, null/*expect to return false*/));
+    executeTableTestCommand(docBuilder(tableParagraphBuilder(`foo<${CURSOR}>`)), addColumnAfterCommand, null/*expect to return false*/));
 
   it('preserves column widths', () =>
     executeTableTestCommand(
       defaultTableBuilder(
         defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 200] }, paragraphBuilder('a')))
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 200] }, tableParagraphBuilder('a')))
       ),
 
       addColumnAfterCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(cellWithAnchorBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, paragraphBuilder('a')))
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, tableParagraphBuilder('a')))
       )
     ));
 });
@@ -301,7 +301,7 @@ describe('addColumnAfterCommand', () => {
 
 //   it('will delete all columns under a [AttributeType.ColSpan] cell', () =>
 //     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, paragraphBuilder(`<${CURSOR}>`))), defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder)),
+//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`<${CURSOR}>`))), defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder)),
 //       deleteColumn,
 //       defaultTableBuilder(defaultRowBuilder(cellBuilder), defaultRowBuilder(emptyCellBuilder))
 //     ));
@@ -324,20 +324,20 @@ describe('addColumnAfterCommand', () => {
 //     executeTableTestCommand(
 //       defaultTableBuilder(
 //         defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-//         defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, paragraphBuilder('y')))
+//         defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableParagraphBuilder('y')))
 //       ),
 //       deleteColumn,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 300] }, paragraphBuilder('y'))))
+//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 300] }, tableParagraphBuilder('y'))))
 //     ));
 
 //   it('resets column width when all zeroes', () =>
 //     executeTableTestCommand(
 //       defaultTableBuilder(
 //         defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-//         defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [0, 200, 0] }, paragraphBuilder('y')))
+//         defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [0, 200, 0] }, tableParagraphBuilder('y')))
 //       ),
 //       deleteColumn,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, paragraphBuilder('y'))))
+//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('y'))))
 //     ));
 // });
 
@@ -479,7 +479,7 @@ describe('addColumnAfterCommand', () => {
 //   it('deletes multiple rows when the start cell has a rowspan', () =>
 //     executeTableTestCommand(
 //       defaultTableBuilder(
-//         defaultRowBuilder(defaultCellBuilder({ rowspan: 3 }, paragraphBuilder(`<${CURSOR}>`)), cellBuilder),
+//         defaultRowBuilder(defaultCellBuilder({ rowspan: 3 }, tableParagraphBuilder(`<${CURSOR}>`)), cellBuilder),
 //         defaultRowBuilder(cellBuilder),
 //         defaultRowBuilder(cellBuilder),
 //         defaultRowBuilder(cellBuilder, cellBuilder)
@@ -522,14 +522,14 @@ describe('addColumnAfterCommand', () => {
 //     executeTableTestCommand(
 //       defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)),
 //       mergeCells,
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, paragraphBuilder('x'), paragraphBuilder('x')), cellBuilder))
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder))
 //     ));
 
 //   it('can merge two cells in a row', () =>
 //     executeTableTestCommand(
 //       defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellBuilder), defaultRowBuilder(cellWithHeadBuilder, cellBuilder)),
 //       mergeCells,
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ rowspan: 2 }, paragraphBuilder('x'), paragraphBuilder('x')), cellBuilder), defaultRowBuilder(cellBuilder))
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder), defaultRowBuilder(cellBuilder))
 //     ));
 
 //   it('can merge a rectangle of cells', () =>
@@ -540,7 +540,7 @@ describe('addColumnAfterCommand', () => {
 //       ),
 //       mergeCells,
 //       defaultTableBuilder(
-//         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 3 }, paragraphBuilder('x'), paragraphBuilder('x')), cellBuilder),
+//         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
 //         defaultRowBuilder(cellBuilder, cellBuilder)
 //       )
 //     ));
@@ -553,23 +553,23 @@ describe('addColumnAfterCommand', () => {
 //       ),
 //       mergeCells,
 //       defaultTableBuilder(
-//         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 3 }, paragraphBuilder('x'), paragraphBuilder('x'), paragraphBuilder('x')), cellBuilder),
+//         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
 //         defaultRowBuilder(cellBuilder, cellBuilder)
 //       )
 //     ));
 
 //   it('keeps the column width of the first col', () =>
 //     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, paragraphBuilder('x<anchor>')), cellBuilder), defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('x<anchor>')), cellBuilder), defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
 //       mergeCells,
 //       defaultTableBuilder(
 //         defaultRowBuilder(
 //           defaultCellBuilder(
 //             { [AttributeType.ColSpan]: 2, rowspan: 2, [AttributeType.ColWidth]: [100, 0] },
-//             paragraphBuilder('x'),
-//             paragraphBuilder('x'),
-//             paragraphBuilder('x'),
-//             paragraphBuilder('x')
+//             tableParagraphBuilder('x'),
+//             tableParagraphBuilder('x'),
+//             tableParagraphBuilder('x'),
+//             tableParagraphBuilder('x')
 //           )
 //         ),
 //         defaultRowBuilder()
@@ -583,16 +583,16 @@ describe('addColumnAfterCommand', () => {
 
 //   it('can split when col-spanning cell with cursor', () =>
 //     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, paragraphBuilder(`foo<${CURSOR}>`)), cellBuilder)),
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)), cellBuilder)),
 //       splitCell,
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(paragraphBuilder('foo')), emptyCellBuilder, cellBuilder))
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
 //     ));
 
 //   it('can split when col-spanning header-cell with cursor', () =>
 //     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(th({ [AttributeType.ColSpan]: 2 }, paragraphBuilder(`foo<${CURSOR}>`)))),
+//       defaultTableBuilder(defaultRowBuilder(th({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)))),
 //       splitCell,
-//       defaultTableBuilder(defaultRowBuilder(th(paragraphBuilder('foo')), emptyHeaderCellBuilder))
+//       defaultTableBuilder(defaultRowBuilder(th(tableParagraphBuilder('foo')), emptyHeaderCellBuilder))
 //     ));
 
 //   it('does nothing for a multi-cell selection', () =>
@@ -603,42 +603,42 @@ describe('addColumnAfterCommand', () => {
 
 //   it('can split a col-spanning cell', () =>
 //     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, paragraphBuilder('foo<anchor>')), cellBuilder)),
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('foo<anchor>')), cellBuilder)),
 //       splitCell,
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(paragraphBuilder('foo')), emptyCellBuilder, cellBuilder))
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
 //     ));
 
 //   it('can split a row-spanning cell', () =>
 //     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, paragraphBuilder('foo<anchor>')), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
+//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder('foo<anchor>')), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
 //       splitCell,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder(paragraphBuilder('foo')), cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
 //     ));
 
 //   it('can split a rectangular cell', () =>
 //     executeTableTestCommand(
 //       defaultTableBuilder(
 //         defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
-//         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 2 }, paragraphBuilder('foo<anchor>')), cellBuilder),
+//         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('foo<anchor>')), cellBuilder),
 //         defaultRowBuilder(cellBuilder, cellBuilder)
 //       ),
 //       splitCell,
 //       defaultTableBuilder(
 //         defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
-//         defaultRowBuilder(cellBuilder, defaultCellBuilder(paragraphBuilder('foo')), emptyCellBuilder, cellBuilder),
+//         defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder),
 //         defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder, cellBuilder)
 //       )
 //     ));
 
 //   it('distributes column widths', () =>
 //     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, paragraphBuilder('a<anchor>')))),
+//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, tableParagraphBuilder('a<anchor>')))),
 //       splitCell,
 //       defaultTableBuilder(
 //         defaultRowBuilder(
-//           defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, paragraphBuilder('a')),
+//           defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('a')),
 //           emptyCellBuilder,
-//           defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, paragraphBuilder())
+//           defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder())
 //         )
 //       )
 //     ));
@@ -658,15 +658,15 @@ describe('addColumnAfterCommand', () => {
 
 //     it('can split a row-spanning header cell into a header and normal cell ', () =>
 //       executeTableTestCommand(
-//         defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, paragraphBuilder('foo<anchor>')), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
+//         defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder('foo<anchor>')), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
 //         splitCellWithOnlyHeaderInColumnZero,
-//         defaultTableBuilder(defaultRowBuilder(cellBuilder, th(paragraphBuilder('foo')), cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+//         defaultTableBuilder(defaultRowBuilder(cellBuilder, th(tableParagraphBuilder('foo')), cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
 //       ));
 //   });
 // });
 
 // describe('setCellAttr', () => {
-//   let cAttr = defaultCellBuilder({ executeTableTestCommand: 'value' }, paragraphBuilder('x'));
+//   let cAttr = defaultCellBuilder({ executeTableTestCommand: 'value' }, tableParagraphBuilder('x'));
 
 //   it('can set an attribute on a parent cell', () =>
 //     executeTableTestCommand(
@@ -744,12 +744,12 @@ describe('addColumnAfterCommand', () => {
 //   it('turns a header row with [AttributeType.ColSpan] and rowspan into a regular cell', () =>
 //     executeTableTestCommand(
 //       docellWithDimensionBuilder(
-//         paragraphBuilder('x'),
+//         tableParagraphBuilder('x'),
 //         defaultTableBuilder(defaultRowBuilder(h(2, 1), h(1, 2)), defaultRowBuilder(cellWithCursorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))
 //       ),
 //       toggleHeader('row', { useDeprecateLogic: false }),
 //       docellWithDimensionBuilder(
-//         paragraphBuilder('x'),
+//         tableParagraphBuilder('x'),
 //         defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellWithCursorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))
 //       )
 //     ));
@@ -757,18 +757,18 @@ describe('addColumnAfterCommand', () => {
 //   it('turns a header column with [AttributeType.ColSpan] and rowspan into a regular cell', () =>
 //     executeTableTestCommand(
 //       docellWithDimensionBuilder(
-//         paragraphBuilder('x'),
+//         tableParagraphBuilder('x'),
 //         defaultTableBuilder(defaultRowBuilder(h(2, 1), h(1, 2)), defaultRowBuilder(cellWithCursorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))
 //       ),
 //       toggleHeader('column', { useDeprecateLogic: false }),
-//       docellWithDimensionBuilder(paragraphBuilder('x'), defaultTableBuilder(defaultRowBuilder(h(2, 1), h(1, 2)), defaultRowBuilder(headerCellBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder, cellBuilder)))
+//       docellWithDimensionBuilder(tableParagraphBuilder('x'), defaultTableBuilder(defaultRowBuilder(h(2, 1), h(1, 2)), defaultRowBuilder(headerCellBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder, cellBuilder)))
 //     ));
 
 //   it('should keep first cell as header when the column header is enabled', () =>
 //     executeTableTestCommand(
-//       docellWithDimensionBuilder(paragraphBuilder('x'), defaultTableBuilder(defaultRowBuilder(headerCellBuilder, cellBuilder), defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder))),
+//       docellWithDimensionBuilder(tableParagraphBuilder('x'), defaultTableBuilder(defaultRowBuilder(headerCellBuilder, cellBuilder), defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder))),
 //       toggleHeader('row', { useDeprecateLogic: false }),
-//       docellWithDimensionBuilder(paragraphBuilder('x'), defaultTableBuilder(defaultRowBuilder(headerCellBuilder, headerCellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder)))
+//       docellWithDimensionBuilder(tableParagraphBuilder('x'), defaultTableBuilder(defaultRowBuilder(headerCellBuilder, headerCellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder)))
 //     ));
 
 //   describe('new behavior', () => {

@@ -1,18 +1,12 @@
 import ist from 'ist';
 
-import { getNotebookSchemaNodeBuilders } from '../../../../notebookEditor/command/test/testUtil';
-import { cellBuilder, cellWithDimensionBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
-import { NodeName } from '../../../../notebookEditor/node';
+import { cellBuilder, cellWithDimensionBuilder, defaultRowBuilder, defaultTableBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
 
 import { TableMap } from './TableMap';
 import { TableRect } from './TableRect';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const {
-  [NodeName.ROW]: rowBuilder,
-  [NodeName.TABLE]: tableBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.DOC, NodeName.ROW, NodeName.TABLE]);
 const areRectsEqual = (a: TableRect, b: TableRect) => (a.left === b.left && a.right === b.right && a.top === b.top && a.bottom === b.bottom);
 
 // == Test ========================================================================
@@ -20,11 +14,11 @@ describe('TableMap', () => {
   it('finds the right shape for a simple table', () => {
     ist(
       TableMap.get(
-        tableBuilder(
-          rowBuilder(cellBuilder, cellBuilder, cellBuilder),
-          rowBuilder(cellBuilder, cellBuilder, cellBuilder),
-          rowBuilder(cellBuilder, cellBuilder, cellBuilder),
-          rowBuilder(cellBuilder, cellBuilder, cellBuilder)
+        defaultTableBuilder(
+          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)
         )
       ).map.join(', '),
 
@@ -33,7 +27,7 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for colSpans', () => {
-    ist(TableMap.get(tableBuilder(rowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)), rowBuilder(cellWithDimensionBuilder(2, 1), cellBuilder), rowBuilder(cellBuilder, cellBuilder, cellBuilder)))
+    ist(TableMap.get(defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)))
       .map.join(', '),
 
       '1, 6, 6, 13, 13, 18, 25, 30, 35'
@@ -41,7 +35,7 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for rowSpans', () => {
-    ist(TableMap.get(tableBuilder(rowBuilder(cellWithDimensionBuilder(1, 2), cellBuilder, cellWithDimensionBuilder(1, 2)), rowBuilder(cellBuilder)))
+    ist(TableMap.get(defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellBuilder, cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellBuilder)))
       .map.join(', '),
 
       '1, 6, 11, 1, 18, 11'
@@ -49,7 +43,7 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for deep rowSpans', () => {
-    ist(TableMap.get(tableBuilder(rowBuilder(cellWithDimensionBuilder(1, 4), cellWithDimensionBuilder(2, 1)), rowBuilder(cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(1, 2)), rowBuilder()))
+    ist(TableMap.get(defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(1, 4), cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(1, 2)), defaultRowBuilder()))
       .map.join(', '),
 
       '1, 6, 6, 1, 13, 18, 1, 13, 18'
@@ -57,14 +51,14 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for larger rectangles', () => {
-    ist(TableMap.get(tableBuilder(rowBuilder(cellBuilder, cellWithDimensionBuilder(4, 4)), rowBuilder(cellBuilder), rowBuilder(cellBuilder), rowBuilder(cellBuilder)))
+    ist(TableMap.get(defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(4, 4)), defaultRowBuilder(cellBuilder), defaultRowBuilder(cellBuilder), defaultRowBuilder(cellBuilder)))
       .map.join(', '),
 
       '1, 6, 6, 6, 6, 13, 6, 6, 6, 6, 20, 6, 6, 6, 6, 27, 6, 6, 6, 6'
     );
   });
 
-  const tableMap = TableMap.get(tableBuilder(rowBuilder(cellWithDimensionBuilder(2, 3), cellBuilder, cellWithDimensionBuilder(1, 2)), rowBuilder(cellBuilder), rowBuilder(cellWithDimensionBuilder(2, 1))));
+  const tableMap = TableMap.get(defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(2, 3), cellBuilder, cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellBuilder), defaultRowBuilder(cellWithDimensionBuilder(2, 1))));
   // expected to be:
   //  1  1  6 11
   //  1  1 18 11

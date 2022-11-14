@@ -4,7 +4,7 @@ import { Command, EditorState } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand } from '../../../../notebookEditor/command/table';
-import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, selectionForTableTest } from '../../../../notebookEditor/command/test/tableTestUtil';
+import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, selectionForTableTest, tableParagraphBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
 import { getNotebookSchemaNodeBuilders, A } from '../../../../notebookEditor/command/test/testUtil';
 import { NodeName } from '../../../../notebookEditor/node';
 import { isCellSelection } from '../../../../notebookEditor/selection';
@@ -13,7 +13,7 @@ import { CellSelection } from './CellSelection';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const { [NodeName.DOC]: docBuilder, [NodeName.PARAGRAPH]: paragraphBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC, NodeName.PARAGRAPH]);
+const { [NodeName.DOC]: docBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC]);
 
 // == Test ========================================================================
 describe('CellSelection', () => {
@@ -123,7 +123,7 @@ describe('CellSelection.content', () => {
     ist(selectionContent, sliceStartAndEnd(
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, paragraphBuilder())),
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder())),
         defaultRowBuilder(emptyCellBuilder, cellBuilder))),
       compareStringifiedSlice);
   });
@@ -141,7 +141,7 @@ describe('CellSelection.content', () => {
 
     ist(selectionContent,
       sliceStartAndEnd(defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, paragraphBuilder()), emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder()), emptyCellBuilder),
         defaultRowBuilder(cellBuilder, cellBuilder))),
       compareStringifiedSlice);
   });
@@ -151,14 +151,14 @@ describe('CellSelection.content', () => {
       selectionForTableTest(
         defaultTableBuilder(
           defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-          defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, paragraphBuilder('x'))),
+          defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableParagraphBuilder('x'))),
           defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder)
         )
       )?.content();
 
     ist(selectionContent,
       sliceStartAndEnd(defaultTableBuilder(defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, paragraphBuilder())),
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder())),
         defaultRowBuilder(cellBuilder))),
       compareStringifiedSlice);
   });
