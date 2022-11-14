@@ -3,7 +3,8 @@ import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-st
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { isCellSelection } from '../../../../notebookEditor/selection';
-import { CellSelection, TableRect } from '../../../extension/table/class';
+import { isNotNullOrUndefined } from '../../../../util/object';
+import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
 import { addColSpan, cellAround, cellWrapping, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate, DispatchType } from '../../type';
@@ -25,20 +26,20 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
     } /* else -- can try to merge Cells */
 
     const rect = selectedRect(editorState);
-    if(!rect || !rect.table || !rect.tableMap || !rect.tableStart) return false/*nothing to do*/;
+    if(!rect) return false/*no TableRect available*/;
 
-    const { tableMap } = rect;
-    if(cellsOverlapRectangle(tableMap.map, rect.tableMap.width, rect.tableMap.height, rect)) return false/*nothing to do*/;
+    const { table, tableMap, tableStart } = rect;
+    if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return false/*nothing to do*/;
+    if(cellsOverlapRectangle(tableMap.map, tableMap.width, tableMap.height, rect)) return false/*nothing to do*/;
 
     const seen: { [key: number]: boolean; } = {};
-
     let content = Fragment.empty;
     let mergedPos, mergedCell;
 
     for(let row = rect.top; row < rect.bottom; row++) {
       for(let col = rect.left; col < rect.right; col++) {
         const cellPos = tableMap.map[row * tableMap.width + col];
-        const cell = rect.table.nodeAt(cellPos);
+        const cell = table.nodeAt(cellPos);
 
         if(!cell) continue/*nothing to do*/;
         if(seen[cellPos]) continue/*already seen*/;
@@ -49,23 +50,23 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
           mergedCell = cell;
         } else {
           if(!isCellEmpty(cell)) content = content.append(cell.content);
-          let mapped = tr.mapping.map(cellPos + rect.tableStart);
+          let mapped = tr.mapping.map(cellPos + tableStart);
           tr.delete(mapped, mapped + cell.nodeSize);
         }
       }
     }
 
     if(!mergedPos || !mergedCell) return false/*could not merge Cells*/;
-    tr.setNodeMarkup(mergedPos + rect.tableStart, null, setTableNodeAttributes(addColSpan(mergedCell.attrs, mergedCell.attrs[AttributeType.ColSpan], rect.right - rect.left - mergedCell.attrs[AttributeType.ColSpan]), AttributeType.RowSpan, rect.bottom - rect.top));
+    tr.setNodeMarkup(mergedPos + tableStart, null, setTableNodeAttributes(addColSpan(mergedCell.attrs, mergedCell.attrs[AttributeType.ColSpan], rect.right - rect.left - mergedCell.attrs[AttributeType.ColSpan]), AttributeType.RowSpan, rect.bottom - rect.top));
 
     if(content.size) {
       let end = mergedPos + 1 + mergedCell.content.size;
       let start = isCellEmpty(mergedCell) ? mergedPos + 1 : end;
-      tr.replaceWith(start + rect.tableStart, end + rect.tableStart, content);
+      tr.replaceWith(start + tableStart, end + tableStart, content);
     } /* else -- no need to replace mergedCell's content */
 
 
-    tr.setSelection(new CellSelection(tr.doc.resolve(mergedPos + rect.tableStart)));
+    tr.setSelection(new CellSelection(tr.doc.resolve(mergedPos + tableStart)));
     return tr;
   }
 }
