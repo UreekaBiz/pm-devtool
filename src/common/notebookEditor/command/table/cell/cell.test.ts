@@ -108,7 +108,7 @@ describe('splitCellCommand', () => {
       defaultTableBuilder(
         defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
 
-        splitCellCommand,
+        splitCellCommand(),
 
         null/*expect to return false*/
     ));
@@ -118,7 +118,7 @@ describe('splitCellCommand', () => {
       defaultTableBuilder(
         defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)), cellBuilder)),
 
-      splitCellCommand,
+      splitCellCommand(),
 
       defaultTableBuilder(
         defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
