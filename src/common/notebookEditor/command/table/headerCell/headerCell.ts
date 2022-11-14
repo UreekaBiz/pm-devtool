@@ -9,7 +9,7 @@ import { DispatchType } from '../../type';
 
 // ********************************************************************************
 /** toggles between row/column Header and normal Cells (only applies to first row/column) */
-export const toggleHeader = (type: 'column' | 'row' | 'cell') => (state: EditorState, dispatch: DispatchType) => {
+export const toggleHeaderCommand = (type: 'column' | 'row' | 'cell') => (state: EditorState, dispatch: DispatchType) => {
   if(!isInTable(state)) return false/*nothing to do*/;
 
   if(dispatch) {
@@ -60,13 +60,13 @@ export const toggleHeader = (type: 'column' | 'row' | 'cell') => (state: EditorS
 };
 
 /** toggles whether the selected Row contains HeaderCells */
-export const toggleHeaderRow = toggleHeader('row');
+export const toggleHeaderRowCommand = toggleHeaderCommand('row');
 
 /** toggles whether the selected Column contains header Cells */
-export const toggleHeaderColumn = toggleHeader('column');
+export const toggleHeaderColumnCommand = toggleHeaderCommand('column');
 
 /** toggles whether the selected Cells are HeaderCells */
-export const toggleHeaderCell = toggleHeader('cell');
+export const toggleHeaderCellCommand = toggleHeaderCommand('cell');
 
 // == Util ========================================================================
 const isHeaderEnabledByType = (type: 'column' | 'row', rect: TableRect, types: { [nodeName: string]: NodeType; }) => {

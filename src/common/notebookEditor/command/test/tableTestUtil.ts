@@ -82,6 +82,8 @@ export const cellWithAnchorBuilder = defaultCellBuilder({ ...defaultCellAttrs },
 export const cellWithHeadBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${HEAD}>`));
 
 // -- HeaderCell ------------------------------------------------------------------
+export const headerCellWithDimensionBuilder = (colSpan: number, rowSpan: number) => defaultHeaderCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, tableParagraphBuilder('x'));
+
 export const headerCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder('x'));
 export const emptyHeaderCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder());
 export const headerCellWithCursorBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${CURSOR}>`));

@@ -2,7 +2,7 @@ import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { IoMdSquareOutline } from 'react-icons/io';
 import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
-import { goToCellCommand, mergeCellsCommand, splitCellCommand, toggleHeaderCell } from 'common';
+import { goToCellCommand, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -66,7 +66,7 @@ export const toggleHeaderCellToolItem: ToolItem = {
 
   shouldBeDisabled: (editor) => false,
   shouldShow: (editor) => true,
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderCell),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderCellCommand),
 };
 
 // --------------------------------------------------------------------------------

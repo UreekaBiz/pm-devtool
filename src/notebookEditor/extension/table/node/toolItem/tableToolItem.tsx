@@ -2,7 +2,7 @@ import { MdOutlineTableChart } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, RiInsertRowBottom, RiInsertRowTop, RiMore2Line, RiMoreLine } from 'react-icons/ri';
 
-import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, isCellSelection, toggleHeaderColumn, toggleHeaderRow, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, isCellSelection, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -153,7 +153,7 @@ export const toggleHeaderInFirstRowToolItem: ToolItem = {
 
   shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.TABLE),
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderRow),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderRowCommand),
 };
 
 export const toggleHeaderInFirstColumnToolItem: ToolItem = {
@@ -165,7 +165,7 @@ export const toggleHeaderInFirstColumnToolItem: ToolItem = {
 
   shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.TABLE),
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderColumn),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderColumnCommand),
 };
 
 // --------------------------------------------------------------------------------
