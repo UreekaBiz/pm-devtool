@@ -7,7 +7,7 @@ import { isCellSelection } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
-import { addColSpan, cellAround, cellWrapping, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes } from '../../..//extension/table/util';
+import { addColSpan, cellAround, findCellWrapperNode, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate, DispatchType } from '../../type';
 
 // ********************************************************************************
@@ -97,26 +97,23 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
 
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = editorState;
-    let cellNode, cellPos;
+    let cellNode: ProseMirrorNode | null = null/*default*/;
+    let cellPos: number | undefined = undefined/*default*/;
 
     if(!isCellSelection(selection)) {
-      cellNode = cellWrapping(selection.$from);
+      cellNode = findCellWrapperNode(selection.$from);
       if(!cellNode) return false/*nothing to do*/;
 
       cellPos = cellAround(selection.$from)?.pos;
 
     } else {
       if(selection.$anchorCell.pos !== selection.$headCell.pos) return false/*nothing to do*/;
-
       cellNode = selection.$anchorCell.nodeAfter;
       cellPos = selection.$anchorCell.pos;
     }
 
     if(!cellNode) return false/*no Cell available*/;
-    if(cellNode.attrs[AttributeType.ColSpan] === 1 && cellNode.attrs[AttributeType.RowSpan] === 1) {
-      return false;
-    } /* else -- colSpan or rowSpan is greater than 1 */
-
+    if(cellNode.attrs[AttributeType.ColSpan] === 1 && cellNode.attrs[AttributeType.RowSpan] === 1) return false/*Cell is not merged*/;
 
     let baseAttrs = cellNode.attrs;
     const attrs = [];
