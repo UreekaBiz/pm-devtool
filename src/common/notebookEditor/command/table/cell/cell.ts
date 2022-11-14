@@ -2,6 +2,7 @@ import { Fragment, Node as ProseMirrorNode, NodeType, ResolvedPos } from 'prosem
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
+import { NodeName } from '../../../../notebookEditor/node';
 import { isCellSelection } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
@@ -79,7 +80,9 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
 type GetCellTypeFunctionType = (state: EditorState, row: number, col: number, node: ProseMirrorNode) => NodeType;
 const defaultGetCellTypeFunction: GetCellTypeFunctionType = (state, row, col, node) => {
   const nodeTypes = getTableNodeTypes(state.schema);
-  return nodeTypes[node.type.spec.tableRole];
+
+  // default to returning a regular cell
+  return nodeTypes[NodeName.CELL];
 };
 
 /**
@@ -128,7 +131,10 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
     } /* else -- no need to change colSpan */
 
     const rect = selectedRect(editorState);
-    if(!rect || !rect.table || !rect.tableMap || !rect.tableStart) return false/*no selected Rectangle in Table*/;
+    if(!rect) return false/*no selected Rectangle in Table*/;
+
+    const { table, tableMap, tableStart } = rect;
+    if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return false/*nothing to do*/;
 
     for(let i = 0; i < rect.right - rect.left; i++) {
       attrs.push(colWidth ? setTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colWidth && colWidth[i] ? [colWidth[i]] : null) : baseAttrs);
@@ -136,7 +142,7 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
 
     let lastCell;
     for(let row = rect.top; row < rect.bottom; row++) {
-      let pos = rect.tableMap.positionAt(row, rect.left, rect.table);
+      let pos = tableMap.positionAt(row, rect.left, table);
       if(row === rect.top) {
         pos += cellNode.nodeSize;
       } /* else -- no need to change row */
@@ -150,7 +156,7 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
         const newCell = cellType.createAndFill(attrs[i]);
         if(!newCell) continue/*could not create new Cell*/;
 
-        tr.insert((lastCell = tr.mapping.map(pos + rect.tableStart, 1)), newCell);
+        tr.insert((lastCell = tr.mapping.map(pos + tableStart, 1)), newCell);
       }
     }
 
