@@ -2,17 +2,14 @@ import ist from 'ist';
 import { EditorState, NodeSelection, Selection } from 'prosemirror-state';
 import { eq } from 'prosemirror-test-builder';
 
-import { cellBuilder, CellSelection, defaultRowBuilder, defaultTableBuilder, getNotebookSchemaNodeBuilders, NodeName } from 'common';
+import { cellBuilder, CellSelection, defaultRowBuilder, defaultTableBuilder, tableDocBuilder } from 'common';
 import { tableEditingPlugin } from './tableEditing';
-
-// == Constant ====================================================================
-const { [NodeName.DOC]: docBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC]);
 
 // == Test ========================================================================
 describe('normalizeTableSelection', () => {
   // NOTE: the inline comments below are the positions of the
   //       start of the Cell Nodes
-  const tableDoc = docBuilder(
+  const tableDoc = tableDocBuilder(
     defaultTableBuilder(
       defaultRowBuilder(/* 2*/ cellBuilder, /* 7*/ cellBuilder, /*12*/ cellBuilder),
       defaultRowBuilder(/*19*/ cellBuilder, /*24*/ cellBuilder, /*29*/ cellBuilder),

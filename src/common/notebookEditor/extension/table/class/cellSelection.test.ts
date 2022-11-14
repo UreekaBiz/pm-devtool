@@ -4,22 +4,18 @@ import { Command, EditorState } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand } from '../../../../notebookEditor/command/table';
-import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, selectionForTableTest, tableParagraphBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
-import { getNotebookSchemaNodeBuilders, A } from '../../../../notebookEditor/command/test/testUtil';
-import { NodeName } from '../../../../notebookEditor/node';
+import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, selectionForTableTest, tableDocBuilder, tableParagraphBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
+import { A } from '../../../../notebookEditor/command/test/testUtil';
 import { isCellSelection } from '../../../../notebookEditor/selection';
 
 import { CellSelection } from './CellSelection';
 
 // ********************************************************************************
-// == Constant ====================================================================
-const { [NodeName.DOC]: docBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC]);
-
 // == Test ========================================================================
 describe('CellSelection', () => {
   // NOTE: the inline comments below are the positions of the
   //       start of the Cell Nodes
-  const tableDoc = docBuilder(
+  const tableDoc = tableDocBuilder(
     defaultTableBuilder(
         defaultRowBuilder(/* 2*/ emptyCellBuilder, /* 6*/ emptyCellBuilder, /*10*/ emptyCellBuilder),
         defaultRowBuilder(/*16*/ emptyCellBuilder, /*20*/ emptyCellBuilder, /*24*/ emptyCellBuilder),

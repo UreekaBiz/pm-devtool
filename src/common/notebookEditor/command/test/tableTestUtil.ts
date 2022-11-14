@@ -67,9 +67,11 @@ export const {
 
   // NOTE: contentMatch objects used by PM make comparison
   //       by object type instead of by properties (e.g. names of Nodes/Marks)
-  //       hence, use this paragraphBuilder when testing Table Commands
+  //       hence, these doc and paragraph builders
+  // .     must be used when testing Table Commands
+  [NodeName.DOC]: tableDocBuilder,
   [NodeName.PARAGRAPH]: tableParagraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.HEADER_CELL, NodeName.ROW, NodeName.TABLE, NodeName.PARAGRAPH], schemaWithCellAttrs);
+} = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.DOC, NodeName.HEADER_CELL, NodeName.ROW, NodeName.TABLE, NodeName.PARAGRAPH], schemaWithCellAttrs);
 
 
 // -- Cell ------------------------------------------------------------------------

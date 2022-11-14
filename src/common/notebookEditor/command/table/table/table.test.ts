@@ -1,12 +1,7 @@
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { NodeName } from '../../../../notebookEditor/node';
-import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder,  emptyCellBuilder, emptyHeaderCellBuilder, executeTableTestCommand, headerCellBuilder, headerCellWithCursorBuilder, tableParagraphBuilder } from '../../test/tableTestUtil';
-import { getNotebookSchemaNodeBuilders, CURSOR, NODE } from '../../test/testUtil';
+import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder,  emptyCellBuilder, emptyHeaderCellBuilder, executeTableTestCommand, headerCellBuilder, headerCellWithCursorBuilder, tableDocBuilder, tableParagraphBuilder } from '../../test/tableTestUtil';
+import { CURSOR, NODE } from '../../test/testUtil';
 import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, deleteColumnCommand, deleteRowCommand } from './table';
-
-// ********************************************************************************
-// == Constant ====================================================================
-const { [NodeName.DOC]: docBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC]);
 
 // == Table Test ==================================================================
 // -- Column ----------------------------------------------------------------------
@@ -186,7 +181,7 @@ describe('addColumnAfterCommand', () => {
     ));
 
   it('does nothing outside of a Table', () =>
-    executeTableTestCommand(docBuilder(tableParagraphBuilder(`foo<${CURSOR}>`)), addColumnAfterCommand, null/*expect to return false*/));
+    executeTableTestCommand(tableDocBuilder(tableParagraphBuilder(`foo<${CURSOR}>`)), addColumnAfterCommand, null/*expect to return false*/));
 
   it('preserves column widths', () =>
     executeTableTestCommand(
