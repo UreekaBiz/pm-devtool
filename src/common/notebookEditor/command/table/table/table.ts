@@ -130,7 +130,7 @@ export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 /** remove the selected Rows from a Table */
-export const deleteRow = (state: EditorState, dispatch: DispatchType) => {
+export const deleteRowCommand = (state: EditorState, dispatch: DispatchType) => {
   if(!isInTable(state)) return false/*nothing to do*/;
 
   if(dispatch) {
