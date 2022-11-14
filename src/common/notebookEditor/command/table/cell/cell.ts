@@ -157,7 +157,7 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
       }
     }
 
-    if(!cellPos) return false/*no position to change Cell*/;
+    if(!isNotNullOrUndefined<number>(cellPos)) return false/*no position to change Cell*/;
     tr.setNodeMarkup(cellPos, this.getCellTypeFunction(editorState, rect.top, rect.left, cellNode), attrs[0]);
 
     if(lastCell && isCellSelection(selection)) {

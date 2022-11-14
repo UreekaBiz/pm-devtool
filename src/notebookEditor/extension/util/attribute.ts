@@ -9,7 +9,7 @@ import { ExtensionStorageType } from '../type';
 
 // ********************************************************************************
 // == Type ========================================================================
-export type DefaultAttributeType = string | number | boolean | string[] | undefined;
+export type DefaultAttributeType = string | number | boolean | string[] | null | undefined;
 export type ParseHTMLAttributeType = (element: HTMLElement) => string | string[] | boolean | number | number[] | null;
 
 // == Interface ===================================================================
@@ -28,7 +28,7 @@ export interface AttributeSpecWithParseHTML {
  * @param defaultValue The default value of the attribute to be parsed
  * @returns The attribute spec object that defines the parsing behavior of the attribute
  */
-export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | undefined, arrayValueType?: 'string' | 'number'): AttributeSpecWithParseHTML => {
+export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | null | undefined, arrayValueType?: 'string' | 'number'): AttributeSpecWithParseHTML => {
   let parseHTML: (element: HTMLElement) => string | string[] | boolean | number | number[] | null = (element: HTMLElement) => element.getAttribute(name);
 
   switch(type) {
@@ -50,7 +50,13 @@ export const setAttributeParsingBehavior = (name: string, type: SetAttributeType
     case SetAttributeType.ARRAY:
       parseHTML = (element: HTMLElement) => {
         const attr = element.getAttribute(name);
-        if(!attr) return [/*empty*/];
+        if(!attr) {
+          if(defaultValue === null) {
+            return null/*explicitly chose to return null*/;
+          } /* else -- return empty array */
+
+          return [/*empty*/];
+        }
 
         return arrayValueType === 'number' ? attr.split(',').map(element => Number(element)) : attr.split(',');
       };
@@ -58,7 +64,7 @@ export const setAttributeParsingBehavior = (name: string, type: SetAttributeType
   }
 
   return {
-    default: defaultValue,
+    default: defaultValue === null ? null/*explicitly chose to return null*/ : defaultValue,
     parseHTML,
   };
 };
