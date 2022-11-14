@@ -130,15 +130,25 @@ export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 /** remove the selected Rows from a Table */
-export const deleteRowCommand = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
+export const deleteRowCommand = (state: EditorState, dispatch: DispatchType) =>
+  AbstractDocumentUpdate.execute(new DeleteRowDocumentUpdate().update(state, state.tr), dispatch);
+export class DeleteRowDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
 
-  if(dispatch) {
-    const rect = selectedRect(state);
-    if(!rect || !rect.table || !rect.tableMap) return false/*no selected Rectangle in Table*/;
-    if(rect.top === 0 && rect.bottom === rect.tableMap.height) return false/*nothing to do*/;
+  /**
+   * modify the given Transaction such that
+   * the selected Rows are removed from a Table
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isInTable(editorState)) return false/*nothing to do*/;
 
-    const { tr } = state;
+    const rect = selectedRect(editorState);
+    if(!rect) return false/*no selected Rectangle in Table*/;
+
+    const { table, tableMap } = rect;
+    if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap)) return false/*do nothing*/;
+    if(rect.top === 0 && rect.bottom === tableMap.height) return false/*nothing to do*/;
+
     for(let i = rect.bottom - 1; ; i--) {
       removeRow(tr, rect, i);
       if(i === rect.top) break/*nothing left to do*/;
@@ -151,11 +161,9 @@ export const deleteRowCommand = (state: EditorState, dispatch: DispatchType) => 
       rect.tableMap = TableMap.get(rect.table);
     }
 
-    dispatch(tr);
+    return tr/*updated*/;
   }
-
-  return true/*handled*/;
-};
+}
 
 const rowIsHeader = (map: TableMap, table: ProseMirrorNode, row: number) => {
   const headerCellType = getTableNodeTypes(table.type.schema)[NodeName.HEADER_CELL];

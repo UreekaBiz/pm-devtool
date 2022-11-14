@@ -7,7 +7,7 @@ import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
 import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder,  emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, headerCellWithCursorBuilder, selectionForTableTest, tableParagraphBuilder } from '../../test/tableTestUtil';
 import { getNotebookSchemaNodeBuilders, CURSOR, NODE } from '../../test/testUtil';
-import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, deleteColumnCommand } from './table';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, deleteColumnCommand, deleteRowCommand } from './table';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -607,7 +607,7 @@ describe('addRowBeforeCommand', () => {
     ));
 });
 
-describe('deleteRow', () => {
+describe('deleteRowCommand', () => {
   it('can delete a simple row', () =>
     executeTableTestCommand(
       defaultTableBuilder(
@@ -615,7 +615,7 @@ describe('deleteRow', () => {
         defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
         defaultRowBuilder(cellBuilder, emptyCellBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, emptyCellBuilder),
@@ -629,7 +629,7 @@ describe('deleteRow', () => {
         defaultRowBuilder(emptyCellBuilder, cellBuilder),
         defaultRowBuilder(cellBuilder, emptyCellBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(emptyCellBuilder, cellBuilder),
@@ -643,7 +643,7 @@ describe('deleteRow', () => {
         defaultRowBuilder(cellBuilder, emptyCellBuilder),
         defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(emptyCellBuilder, cellBuilder),
@@ -657,7 +657,7 @@ describe('deleteRow', () => {
         defaultRowBuilder(cellWithCursorBuilder),
         defaultRowBuilder(cellBuilder, cellBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, cellBuilder, cellWithDimensionBuilder(1, 2)),
@@ -670,33 +670,33 @@ describe('deleteRow', () => {
         defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithCursorBuilder),
         defaultRowBuilder(emptyCellBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, emptyCellBuilder))
     ));
 
-  it('deletes multiple rows when the start cell has a rowspan', () =>
+  it('deletes multiple rows when the start cell has a rowSpan', () =>
     executeTableTestCommand(
       defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ rowspan: 3 }, tableParagraphBuilder(`<${CURSOR}>`)), cellBuilder),
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.RowSpan]: 3 }, tableParagraphBuilder(`<${CURSOR}>`)), cellBuilder),
         defaultRowBuilder(cellBuilder),
         defaultRowBuilder(cellBuilder),
         defaultRowBuilder(cellBuilder, cellBuilder)
       ),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder))
     ));
 
-  it('skips columns when adjusting rowspan', () =>
+  it('skips columns when adjusting rowSpan', () =>
     executeTableTestCommand(
       defaultTableBuilder(
         defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)),
         defaultRowBuilder(cellBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)))
@@ -708,7 +708,7 @@ describe('deleteRow', () => {
         defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
         defaultRowBuilder(cellBuilder, emptyCellBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, emptyCellBuilder))
@@ -722,7 +722,7 @@ describe('deleteRow', () => {
         defaultRowBuilder(cellBuilder, cellWithHeadBuilder),
         defaultRowBuilder(emptyCellBuilder, cellBuilder)),
 
-      deleteRow,
+      deleteRowCommand,
 
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, emptyCellBuilder),
