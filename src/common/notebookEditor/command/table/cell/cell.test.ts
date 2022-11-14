@@ -1,8 +1,8 @@
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, executeTableTestCommand, tableParagraphBuilder } from '../../test/tableTestUtil';
-import { ANCHOR } from '../../test/testUtil';
+import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, executeTableTestCommand, tableParagraphBuilder } from '../../test/tableTestUtil';
+import { ANCHOR, CURSOR } from '../../test/testUtil';
 
-import { mergeCellsCommand } from './cell';
+import { mergeCellsCommand, splitCellCommand } from './cell';
 
 // == Cell Test ===================================================================
 describe('mergeCellsCommand', () => {
@@ -102,98 +102,137 @@ describe('mergeCellsCommand', () => {
     ));
 });
 
-// describe('splitCellCommand', () => {
-//   it('does nothing when cursor is inside of a cell with attributes [AttributeType.ColSpan] = 1 and rowspan = 1', () =>
-//     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellBuilder)), splitCellCommand, null));
+describe('splitCellCommand', () => {
+  it('does nothing when cursor is inside of a Cell with attributes colSpan = 1 and rowSpan = 1', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
 
-//   it('can split when col-spanning cell with cursor', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)), cellBuilder)),
-//       splitCellCommand,
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
-//     ));
+        splitCellCommand,
 
-//   it('can split when col-spanning header-cell with cursor', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultHeaderCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)))),
-//       splitCellCommand,
-//       defaultTableBuilder(defaultRowBuilder(defaultHeaderCellBuilder(tableParagraphBuilder('foo')), emptyHeaderCellBuilder))
-//     ));
+        null/*expect to return false*/
+    ));
 
-//   it('does nothing for a multi-CellSelection', () =>
-//     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)), splitCellCommand, null));
+  it('can split col-spanning Cell with cursor', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)), cellBuilder)),
 
-//   it('does nothing when the selected cell does not span anything', () =>
-//     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellBuilder)), splitCellCommand, null));
+      splitCellCommand,
 
-//   it('can split a col-spanning cell', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder)),
-//       splitCellCommand,
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
-//     ));
+      defaultTableBuilder(
+        defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
+    ));
 
-//   it('can split a row-spanning cell', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
-//       splitCellCommand,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
-//     ));
+  // it('can split when col-spanning HeaderCell with cursor', () =>
+  //   executeTableTestCommand(
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(defaultHeaderCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)))),
 
-//   it('can split a rectangular cell', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(
-//         defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
-//         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
-//         defaultRowBuilder(cellBuilder, cellBuilder)
-//       ),
-//       splitCellCommand,
-//       defaultTableBuilder(
-//         defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
-//         defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder),
-//         defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder, cellBuilder)
-//       )
-//     ));
+  //     splitCellCommand,
 
-//   it('distributes column widths', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, tableParagraphBuilder(`a<${ANCHOR}>`)))),
-//       splitCellCommand,
-//       defaultTableBuilder(
-//         defaultRowBuilder(
-//           defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('a')),
-//           emptyCellBuilder,
-//           defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder())
-//         )
-//       )
-//     ));
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(defaultHeaderCellBuilder(tableParagraphBuilder('foo')), emptyHeaderCellBuilder))
+  //   ));
 
-//   // describe('with custom cell type', () => {
-//   //   function createGetCellType(state) {
-//   //     return ({ row }) => {
-//   //       if(row === 0) {
-//   //         return state.schema.nodes.table_header;
-//   //       }
-//   //       return state.schema.nodes.table_cell;
-//   //     };
-//   //   }
+  // it('does nothing for a multi-CellSelection', () =>
+  //   executeTableTestCommand(
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)),
 
-//   //   const splitCellWithOnlyHeaderInColumnZero = (state, dispatch) =>
-//   //     splitCellWithType(createGetCellType(state))(state, dispatch);
+  //       splitCellCommand,
 
-//   //   it('can split a row-spanning header cell into a header and normal cell ', () =>
-//   //     executeTableTestCommand(
-//   //       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
-//   //       splitCellWithOnlyHeaderInColumnZero,
-//   //       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultHeaderCellBuilder(tableParagraphBuilder('foo')), cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
-//   //     ));
-//   // });
-// });
+  //       null/*expect to return false*/
+  //   ));
+
+  // it('does nothing when the selected Cell does not span anything', () =>
+  //   executeTableTestCommand(
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(cellWithAnchorBuilder, cellBuilder)),
+
+  //       splitCellCommand,
+
+  //       null/*expect to return false*/
+  //   ));
+
+  // it('can split a col-spanning Cell', () =>
+  //   executeTableTestCommand(
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder)),
+
+  //     splitCellCommand,
+
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
+  //   ));
+
+  // it('can split a row-spanning Cell', () =>
+  //   executeTableTestCommand(
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
+  //       defaultRowBuilder(cellBuilder, cellBuilder)),
+
+  //     splitCellCommand,
+
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), cellBuilder),
+  //       defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+  //   ));
+
+  // it('can split a rectangular Cell', () =>
+  //   executeTableTestCommand(
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
+  //       defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
+  //       defaultRowBuilder(cellBuilder, cellBuilder)
+  //     ),
+
+  //     splitCellCommand,
+
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
+  //       defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder),
+  //       defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder, cellBuilder)
+  //     )
+  //   ));
+
+  // it('distributes column widths', () =>
+  //   executeTableTestCommand(
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, tableParagraphBuilder(`a<${ANCHOR}>`)))),
+
+  //     splitCellCommand,
+
+  //     defaultTableBuilder(
+  //       defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('a')), emptyCellBuilder, defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder())))
+  //   ));
+
+  // describe('with custom Cell type', () => {
+  //   function createGetCellType(state) {
+  //     return ({ row }) => {
+  //       if(row === 0) {
+  //         return state.schema.nodes.table_header;
+  //       }
+  //       return state.schema.nodes.table_cell;
+  //     };
+  //   }
+
+  //   const splitCellWithOnlyHeaderInColumnZero = (state, dispatch) =>
+  //     splitCellWithType(createGetCellType(state))(state, dispatch);
+
+  //   it('can split a row-spanning header Cell into a header and normal Cell ', () =>
+  //     executeTableTestCommand(
+  //       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
+  //       splitCellWithOnlyHeaderInColumnZero,
+  //       defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultHeaderCellBuilder(tableParagraphBuilder('foo')), cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+  //     ));
+  // });
+});
 
 // describe('setCellAttr', () => {
 //   let cAttr = defaultCellBuilder({ executeTableTestCommand: 'value' }, tableParagraphBuilder('x'));
 
-//   it('can set an attribute on a parent cell', () =>
+//   it('can set an attribute on a parent Cell', () =>
 //     executeTableTestCommand(
 //       defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
 //       setCellAdefaultCellBuilderefaultRowBuilder('executeTableTestCommand', 'value'),
