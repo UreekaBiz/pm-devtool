@@ -231,24 +231,3 @@ describe('splitCellCommand', () => {
       ));
   });
 });
-
-// describe('setCellAttr', () => {
-//   let cAttr = defaultCellBuilder({ executeTableTestCommand: 'value' }, tableParagraphBuilder('x'));
-
-//   it('can set an attribute on a parent Cell', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
-//       setCellAdefaultCellBuilderefaultRowBuilder('executeTableTestCommand', 'value'),
-//       defaultTableBuilder(defaultRowBuilder(cAttr, cellBuilder))
-//     ));
-
-//   it('does nothing when the attribute is already there', () =>
-//     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellBuilder)), setCellAdefaultCellBuilderefaultRowBuilder('executeTableTestCommand', 'default'), null));
-
-//   it('will set attributes on all Cells covered by a CellSelection', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder), defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellWithHeadBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
-//       setCellAdefaultCellBuilderefaultRowBuilder('executeTableTestCommand', 'value'),
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cAttr, cAttr), defaultRowBuilder(cellWithDimensionBuilder(2, 1), cAttr), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))
-//     ));
-// });
