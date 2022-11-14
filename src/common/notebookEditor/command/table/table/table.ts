@@ -171,7 +171,7 @@ const rowIsHeader = (map: TableMap, table: ProseMirrorNode, row: number) => {
 };
 
 const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectProps, row: number) => {
-  if(!tableMap || !tableStart || !table) return tr/*do nothing*/;
+  if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return tr/*do nothing*/;
 
   let rowPos: number | null | undefined = tableStart;
   for(let i = 0; i < row; i++) {
@@ -214,7 +214,7 @@ const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectPr
 };
 
 const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRectProps, row: number) => {
-  if(!table || !tableMap || !tableStart) return/*do nothing*/;
+  if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return/*do nothing*/;
 
   let rowPos = 0;
   for(let i = 0; i < row; i++) {
@@ -296,11 +296,8 @@ export class AddColumnAfterDocumentUpdate implements AbstractDocumentUpdate {
 
 
 /** remove the selected columns from a Table */
-export const deleteColumnCommand: Command = (state, dispatch) => {
-  const x = AbstractDocumentUpdate.execute(new DeleteColumnDocumentUpdate().update(state, state.tr), dispatch);
-  console.log(x);
-  return x;
-}
+export const deleteColumnCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new DeleteColumnDocumentUpdate().update(state, state.tr), dispatch);
 export class DeleteColumnDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -314,7 +311,7 @@ export class DeleteColumnDocumentUpdate implements AbstractDocumentUpdate {
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const { table, tableMap, tableStart } = rect;
-    if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return false/*cannot use Rect*/;
+    if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return false/*do nothing*/;
     if(rect.left === 0 && rect.right === tableMap.width) return false/*do nothing*/;
 
     for(let i = rect.right - 1; ; i--) {
@@ -372,7 +369,7 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
 };
 
 const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
-  if(!table || !tableMap || !tableStart) return/*do nothing*/;
+  if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return/*do nothing*/;
 
   const mapStart = tr.mapping.maps.length;
   for(let row = 0; row < tableMap.height;) {

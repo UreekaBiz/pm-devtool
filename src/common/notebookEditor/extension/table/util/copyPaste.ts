@@ -2,7 +2,13 @@ import { Slice, Fragment, Node as ProseMirrorNode, NodeType, Schema } from 'pros
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
-import { getTableNodeTypes, removeColSpan, setTableNodeAttributes, CellSelection, TableMap, TableRole, NodeName, AttributeType, DispatchType, TableRect } from 'common';
+import { DispatchType } from '../../../command/type';
+import { AttributeType } from '../../../../notebookEditor/attribute';
+import { NodeName } from '../../../../notebookEditor/node';
+import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
+import { getTableNodeTypes } from '../../../extension/table/node/table';
+import { TableRole } from '../../../extension/table/type';
+import { removeColSpan, setTableNodeAttributes } from '../../..//extension/table/util';
 
 // ********************************************************************************
 // handle pasting Cell content into Tables, or pasting
