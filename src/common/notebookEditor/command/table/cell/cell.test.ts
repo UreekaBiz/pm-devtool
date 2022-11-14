@@ -1,5 +1,5 @@
-// import { AttributeType } from '../../../../notebookEditor/attribute';
-import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultRowBuilder, defaultTableBuilder, executeTableTestCommand } from '../../test/tableTestUtil';
+import { AttributeType } from '../../../../notebookEditor/attribute';
+import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, executeTableTestCommand, tableParagraphBuilder } from '../../test/tableTestUtil';
 // import { ANCHOR } from '../../test/testUtil';
 
 import { mergeCellsCommand } from './cell';
@@ -27,12 +27,16 @@ describe('mergeCellsCommand', () => {
       null/*expect to return false*/
     ));
 
-  // it('can merge two Cells in a column', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)),
-  //     mergeCellsCommand,
-  //     defaultTableBuilder(defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder))
-  //   ));
+  it('can merge two Cells in a column', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)),
+
+      mergeCellsCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder))
+    ));
 
   // it('can merge two Cells in a row', () =>
   //   executeTableTestCommand(

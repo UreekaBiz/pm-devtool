@@ -1,32 +1,35 @@
 import { Fragment, Node as ProseMirrorNode, NodeType, ResolvedPos } from 'prosemirror-model';
-import { EditorState, TextSelection } from 'prosemirror-state';
+import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { isCellSelection } from '../../../../notebookEditor/selection';
 import { CellSelection, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
 import { addColSpan, cellAround, cellWrapping, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes } from '../../..//extension/table/util';
-import { DispatchType } from '../../type';
+import { AbstractDocumentUpdate, DispatchType } from '../../type';
 
 // ********************************************************************************
 /**
  * merge the selected Cells into a single Cell, only available
  * when the selected Cell's outline forms a Rectangle
  */
-export const mergeCellsCommand = (state: EditorState, dispatch: DispatchType) => {
-  const { selection } = state;
-  if(!isCellSelection(selection) || selection.$anchorCell.pos === selection.$headCell.pos) {
-    return false;
-  } /* else -- can try to merge Cells */
+export const mergeCellsCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new MergeCellsDocumentUpdate().update(state, state.tr), dispatch);
+export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
+  constructor() {/*nothing additional*/ }
 
-  const rect = selectedRect(state);
-  if(!rect || !rect.table || !rect.tableMap || !rect.tableStart) return false/*nothing to do*/;
+  public update(editorState: EditorState, tr: Transaction) {
+    const { selection } = editorState;
+    if(!isCellSelection(selection) || selection.$anchorCell.pos === selection.$headCell.pos) {
+      return false;
+    } /* else -- can try to merge Cells */
 
-  const { tableMap } = rect;
-  if(cellsOverlapRectangle(tableMap.map, rect.tableMap.width, rect.tableMap.height, rect)) return false/*nothing to do*/;
+    const rect = selectedRect(editorState);
+    if(!rect || !rect.table || !rect.tableMap || !rect.tableStart) return false/*nothing to do*/;
 
-  if(dispatch) {
-    const { tr } = state;
+    const { tableMap } = rect;
+    if(cellsOverlapRectangle(tableMap.map, rect.tableMap.width, rect.tableMap.height, rect)) return false/*nothing to do*/;
+
     const seen: { [key: number]: boolean; } = {};
 
     let content = Fragment.empty;
@@ -63,10 +66,9 @@ export const mergeCellsCommand = (state: EditorState, dispatch: DispatchType) =>
 
 
     tr.setSelection(new CellSelection(tr.doc.resolve(mergedPos + rect.tableStart)));
-    dispatch(tr);
+    return tr;
   }
-  return true;
-};
+}
 
 /**
  * split a selected Cell whose rowSpan or colSpan is greater than one
@@ -124,7 +126,7 @@ const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (sta
     if(!rect || !rect.table || !rect.tableMap || !rect.tableStart) return false/*no selected Rectangle in Table*/;
 
     for(let i = 0; i < rect.right - rect.left; i++) {
-      attrs.push(colWidth ? setTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colWidth && colWidth[i] ? [colWidth[i]] : null): baseAttrs);
+      attrs.push(colWidth ? setTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colWidth && colWidth[i] ? [colWidth[i]] : null) : baseAttrs);
     }
 
     const { tr } = state;
@@ -151,7 +153,7 @@ const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (sta
     if(!cellPos) return false/*no position to change Cell*/;
     tr.setNodeMarkup(cellPos, getCellTypeFunction({ node: cellNode, row: rect.top, col: rect.left }), attrs[0]);
 
-    if( lastCell && isCellSelection(selection)) {
+    if(lastCell && isCellSelection(selection)) {
       const $lastCellPos = tr.doc.resolve(lastCell);
       tr.setSelection(new CellSelection(tr.doc.resolve(selection.$anchorCell.pos), $lastCellPos));
     } /* else -- no need to set CellSelection */
@@ -162,7 +164,7 @@ const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (sta
 };
 
 /** select the previous or the next Cell in a Table */
-export const goToCellCommand = (direction:  'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
+export const goToCellCommand = (direction: 'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
   if(!isInTable(state)) return false/*nothing to do*/;
 
   const $cell = selectionCell(state);
