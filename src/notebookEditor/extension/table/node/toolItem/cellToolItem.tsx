@@ -2,7 +2,7 @@ import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { IoMdSquareOutline } from 'react-icons/io';
 import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
-import { goToCellCommand, isCellSelection, mergeCellsCommand, splitCellCommand, NodeName } from 'common';
+import { goToCellCommand, mergeCellsCommand, splitCellCommand } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -18,7 +18,7 @@ export const goToPreviousCellToolItem: ToolItem = {
   icon: <GrFormPreviousLink size={16} />,
   tooltip: 'Go to previous Cell',
 
-  shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.CELL) && !editor.isNodeOrMarkActive(NodeName.HEADER_CELL),
+  shouldBeDisabled: (editor) => false,
   shouldShow: (editor) => true,
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('previous')),
 };
@@ -30,7 +30,7 @@ export const goToNextCellToolItem: ToolItem = {
   icon: <GrFormNextLink size={16} />,
   tooltip: 'Go to next Cell',
 
-  shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.CELL) && !editor.isNodeOrMarkActive(NodeName.HEADER_CELL),
+  shouldBeDisabled: (editor) => false,
   shouldShow: (editor) => true,
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('next')),
 };
@@ -42,14 +42,8 @@ export const mergeCellsToolItem: ToolItem = {
   icon: <RiMergeCellsHorizontal size={16} />,
   tooltip: 'Merge Cells',
 
-  shouldBeDisabled: (editor) => {
-    const { selection } = editor.view.state;
-    if((editor.isNodeOrMarkActive(NodeName.CELL) || editor.isNodeOrMarkActive(NodeName.HEADER_CELL)) && isCellSelection(selection)) return false;
-    /* else -- user does not have many cells selected */
-
-    return true;
-  },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldBeDisabled: (editor) => false,
+  shouldShow: (editor) => true,
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, mergeCellsCommand),
 };
 
@@ -60,14 +54,8 @@ export const splitCellsToolItem: ToolItem = {
   icon: <RiSplitCellsHorizontal size={16} />,
   tooltip: 'Split Cells',
 
-  shouldBeDisabled: (editor) => {
-    const { selection } = editor.view.state;
-    if((editor.isNodeOrMarkActive(NodeName.CELL) || editor.isNodeOrMarkActive(NodeName.HEADER_CELL)) && isCellSelection(selection)) return false;
-    /* else -- user does not have many cells selected */
-
-    return true;
-  },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldBeDisabled: (editor) => false,
+  shouldShow: (editor) => true,
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCellCommand()),
 };
 
@@ -78,8 +66,8 @@ export const toggleHeaderCellToolItem: ToolItem = {
   icon: <IoMdSquareOutline size={16} />,
   tooltip: 'Toggle Header in Cell',
 
-  shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.CELL) && !editor.isNodeOrMarkActive(NodeName.HEADER_CELL),
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldBeDisabled: (editor) => false,
+  shouldShow: (editor) => true,
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderCell),
 };
 
