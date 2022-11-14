@@ -2,7 +2,7 @@ import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { IoMdSquareOutline } from 'react-icons/io';
 import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
-import { goToCell, isCellSelection, mergeCells, splitCell, NodeName } from 'common';
+import { goToCellCommand, isCellSelection, mergeCellsCommand, splitCellCommand, NodeName } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -20,7 +20,7 @@ export const goToPreviousCellToolItem: ToolItem = {
 
   shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.CELL) && !editor.isNodeOrMarkActive(NodeName.HEADER_CELL),
   shouldShow: (editor) => true,
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCell('previous')),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('previous')),
 };
 
 export const goToNextCellToolItem: ToolItem = {
@@ -32,7 +32,7 @@ export const goToNextCellToolItem: ToolItem = {
 
   shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.CELL) && !editor.isNodeOrMarkActive(NodeName.HEADER_CELL),
   shouldShow: (editor) => true,
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCell('next')),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('next')),
 };
 
 export const mergeCellsToolItem: ToolItem = {
@@ -50,7 +50,7 @@ export const mergeCellsToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, mergeCells),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, mergeCellsCommand),
 };
 
 export const splitCellsToolItem: ToolItem = {
@@ -68,7 +68,7 @@ export const splitCellsToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCell),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCellCommand),
 };
 
 export const toggleHeaderCellToolItem: ToolItem = {

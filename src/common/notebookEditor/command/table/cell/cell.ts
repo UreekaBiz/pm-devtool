@@ -13,7 +13,7 @@ import { DispatchType } from '../../type';
  * merge the selected Cells into a single Cell, only available
  * when the selected Cell's outline forms a Rectangle
  */
-export const mergeCells = (state: EditorState, dispatch: DispatchType) => {
+export const mergeCellsCommand = (state: EditorState, dispatch: DispatchType) => {
   const { selection } = state;
   if(!isCellSelection(selection) || selection.$anchorCell.pos === selection.$headCell.pos) {
     return false;
@@ -72,7 +72,7 @@ export const mergeCells = (state: EditorState, dispatch: DispatchType) => {
  * split a selected Cell whose rowSpan or colSpan is greater than one
  * into smaller Cells. Use the first CellType for the new Cells
  */
-export const splitCell = (state: EditorState, dispatch: DispatchType) => {
+export const splitCellCommand = (state: EditorState, dispatch: DispatchType) => {
   const nodeTypes = getTableNodeTypes(state.schema);
   return splitCellWithType(({ node }) => {
     return nodeTypes[node.type.spec.tableRole];
@@ -162,7 +162,7 @@ const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (sta
 };
 
 /** select the previous or the next Cell in a Table */
-export const goToCell = (direction:  'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
+export const goToCellCommand = (direction:  'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
   if(!isInTable(state)) return false/*nothing to do*/;
 
   const $cell = selectionCell(state);

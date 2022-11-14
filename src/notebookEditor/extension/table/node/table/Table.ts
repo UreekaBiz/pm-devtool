@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { addRowAfterCommand, deleteTableWhenAllCellsSelected, getNodeOutputSpec, goToCell, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
+import { addRowAfterCommand, deleteTableWhenAllCellsSelected, getNodeOutputSpec, goToCellCommand, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
 
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
 import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
@@ -48,7 +48,7 @@ export const Table = new NodeExtension({
     tableColumnResizingPlugin(TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH, false/*do not make the last Column resizable*/),
     keymap({
       'Tab': () => {
-        if(goToCell('next')(editor.view.state, editor.view.dispatch)) {
+        if(goToCellCommand('next')(editor.view.state, editor.view.dispatch)) {
           return true;
         } /* else -- cannot go to the next Cell */
 
@@ -60,7 +60,7 @@ export const Table = new NodeExtension({
         // TODO: handle with DocumentUpdates
         // return this.editor.chain().addRowAfterCommand().goToCell().run();
       },
-      'Shift-Tab': () => goToCell('previous')(editor.view.state, editor.view.dispatch),
+      'Shift-Tab': () => goToCellCommand('previous')(editor.view.state, editor.view.dispatch),
       'Backspace': deleteTableWhenAllCellsSelected,
       'Mod-Backspace': deleteTableWhenAllCellsSelected,
       'Delete': deleteTableWhenAllCellsSelected,
