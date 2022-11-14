@@ -73,44 +73,48 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
 
 /**
  * split a selected Cell whose rowSpan or colSpan is greater than one
- * into smaller Cells. Use the first CellType for the new Cells
- */
-export const splitCellCommand = (state: EditorState, dispatch: DispatchType) => {
-  const nodeTypes = getTableNodeTypes(state.schema);
-  return splitCellWithType(({ node }) => {
-    return nodeTypes[node.type.spec.tableRole];
-  })(state, dispatch);
-};
-/**
- * split a selected Cell whose rowSpan or colSpan is greater than one
  * into smaller Cell with the Cell type (th, td) returned by the
  * given getCellType function
  */
-type GetCellTypeFunctionType = ({ row, col, node }: { row: number; col: number; node: ProseMirrorNode; }) => NodeType;
-const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (state: EditorState, dispatch: DispatchType) => {
-  const { selection } = state;
-  let cellNode, cellPos;
+type GetCellTypeFunctionType = (state: EditorState, row: number, col: number, node: ProseMirrorNode) => NodeType;
+const defaultGetCellTypeFunction: GetCellTypeFunctionType = (state, row, col, node) => {
+  const nodeTypes = getTableNodeTypes(state.schema);
+  return nodeTypes[node.type.spec.tableRole];
+};
 
-  if(!isCellSelection(selection)) {
-    cellNode = cellWrapping(selection.$from);
-    if(!cellNode) return false/*nothing to do*/;
+/**
+ * split a selected Cell whose rowSpan or colSpan is greater than one
+ * into smaller Cells. Use the first CellType for the new Cells
+ */
+export const splitCellCommand = (getCellTypeFunction?: GetCellTypeFunctionType): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SplitCellDocumentUpdate(getCellTypeFunction).update(state, state.tr), dispatch);
 
-    cellPos = cellAround(selection.$from)?.pos;
+export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
+  constructor(private readonly getCellTypeFunction: GetCellTypeFunctionType = defaultGetCellTypeFunction) {/*nothing additional*/ }
 
-  } else {
-    if(selection.$anchorCell.pos !== selection.$headCell.pos) return false/*nothing to do*/;
+  public update(editorState: EditorState, tr: Transaction) {
+    const { selection } = editorState;
+    let cellNode, cellPos;
 
-    cellNode = selection.$anchorCell.nodeAfter;
-    cellPos = selection.$anchorCell.pos;
-  }
+    if(!isCellSelection(selection)) {
+      cellNode = cellWrapping(selection.$from);
+      if(!cellNode) return false/*nothing to do*/;
 
-  if(!cellNode) return false/*no Cell available*/;
-  if(cellNode.attrs[AttributeType.ColSpan] === 1 && cellNode.attrs[AttributeType.RowSpan] === 1) {
-    return false;
-  } /* else -- colSpan or rowSpan is greater than 1 */
+      cellPos = cellAround(selection.$from)?.pos;
+
+    } else {
+      if(selection.$anchorCell.pos !== selection.$headCell.pos) return false/*nothing to do*/;
+
+      cellNode = selection.$anchorCell.nodeAfter;
+      cellPos = selection.$anchorCell.pos;
+    }
+
+    if(!cellNode) return false/*no Cell available*/;
+    if(cellNode.attrs[AttributeType.ColSpan] === 1 && cellNode.attrs[AttributeType.RowSpan] === 1) {
+      return false;
+    } /* else -- colSpan or rowSpan is greater than 1 */
 
 
-  if(dispatch) {
     let baseAttrs = cellNode.attrs;
     const attrs = [];
     const colWidth = baseAttrs[AttributeType.ColWidth];
@@ -123,14 +127,13 @@ const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (sta
       baseAttrs = setTableNodeAttributes(baseAttrs, AttributeType.ColSpan, 1);
     } /* else -- no need to change colSpan */
 
-    const rect = selectedRect(state);
+    const rect = selectedRect(editorState);
     if(!rect || !rect.table || !rect.tableMap || !rect.tableStart) return false/*no selected Rectangle in Table*/;
 
     for(let i = 0; i < rect.right - rect.left; i++) {
       attrs.push(colWidth ? setTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colWidth && colWidth[i] ? [colWidth[i]] : null) : baseAttrs);
     }
 
-    const { tr } = state;
     let lastCell;
     for(let row = rect.top; row < rect.bottom; row++) {
       let pos = rect.tableMap.positionAt(row, rect.left, rect.table);
@@ -141,7 +144,7 @@ const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (sta
       for(let col = rect.left, i = 0; col < rect.right; col++, i++) {
         if(col === rect.left && row === rect.top) continue/* no need to insert content*/;
 
-        const cellType = getCellTypeFunction({ node: cellNode, row, col });
+        const cellType = this.getCellTypeFunction(editorState, row, col, cellNode);
         if(!cellType) continue/*no CellType available*/;
 
         const newCell = cellType.createAndFill(attrs[i]);
@@ -152,17 +155,16 @@ const splitCellWithType = (getCellTypeFunction: GetCellTypeFunctionType) => (sta
     }
 
     if(!cellPos) return false/*no position to change Cell*/;
-    tr.setNodeMarkup(cellPos, getCellTypeFunction({ node: cellNode, row: rect.top, col: rect.left }), attrs[0]);
+    tr.setNodeMarkup(cellPos, this.getCellTypeFunction(editorState, rect.top, rect.left, cellNode), attrs[0]);
 
     if(lastCell && isCellSelection(selection)) {
       const $lastCellPos = tr.doc.resolve(lastCell);
       tr.setSelection(new CellSelection(tr.doc.resolve(selection.$anchorCell.pos), $lastCellPos));
     } /* else -- no need to set CellSelection */
 
-    dispatch(tr);
+    return tr/*handled*/;
   }
-  return true/*handled*/;
-};
+}
 
 /** select the previous or the next Cell in a Table */
 export const goToCellCommand = (direction: 'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
