@@ -7,7 +7,7 @@ import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
 import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder,  emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, headerCellWithCursorBuilder, selectionForTableTest, tableParagraphBuilder } from '../../test/tableTestUtil';
 import { getNotebookSchemaNodeBuilders, CURSOR, NODE } from '../../test/testUtil';
-import { addColumnAfterCommand, addColumnBeforeCommand, deleteColumnCommand } from './table';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, deleteColumnCommand } from './table';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -432,173 +432,303 @@ describe('deleteColumnCommand', () => {
 });
 
 // -- Row -------------------------------------------------------------------------
-// describe('addRowAfterCommand', () => {
-//   it('can add a simple row', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
-//       addRowAfterCommand,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(emptyCellBuilder, emptyCellBuilder), defaultRowBuilder(cellBuilder, cellBuilder))
-//     ));
+describe('addRowAfterCommand', () => {
+  it('can add a simple row', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder)),
 
-//   it('can add a row at the end', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
-//       addRowAfterCommand,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(emptyCellBuilder, emptyCellBuilder))
-//     ));
+      addRowAfterCommand,
 
-//   it('increases rowspan when needed', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellBuilder)),
-//       addRowAfterCommand,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 3)), defaultRowBuilder(emptyCellBuilder), defaultRowBuilder(cellBuilder))
-//     ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
 
-//   it('skips columns for [AttributeType.ColSpan] cells', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)), defaultRowBuilder(cellBuilder)),
-//       addRowAfterCommand,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 3)), defaultRowBuilder(emptyCellBuilder), defaultRowBuilder(cellBuilder))
-//     ));
+  it('can add a row at the end', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
 
-//   it('picks the row after a CellSelection', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithHeadBuilder, cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder), defaultRowBuilder(cellWithDimensionBuilder(3, 1))),
-//       addRowAfterCommand,
-//       defaultTableBuilder(
-//         defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-//         defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-//         defaultRowBuilder(emptyCellBuilder, emptyCellBuilder, emptyCellBuilder),
-//         defaultRowBuilder(cellWithDimensionBuilder(3, 1))
-//       )
-//     ));
+      addRowAfterCommand,
 
-//   it('preserves header columns', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, headerCellWithCursorBuilder), defaultRowBuilder(cellBuilder, headerCellBuilder)),
-//       addRowAfterCommand,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, headerCellBuilder), defaultRowBuilder(emptyCellBuilder, emptyHeaderCellBuilder), defaultRowBuilder(cellBuilder, headerCellBuilder))
-//     ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder))
+    ));
 
-//   it('uses next row as reference when row before is a header', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(headerCellBuilder, headerCellWithCursorBuilder), defaultRowBuilder(cellBuilder, headerCellBuilder)),
-//       addRowAfterCommand,
-//       defaultTableBuilder(defaultRowBuilder(headerCellBuilder, headerCellBuilder), defaultRowBuilder(emptyCellBuilder, emptyHeaderCellBuilder), defaultRowBuilder(cellBuilder, headerCellBuilder))
-//     ));
+  it('increases rowspan when needed', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(1, 2)),
+        defaultRowBuilder(cellBuilder)),
 
-//   it('creates regular cells when no reference row is available', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(headerCellBuilder, headerCellWithCursorBuilder)),
-//       addRowAfterCommand,
-//       defaultTableBuilder(defaultRowBuilder(headerCellBuilder, headerCellBuilder), defaultRowBuilder(emptyCellBuilder, emptyCellBuilder))
-//     ));
-// });
+      addRowAfterCommand,
 
-// describe('addRowBeforeCommand', () => {
-//   it('can add a simple row', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
-//       addRowBeforeCommand,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(emptyCellBuilder, emptyCellBuilder), defaultRowBuilder(cellBuilder, cellBuilder))
-//     ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 3)),
+        defaultRowBuilder(emptyCellBuilder),
+        defaultRowBuilder(cellBuilder))
+    ));
 
-//   it('can add a row at the start', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
-//       addRowBeforeCommand,
-//       defaultTableBuilder(defaultRowBuilder(emptyCellBuilder, emptyCellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder))
-//     ));
+  it('skips columns for colSpan Cells', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)),
+        defaultRowBuilder(cellBuilder)),
 
-//   it('picks the row before a CellSelection', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellWithAnchorBuilder, cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder)),
-//       addRowBeforeCommand,
-//       defaultTableBuilder(
-//         defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)),
-//         defaultRowBuilder(emptyCellBuilder, emptyCellBuilder, emptyCellBuilder),
-//         defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-//         defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)
-//       )
-//     ));
+      addRowAfterCommand,
 
-//   it('preserves header columns', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder)),
-//       addRowBeforeCommand,
-//       defaultTableBuilder(defaultRowBuilder(emptyHeaderCellBuilder, emptyCellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder), defaultRowBuilder(headerCellBuilder, cellBuilder))
-//     ));
-// });
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 3)),
+        defaultRowBuilder(emptyCellBuilder), defaultRowBuilder(cellBuilder))
+    ));
 
-// describe('deleteRow', () => {
-//   it('can delete a simple row', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder), defaultRowBuilder(cellWithCursorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder))
-//     ));
+  it('picks the row after a CellSelection', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithHeadBuilder, cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
+        defaultRowBuilder(cellWithDimensionBuilder(3, 1))),
 
-//   it('can delete the first row', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithCursorBuilder), defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder))
-//     ));
+      addRowAfterCommand,
 
-//   it('can delete the last row', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder), defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder))
-//     ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellWithDimensionBuilder(3, 1))
+      )
+    ));
 
-//   it('can shrink rowspan cells', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellBuilder, cellWithDimensionBuilder(1, 3)), defaultRowBuilder(cellWithCursorBuilder), defaultRowBuilder(cellBuilder, cellBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder, cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellBuilder, cellBuilder))
-//     ));
+  it('preserves header columns', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, headerCellWithCursorBuilder),
+        defaultRowBuilder(cellBuilder, headerCellBuilder)),
 
-//   it('can move cells that start in the deleted row', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithCursorBuilder), defaultRowBuilder(emptyCellBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder))
-//     ));
+      addRowAfterCommand,
 
-//   it('deletes multiple rows when the start cell has a rowspan', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(
-//         defaultRowBuilder(defaultCellBuilder({ rowspan: 3 }, tableParagraphBuilder(`<${CURSOR}>`)), cellBuilder),
-//         defaultRowBuilder(cellBuilder),
-//         defaultRowBuilder(cellBuilder),
-//         defaultRowBuilder(cellBuilder, cellBuilder)
-//       ),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder))
-//     ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, headerCellBuilder),
+        defaultRowBuilder(emptyCellBuilder, emptyHeaderCellBuilder),
+        defaultRowBuilder(cellBuilder, headerCellBuilder))
+    ));
 
-//   it('skips columns when adjusting rowspan', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)), defaultRowBuilder(cellBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)))
-//     ));
+  it('uses next row as reference when row before is a header', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(headerCellBuilder, headerCellWithCursorBuilder),
+        defaultRowBuilder(cellBuilder, headerCellBuilder)),
 
-//   it('can delete a CellSelection', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder))
-//     ));
+      addRowAfterCommand,
 
-//   it('will delete all rows in the CellSelection', () =>
-//     executeTableTestCommand(
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder), defaultRowBuilder(cellWithAnchorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellWithHeadBuilder), defaultRowBuilder(emptyCellBuilder, cellBuilder)),
-//       deleteRow,
-//       defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder), defaultRowBuilder(emptyCellBuilder, cellBuilder))
-//     ));
-// });
+      defaultTableBuilder(
+        defaultRowBuilder(headerCellBuilder, headerCellBuilder),
+        defaultRowBuilder(emptyCellBuilder, emptyHeaderCellBuilder),
+        defaultRowBuilder(cellBuilder, headerCellBuilder))
+    ));
+
+  it('creates regular Cells when no reference row is available', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(headerCellBuilder, headerCellWithCursorBuilder)),
+
+      addRowAfterCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(headerCellBuilder, headerCellBuilder),
+        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder))
+    ));
+});
+
+describe('addRowBeforeCommand', () => {
+  it('can add a simple row', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
+
+      addRowBeforeCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
+
+  it('can add a row at the start', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder)),
+
+      addRowBeforeCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
+
+  it('picks the row before a CellSelection', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)),
+        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder)),
+
+      addRowBeforeCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)),
+        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)
+      )
+    ));
+
+  it('preserves header columns', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder),
+        defaultRowBuilder(headerCellBuilder, cellBuilder)),
+
+      addRowBeforeCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(emptyHeaderCellBuilder, emptyCellBuilder),
+        defaultRowBuilder(headerCellBuilder, cellBuilder),
+        defaultRowBuilder(headerCellBuilder, cellBuilder))
+    ));
+});
+
+describe('deleteRow', () => {
+  it('can delete a simple row', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+    ));
+
+  it('can delete the first row', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithCursorBuilder),
+        defaultRowBuilder(emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+    ));
+
+  it('can delete the last row', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+    ));
+
+  it('can shrink rowspan cells', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellBuilder, cellWithDimensionBuilder(1, 3)),
+        defaultRowBuilder(cellWithCursorBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder, cellWithDimensionBuilder(1, 2)),
+        defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
+
+  it('can move cells that start in the deleted row', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithCursorBuilder),
+        defaultRowBuilder(emptyCellBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+    ));
+
+  it('deletes multiple rows when the start cell has a rowspan', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(defaultCellBuilder({ rowspan: 3 }, tableParagraphBuilder(`<${CURSOR}>`)), cellBuilder),
+        defaultRowBuilder(cellBuilder),
+        defaultRowBuilder(cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder)
+      ),
+
+      deleteRow,
+
+      defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
+
+  it('skips columns when adjusting rowspan', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)),
+        defaultRowBuilder(cellBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)))
+    ));
+
+  it('can delete a CellSelection', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+    ));
+
+  it('will delete all rows in the CellSelection', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellWithHeadBuilder),
+        defaultRowBuilder(emptyCellBuilder, cellBuilder)),
+
+      deleteRow,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder),
+        defaultRowBuilder(emptyCellBuilder, cellBuilder))
+    ));
+});
 
 // -- Cell ------------------------------------------------------------------------
 // describe('mergeCells', () => {
