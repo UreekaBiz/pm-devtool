@@ -2,7 +2,6 @@ import { Fragment, Node as ProseMirrorNode, NodeType, ResolvedPos } from 'prosem
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { NodeName } from '../../../../notebookEditor/node';
 import { isCellSelection } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
@@ -80,9 +79,7 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
 type GetCellTypeFunctionType = (state: EditorState, row: number, col: number, node: ProseMirrorNode) => NodeType;
 const defaultGetCellTypeFunction: GetCellTypeFunctionType = (state, row, col, node) => {
   const nodeTypes = getTableNodeTypes(state.schema);
-
-  // default to returning a regular cell
-  return nodeTypes[NodeName.CELL];
+  return nodeTypes[node.type.name];
 };
 
 /**
