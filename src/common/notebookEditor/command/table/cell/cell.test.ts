@@ -1,8 +1,11 @@
+import { Command, EditorState } from 'prosemirror-state';
+
 import { AttributeType } from '../../../../notebookEditor/attribute';
+import { NodeName } from '../../../../notebookEditor/node';
 import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultHeaderCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, emptyHeaderCellBuilder, executeTableTestCommand, tableParagraphBuilder } from '../../test/tableTestUtil';
 import { ANCHOR, CURSOR } from '../../test/testUtil';
 
-import { mergeCellsCommand, splitCellCommand } from './cell';
+import { mergeCellsCommand, splitCellCommand, GetCellTypeFunctionType } from './cell';
 
 // == Cell Test ===================================================================
 describe('mergeCellsCommand', () => {
@@ -207,32 +210,26 @@ describe('splitCellCommand', () => {
         defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('a')), emptyCellBuilder, defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder())))
     ));
 
-  // describe('with custom Cell type', () => {
-  //   function createGetCellType(state) {
-  //     return ({ row }) => {
-  //       if(row === 0) {
-  //         return state.schema.nodes.table_header;
-  //       }
-  //       return state.schema.nodes.table_cell;
-  //     };
-  //   }
+  describe('with custom Cell type', () => {
+    const createGetCellTypeFunction = (state: EditorState): GetCellTypeFunctionType => (state, row, col, node) =>
+      row === 0
+        ? state.schema.nodes[NodeName.HEADER_CELL]
+        :  state.schema.nodes[NodeName.CELL];
 
-  //   const splitCellWithOnlyHeaderInColumnZero = (state, dispatch) =>
-  //     splitCellWithType(createGetCellType(state))(state, dispatch);
+    const splitCellWithOnlyHeaderInColumnZero: Command = (state, dispatch) => splitCellCommand(createGetCellTypeFunction(state))(state, dispatch);
+    it('can split a row-spanning header Cell into a header and normal Cell ', () =>
+      executeTableTestCommand(
+        defaultTableBuilder(
+          defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
+          defaultRowBuilder(cellBuilder, cellBuilder)),
 
-  //   it('can split a row-spanning header Cell into a header and normal Cell ', () =>
-  //     executeTableTestCommand(
-  //       defaultTableBuilder(
-  //         defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
-  //         defaultRowBuilder(cellBuilder, cellBuilder)),
+        splitCellWithOnlyHeaderInColumnZero,
 
-  //       splitCellWithOnlyHeaderInColumnZero,
-
-  //       defaultTableBuilder(
-  //         defaultRowBuilder(cellBuilder, defaultHeaderCellBuilder(tableParagraphBuilder('foo')), cellBuilder),
-  //         defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
-  //     ));
-  // });
+        defaultTableBuilder(
+          defaultRowBuilder(cellBuilder, defaultHeaderCellBuilder(tableParagraphBuilder('foo')), cellBuilder),
+          defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+      ));
+  });
 });
 
 // describe('setCellAttr', () => {

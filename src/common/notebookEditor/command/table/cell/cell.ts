@@ -76,7 +76,7 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
  * into smaller Cell with the Cell type (th, td) returned by the
  * given getCellType function
  */
-type GetCellTypeFunctionType = (state: EditorState, row: number, col: number, node: ProseMirrorNode) => NodeType;
+export type GetCellTypeFunctionType = (state: EditorState, row: number, col: number, node: ProseMirrorNode) => NodeType;
 const defaultGetCellTypeFunction: GetCellTypeFunctionType = (state, row, col, node) => {
   const nodeTypes = getTableNodeTypes(state.schema);
   return nodeTypes[node.type.name];
