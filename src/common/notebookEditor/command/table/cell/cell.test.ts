@@ -1,6 +1,6 @@
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, executeTableTestCommand, tableParagraphBuilder } from '../../test/tableTestUtil';
-// import { ANCHOR } from '../../test/testUtil';
+import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, executeTableTestCommand, tableParagraphBuilder } from '../../test/tableTestUtil';
+import { ANCHOR } from '../../test/testUtil';
 
 import { mergeCellsCommand } from './cell';
 
@@ -38,68 +38,68 @@ describe('mergeCellsCommand', () => {
         defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder))
     ));
 
-  // it('can merge two Cells in a row', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-  //       defaultRowBuilder(cellWithHeadBuilder, cellBuilder)),
+  it('can merge two Cells in a row', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
+        defaultRowBuilder(cellWithHeadBuilder, cellBuilder)),
 
-  //     mergeCellsCommand,
+      mergeCellsCommand,
 
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(defaultCellBuilder({ rowspan: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
-  //       defaultRowBuilder(cellBuilder))
-  //   ));
+      defaultTableBuilder(
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
+        defaultRowBuilder(cellBuilder))
+    ));
 
-  // it('can merge a rectangle of Cells', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, emptyCellBuilder, emptyCellBuilder, cellBuilder),
-  //       defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder, cellWithHeadBuilder, cellBuilder)
-  //     ),
+  it('can merge a rectangle of Cells', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, emptyCellBuilder, emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder, cellWithHeadBuilder, cellBuilder)
+      ),
 
-  //     mergeCellsCommand,
+      mergeCellsCommand,
 
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
-  //       defaultRowBuilder(cellBuilder, cellBuilder)
-  //     )
-  //   ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder)
+      )
+    ));
 
-  // it('can merge already spanning Cells', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder(1, 2), emptyCellBuilder, cellBuilder),
-  //       defaultRowBuilder(cellBuilder, emptyCellBuilder, cellWithHeadBuilder, cellBuilder)),
+  it('can merge already spanning Cells', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder(1, 2), emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellWithHeadBuilder, cellBuilder)),
 
-  //     mergeCellsCommand,
+      mergeCellsCommand,
 
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(cellBuilder, defaultCellBuilder({ rowspan: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
-  //       defaultRowBuilder(cellBuilder, cellBuilder))
-  //   ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
 
-  // it('keeps the column width of the first column', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder(`x<${ANCHOR}>`)), cellBuilder),
-  //       defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
+  it('keeps the column width of the first column', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder(`x<${ANCHOR}>`)), cellBuilder),
+        defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
 
-  //     mergeCellsCommand,
+      mergeCellsCommand,
 
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(
-  //         defaultCellBuilder(
-  //           { [AttributeType.ColSpan]: 2, [AttributeType.RowSpan]: 2, [AttributeType.ColWidth]: [100, 0] },
-  //           tableParagraphBuilder('x'),
-  //           tableParagraphBuilder('x'),
-  //           tableParagraphBuilder('x'),
-  //           tableParagraphBuilder('x')
-  //         )
-  //       ),
-  //       defaultRowBuilder()
-  //     )
-  //   ));
+      defaultTableBuilder(
+        defaultRowBuilder(
+          defaultCellBuilder(
+            { [AttributeType.ColSpan]: 2, [AttributeType.RowSpan]: 2, [AttributeType.ColWidth]: [100, 0] },
+            tableParagraphBuilder('x'),
+            tableParagraphBuilder('x'),
+            tableParagraphBuilder('x'),
+            tableParagraphBuilder('x')
+          )
+        ),
+        defaultRowBuilder()
+      )
+    ));
 });
 
 // describe('splitCellCommand', () => {
