@@ -307,74 +307,128 @@ describe('deleteColumnCommand', () => {
         defaultRowBuilder(cellBuilder, emptyCellBuilder))
     ));
 
-  // it('can delete the first column', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder))
-  //   ));
+  it('can delete the first column', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithCursorBuilder, emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
 
-  // it('can delete the last column', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder, cellWithCursorBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder))
-  //   ));
+      deleteColumnCommand,
 
-  // it("can reduce a cell's [AttributeType.ColSpan]", () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithCursorBuilder), defaultRowBuilder(cellWithDimensionBuilder(2, 1))),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder), defaultRowBuilder(cellBuilder))
-  //   ));
+      defaultTableBuilder(
+        defaultRowBuilder(emptyCellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
 
-  // it('will skip rows after a rowspan', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithCursorBuilder), defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellBuilder)),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder), defaultRowBuilder(cellBuilder), defaultRowBuilder(cellBuilder))
-  //   ));
+  it('can delete the last column', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellWithCursorBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
 
-  // it('will delete all columns under a [AttributeType.ColSpan] cell', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`<${CURSOR}>`))), defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder)),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder), defaultRowBuilder(emptyCellBuilder))
-  //   ));
+      deleteColumnCommand,
 
-  // it('deletes a cell-selected column', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(emptyCellBuilder, cellWithAnchorBuilder), defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(emptyCellBuilder), defaultRowBuilder(cellBuilder))
-  //   ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, cellBuilder))
+    ));
 
-  // it('deletes multiple cell-selected columns', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithAnchorBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder), defaultRowBuilder(cellWithHeadBuilder, cellBuilder, cellBuilder)),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder), defaultRowBuilder(emptyCellBuilder), defaultRowBuilder(cellBuilder))
-  //   ));
+  it('can reduce a Cell ColSpan', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithCursorBuilder),
+        defaultRowBuilder(cellWithDimensionBuilder(2, 1))),
 
-  // it('leaves column widths intact', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-  //       defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableParagraphBuilder('y')))
-  //     ),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 300] }, tableParagraphBuilder('y'))))
-  //   ));
+      deleteColumnCommand,
 
-  // it('resets column width when all zeroes', () =>
-  //   executeTableTestCommand(
-  //     defaultTableBuilder(
-  //       defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-  //       defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [0, 200, 0] }, tableParagraphBuilder('y')))
-  //     ),
-  //     deleteColumnCommand,
-  //     defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('y'))))
-  //   ));
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder),
+        defaultRowBuilder(cellBuilder))
+    ));
+
+  it('will skip rows after a rowSpan', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithCursorBuilder),
+        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 2)),
+        defaultRowBuilder(cellBuilder)),
+
+      deleteColumnCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder),
+        defaultRowBuilder(cellBuilder),
+        defaultRowBuilder(cellBuilder))
+    ));
+
+  it('will delete all columns under a colSpan Cell', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`<${CURSOR}>`))),
+        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder)),
+
+      deleteColumnCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder),
+        defaultRowBuilder(emptyCellBuilder))
+    ));
+
+  it('deletes a Cell selected column', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(emptyCellBuilder, cellWithAnchorBuilder),
+        defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
+
+      deleteColumnCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(emptyCellBuilder),
+        defaultRowBuilder(cellBuilder))
+    ));
+
+  it('deletes multiple Cell selected columns', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithAnchorBuilder, cellBuilder),
+        defaultRowBuilder(cellBuilder, emptyCellBuilder),
+        defaultRowBuilder(cellWithHeadBuilder, cellBuilder, cellBuilder)),
+
+      deleteColumnCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder),
+        defaultRowBuilder(emptyCellBuilder),
+        defaultRowBuilder(cellBuilder))
+    ));
+
+  it('leaves column widths intact', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableParagraphBuilder('y')))),
+
+      deleteColumnCommand,
+
+      defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 300] }, tableParagraphBuilder('y'))))
+    ));
+
+  it('resets column width when all zeroes', () =>
+    executeTableTestCommand(
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [0, 200, 0] }, tableParagraphBuilder('y')))),
+
+      deleteColumnCommand,
+
+      defaultTableBuilder(
+        defaultRowBuilder(cellBuilder, cellBuilder),
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('y'))))
+    ));
 });
 
 // -- Row -------------------------------------------------------------------------
@@ -548,10 +602,10 @@ describe('deleteColumnCommand', () => {
 
 // -- Cell ------------------------------------------------------------------------
 // describe('mergeCells', () => {
-//   it("doesn't do anything when only one cell is selected", () =>
+//   it('doesn't do anything when only one cell is selected', () =>
 //     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellBuilder)), mergeCells, null));
 
-//   it("doesn't do anything when the selection cuts across spanning cells", () =>
+//   it('doesn't do anything when the selection cuts across spanning cells', () =>
 //     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder)), mergeCells, null));
 
 //   it('can merge two cells in a column', () =>
@@ -634,7 +688,7 @@ describe('deleteColumnCommand', () => {
 //   it('does nothing for a multi-CellSelection', () =>
 //     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)), splitCell, null));
 
-//   it("does nothing when the selected cell doesn't span anything", () =>
+//   it('does nothing when the selected cell doesn't span anything', () =>
 //     executeTableTestCommand(defaultTableBuilder(defaultRowBuilder(cellWithAnchorBuilder, cellBuilder)), splitCell, null));
 
 //   it('can split a col-spanning cell', () =>
