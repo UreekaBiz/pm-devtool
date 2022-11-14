@@ -86,11 +86,14 @@ export const cellAround = ($pos: ResolvedPos) => {
   return null/*default*/;
 };
 
-export const cellWrapping = ($pos: ResolvedPos) => {
+export const findCellWrapperNode = ($pos: ResolvedPos) => {
   for(let d = $pos.depth; d > 0; d--) {
-    // sometimes the cell can be in the same depth
+    // it is possible for Cell to be at the same depth
     const role = $pos.node(d).type.spec.tableRole;
-    if(role === TableRole.Cell || role === TableRole.HeaderCell) return $pos.node(d);
+
+    if(role === TableRole.HeaderCell || role === TableRole.Cell) {
+      return $pos.node(d);
+    } /* else -- keep looking upwards through depth */
   }
 
   return null/*default*/;
