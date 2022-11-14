@@ -1,5 +1,7 @@
+import ist from 'ist';
 import { Node as ProseMirrorNode, Schema } from 'prosemirror-model';
-import { NodeSelection, TextSelection } from 'prosemirror-state';
+import { Command, EditorState, NodeSelection, TextSelection } from 'prosemirror-state';
+import { eq } from 'prosemirror-test-builder';
 
 import { NodeSpecs, SchemaV1 } from '../../../notebookEditor/schema';
 import { NodeName } from '../../node/type';
@@ -11,6 +13,15 @@ import { getNotebookSchemaNodeBuilders, validateNodeWithTag, ANCHOR, CURSOR, HEA
 
 // ********************************************************************************
 // Command-testing utilities used by Table related test files
+
+// == Command =====================================================================
+export const executeTableTestCommand = (doc: ProseMirrorNode, command: Command, resultingDoc: ProseMirrorNode | null) => {
+  let state = EditorState.create({ doc, selection: selectionForTableTest(doc) });
+  const commandExecutedSuccessfully = command(state, (tr) => (state = state.apply(tr)));
+
+  if(resultingDoc === null) { ist(commandExecutedSuccessfully, false); }
+  else { ist(state.doc, resultingDoc, eq); }
+};
 
 // == Constant ====================================================================
 // ensure that Table Nodes  have defined attributes and content expressions
