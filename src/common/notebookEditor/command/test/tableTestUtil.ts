@@ -67,7 +67,7 @@ export const cellWithAnchorBuilder = defaultCellBuilder({ ...defaultCellAttrs },
 export const cellWithHeadBuilder = defaultCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${HEAD}>`));
 
 // -- HeaderCell ------------------------------------------------------------------
-export const defaultDimensionWithParagraphHeaderCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
+export const headerCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, paragraphBuilder('x'));
 export const emptyHeaderCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, paragraphBuilder());
 export const headerCellWithCursorBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, paragraphBuilder(`x<${CURSOR}>`));
 
@@ -80,12 +80,9 @@ export const selectionForTableTest = (doc: ProseMirrorNode) => {
   if(cursor) return new TextSelection(doc.resolve(cursor));
 
   const $anchor = doc.tag[ANCHOR];
-  if(!$anchor) throw new Error('expected anchor tag to exist in doc and it does not');
-
   const $cellAnchor = resolveCell(doc, $anchor);
   if($cellAnchor) {
     const head = doc.tag[HEAD];
-    if(!head) throw new Error('expected head tag to exist in doc and it does not');
     return new CellSelection($cellAnchor, resolveCell(doc, head) || undefined);
   } /* else -- could not resolve cell at given anchor */
 
@@ -95,7 +92,7 @@ export const selectionForTableTest = (doc: ProseMirrorNode) => {
   return/*undefined*/;
 };
 // -- Cell ------------------------------------------------------------------------
-const resolveCell = (doc: ProseMirrorNode, tag: number) => {
+const resolveCell = (doc: ProseMirrorNode, tag: number | null) => {
   if(!tag) return null;
   return cellAround(doc.resolve(tag));
 };

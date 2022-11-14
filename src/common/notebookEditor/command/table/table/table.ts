@@ -1,7 +1,17 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
-import { addColSpan, columnIsHeader, findParentNodeClosestToPos, getTableNodeTypes, isCellNode, isCellSelection, isHeaderCellNode, isInTable, isTableNode, removeColSpan, selectedRect, setTableNodeAttributes, AbstractDocumentUpdate, AttributeType, DispatchType, NodeName, TableMap, TableRole, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
+import { AttributeType } from '../../../../notebookEditor/attribute';
+import { NodeName } from '../../../../notebookEditor/node';
+import { findParentNodeClosestToPos } from '../../../../notebookEditor/node/util';
+import { isCellSelection } from '../../../../notebookEditor/selection';
+import { TableMap } from '../../../extension/table/class';
+import { isCellNode } from '../../..//extension/table/node/cell';
+import { isHeaderCellNode } from '../../../extension/table/node/headerCell';
+import { getTableNodeTypes, isTableNode, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from '../../../extension/table/node/table';
+import { TableRole } from '../../../extension/table/type';
+import { addColSpan, columnIsHeader, isInTable, removeColSpan, selectedRect, setTableNodeAttributes } from '../../..//extension/table/util';
+import { AbstractDocumentUpdate, DispatchType } from '../../type';
 
 import { createTable } from './util';
 
@@ -313,7 +323,8 @@ export const deleteColumn = (state: EditorState, dispatch: DispatchType) => {
 
 /** add a Column at the given position in a Table Node */
 const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
-  if(!table || !tableMap || !tableStart) return tr/*do nothing*/;
+  // NOTE: explicit checks since valid values can be 0
+  if((table===null || table===undefined) || (tableMap===null || tableMap===undefined) || (tableStart===null || tableStart===undefined)) return tr/*do nothing*/;
 
   let referenceColumn: number | null = col > 0 ? -1 : 0;
   if(columnIsHeader(tableMap, table, col + referenceColumn)) {
