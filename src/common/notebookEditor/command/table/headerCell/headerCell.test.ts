@@ -34,7 +34,7 @@ describe('toggleHeaderRowCommand', () => {
           defaultRowBuilder(cellBuilder, cellBuilder)))
     ));
 
-  it('turns a partial header row into regular Cells', () =>
+  it('turns a partial header row into a header Row', () =>
     executeTableTestCommand(
       tableDocBuilder(
         defaultTableBuilder(
@@ -45,7 +45,7 @@ describe('toggleHeaderRowCommand', () => {
 
       tableDocBuilder(
         defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder),
+          defaultRowBuilder(headerCellBuilder, headerCellBuilder),
           defaultRowBuilder(cellBuilder, cellBuilder)))
     ));
 
@@ -98,7 +98,7 @@ describe('toggleHeaderColumnCommand', () => {
           defaultRowBuilder(cellBuilder, cellBuilder)))
     ));
 
-  it('turns a partial header column into regular Cells', () =>
+  it('turns a partial header column into a header Column', () =>
     executeTableTestCommand(
       tableDocBuilder(
         defaultTableBuilder(
@@ -108,8 +108,8 @@ describe('toggleHeaderColumnCommand', () => {
       toggleHeaderColumnCommand,
 
       tableDocBuilder(
-        defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)))
+        defaultTableBuilder(defaultRowBuilder(headerCellBuilder, cellBuilder),
+          defaultRowBuilder(headerCellBuilder, cellBuilder)))
     ));
 });
 
