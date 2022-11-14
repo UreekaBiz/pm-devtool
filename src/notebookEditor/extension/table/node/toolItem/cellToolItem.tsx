@@ -2,12 +2,10 @@ import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { IoMdSquareOutline } from 'react-icons/io';
 import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
-import { goToCellCommand, mergeCellsCommand, splitCellCommand } from 'common';
+import { goToCellCommand, mergeCellsCommand, splitCellCommand, toggleHeaderCell } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
-
-import { toggleHeaderCell } from '../headerCell/command';
 
 //*********************************************************************************
 // == ToolItems ===================================================================
