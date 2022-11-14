@@ -10,7 +10,7 @@ import { ExtensionStorageType } from '../type';
 // ********************************************************************************
 // == Type ========================================================================
 export type DefaultAttributeType = string | number | boolean | string[] | undefined;
-export type ParseHTMLAttributeType = (element: HTMLElement) => string | string[] | boolean | number | null;
+export type ParseHTMLAttributeType = (element: HTMLElement) => string | string[] | boolean | number | number[] | null;
 
 // == Interface ===================================================================
 /** defines how the attributes of an extension's spec should look when included  */
@@ -28,8 +28,8 @@ export interface AttributeSpecWithParseHTML {
  * @param defaultValue The default value of the attribute to be parsed
  * @returns The attribute spec object that defines the parsing behavior of the attribute
  */
-export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | undefined): AttributeSpecWithParseHTML => {
-  let parseHTML: (element: HTMLElement) => string | string[] | boolean | number | null = (element: HTMLElement) => element.getAttribute(name);
+export const setAttributeParsingBehavior = (name: string, type: SetAttributeType, defaultValue?: string | string[] | boolean | number | undefined, arrayValueType?: 'string' | 'number'): AttributeSpecWithParseHTML => {
+  let parseHTML: (element: HTMLElement) => string | string[] | boolean | number | number[] | null = (element: HTMLElement) => element.getAttribute(name);
 
   switch(type) {
     case SetAttributeType.STRING:
@@ -50,9 +50,9 @@ export const setAttributeParsingBehavior = (name: string, type: SetAttributeType
     case SetAttributeType.ARRAY:
       parseHTML = (element: HTMLElement) => {
         const attr = element.getAttribute(name);
-        if(!attr) return [];
+        if(!attr) return [/*empty*/];
 
-        return attr.split(',');
+        return arrayValueType === 'number' ? attr.split(',').map(element => Number(element)) : attr.split(',');
       };
       break/*use default*/;
   }

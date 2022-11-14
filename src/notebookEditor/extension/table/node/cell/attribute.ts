@@ -10,5 +10,5 @@ import { setAttributeParsingBehavior } from 'notebookEditor/extension/util';
 export const CellAttrs: NodeExtensionAttributes<CellAttributes> = {
   [AttributeType.ColSpan]: setAttributeParsingBehavior(AttributeType.ColSpan, SetAttributeType.NUMBER, CELL_COL_SPAN),
   [AttributeType.RowSpan]: setAttributeParsingBehavior(AttributeType.RowSpan, SetAttributeType.NUMBER, CELL_ROW_SPAN),
-  [AttributeType.ColWidth]: setAttributeParsingBehavior(AttributeType.RowSpan, SetAttributeType.NUMBER),
+  [AttributeType.ColWidth]: setAttributeParsingBehavior(AttributeType.ColWidth, SetAttributeType.ARRAY, undefined/*no default value*/, 'number'),
 };
