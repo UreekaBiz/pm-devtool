@@ -19,7 +19,7 @@ describe('toggleHeaderRowCommand', () => {
           defaultRowBuilder(cellBuilder, cellBuilder)))
     ));
 
-  it('turns a header row into regular cells', () =>
+  it('turns a header row into regular Cells', () =>
     executeTableTestCommand(
       tableDocBuilder(
         defaultTableBuilder(
@@ -29,11 +29,12 @@ describe('toggleHeaderRowCommand', () => {
       toggleHeaderRowCommand,
 
       tableDocBuilder(
-        defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)))
+        defaultTableBuilder(
+          defaultRowBuilder(cellBuilder, cellBuilder),
+          defaultRowBuilder(cellBuilder, cellBuilder)))
     ));
 
-  it('turns a partial header row into regular cells', () =>
+  it('turns a partial header row into regular Cells', () =>
     executeTableTestCommand(
       tableDocBuilder(
         defaultTableBuilder(
@@ -82,7 +83,7 @@ describe('toggleHeaderColumnCommand', () => {
           defaultRowBuilder(headerCellBuilder, cellBuilder)))
     ));
 
-  it('turns a header column into regular cells', () =>
+  it('turns a header column into regular Cells', () =>
     executeTableTestCommand(
       tableDocBuilder(
         defaultTableBuilder(
@@ -97,7 +98,7 @@ describe('toggleHeaderColumnCommand', () => {
           defaultRowBuilder(cellBuilder, cellBuilder)))
     ));
 
-  it('turns a partial header column into regular cells', () =>
+  it('turns a partial header column into regular Cells', () =>
     executeTableTestCommand(
       tableDocBuilder(
         defaultTableBuilder(
@@ -174,7 +175,7 @@ describe('toggleHeaderCommand', () => {
     ));
 
   describe('new behavior', () => {
-    it('turns a header column into regular cells without override header row', () =>
+    it('turns a header column into regular Cells without override header row', () =>
       executeTableTestCommand(
         tableDocBuilder(
           defaultTableBuilder(
