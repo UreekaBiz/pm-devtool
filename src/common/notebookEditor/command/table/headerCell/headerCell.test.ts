@@ -1,4 +1,4 @@
-import { NodeName } from '../../../../notebookEditor/node';
+import { NodeName } from '../../../node';
 import { cellBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, defaultRowBuilder, defaultTableBuilder, executeTableTestCommand, headerCellBuilder, headerCellWithCursorBuilder, headerCellWithDimensionBuilder, tableParagraphBuilder } from '../../test/tableTestUtil';
 import { getNotebookSchemaNodeBuilders } from '../../test/testUtil';
 import { toggleHeaderColumnCommand, toggleHeaderCommand, toggleHeaderRowCommand } from './headerCell';
