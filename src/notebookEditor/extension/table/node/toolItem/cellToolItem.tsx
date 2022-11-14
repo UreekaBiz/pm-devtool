@@ -68,7 +68,7 @@ export const splitCellsToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCellCommand),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCellCommand()),
 };
 
 export const toggleHeaderCellToolItem: ToolItem = {
