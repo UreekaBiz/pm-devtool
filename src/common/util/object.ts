@@ -31,6 +31,9 @@ export const pick = <T, K extends keyof T>(o: T, ...keys: K[]): Pick<T, K> => {
 
 // ................................................................................
 
+// == Check =======================================================================
+export const isNotNullOrUndefined = <T>(obj: any): obj is T  => obj !== null && obj !== undefined;
+
 // == Conversion ==================================================================
 export const convertNull = <T extends Record<string, any>>(o: T, convert: any): T => {
   const result: any = {};

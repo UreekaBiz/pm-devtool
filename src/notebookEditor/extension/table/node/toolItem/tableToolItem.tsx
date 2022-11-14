@@ -2,7 +2,7 @@ import { MdOutlineTableChart } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, RiInsertRowBottom, RiInsertRowTop, RiMore2Line, RiMoreLine } from 'react-icons/ri';
 
-import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumn, deleteRow, deleteTable, isCellSelection, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRow, deleteTable, isCellSelection, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -110,7 +110,7 @@ export const deleteColumnToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor) => isCellSelection(editor.view.state.selection),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, deleteColumn),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, deleteColumnCommand),
 };
 
 export const addColumnBeforeToolItem: ToolItem = {

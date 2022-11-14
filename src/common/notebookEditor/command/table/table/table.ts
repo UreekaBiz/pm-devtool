@@ -5,6 +5,7 @@ import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
 import { findParentNodeClosestToPos } from '../../../../notebookEditor/node/util';
 import { isCellSelection } from '../../../../notebookEditor/selection';
+import { isNotNullOrUndefined } from '../../../../util/object';
 import { TableMap } from '../../../extension/table/class';
 import { isCellNode } from '../../..//extension/table/node/cell';
 import { isHeaderCellNode } from '../../../extension/table/node/headerCell';
@@ -293,18 +294,29 @@ export class AddColumnAfterDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+
 /** remove the selected columns from a Table */
-export const deleteColumn = (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
+export const deleteColumnCommand: Command = (state, dispatch) => {
+  const x = AbstractDocumentUpdate.execute(new DeleteColumnDocumentUpdate().update(state, state.tr), dispatch);
+  console.log(x);
+  return x;
+}
+export class DeleteColumnDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
 
-  if(dispatch) {
-    const rect = selectedRect(state);
+  /**
+   * modify the given Transaction such that the selected Columns
+   * are removed from a Table */
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isInTable(editorState)) return false/*nothing to do*/;
+
+    const rect = selectedRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
-    if(!rect.table || !rect.tableMap || !rect.tableStart) return false/*cannot use Rect*/;
 
-    if(rect.left === 0 && rect.right === rect.tableMap.width) return false/*do nothing*/;
+    const { table, tableMap, tableStart } = rect;
+    if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return false/*cannot use Rect*/;
+    if(rect.left === 0 && rect.right === tableMap.width) return false/*do nothing*/;
 
-    const { tr } = state;
     for(let i = rect.right - 1; ; i--) {
       removeColumn(tr, rect, i);
       if(i === rect.left) break/*nothing left to do*/;
@@ -315,16 +327,13 @@ export const deleteColumn = (state: EditorState, dispatch: DispatchType) => {
       rect.tableMap = TableMap.get(rect.table);
     }
 
-    dispatch(tr);
+    return tr/*updated*/;
   }
-
-  return true/*handled*/;
-};
+}
 
 /** add a Column at the given position in a Table Node */
 const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
-  // NOTE: explicit checks since valid values can be 0
-  if((table===null || table===undefined) || (tableMap===null || tableMap===undefined) || (tableStart===null || tableStart===undefined)) return tr/*do nothing*/;
+  if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return tr/*do nothing*/;
 
   let referenceColumn: number | null = col > 0 ? -1 : 0;
   if(columnIsHeader(tableMap, table, col + referenceColumn)) {
