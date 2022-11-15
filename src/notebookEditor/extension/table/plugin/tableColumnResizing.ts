@@ -9,7 +9,7 @@ import { updateTableColumns } from '../node';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const RESIZE_HANDLE_CLASS = 'dom-resize-handle';
+const RESIZE_HANDLE_CLASS = 'resize-cursor'/*(SEE: table.css)*/;
 const DEFAULT_CLASS_OBJ = { class: ''/*none*/ };
 
 // == Type ========================================================================
@@ -78,7 +78,7 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
       if(!pluginState || !pluginState.activeHandle) return DEFAULT_CLASS_OBJ;
 
       if(pluginState.activeHandle > -1) {
-        return { class: 'resize-cursor' };
+        return { class: RESIZE_HANDLE_CLASS };
       } /* else -- not active */
 
       return DEFAULT_CLASS_OBJ/*default*/;
