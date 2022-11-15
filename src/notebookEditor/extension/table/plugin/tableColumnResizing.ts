@@ -44,14 +44,14 @@ class ResizeState {
     }
 
     if(state.activeHandle && state.activeHandle > -1 && tr.docChanged) {
-      let handle: number | null = tr.mapping.map(state.activeHandle, -1);
+      let mappedHandle: number | null = tr.mapping.map(state.activeHandle, -1/*associate to the left*/);
 
-      if(!pointsAtCell(tr.doc.resolve(handle))) {
-        handle = null/*none*/;
+      if(!pointsAtCell(tr.doc.resolve(mappedHandle))) {
+        mappedHandle = null/*none*/;
       } /* else -- not pointing at a Cell */
 
       // @ts-ignore
-      state = new ResizeState(handle, state.dragging);
+      state = new ResizeState(mappedHandle, state.dragging);
     }
 
     return state;
@@ -63,8 +63,8 @@ export const tableColumnResizingPluginKey = new PluginKey<ResizeState>('tableCol
 
 // == Plugin ======================================================================
 export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: number, lastColumnResizable: boolean) => new Plugin({
+  // -- State ---------------------------------------------------------------------
   key: tableColumnResizingPluginKey,
-
   state: {
     init(_, state) { return new ResizeState(-1, false); },
     apply(tr, thisPluginState, oldState, newState) {
@@ -72,7 +72,9 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
     },
   },
 
+  // -- Props ---------------------------------------------------------------------
   props: {
+    // .. View Attribute ..........................................................
     attributes: (state) => {
       const pluginState = tableColumnResizingPluginKey.getState(state);
       if(!pluginState || !pluginState.activeHandle) return DEFAULT_CLASS_OBJ;
@@ -84,12 +86,14 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
       return DEFAULT_CLASS_OBJ/*default*/;
     },
 
+    // .. DOM Event ...............................................................
     handleDOMEvents: {
       mousemove: (view, event) => handleMouseMove(view, event, handleWidth, cellMinWidth, lastColumnResizable),
       mouseleave: (view) => handleMouseLeave(view),
       mousedown: (view, event) => handleMouseDown(view, event, cellMinWidth),
     },
 
+    // .. Decoration ..............................................................
     decorations: (state) => {
       const pluginState = tableColumnResizingPluginKey.getState(state);
       if(!pluginState || !pluginState.activeHandle) return DecorationSet.empty;
@@ -106,37 +110,44 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
 // == Handler =====================================================================
 const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: number, cellMinWidth: number, lastColumnResizable: boolean) => {
   const pluginState = tableColumnResizingPluginKey.getState(view.state);
+  if(!pluginState) return false/*do not handle*/;
 
-  if(!pluginState?.dragging) {
-    if(!isValidHTMLElement(event.target)) return/*nothing to do*/;
+  if(!pluginState.dragging) {
+    if(!isValidHTMLElement(event.target)) return false/*do not handle*/;
 
-    const target = domCellAround(event.target);
+    const domTarget = domCellAround(event.target);
     let cellPos = -1/*default*/;
-    if(target) {
-      let { left, right } = target.getBoundingClientRect();
-      if(event.clientX - left <= handleWidth)
+    if(domTarget) {
+      const { left, right } = domTarget.getBoundingClientRect();
+
+      if(event.clientX - left <= handleWidth) {
         cellPos = edgeCell(view, event, 'left');
-      else if(right - event.clientX <= handleWidth)
+      } else if(right - event.clientX <= handleWidth) {
         cellPos = edgeCell(view, event, 'right');
-    }
+      } /* else -- do nothing */
+    } /* else -- no domTarget exists */
 
-    if(cellPos !== pluginState?.activeHandle) {
+    if(cellPos !== pluginState.activeHandle) {
       if(!lastColumnResizable && cellPos !== -1) {
-        let $cell = view.state.doc.resolve(cellPos);
-        let table = $cell.node(-1),
-          map = TableMap.get(table),
-          start = $cell.start(-1);
-        let col =
-          map.colCount($cell.pos - start) + $cell.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
+        const $cellPos = view.state.doc.resolve(cellPos);
 
-        if(col == map.width - 1) {
-          return;
-        }
-      }
+        const tableNode = $cellPos.node(-1);
+        const tableMap = TableMap.get(tableNode);
+        const tableStart = $cellPos.start(-1);
+
+        const col = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
+        if(col == tableMap.width - 1) {
+          return false/*do not handle*/;
+        } /* else -- update the handle  */
+
+      } /* else -- update the handle */
 
       updateHandle(view, cellPos);
-    }
-  } /* else -- already dragging */
+    } /* else -- cellPos equals the activeHandle */
+
+  } /* else -- currently dragging */
+
+  return false/*default to not handling*/;
 };
 
 const handleMouseLeave = (view: EditorView) => {
