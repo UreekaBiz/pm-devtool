@@ -19,12 +19,12 @@ const dispatchSetHandleActionMeta = (view: EditorView, value: number) => {
 };
 
 const dispatchSetDraggingActionMeta = (view: EditorView, startX: number, startWidth: number) => {
-  const setDraggingAction: SetDraggingAction = { setDragging: { startX, startWidth } };
+  const setDraggingAction: SetDraggingAction = { dragInfo: { startX, startWidth } };
   view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, setDraggingAction));
 };
 
 const dispatchUnsetDraggingMeta = (view: EditorView) => {
-  const deactivateDraggingAction: UnsetDraggingAction = { setDragging: null };
+  const deactivateDraggingAction: UnsetDraggingAction = { dragInfo: null };
   view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, deactivateDraggingAction));
 };
 
@@ -33,24 +33,23 @@ type SetHandleObjType = { value: number; }
 type SetHandleAction = { setHandle: SetHandleObjType; };
 
 type DraggingObjType = { startX: number; startWidth: number; };
-type SetDraggingAction = { setDragging: DraggingObjType; };
-type UnsetDraggingAction = { setDragging: null; };
+type SetDraggingAction = { dragInfo: DraggingObjType; };
+type UnsetDraggingAction = { dragInfo: null; };
 
 type ResizeStateAction = SetHandleAction | SetDraggingAction | UnsetDraggingAction | undefined;
 
 // -- Type Guard -----------------------------------------------------------------
 const isSetHandleAction = (obj: any): obj is SetHandleAction => obj && 'setHandle' in obj;
-const isSetDraggingAction = (obj: any): obj is SetDraggingAction => obj && 'setDragging' in obj;
-
+const isSetDraggingAction = (obj: any): obj is SetDraggingAction => obj && 'dragInfo' in obj;
 
 // == Class =======================================================================
 class ResizeState {
   // -- Attribute -----------------------------------------------------------------
   activeHandle: number | null | undefined;
-  dragging: number | DraggingObjType | boolean | null ;
+  dragging: number | DraggingObjType | null ;
 
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(activeHandle: number | null | undefined, dragging: number | boolean | null | DraggingObjType) {
+  constructor(activeHandle: number | null | undefined, dragging: number | null | DraggingObjType) {
     this.activeHandle = activeHandle;
     this.dragging = dragging;
   }
@@ -63,7 +62,7 @@ class ResizeState {
     } /* else -- no action or action is not meant to set a Handle */
 
     if(isSetDraggingAction(action)) {
-      return new ResizeState(this.activeHandle, action.setDragging);
+      return new ResizeState(this.activeHandle, action.dragInfo);
     } /* else -- no action or action is not meant to start dragging */
 
     if(this.activeHandle && this.activeHandle > -1 && tr.docChanged) {
@@ -87,11 +86,8 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
   // -- State ---------------------------------------------------------------------
   key: tableColumnResizingPluginKey,
   state: {
-    init: (_, state) => new ResizeState(-1, false),
-    apply: (tr, thisPluginState, oldState, newState) => {
-      const x = thisPluginState.apply(tr);
-      return x;
-    },
+    init: (_, state) => new ResizeState(-1/*default*/, null/*default not dragging*/),
+    apply: (tr, thisPluginState, oldState, newState) => thisPluginState.apply(tr),
   },
 
   // -- Props ---------------------------------------------------------------------
@@ -205,7 +201,7 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     const { activeHandle, dragging } = pluginState;
     if(!isNotNullOrUndefined<number>(activeHandle) || !isSetDraggingAction(dragging)) throw new Error('expected pluginState to be valid');
 
-    const dragged = computeDraggedWidth(dragging, event, cellMinWidth);
+    const dragged = computeDraggedWidth(dragging.dragInfo.startX, dragging.dragInfo.startWidth, event, cellMinWidth);
     displayColumnWidth(view, activeHandle, dragged, cellMinWidth);
   };
 
@@ -217,8 +213,8 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     if(!pluginState) return/*nothing to do*/;
 
     const { activeHandle, dragging } = pluginState;
-    if(isNotNullOrUndefined<number>(activeHandle) && dragging && isSetDraggingAction(pluginState.dragging)) {
-      updateColumnWidth(view, activeHandle, computeDraggedWidth(pluginState.dragging, event, cellMinWidth));
+    if(isNotNullOrUndefined<number>(activeHandle) && dragging && isSetDraggingAction(dragging)) {
+      updateColumnWidth(view, activeHandle, computeDraggedWidth(dragging.dragInfo.startX, dragging.dragInfo.startWidth, event, cellMinWidth));
       dispatchUnsetDraggingMeta(view);
     } /* else -- activeHandle is null or undefined, dragging is not defined, or dragging is not a draggingObject */
   };
@@ -343,7 +339,7 @@ const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => 
 
     const { attrs } = node;
     const index = attrs[AttributeType.ColSpan] === 1 ? 0 : col - tableMap.colCount(pos);
-    if(attrs[AttributeType.ColWidth] && attrs[AttributeType.ColWidth][index] == width) continue;
+    if(attrs[AttributeType.ColWidth] && attrs[AttributeType.ColWidth][index] === width) continue;
 
     const newColWidth = attrs[AttributeType.ColWidth]
       ? attrs[AttributeType.ColWidth].slice()
@@ -375,7 +371,6 @@ const displayColumnWidth = (view: EditorView, cellPos: number, width: number, ce
   updateTableColumns(tableNode, nodeDOM.firstChild as HTMLTableColElement/*by contract*/, nodeDOM as HTMLTableElement/*by contract*/, cellMinWidth, col, width);
 };
 
-
 // -- Misc ------------------------------------------------------------------------
 /** return an array of n zeroes */
 const zeroes = (n: number) => {
@@ -386,7 +381,7 @@ const zeroes = (n: number) => {
   return result;
 };
 
-const computeDraggedWidth = (dragging: { startX: number; startWidth: number; }, event: MouseEvent, cellMinWidth: number) => {
-  const offset = event.clientX - dragging.startX;
-  return Math.max(cellMinWidth, dragging.startWidth + offset);
+const computeDraggedWidth = (startX: number, startWidth: number, event: MouseEvent, cellMinWidth: number) => {
+  const offset = event.clientX - startX;
+  return Math.max(cellMinWidth, startWidth + offset);
 };
