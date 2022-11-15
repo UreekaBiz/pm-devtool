@@ -47,7 +47,7 @@ export const Table = new NodeExtension({
     // NOTE: the column resize plugin must be added before the Table editing Plugin
     //        since it will ensure no incorrect CellSelections are drawn into
     //        the Editor while the resizing columns
-    tableColumnResizingPlugin(TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH, false/*do not make the last Column resizable*/),
+    tableColumnResizingPlugin(TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH, true/*make the last Column resizable*/),
 
     tableEditingPlugin(false/*do not allow Table Node Selection*/),
 

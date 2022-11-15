@@ -8,7 +8,7 @@
   border-collapse: collapse;
   table-layout: fixed;
   margin: 10px;
-  /* width: 95%; */
+  width: 95%;
   overflow: hidden;
 }
 .ProseMirror table div[data-node-type="paragraph"] { margin: 0; }

@@ -1,11 +1,12 @@
 import { AttributeType, TableNodeType } from 'common';
 
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
+import { Unit } from 'notebookEditor/theme';
 
 // ********************************************************************************
 // == Update ======================================================================
 /** update the Columns of a Table */
-export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableColElement, table: HTMLTableElement, minimumCellWidth: number, overrideCol?: number, overrideValue?: number) => {
+export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableColElement, tableDOM: HTMLTableElement, minimumCellWidth: number, overrideCol?: number, overrideValue?: number) => {
   let totalWidth = 0/*default*/;
   let fixedWidth = true/*default*/;
 
@@ -21,7 +22,7 @@ export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableCo
 
     for(let j = 0; j < colSpan; j++, col++) {
       const hasWidth = overrideCol === col ? overrideValue : colWidth && colWidth[j];
-      const cssWidth = hasWidth ? hasWidth + 'px' : '';
+      const cssWidth = hasWidth ? hasWidth + Unit.Pixel : ''/*none*/;
 
       totalWidth += hasWidth || minimumCellWidth;
       if(!hasWidth) {
@@ -48,10 +49,10 @@ export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableCo
   }
 
   if(fixedWidth) {
-    table.style.width = totalWidth + 'px';
-    table.style.minWidth = '';
+    tableDOM.style.width = totalWidth + Unit.Pixel;
+    tableDOM.style.minWidth = ''/*none*/;
   } else {
-    table.style.width = '';
-    table.style.minWidth = totalWidth + 'px';
+    tableDOM.style.width = ''/*none*/;
+    tableDOM.style.minWidth = totalWidth + Unit.Pixel;
   }
 };
