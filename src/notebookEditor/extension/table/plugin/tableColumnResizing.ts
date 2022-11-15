@@ -119,9 +119,9 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
 
     // .. DOM Event ...............................................................
     handleDOMEvents: {
-      mousemove: (view, event) => handleMouseMove(view, event, handleWidth, cellMinWidth, lastColumnResizable),
-      mouseleave: (view) => handleMouseLeave(view),
       mousedown: (view, event) => handleMouseDown(view, event, cellMinWidth),
+      mousemove: (view, event) => handleMouseMove(view, event, handleWidth, lastColumnResizable),
+      mouseleave: (view) => handleMouseLeave(view),
     },
 
     // .. Decoration ..............................................................
@@ -139,11 +139,55 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
 });
 
 // == Handler =====================================================================
-const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: number, cellMinWidth: number, lastColumnResizable: boolean) => {
+// -- MouseDown -------------------------------------------------------------------
+const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: number) => {
+  const moveWhileDragging = (event: MouseEvent) => {
+    if(!event.which) return finishDragging(event);
+
+    const pluginState = getColumnResizePluginState(view.state);
+    const { activeHandle, dragInfo } = pluginState;
+
+    if(!isNotNullOrUndefined<number>(activeHandle) || (dragInfo.startX === null || dragInfo.startWidth === null)) throw new Error('expected pluginState to be valid');
+    const draggedWidth = computeDraggedWidth(dragInfo.startX, dragInfo.startWidth, event, cellMinWidth);
+    displayColumnWidth(view, activeHandle, draggedWidth, cellMinWidth);
+  };
+
+  const finishDragging = (event: MouseEvent) => {
+    window.removeEventListener('mouseup', finishDragging);
+    window.removeEventListener('mousemove', moveWhileDragging);
+
+    const pluginState = getColumnResizePluginState(view.state);
+    const { activeHandle, dragInfo } = pluginState;
+
+    if(isNotNullOrUndefined<number>(activeHandle) && (dragInfo.startX && dragInfo.startWidth)) {
+      updateColumnWidth(view, activeHandle, computeDraggedWidth(dragInfo.startX, dragInfo.startWidth, event, cellMinWidth));
+      dispatchUnsetDraggingMeta(view);
+    } /* else -- activeHandle is null or undefined, dragging is not defined, or dragging is not a draggingObject */
+  };
+
+  window.addEventListener('mousemove', moveWhileDragging);
+  window.addEventListener('mouseup', finishDragging);
+  event.preventDefault();
+
   const pluginState = getColumnResizePluginState(view.state);
   const { activeHandle, dragInfo } = pluginState;
 
-  if(!(dragInfo.startX && dragInfo.startWidth)) {
+  if(activeHandle === -1 || (dragInfo.startX && dragInfo.startWidth /*dragging*/)) return false/*do not handle*/;
+  if(!isNotNullOrUndefined<number>(activeHandle)) return false/*do not handle*/;
+
+  const cell = view.state.doc.nodeAt(activeHandle);
+  const width = currentColWidth(view, activeHandle, cell?.attrs[AttributeType.ColSpan], cell?.attrs[AttributeType.ColWidth]);
+  dispatchSetDraggingActionMeta(view, event.clientX, width);
+
+  return true/*handled*/;
+};
+
+// -- MouseMove -------------------------------------------------------------------
+const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: number, lastColumnResizable: boolean) => {
+  const pluginState = getColumnResizePluginState(view.state);
+  const { activeHandle, dragInfo } = pluginState;
+
+  if(dragInfo.startX === null/*not dragging*/ && dragInfo.startWidth === null/*not dragging*/) {
     if(!isValidHTMLElement(event.target)) return false/*do not handle*/;
 
     const domTarget = domCellAround(event.target);
@@ -181,6 +225,7 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
   return false/*default to not handling*/;
 };
 
+// -- MouseLeave ------------------------------------------------------------------
 const handleMouseLeave = (view: EditorView) => {
   const pluginState = getColumnResizePluginState(view.state);
 
@@ -188,48 +233,6 @@ const handleMouseLeave = (view: EditorView) => {
   if(activeHandle && activeHandle > -1 && (dragInfo.startX === null/*not dragging*/ && dragInfo.startWidth === null/*not dragging*/)) {
     dispatchSetHandleActionMeta(view, -1/*default*/);
   } /* else -- no active Handle or currently dragging */
-};
-
-const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: number) => {
-  const pluginState = getColumnResizePluginState(view.state);
-  const { activeHandle, dragInfo } = pluginState;
-
-  if(activeHandle === -1 || (dragInfo.startX && dragInfo.startWidth /*dragging*/)) return false/*do not handle*/;
-  if(!isNotNullOrUndefined<number>(activeHandle)) return false/*do not handle*/;
-
-  const cell = view.state.doc.nodeAt(activeHandle);
-  const width = currentColWidth(view, activeHandle, cell?.attrs[AttributeType.ColSpan], cell?.attrs[AttributeType.ColWidth]);
-  dispatchSetDraggingActionMeta(view, event.clientX, width);
-
-  const moveWhileDragging = (event: MouseEvent) => {
-    if(!event.which) return finishDragging(event);
-
-    const pluginState = getColumnResizePluginState(view.state);
-    const { activeHandle, dragInfo } = pluginState;
-
-    if(!isNotNullOrUndefined<number>(activeHandle) || (dragInfo.startX === null || dragInfo.startWidth === null)) throw new Error('expected pluginState to be valid');
-    const draggedWidth = computeDraggedWidth(dragInfo.startX, dragInfo.startWidth, event, cellMinWidth);
-    displayColumnWidth(view, activeHandle, draggedWidth, cellMinWidth);
-  };
-
-  const finishDragging = (event: MouseEvent) => {
-    window.removeEventListener('mouseup', finishDragging);
-    window.removeEventListener('mousemove', moveWhileDragging);
-
-    const pluginState = getColumnResizePluginState(view.state);
-    const { activeHandle, dragInfo } = pluginState;
-
-    if(isNotNullOrUndefined<number>(activeHandle) && (dragInfo.startX && dragInfo.startWidth)) {
-      updateColumnWidth(view, activeHandle, computeDraggedWidth(dragInfo.startX, dragInfo.startWidth, event, cellMinWidth));
-      dispatchUnsetDraggingMeta(view);
-    } /* else -- activeHandle is null or undefined, dragging is not defined, or dragging is not a draggingObject */
-  };
-
-  window.addEventListener('mouseup', finishDragging);
-  window.addEventListener('mousemove', moveWhileDragging);
-  event.preventDefault();
-
-  return true/*handled*/;
 };
 
 // == Decoration ==================================================================
@@ -387,6 +390,7 @@ const zeroes = (n: number) => {
   return result;
 };
 
+/** return the width that has been dragged with the mouse */
 const computeDraggedWidth = (startX: number, startWidth: number, event: MouseEvent, cellMinWidth: number) => {
   const offset = event.clientX - startX;
   return Math.max(cellMinWidth, startWidth + offset);
