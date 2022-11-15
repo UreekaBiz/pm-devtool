@@ -61,7 +61,7 @@ const fixTablesKey = new PluginKey('fix-tables');
 
   for(let i = 0; i < map.problems.length; i++) {
     const problem = map.problems[i];
-    if(problem.type === 'collision') {
+    if(problem.type === TableProblem.Collision) {
       const cell = table.nodeAt(problem.pos);
       if(!cell) continue/*nothing to do*/;
 
@@ -70,13 +70,16 @@ const fixTablesKey = new PluginKey('fix-tables');
       }
 
       tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + problem.pos), null/*maintain type*/, removeColSpan(cell.attrs, cell.attrs[AttributeType.ColSpan] - problem.n, problem.n));
-    } else if(problem.type == 'missing') {
+
+    } else if(problem.type == TableProblem.Missing) {
       mustAdd[problem.row] += problem.n;
+
     } else if(problem.type === TableProblem.OverlongRowSpan) {
       const cell = table.nodeAt(problem.pos);
       if(!cell) continue/*nothing to do*/;
 
       tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + problem.pos), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - problem.n));
+
     } else if(problem.type === TableProblem.ColWidthMistMatch) {
       const cell = table.nodeAt(problem.pos);
       if(!cell) continue/*nothing to do*/;
@@ -125,6 +128,7 @@ const fixTablesKey = new PluginKey('fix-tables');
 
     pos = end;
   }
+
   return tr.setMeta(fixTablesKey, { fixTables: true });
 };
 
