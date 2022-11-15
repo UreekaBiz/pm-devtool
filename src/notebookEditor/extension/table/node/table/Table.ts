@@ -1,7 +1,8 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { addRowAfterCommand, deleteTableWhenAllCellsSelected, getNodeOutputSpec, goToCellCommand, isTableNode, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
+import { deleteTableWhenAllCellsSelected, getNodeOutputSpec, goToCellCommand, isTableNode, AddRowAfterDocumentUpdate, GoToCellDocumentUpdate, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
 
+import { applyDocumentUpdates } from 'notebookEditor/command';
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
 import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
 
@@ -54,17 +55,15 @@ export const Table = new NodeExtension({
     keymap({
       'Tab': () => {
         if(goToCellCommand('next')(editor.view.state, editor.view.dispatch)) {
-          return true;
-        } /* else -- cannot go to the next Cell */
+          return true/*handled*/;
+        } /* else -- cannot go to the next Cell, try adding and focusing */
 
-        if(!addRowAfterCommand(editor.view.state, undefined/*just check if possible*/)) {
-          return false;
-        } /* else -- can add a row after, do so and then go to next Cell */
-
-        return true;
-        // TODO: handle with DocumentUpdates
-        // return this.editor.chain().addRowAfterCommand().goToCell().run();
+        return applyDocumentUpdates(editor, [
+          new AddRowAfterDocumentUpdate(),
+          new GoToCellDocumentUpdate('next'),
+        ]);
       },
+
       'Shift-Tab': () => goToCellCommand('previous')(editor.view.state, editor.view.dispatch),
       'Backspace': deleteTableWhenAllCellsSelected,
       'Mod-Backspace': deleteTableWhenAllCellsSelected,

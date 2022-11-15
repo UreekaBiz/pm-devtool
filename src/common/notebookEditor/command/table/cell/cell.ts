@@ -167,29 +167,28 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 /** select the previous or the next Cell in a Table */
-export const goToCellCommand = (direction: 'previous' | 'next') => (state: EditorState, dispatch: DispatchType) => {
-  if(!isInTable(state)) return false/*nothing to do*/;
+export const goToCellCommand = (direction: 'previous' | 'next') => (state: EditorState, dispatch: DispatchType) =>
+  AbstractDocumentUpdate.execute(new GoToCellDocumentUpdate(direction).update(state, state.tr), dispatch);
+export class GoToCellDocumentUpdate implements AbstractDocumentUpdate {
+  constructor(private readonly direction: 'previous' | 'next') {/*nothing additional*/ }
 
-  const $cell = selectionCell(state);
-  if(!$cell) return false/*nothing to do*/;
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isInTable(editorState)) return false/*nothing to do*/;
 
-  const cell = findCell($cell, direction);
-  if(!cell) return false/*nothing to do*/;
+    let $cell = selectionCell(editorState);
+    if(!$cell) return false/*nothing to do*/;
 
-  if(dispatch) {
-    const $cell = state.doc.resolve(cell);
+    const cellPos = findCell($cell, this.direction);
+    if(!cellPos) return false/*nothing to do*/;
+
+    $cell = editorState.doc.resolve(cellPos);
     const $movedForwardCell = moveCellForward($cell);
-    if(!$movedForwardCell) return false/*nothing to do*/;
+    if(!$movedForwardCell) return false/*could not move cell forward*/;
 
-    const { tr } = state;
     tr.setSelection(TextSelection.between($cell, $movedForwardCell)).scrollIntoView();
-
-    dispatch(tr);
+    return tr/*updated*/;
   }
-
-  return true;
-};
-
+}
 // == Util ========================================================================
 const isCellEmpty = (cell: ProseMirrorNode) => {
   const { content: cellContent } = cell;
