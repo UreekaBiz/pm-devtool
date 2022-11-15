@@ -1,7 +1,7 @@
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
-import { cellAround, isTableNode, pointsAtCell, setTableNodeAttributes, AttributeType, TableMap, PM_CLASS, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
+import { cellAround, isNotNullOrUndefined, isTableNode, pointsAtCell, setTableNodeAttributes, AttributeType, TableMap, PM_CLASS, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
 
@@ -10,15 +10,22 @@ import { updateTableColumns } from '../node';
 // ********************************************************************************
 // == Constant ====================================================================
 const RESIZE_HANDLE_CLASS = 'dom-resize-handle';
+const DEFAULT_CLASS_OBJ = { class: ''/*none*/ };
+
+// == Type ========================================================================
+type DraggingObjType = { startX: number; startWidth: number; };
+
+// -- Type Guard -----------------------------------------------------------------
+const isDraggingObjType = (obj: any): obj is DraggingObjType => 'startX' in obj && 'startWidth' in obj;
 
 // == Class =======================================================================
 class ResizeState {
   // -- Attribute -----------------------------------------------------------------
-  activeHandle: any;
-  dragging: any;
+  activeHandle: number | null | undefined;
+  dragging: number | boolean | null | DraggingObjType;
 
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(activeHandle: any, dragging: any) {
+  constructor(activeHandle: number | null | undefined, dragging: number | boolean | null | DraggingObjType) {
     this.activeHandle = activeHandle;
     this.dragging = dragging;
   }
@@ -28,13 +35,15 @@ class ResizeState {
     let state = this;
     const action = tr.getMeta(tableColumnResizingPluginKey);
 
-    if(action && action.setHandle != null)
+    if(action && action.setHandle !== null) {
       return new ResizeState(action.setHandle, null);
+    }
 
-    if(action && action.setDragging !== undefined)
+    if(action && action.setDragging !== undefined) {
       return new ResizeState(state.activeHandle, action.setDragging);
+    }
 
-    if(state.activeHandle > -1 && tr.docChanged) {
+    if(state.activeHandle && state.activeHandle > -1 && tr.docChanged) {
       let handle: number | null = tr.mapping.map(state.activeHandle, -1);
 
       if(!pointsAtCell(tr.doc.resolve(handle))) {
@@ -58,18 +67,21 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
 
   state: {
     init(_, state) { return new ResizeState(-1, false); },
-    apply(tr, prev) {
-      return prev.apply(tr);
+    apply(tr, thisPluginState, oldState, newState) {
+      return thisPluginState.apply(tr);
     },
   },
 
   props: {
     attributes: (state) => {
       const pluginState = tableColumnResizingPluginKey.getState(state);
+      if(!pluginState || !pluginState.activeHandle) return DEFAULT_CLASS_OBJ;
 
-      return pluginState?.activeHandle > -1
-        ? { class: 'resize-cursor' }
-        : { class: ''/*none*/ };
+      if(pluginState.activeHandle > -1) {
+        return { class: 'resize-cursor' };
+      } /* else -- not active */
+
+      return DEFAULT_CLASS_OBJ/*default*/;
     },
 
     handleDOMEvents: {
@@ -80,9 +92,13 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
 
     decorations: (state) => {
       const pluginState = tableColumnResizingPluginKey.getState(state);
+      if(!pluginState || !pluginState.activeHandle) return DecorationSet.empty;
 
-      if(pluginState?.activeHandle > -1) { return handleColumnResizingDecorations(state, pluginState?.activeHandle); }
-      else { return DecorationSet.empty; }
+      if(pluginState.activeHandle > -1) {
+        return handleColumnResizingDecorations(state, pluginState.activeHandle);
+      } /* else -- no activeHandle */
+
+      return DecorationSet.empty/*default*/;
     },
   },
 });
@@ -95,7 +111,7 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
     if(!isValidHTMLElement(event.target)) return/*nothing to do*/;
 
     const target = domCellAround(event.target);
-    let cellPos = -1;
+    let cellPos = -1/*default*/;
     if(target) {
       let { left, right } = target.getBoundingClientRect();
       if(event.clientX - left <= handleWidth)
@@ -120,22 +136,28 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
 
       updateHandle(view, cellPos);
     }
-  }
+  } /* else -- already dragging */
 };
 
 const handleMouseLeave = (view: EditorView) => {
   const pluginState = tableColumnResizingPluginKey.getState(view.state);
-  if(pluginState?.activeHandle > -1 && !pluginState?.dragging) {
+  if(!pluginState) return/*do not handle*/;
+
+  const { activeHandle, dragging } = pluginState;
+  if(activeHandle && activeHandle > -1 && !dragging) {
     updateHandle(view, -1);
-  } /* else -- */
+  } /* else -- no active Handle or currently dragging */
 };
 
 const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: number) => {
   const pluginState = tableColumnResizingPluginKey.getState(view.state);
-  if(pluginState?.activeHandle == -1 || pluginState?.dragging) return false;
+  if(!pluginState || !pluginState.activeHandle) return false/*do not handle*/;
 
-  let cell = view.state.doc.nodeAt(pluginState?.activeHandle);
-  let width = currentColWidth(view, pluginState?.activeHandle, cell?.attrs[AttributeType.ColSpan], cell?.attrs[AttributeType.ColWidth]);
+  if(pluginState.activeHandle === -1 || pluginState.dragging) return false/*do not handle*/;
+
+  const cell = view.state.doc.nodeAt(pluginState.activeHandle);
+  const width = currentColWidth(view, pluginState.activeHandle, cell?.attrs[AttributeType.ColSpan], cell?.attrs[AttributeType.ColWidth]);
+
   view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: { startX: event.clientX, startWidth: width } }));
 
   const finish = (event: MouseEvent) => {
@@ -143,8 +165,10 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     window.removeEventListener('mousemove', move);
 
     const pluginState = tableColumnResizingPluginKey.getState(view.state);
-    if(pluginState?.dragging) {
-      updateColumnWidth(view, pluginState.activeHandle, draggedWidth(pluginState.dragging, event, cellMinWidth) );
+    if(!pluginState) return/*nothing to do*/;
+
+    if(pluginState.activeHandle && pluginState.dragging && isDraggingObjType(pluginState.dragging)) {
+      updateColumnWidth(view, pluginState.activeHandle, draggedWidth(pluginState.dragging, event, cellMinWidth));
       view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: null }));
     }
   };
@@ -153,14 +177,17 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     if(!event.which) return finish(event);
 
     const pluginState = tableColumnResizingPluginKey.getState(view.state);
-    const dragged = draggedWidth(pluginState?.dragging, event, cellMinWidth);
-    displayColumnWidth(view, pluginState?.activeHandle, dragged, cellMinWidth);
+    if(!pluginState || !isNotNullOrUndefined<number>(pluginState.activeHandle) || !isDraggingObjType(pluginState.dragging)) throw new Error('expected pluginState to be valid');
+
+    const dragged = draggedWidth(pluginState.dragging, event, cellMinWidth);
+    displayColumnWidth(view, pluginState.activeHandle, dragged, cellMinWidth);
   };
 
   window.addEventListener('mouseup', finish);
   window.addEventListener('mousemove', move);
   event.preventDefault();
-  return true;
+
+  return true/*handled*/;
 };
 
 const currentColWidth = (view: EditorView, cellPos: number, colSpan: number, colWidth: number[]) => {
@@ -312,7 +339,7 @@ export const handleColumnResizingDecorations = (state: EditorState, cellPos: num
 
       const decorationPos = tableStart + cellPos + node.nodeSize - 1;
       const decorationDOM = document.createElement('div');
-            decorationDOM.className = RESIZE_HANDLE_CLASS;
+      decorationDOM.className = RESIZE_HANDLE_CLASS;
       decorations.push(Decoration.widget(decorationPos, decorationDOM));
     }
   }
