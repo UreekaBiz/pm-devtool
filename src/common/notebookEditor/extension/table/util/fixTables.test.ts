@@ -3,7 +3,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { eq } from 'prosemirror-test-builder';
 
-import { cellBuilder, cellWithDimensionBuilder, colWidth100CellBuilder, colWidth200CellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, tableDocBuilder, tableParagraphBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
+import { cellBuilder, cellWithDimensionBuilder, colWidth100CellBuilder, colWidth200CellBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, tableDocBuilder, tableParagraphBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
 import { AttributeType } from '../../../attribute';
 import { fixTables } from './fixTables';
 
@@ -144,7 +144,7 @@ describe('fixTable', () => {
 
       defaultTableBuilder(
         defaultRowBuilder(cellBuilder, cellBuilder, colWidth200CellBuilder),
-        defaultRowBuilder(defaultRowBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.RowSpan]: 2, [AttributeType.ColWidth]: [0, 0, 200] }, tableParagraphBuilder('x'))),
+        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.RowSpan]: 2, [AttributeType.ColWidth]: [0, 0, 200] }, tableParagraphBuilder('x'))),
         defaultRowBuilder()
       ),
 
