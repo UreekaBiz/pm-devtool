@@ -25,28 +25,25 @@ export class TableView extends AbstractNodeView<TableNodeType, TableStorageType,
     super(model, editor, node, storage, getPos);
 
     // .. UI ......................................................................
+    this.minimumCellWidth = MIN_CELL_WIDTH;
+
     this.table = document.createElement('table');
     this.dom.appendChild(this.table);
 
     this.columnGroup = document.createElement('colgroup');
     this.table.appendChild(this.columnGroup);
 
-    const tableBody = document.createElement('tbody');
-    this.table.appendChild(tableBody);
-
-    this.minimumCellWidth = MIN_CELL_WIDTH;
+    updateTableColumns(node, this.columnGroup, this.table, this.minimumCellWidth);
 
     // .. PM ......................................................................
-    this.contentDOM = this.table;
-
-    // ............................................................................
-    updateTableColumns(this.node, this.columnGroup, this.table, this.minimumCellWidth);
+    this.contentDOM = document.createElement('tbody');
+    this.contentDOM = this.table.appendChild(this.contentDOM);
   }
 
   // -- Creation ------------------------------------------------------------------
   protected createDomElement(): HTMLElement {
     const dom = document.createElement('div');
-    dom.classList.add(TABLE_CONTAINER_CLASS);
+          dom.classList.add(TABLE_CONTAINER_CLASS);
     return dom;
   }
 }
