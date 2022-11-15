@@ -11,6 +11,8 @@ import { TableMap } from '../class';
 import { clipCells, insertCells, pastedCells, PastedCellsReturnType } from './tableCopyPaste';
 import { cellAround } from './util';
 
+// ********************************************************************************
+// == Table Copy Paste Test =======================================================
 describe('pastedCells', () => {
   const executePastedCellsTest = (sliceNode: ProseMirrorNodeWithTag, width: number | null, height?: number, content?: ProseMirrorNode[][]) => {
     const { [A]: sliceFromPos, [B]: sliceToPos } = sliceNode.tag;

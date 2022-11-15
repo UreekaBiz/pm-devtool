@@ -83,7 +83,7 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
     decorations(state) {
       const pluginState = tableColumnResizingPluginKey.getState(state);
 
-      if(pluginState && pluginState.activeHandle && pluginState.activeHandle > -1) { return handleDecorations(state, pluginState.activeHandle); }
+      if(pluginState && pluginState.activeHandle && pluginState.activeHandle > -1) { return handleColumnResizingDecorations(state, pluginState.activeHandle); }
       else { return DecorationSet.empty;/*no decorations*/ }
     },
   },
@@ -304,7 +304,7 @@ const zeroes = (n: number) => {
   return result;
 };
 
-export const handleDecorations = (state: EditorState, cell: number) => {
+export const handleColumnResizingDecorations = (state: EditorState, cell: number) => {
   const decorations = [];
   const $cell = state.doc.resolve(cell);
 
