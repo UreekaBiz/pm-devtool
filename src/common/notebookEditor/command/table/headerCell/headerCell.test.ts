@@ -94,7 +94,7 @@ describe('toggleHeaderColumnCommand', () => {
 
       tableDocBuilder(
         defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, headerCellBuilder),
+          defaultRowBuilder(headerCellBuilder, headerCellBuilder),
           defaultRowBuilder(cellBuilder, cellBuilder)))
     ));
 
