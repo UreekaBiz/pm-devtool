@@ -122,9 +122,9 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
       const { left, right } = domTarget.getBoundingClientRect();
 
       if(event.clientX - left <= handleWidth) {
-        cellPos = edgeCell(view, event, 'left');
+        cellPos = getCellEdge(view, event, 'left');
       } else if(right - event.clientX <= handleWidth) {
-        cellPos = edgeCell(view, event, 'right');
+        cellPos = getCellEdge(view, event, 'right');
       } /* else -- do nothing */
     } /* else -- no domTarget exists */
 
@@ -183,7 +183,7 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     const { activeHandle, dragging } = pluginState;
     if(!isNotNullOrUndefined<number>(activeHandle) || !isDraggingObjType(dragging)) throw new Error('expected pluginState to be valid');
 
-    const dragged = draggedWidth(dragging, event, cellMinWidth);
+    const dragged = computeDraggedWidth(dragging, event, cellMinWidth);
     displayColumnWidth(view, activeHandle, dragged, cellMinWidth);
   };
 
@@ -196,7 +196,7 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
 
     const { activeHandle, dragging } = pluginState;
     if(isNotNullOrUndefined<number>(activeHandle) && dragging && isDraggingObjType(pluginState.dragging)) {
-      updateColumnWidth(view, activeHandle, draggedWidth(pluginState.dragging, event, cellMinWidth));
+      updateColumnWidth(view, activeHandle, computeDraggedWidth(pluginState.dragging, event, cellMinWidth));
       view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: null/*deactivate dragging*/ }));
     } /* else -- activeHandle is null or undefined, dragging is not defined, or dragging is not a draggingObject */
   };
@@ -208,16 +208,16 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
   return true/*handled*/;
 };
 
+// == Util ========================================================================
 const currentColWidth = (view: EditorView, cellPos: number, colSpan: number, colWidth: number[]) => {
   const currentColWidth = colWidth && colWidth[colWidth.length - 1];
   if(currentColWidth) return currentColWidth/*colWidth already set*/;
 
-  const dom = view.domAtPos(cellPos);
+  const domNodeAtCellPos = view.domAtPos(cellPos);
+  const cellNode = domNodeAtCellPos.node.childNodes[domNodeAtCellPos.offset];
+  if(!isValidHTMLElement(cellNode)) throw new Error('expected node to be an HTMLElement');
 
-  const node = dom.node.childNodes[dom.offset];
-  if(!isValidHTMLElement(node)) throw new Error('expected node to be an HTMLElement');
-
-  let domWidth = node.offsetWidth;
+  let domWidth = cellNode.offsetWidth;
   let parts = colSpan;
   if(colWidth) {
     for(let i = 0; i < colSpan; i++) {
@@ -226,7 +226,7 @@ const currentColWidth = (view: EditorView, cellPos: number, colSpan: number, col
         parts--;
       }
     }
-  }
+  } /* else -- Cell has no colWidth defined */
 
   return domWidth / parts;
 };
@@ -245,24 +245,26 @@ const domCellAround = (target: HTMLElement | null) => {
   return target;
 };
 
-const edgeCell = (view: EditorView, event: MouseEvent, side: 'right' | 'left') => {
-  let found = view.posAtCoords({ left: event.clientX, top: event.clientY });
-  if(!found) return -1;
+const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left') => {
+  const found = view.posAtCoords({ left: event.clientX, top: event.clientY });
+  if(!found) return -1/*default*/;
 
-  let { pos } = found;
-  let $cell = cellAround(view.state.doc.resolve(pos));
-  if(!$cell) return -1;
+  const { pos } = found;
+  const $cellPos = cellAround(view.state.doc.resolve(pos));
+  if(!$cellPos) return -1/*default*/;
 
-  if(side == 'right') return $cell.pos;
+  if(side === 'right') return $cellPos.pos;
 
-  const tableMap = TableMap.get($cell.node(-1));
-  const tableStart = $cell.start(-1);
-  let index = tableMap.map.indexOf($cell.pos - tableStart);
-  return index % tableMap.width == 0 ? -1 : tableStart + tableMap.map[index - 1];
+  const tableMap = TableMap.get($cellPos.node(-1));
+  const tableStart = $cellPos.start(-1);
+
+  const index = tableMap.map.indexOf($cellPos.pos - tableStart);
+  if(index % tableMap.width === 0) { return -1/*default*/; }
+  else { return tableStart + tableMap.map[index - 1]; }
 };
 
-const draggedWidth = (dragging: { startX: number; startWidth: number; }, event: MouseEvent, cellMinWidth: number) => {
-  let offset = event.clientX - dragging.startX;
+const computeDraggedWidth = (dragging: { startX: number; startWidth: number; }, event: MouseEvent, cellMinWidth: number) => {
+  const offset = event.clientX - dragging.startX;
   return Math.max(cellMinWidth, dragging.startWidth + offset);
 };
 
@@ -292,12 +294,12 @@ const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => 
     const index = attrs[AttributeType.ColSpan] === 1 ? 0 : col - tableMap.colCount(pos);
     if(attrs[AttributeType.ColWidth] && attrs[AttributeType.ColWidth][index] == width) continue;
 
-    const colwidth = attrs[AttributeType.ColWidth]
+    const newColWidth = attrs[AttributeType.ColWidth]
       ? attrs[AttributeType.ColWidth].slice()
       : zeroes(attrs[AttributeType.ColSpan]);
 
-    colwidth[index] = width;
-    tr.setNodeMarkup(tableStart + pos, null/*maintain type*/, setTableNodeAttributes(attrs, AttributeType.ColWidth, colwidth));
+    newColWidth[index] = width;
+    tr.setNodeMarkup(tableStart + pos, null/*maintain type*/, setTableNodeAttributes(attrs, AttributeType.ColWidth, newColWidth));
   }
 
   if(tr.docChanged) {
@@ -331,6 +333,7 @@ const zeroes = (n: number) => {
   return result;
 };
 
+// == Decoration ==================================================================
 export const handleColumnResizingDecorations = (state: EditorState, cellPos: number | null) => {
   if(!cellPos) return DecorationSet.empty;
 
@@ -345,11 +348,12 @@ export const handleColumnResizingDecorations = (state: EditorState, cellPos: num
 
   const col = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan];
   for(let row = 0; row < tableMap.height; row++) {
-    let index = col + row * tableMap.width - 1;
-    // For positions that are have either a different cell or the end
-    // of the table to their right, and either the top of the table or
-    // a different cell above them, add a decoration
-    if((col == tableMap.width || tableMap.map[index] != tableMap.map[index + 1]) && (row == 0 || tableMap.map[index - 1] != tableMap.map[index - 1 - tableMap.width])) {
+    const index = col + row * tableMap.width - 1;
+
+    // for positions that either have a different Cell or that have the
+    // end of the Table to their right, and either the top of the Table
+    // or a different Cell above them, add a decoration
+    if((col === tableMap.width || tableMap.map[index] !== tableMap.map[index + 1]) && (row === 0 || tableMap.map[index - 1] !== tableMap.map[index - 1 - tableMap.width])) {
       const cellPos = tableMap.map[index];
 
       const node = table.nodeAt(cellPos);
@@ -357,9 +361,10 @@ export const handleColumnResizingDecorations = (state: EditorState, cellPos: num
 
       const decorationPos = tableStart + cellPos + node.nodeSize - 1;
       const decorationDOM = document.createElement('div');
-      decorationDOM.className = RESIZE_HANDLE_CLASS;
-      decorations.push(Decoration.widget(decorationPos, decorationDOM));
+            decorationDOM.className = RESIZE_HANDLE_CLASS;
+            decorations.push(Decoration.widget(decorationPos, decorationDOM));
     }
   }
+
   return DecorationSet.create(state.doc, decorations);
 };
