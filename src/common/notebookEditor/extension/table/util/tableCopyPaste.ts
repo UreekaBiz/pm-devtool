@@ -211,8 +211,8 @@ const growTable = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start
       const cells: ProseMirrorNode[] = [];
       let addedNode: ProseMirrorNode | null = null/*default*/;
 
-      if(rowNode.lastChild == null || rowNode.lastChild.type == tableTypes.cell) { addedNode = emptyCell || (emptyCell = tableTypes.cell.createAndFill()); }
-      else { addedNode = emptyHeader || (emptyHeader = tableTypes.header_cell.createAndFill()); }
+      if(rowNode.lastChild == null || rowNode.lastChild.type == tableTypes[NodeName.CELL]) { addedNode = emptyCell || (emptyCell = tableTypes[NodeName.CELL].createAndFill()); }
+      else { addedNode = emptyHeader || (emptyHeader = tableTypes[NodeName.HEADER_CELL].createAndFill()); }
 
       for(let i = map.width; i < width; i++) {
         if(addedNode) {
