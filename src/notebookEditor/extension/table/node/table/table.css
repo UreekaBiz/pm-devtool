@@ -1,36 +1,55 @@
-/* == Table ==================================================================== */
+/* -- Wrapper ------------------------------------------------------------------ */
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+}
+
+/* -- Table -------------------------------------------------------------------- */
 .ProseMirror table {
-  table-layout: fixed;
-  width: 95%;
-  margin: 10px;
   border-collapse: collapse;
+  table-layout: fixed;
+  margin: 10px;
+  width: 95%;
   overflow: hidden;
 }
-.ProseMirror table td, .ProseMirror table th {
-  position: relative;
+.ProseMirror table div[data-node-type="paragraph"] { margin: 0; }
+
+/* -- Cells -------------------------------------------------------------------- */
+/* .. Cell and HeaderCell ...................................................... */
+.ProseMirror td,
+.ProseMirror th {
   vertical-align: top;
   box-sizing: border-box;
+  position: relative;
   min-width: 1em;
   padding: 3px 5px;
-  border: 2px solid #ced4da;
+  border: 2px solid #CED4DA;
 }
-.ProseMirror table td > *, .ProseMirror table th > * { margin-bottom: 0; }
+.ProseMirror table td > *,
+.ProseMirror table th > * {
+  margin-bottom: 0;
+}
+
+/* .. HeaderCell ............................................................... */
 .ProseMirror table th {
-  background-color: #f1f3f5;
+  background-color: #F1F3F5;
   text-align: left;
   font-weight: normal;
 }
+
+/* -- CellSelection ------------------------------------------------------------ */
 .ProseMirror table .selectedCell:after {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(200, 200, 255, 0.4);
   content: '';
   pointer-events: none;
   z-index: 2;
+  background: rgba(200, 200, 255, 0.4);
 }
+
+/* -- Resize ------------------------------------------------------------------- */
 .ProseMirror table .resize-cursor {
   position: absolute;
   width: 4px;
@@ -40,10 +59,7 @@
   background-color: #adf;
   pointer-events: none;
 }
-.ProseMirror table p { margin: 0; }
-.tableWrapper {
-  overflow-x: auto;
-}
+
 .resize-cursor {
   cursor: ew-resize;
   cursor: col-resize;
