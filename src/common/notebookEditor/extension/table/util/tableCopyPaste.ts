@@ -26,7 +26,8 @@ import { removeColSpan, setTableNodeAttributes } from '.';
  * get a rectangular area of Cells from a Slice, or null if the outer Nodes
  * of the Slice are not Table Cells or Rows
  */
-export const pastedCells = (slice: Slice) => {
+export type PastedCellsReturnType = { height: number; width: number; rows: Fragment[]; } | null;
+export const pastedCells = (slice: Slice): PastedCellsReturnType => {
   if(!slice.size) return null/*nothing to do*/;
 
   let { content, openStart, openEnd } = slice;
