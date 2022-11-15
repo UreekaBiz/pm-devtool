@@ -216,7 +216,6 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
     return/*not in a Cell, let PM handle the event*/;
   }
 
-
   view.root.addEventListener('mouseup', stop);
   view.root.addEventListener('dragstart', stop);
   view.root.addEventListener('mousemove', move);

@@ -1,6 +1,7 @@
 import { EditorState, PluginKey, Transaction } from 'prosemirror-state';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
+import { HISTORY_META } from '../../../../notebookEditor/command/type';
 import { AttributeType } from '../../../attribute';
 import { NodeName } from '../../../node';
 import { TableMap } from '../class';
@@ -28,6 +29,10 @@ const fixTablesKey = new PluginKey('fix-tables');
   const check = (node: ProseMirrorNode, pos: number) =>  {
     if(node.type.spec.tableRole === TableRole.Table) {
       tr = fixTable(newState, node, pos, tr);
+      if(tr) {
+        tr.setMeta(HISTORY_META, false/*do not add to history*/);
+      } /* else -- Transaction was not modified */
+
     } /* else -- not a Node with a TableRole, ignore */
   };
 
