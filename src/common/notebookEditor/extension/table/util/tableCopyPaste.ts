@@ -3,12 +3,12 @@ import { EditorState, Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 
 import { DispatchType } from '../../../command/type';
-import { AttributeType } from '../../../../notebookEditor/attribute';
-import { NodeName } from '../../../../notebookEditor/node';
-import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
-import { getTableNodeTypes } from '../../../extension/table/node/table';
-import { TableRole } from '../../../extension/table/type';
-import { removeColSpan, setTableNodeAttributes } from '../../..//extension/table/util';
+import { AttributeType } from '../../../attribute';
+import { NodeName } from '../../../node';
+import { CellSelection, TableMap, TableRect } from '../class';
+import { getTableNodeTypes } from '../node/table';
+import { TableRole } from '../type';
+import { removeColSpan, setTableNodeAttributes } from '.';
 
 // ********************************************************************************
 // handle pasting Cell content into Tables, or pasting
