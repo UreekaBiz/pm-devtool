@@ -5,10 +5,10 @@ import { eq } from 'prosemirror-test-builder';
 import { cellBuilder, cellWithDimensionBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, tableDocBuilder, tableParagraphBuilder } from '../../../command/test/tableTestUtil';
 import { A, B, ProseMirrorNodeWithTag, validateNodeWithTag } from '../../../command/test/testUtil';
 
-import { pastedCells, PastedCellsReturnType } from './tableCopyPaste';
+import { clipCells, pastedCells, PastedCellsReturnType } from './tableCopyPaste';
 
 describe('pastedCells', () => {
-  function executePastedCellsTest(sliceNode: ProseMirrorNodeWithTag, width: number | null, height?: number, content?: ProseMirrorNode[][]) {
+  const executePastedCellsTest = (sliceNode: ProseMirrorNodeWithTag, width: number | null, height?: number, content?: ProseMirrorNode[][]) => {
     const { [A]: sliceFromPos, [B]: sliceToPos } = sliceNode.tag;
     if(sliceFromPos === null/*explicit check since it can be 0*/ || sliceToPos === null/*explicit check since it can be 0*/) throw new Error('expected A and B positions to be defined for the test and they are not');
 
@@ -25,7 +25,7 @@ describe('pastedCells', () => {
     if(content) {
       result.rows.forEach((row, i) => ist(row, Fragment.from(content[i]), eq));
     } /* else -- no content to look through */
-  }
+  };
 
   it('returns simple Cells', () => {
     const startState = defaultTableBuilder(defaultRowBuilder(`<${A}>`, emptyCellBuilder, emptyCellBuilder, `<${B}>`));
@@ -130,55 +130,99 @@ describe('pastedCells', () => {
 
 });
 
-// describe('clipCells', () => {
-//   function test(slice, width, height, content) {
-//     let result = clipCells(
-//       pastedCells(slice.slice(slice.tag.a, slice.tag.b)),
-//       width,
-//       height
-//     );
-//     ist(result.rows.length, result.height);
-//     ist(result.width, width);
-//     ist(result.height, height);
-//     if(content)
-//       result.rows.forEach((row, i) => ist(row, Fragment.from(content[i]), eq));
-//   }
+describe('clipCells', () => {
+  const executeClipCellsTest = (sliceNode: ProseMirrorNodeWithTag, width: number, height: number, content: ProseMirrorNode[][]) => {
+    const { [A]: sliceFromPos, [B]: sliceToPos } = sliceNode.tag;
+    if(sliceFromPos === null/*explicit check since it can be 0*/ || sliceToPos === null/*explicit check since it can be 0*/) throw new Error('expected A and B positions to be defined for the test and they are not');
 
-//   it('can clip off excess Cells', () =>
-//     test(defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`), 1, 1, [[emptyCellBuilder]]));
+    const pastedResult = pastedCells(sliceNode.slice(sliceFromPos, sliceToPos));
+    if(!pastedResult) throw new Error('expected pastedResult to be valid');
 
-//   it('will pad by repeating Cells', () =>
-//     test(defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder), `<${B}>`), 4, 4, [
-//       [emptyCellBuilder, cellBuilder, emptyCellBuilder, cellBuilder],
-//       [cellBuilder, emptyCellBuilder, cellBuilder, emptyCellBuilder],
-//       [emptyCellBuilder, cellBuilder, emptyCellBuilder, cellBuilder],
-//       [cellBuilder, emptyCellBuilder, cellBuilder, emptyCellBuilder],
-//     ]));
+    const result = clipCells(pastedResult, width, height);
 
-//   it('takes rowspan into account when counting width', () =>
-//     test(defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`), 6, 2, [
-//       [cellWithDimensionBuilder(2, 2), cellBuilder, cellWithDimensionBuilder(2, 2), cellBuilder],
-//       [cellBuilder, cellBuilder],
-//     ]));
+    ist(result.rows.length, result.height);
+    ist(result.width, width);
+    ist(result.height, height);
 
-//   it('clips off excess colspan', () =>
-//     test(defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`), 4, 2, [
-//       [cellWithDimensionBuilder(2, 2), cellBuilder, cellWithDimensionBuilder(1, 2)],
-//       [cellBuilder],
-//     ]));
+    if(content) {
+      result.rows.forEach((row, i) => ist(row, Fragment.from(content[i]), eq));
+    } /* else -- no content to look through */
+  };
 
-//   it('clips off excess rowspan', () =>
-//     test(defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`), 2, 3, [
-//       [cellWithDimensionBuilder(2, 2)],
-//       [],
-//       [cellWithDimensionBuilder(2, 1)],
-//     ]));
+  it('can clip off excess Cells', () => {
+    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`);
+    if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
-//   it('clips off excess rowspan when new table height is bigger than the current table height', () =>
-//     test(defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`), 3, 1, [
-//       [cellWithDimensionBuilder(1, 1), cellWithDimensionBuilder(2, 1)],
-//     ]));
-// });
+    const rowsContent = [
+      [emptyCellBuilder],
+    ];
+
+    executeClipCellsTest(startState, 1/*width*/, 1/*height*/, rowsContent);
+  });
+
+  it('will pad by repeating Cells', () => {
+    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder), `<${B}>`);
+    if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
+
+    const rowsContent = [
+      [emptyCellBuilder, cellBuilder, emptyCellBuilder, cellBuilder],
+      [cellBuilder, emptyCellBuilder, cellBuilder, emptyCellBuilder],
+      [emptyCellBuilder, cellBuilder, emptyCellBuilder, cellBuilder],
+      [cellBuilder, emptyCellBuilder, cellBuilder, emptyCellBuilder],
+    ];
+
+    executeClipCellsTest(startState, 4/*width*/, 4/*height*/, rowsContent);
+  });
+
+  it('takes rowspan into account when counting width', () => {
+    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`);
+    if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
+
+    const rowsContent = [
+      [cellWithDimensionBuilder(2, 2), cellBuilder, cellWithDimensionBuilder(2, 2), cellBuilder],
+      [cellBuilder, cellBuilder],
+    ];
+
+    executeClipCellsTest(startState, 6/*width*/, 2/*height*/, rowsContent);
+  });
+
+  it('clips off excess colspan', () => {
+    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`);
+    if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
+
+    const rowsContent = [
+      [cellWithDimensionBuilder(2, 2), cellBuilder, cellWithDimensionBuilder(1, 2)],
+      [cellBuilder],
+    ];
+
+    executeClipCellsTest(startState, 4/*width*/, 2/*height*/, rowsContent);
+  });
+
+  it('clips off excess rowspan', () => {
+    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`);
+    if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
+
+    const rowsContent = [
+      [cellWithDimensionBuilder(2, 2)],
+      [],
+      [cellWithDimensionBuilder(2, 1)],
+    ];
+
+    executeClipCellsTest(startState, 2/*width*/, 3/*height*/, rowsContent);
+  });
+
+  it('clips off excess rowspan when new table height is bigger than the current table height', () => {
+    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`);
+    if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
+
+    const rowsContent = [
+      [cellWithDimensionBuilder(1, 1), cellWithDimensionBuilder(2, 1)],
+    ];
+
+    executeClipCellsTest(startState, 3/*width*/, 1/*height*/, rowsContent);
+  });
+
+});
 
 // describe('insertCells', () => {
 //   function test(table, Cells, result) {
