@@ -112,7 +112,8 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
   const pluginState = tableColumnResizingPluginKey.getState(view.state);
   if(!pluginState) return false/*do not handle*/;
 
-  if(!pluginState.dragging) {
+  const { activeHandle, dragging } = pluginState;
+  if(!dragging) {
     if(!isValidHTMLElement(event.target)) return false/*do not handle*/;
 
     const domTarget = domCellAround(event.target);
@@ -127,7 +128,7 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
       } /* else -- do nothing */
     } /* else -- no domTarget exists */
 
-    if(cellPos !== pluginState.activeHandle) {
+    if(cellPos !== activeHandle) {
       if(!lastColumnResizable && cellPos !== -1) {
         const $cellPos = view.state.doc.resolve(cellPos);
 
@@ -162,40 +163,46 @@ const handleMouseLeave = (view: EditorView) => {
 
 const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: number) => {
   const pluginState = tableColumnResizingPluginKey.getState(view.state);
-  if(!pluginState || !pluginState.activeHandle) return false/*do not handle*/;
+  if(!pluginState) return false/*do not handle*/;
 
-  if(pluginState.activeHandle === -1 || pluginState.dragging) return false/*do not handle*/;
+  const { activeHandle, dragging } = pluginState;
+  if(activeHandle === -1 || dragging) return false/*do not handle*/;
 
-  const cell = view.state.doc.nodeAt(pluginState.activeHandle);
-  const width = currentColWidth(view, pluginState.activeHandle, cell?.attrs[AttributeType.ColSpan], cell?.attrs[AttributeType.ColWidth]);
+  if(!isNotNullOrUndefined<number>(activeHandle)) return false/*do not handle*/;
 
+  const cell = view.state.doc.nodeAt(activeHandle);
+  const width = currentColWidth(view, activeHandle, cell?.attrs[AttributeType.ColSpan], cell?.attrs[AttributeType.ColWidth]);
   view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: { startX: event.clientX, startWidth: width } }));
 
-  const finish = (event: MouseEvent) => {
-    window.removeEventListener('mouseup', finish);
-    window.removeEventListener('mousemove', move);
+  const moveWhileDragging = (event: MouseEvent) => {
+    if(!event.which) return finishDragging(event);
+
+    const pluginState = tableColumnResizingPluginKey.getState(view.state);
+    if(!pluginState) return finishDragging(event);
+
+    const { activeHandle, dragging } = pluginState;
+    if(!isNotNullOrUndefined<number>(activeHandle) || !isDraggingObjType(dragging)) throw new Error('expected pluginState to be valid');
+
+    const dragged = draggedWidth(dragging, event, cellMinWidth);
+    displayColumnWidth(view, activeHandle, dragged, cellMinWidth);
+  };
+
+  const finishDragging = (event: MouseEvent) => {
+    window.removeEventListener('mouseup', finishDragging);
+    window.removeEventListener('mousemove', moveWhileDragging);
 
     const pluginState = tableColumnResizingPluginKey.getState(view.state);
     if(!pluginState) return/*nothing to do*/;
 
-    if(pluginState.activeHandle && pluginState.dragging && isDraggingObjType(pluginState.dragging)) {
-      updateColumnWidth(view, pluginState.activeHandle, draggedWidth(pluginState.dragging, event, cellMinWidth));
-      view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: null }));
-    }
+    const { activeHandle, dragging } = pluginState;
+    if(isNotNullOrUndefined<number>(activeHandle) && dragging && isDraggingObjType(pluginState.dragging)) {
+      updateColumnWidth(view, activeHandle, draggedWidth(pluginState.dragging, event, cellMinWidth));
+      view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: null/*deactivate dragging*/ }));
+    } /* else -- activeHandle is null or undefined, dragging is not defined, or dragging is not a draggingObject */
   };
 
-  const move = (event: MouseEvent) => {
-    if(!event.which) return finish(event);
-
-    const pluginState = tableColumnResizingPluginKey.getState(view.state);
-    if(!pluginState || !isNotNullOrUndefined<number>(pluginState.activeHandle) || !isDraggingObjType(pluginState.dragging)) throw new Error('expected pluginState to be valid');
-
-    const dragged = draggedWidth(pluginState.dragging, event, cellMinWidth);
-    displayColumnWidth(view, pluginState.activeHandle, dragged, cellMinWidth);
-  };
-
-  window.addEventListener('mouseup', finish);
-  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', finishDragging);
+  window.addEventListener('mousemove', moveWhileDragging);
   event.preventDefault();
 
   return true/*handled*/;
