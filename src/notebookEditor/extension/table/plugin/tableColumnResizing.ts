@@ -12,18 +12,36 @@ import { updateTableColumns } from '../node';
 const RESIZE_HANDLE_CLASS = 'resize-cursor'/*(SEE: table.css)*/;
 const DEFAULT_CLASS_OBJ = { class: ''/*none*/ };
 
+// -- Meta -------------------------------------------------------------------------
+const dispatchSetHandleActionMeta = (view: EditorView, value: number) => {
+  const setHandleAction: SetHandleAction = { setHandle: { value } };
+  view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, setHandleAction));
+};
+
+const dispatchSetDraggingActionMeta = (view: EditorView, startX: number, startWidth: number) => {
+  const setDraggingAction: SetDraggingAction = { setDragging: { startX, startWidth } };
+  view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, setDraggingAction));
+};
+
+const dispatchUnsetDraggingMeta = (view: EditorView) => {
+  const deactivateDraggingAction: UnsetDraggingAction = { setDragging: null };
+  view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, deactivateDraggingAction));
+};
+
 // == Type ========================================================================
 type SetHandleObjType = { value: number; }
 type SetHandleAction = { setHandle: SetHandleObjType; };
 
 type DraggingObjType = { startX: number; startWidth: number; };
 type SetDraggingAction = { setDragging: DraggingObjType; };
+type UnsetDraggingAction = { setDragging: null; };
 
-type ResizeStateAction = SetHandleAction | SetDraggingAction | undefined;
+type ResizeStateAction = SetHandleAction | SetDraggingAction | UnsetDraggingAction | undefined;
 
 // -- Type Guard -----------------------------------------------------------------
 const isSetHandleAction = (obj: any): obj is SetHandleAction => obj && 'setHandle' in obj;
 const isSetDraggingAction = (obj: any): obj is SetDraggingAction => obj && 'setDragging' in obj;
+
 
 // == Class =======================================================================
 class ResizeState {
@@ -147,7 +165,7 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
 
       } /* else -- update the handle */
 
-      dispatchHandleActionMeta(view, cellPos);
+      dispatchSetHandleActionMeta(view, cellPos);
     } /* else -- cellPos equals the activeHandle */
 
   } /* else -- currently dragging */
@@ -161,7 +179,7 @@ const handleMouseLeave = (view: EditorView) => {
 
   const { activeHandle, dragging } = pluginState;
   if(activeHandle && activeHandle > -1 && !dragging) {
-    dispatchHandleActionMeta(view, -1);
+    dispatchSetHandleActionMeta(view, -1);
   } /* else -- no active Handle or currently dragging */
 };
 
@@ -176,7 +194,7 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
 
   const cell = view.state.doc.nodeAt(activeHandle);
   const width = currentColWidth(view, activeHandle, cell?.attrs[AttributeType.ColSpan], cell?.attrs[AttributeType.ColWidth]);
-  view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: { startX: event.clientX, startWidth: width } }));
+  dispatchSetDraggingActionMeta(view, event.clientX, width);
 
   const moveWhileDragging = (event: MouseEvent) => {
     if(!event.which) return finishDragging(event);
@@ -201,7 +219,7 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     const { activeHandle, dragging } = pluginState;
     if(isNotNullOrUndefined<number>(activeHandle) && dragging && isSetDraggingAction(pluginState.dragging)) {
       updateColumnWidth(view, activeHandle, computeDraggedWidth(pluginState.dragging, event, cellMinWidth));
-      view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: null/*deactivate dragging*/ }));
+      dispatchUnsetDraggingMeta(view);
     } /* else -- activeHandle is null or undefined, dragging is not defined, or dragging is not a draggingObject */
   };
 
@@ -357,12 +375,6 @@ const displayColumnWidth = (view: EditorView, cellPos: number, width: number, ce
   updateTableColumns(tableNode, nodeDOM.firstChild as HTMLTableColElement/*by contract*/, nodeDOM as HTMLTableElement/*by contract*/, cellMinWidth, col, width);
 };
 
-
-// -- Meta ------------------------------------------------------------------------
-const dispatchHandleActionMeta = (view: EditorView, value: number) => {
-  const handleAction: SetHandleAction = { setHandle: { value } };
-  view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, handleAction));
-};
 
 // -- Misc ------------------------------------------------------------------------
 /** return an array of n zeroes */
