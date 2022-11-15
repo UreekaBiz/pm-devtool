@@ -304,14 +304,14 @@ const zeroes = (n: number) => {
   return result;
 };
 
-export const handleColumnResizingDecorations = (state: EditorState, cell: number) => {
+export const handleColumnResizingDecorations = (state: EditorState, cell: number | null) => {
+  if(!cell) return DecorationSet.empty/*no position look for decorate*/;
+
   const decorations = [];
   const $cell = state.doc.resolve(cell);
 
-  const table = $cell.node(-1);
-  if(!table) {
-    return DecorationSet.empty;
-  } /* else -- there is a Table to decorate */
+  const table = $cell.node(-1/*Table ancestor*/);
+  if(!table) return DecorationSet.empty/*no Table to decorate*/;
 
   const tableMap = TableMap.get(table);
   const start = $cell.start(-1);
