@@ -11,7 +11,6 @@ import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleCellSele
 // transaction, the shapes of tables are normalized to be rectangular
 // and not contain overlapping cells.
 
-
 // == Class =======================================================================
 class TableEditingState {
   // -- Attribute -----------------------------------------------------------------

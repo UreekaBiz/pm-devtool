@@ -44,8 +44,13 @@ export const Table = new NodeExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
-    tableEditingPlugin(false/*do not allow Table Node Selection*/),
+    // NOTE: the column resize plugin must be added before the Table editing Plugin
+    //        since it will ensure no incorrect CellSelections are drawn into
+    //        the Editor while the resizing columns
     tableColumnResizingPlugin(TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH, false/*do not make the last Column resizable*/),
+
+    tableEditingPlugin(false/*do not allow Table Node Selection*/),
+
     keymap({
       'Tab': () => {
         if(goToCellCommand('next')(editor.view.state, editor.view.dispatch)) {
