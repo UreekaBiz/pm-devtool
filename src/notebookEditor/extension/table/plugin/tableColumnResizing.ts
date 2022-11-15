@@ -13,16 +13,23 @@ const RESIZE_HANDLE_CLASS = 'resize-cursor'/*(SEE: table.css)*/;
 const DEFAULT_CLASS_OBJ = { class: ''/*none*/ };
 
 // == Type ========================================================================
+type SetHandleObjType = { value: number; }
+type SetHandleAction = { setHandle: SetHandleObjType; };
+
 type DraggingObjType = { startX: number; startWidth: number; };
+type SetDraggingAction = { setDragging: DraggingObjType; };
+
+type ResizeStateAction = SetHandleAction | SetDraggingAction | undefined;
 
 // -- Type Guard -----------------------------------------------------------------
-const isDraggingObjType = (obj: any): obj is DraggingObjType => 'startX' in obj && 'startWidth' in obj;
+const isSetHandleAction = (obj: any): obj is SetHandleAction => obj && 'setHandle' in obj;
+const isSetDraggingAction = (obj: any): obj is SetDraggingAction => obj && 'setDragging' in obj;
 
 // == Class =======================================================================
 class ResizeState {
   // -- Attribute -----------------------------------------------------------------
   activeHandle: number | null | undefined;
-  dragging: number | boolean | null | DraggingObjType;
+  dragging: number | DraggingObjType | boolean | null ;
 
   // -- Lifecycle -----------------------------------------------------------------
   constructor(activeHandle: number | null | undefined, dragging: number | boolean | null | DraggingObjType) {
@@ -31,30 +38,26 @@ class ResizeState {
   }
 
   public apply(tr: Transaction) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    let state = this;
-    const action = tr.getMeta(tableColumnResizingPluginKey);
+    const action: ResizeStateAction = tr.getMeta(tableColumnResizingPluginKey);
 
-    if(action && action.setHandle !== null) {
-      return new ResizeState(action.setHandle, null);
-    }
+    if(isSetHandleAction(action)) {
+      return new ResizeState(action.setHandle.value, null/*not dragging*/);
+    } /* else -- no action or action is not meant to set a Handle */
 
-    if(action && action.setDragging !== undefined) {
-      return new ResizeState(state.activeHandle, action.setDragging);
-    }
+    if(isSetDraggingAction(action)) {
+      return new ResizeState(this.activeHandle, action.setDragging);
+    } /* else -- no action or action is not meant to start dragging */
 
-    if(state.activeHandle && state.activeHandle > -1 && tr.docChanged) {
-      let mappedHandle: number | null = tr.mapping.map(state.activeHandle, -1/*associate to the left*/);
-
+    if(this.activeHandle && this.activeHandle > -1 && tr.docChanged) {
+      let mappedHandle: number | null = tr.mapping.map(this.activeHandle, -1/*associate to the left*/);
       if(!pointsAtCell(tr.doc.resolve(mappedHandle))) {
         mappedHandle = null/*none*/;
       } /* else -- not pointing at a Cell */
 
-      // @ts-ignore
-      state = new ResizeState(mappedHandle, state.dragging);
-    }
+      return new ResizeState(mappedHandle, this.dragging);
+    } /* else -- no currently active handle, currently active handle equals -1, or doc did not change */
 
-    return state;
+    return new ResizeState(this.activeHandle, this.dragging)/*default*/;
   }
 }
 
@@ -66,9 +69,10 @@ export const tableColumnResizingPlugin = (handleWidth: number, cellMinWidth: num
   // -- State ---------------------------------------------------------------------
   key: tableColumnResizingPluginKey,
   state: {
-    init(_, state) { return new ResizeState(-1, false); },
-    apply(tr, thisPluginState, oldState, newState) {
-      return thisPluginState.apply(tr);
+    init: (_, state) => new ResizeState(-1, false),
+    apply: (tr, thisPluginState, oldState, newState) => {
+      const x = thisPluginState.apply(tr);
+      return x;
     },
   },
 
@@ -137,13 +141,13 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
         const tableStart = $cellPos.start(-1);
 
         const col = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
-        if(col == tableMap.width - 1) {
+        if(col === tableMap.width - 1) {
           return false/*do not handle*/;
         } /* else -- update the handle  */
 
       } /* else -- update the handle */
 
-      updateHandle(view, cellPos);
+      dispatchHandleActionMeta(view, cellPos);
     } /* else -- cellPos equals the activeHandle */
 
   } /* else -- currently dragging */
@@ -157,7 +161,7 @@ const handleMouseLeave = (view: EditorView) => {
 
   const { activeHandle, dragging } = pluginState;
   if(activeHandle && activeHandle > -1 && !dragging) {
-    updateHandle(view, -1);
+    dispatchHandleActionMeta(view, -1);
   } /* else -- no active Handle or currently dragging */
 };
 
@@ -181,7 +185,7 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     if(!pluginState) return finishDragging(event);
 
     const { activeHandle, dragging } = pluginState;
-    if(!isNotNullOrUndefined<number>(activeHandle) || !isDraggingObjType(dragging)) throw new Error('expected pluginState to be valid');
+    if(!isNotNullOrUndefined<number>(activeHandle) || !isSetDraggingAction(dragging)) throw new Error('expected pluginState to be valid');
 
     const dragged = computeDraggedWidth(dragging, event, cellMinWidth);
     displayColumnWidth(view, activeHandle, dragged, cellMinWidth);
@@ -195,7 +199,7 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
     if(!pluginState) return/*nothing to do*/;
 
     const { activeHandle, dragging } = pluginState;
-    if(isNotNullOrUndefined<number>(activeHandle) && dragging && isDraggingObjType(pluginState.dragging)) {
+    if(isNotNullOrUndefined<number>(activeHandle) && dragging && isSetDraggingAction(pluginState.dragging)) {
       updateColumnWidth(view, activeHandle, computeDraggedWidth(pluginState.dragging, event, cellMinWidth));
       view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setDragging: null/*deactivate dragging*/ }));
     } /* else -- activeHandle is null or undefined, dragging is not defined, or dragging is not a draggingObject */
@@ -208,29 +212,44 @@ const handleMouseDown = (view: EditorView, event: MouseEvent, cellMinWidth: numb
   return true/*handled*/;
 };
 
-// == Util ========================================================================
-const currentColWidth = (view: EditorView, cellPos: number, colSpan: number, colWidth: number[]) => {
-  const currentColWidth = colWidth && colWidth[colWidth.length - 1];
-  if(currentColWidth) return currentColWidth/*colWidth already set*/;
+// == Decoration ==================================================================
+export const handleColumnResizingDecorations = (state: EditorState, cellPos: number | null) => {
+  if(!cellPos) return DecorationSet.empty;
 
-  const domNodeAtCellPos = view.domAtPos(cellPos);
-  const cellNode = domNodeAtCellPos.node.childNodes[domNodeAtCellPos.offset];
-  if(!isValidHTMLElement(cellNode)) throw new Error('expected node to be an HTMLElement');
+  const decorations = [/*default empty*/];
+  const $cellPos = state.doc.resolve(cellPos);
 
-  let domWidth = cellNode.offsetWidth;
-  let parts = colSpan;
-  if(colWidth) {
-    for(let i = 0; i < colSpan; i++) {
-      if(colWidth[i]) {
-        domWidth -= colWidth[i];
-        parts--;
-      }
+  const table = $cellPos.node(-1);
+  if(!table) return DecorationSet.empty;
+
+  const tableMap = TableMap.get(table);
+  const tableStart = $cellPos.start(-1);
+
+  const col = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan];
+  for(let row = 0; row < tableMap.height; row++) {
+    const index = col + row * tableMap.width - 1;
+
+    // for positions that either have a different Cell or that have the
+    // end of the Table to their right, and either the top of the Table
+    // or a different Cell above them, add a decoration
+    if((col === tableMap.width || tableMap.map[index] !== tableMap.map[index + 1]) && (row === 0 || tableMap.map[index - 1] !== tableMap.map[index - 1 - tableMap.width])) {
+      const cellPos = tableMap.map[index];
+
+      const node = table.nodeAt(cellPos);
+      if(!node) throw new Error('expected Node to exist at pos');
+
+      const decorationPos = tableStart + cellPos + node.nodeSize - 1;
+      const decorationDOM = document.createElement('div');
+            decorationDOM.className = RESIZE_HANDLE_CLASS;
+            decorations.push(Decoration.widget(decorationPos, decorationDOM));
     }
-  } /* else -- Cell has no colWidth defined */
+  }
 
-  return domWidth / parts;
+  return DecorationSet.create(state.doc, decorations);
 };
 
+// == Util ========================================================================
+// -- Cell ------------------------------------------------------------------------
 const domCellAround = (target: HTMLElement | null) => {
   while(target && target.nodeName !== TD_NODENAME && target.nodeName !== TH_NODENAME) {
     if(target.classList && target.classList.contains(PM_CLASS)) {
@@ -263,13 +282,27 @@ const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left'
   else { return tableStart + tableMap.map[index - 1]; }
 };
 
-const computeDraggedWidth = (dragging: { startX: number; startWidth: number; }, event: MouseEvent, cellMinWidth: number) => {
-  const offset = event.clientX - dragging.startX;
-  return Math.max(cellMinWidth, dragging.startWidth + offset);
-};
+// -- ColWidth --------------------------------------------------------------------
+const currentColWidth = (view: EditorView, cellPos: number, colSpan: number, colWidth: number[]) => {
+  const currentColWidth = colWidth && colWidth[colWidth.length - 1];
+  if(currentColWidth) return currentColWidth/*colWidth already set*/;
 
-const updateHandle = (view: EditorView, value: number) => {
-  view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, { setHandle: value }));
+  const domNodeAtCellPos = view.domAtPos(cellPos);
+  const cellNode = domNodeAtCellPos.node.childNodes[domNodeAtCellPos.offset];
+  if(!isValidHTMLElement(cellNode)) throw new Error('expected node to be an HTMLElement');
+
+  let domWidth = cellNode.offsetWidth;
+  let parts = colSpan;
+  if(colWidth) {
+    for(let i = 0; i < colSpan; i++) {
+      if(colWidth[i]) {
+        domWidth -= colWidth[i];
+        parts--;
+      }
+    }
+  } /* else -- Cell has no colWidth defined */
+
+  return domWidth / parts;
 };
 
 const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => {
@@ -324,6 +357,14 @@ const displayColumnWidth = (view: EditorView, cellPos: number, width: number, ce
   updateTableColumns(tableNode, nodeDOM.firstChild as HTMLTableColElement/*by contract*/, nodeDOM as HTMLTableElement/*by contract*/, cellMinWidth, col, width);
 };
 
+
+// -- Meta ------------------------------------------------------------------------
+const dispatchHandleActionMeta = (view: EditorView, value: number) => {
+  const handleAction: SetHandleAction = { setHandle: { value } };
+  view.dispatch(view.state.tr.setMeta(tableColumnResizingPluginKey, handleAction));
+};
+
+// -- Misc ------------------------------------------------------------------------
 /** return an array of n zeroes */
 const zeroes = (n: number) => {
   const result: number[] = [];
@@ -333,38 +374,7 @@ const zeroes = (n: number) => {
   return result;
 };
 
-// == Decoration ==================================================================
-export const handleColumnResizingDecorations = (state: EditorState, cellPos: number | null) => {
-  if(!cellPos) return DecorationSet.empty;
-
-  const decorations = [/*default empty*/];
-  const $cellPos = state.doc.resolve(cellPos);
-
-  const table = $cellPos.node(-1);
-  if(!table) return DecorationSet.empty;
-
-  const tableMap = TableMap.get(table);
-  const tableStart = $cellPos.start(-1);
-
-  const col = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan];
-  for(let row = 0; row < tableMap.height; row++) {
-    const index = col + row * tableMap.width - 1;
-
-    // for positions that either have a different Cell or that have the
-    // end of the Table to their right, and either the top of the Table
-    // or a different Cell above them, add a decoration
-    if((col === tableMap.width || tableMap.map[index] !== tableMap.map[index + 1]) && (row === 0 || tableMap.map[index - 1] !== tableMap.map[index - 1 - tableMap.width])) {
-      const cellPos = tableMap.map[index];
-
-      const node = table.nodeAt(cellPos);
-      if(!node) throw new Error('expected Node to exist at pos');
-
-      const decorationPos = tableStart + cellPos + node.nodeSize - 1;
-      const decorationDOM = document.createElement('div');
-            decorationDOM.className = RESIZE_HANDLE_CLASS;
-            decorations.push(Decoration.widget(decorationPos, decorationDOM));
-    }
-  }
-
-  return DecorationSet.create(state.doc, decorations);
+const computeDraggedWidth = (dragging: { startX: number; startWidth: number; }, event: MouseEvent, cellMinWidth: number) => {
+  const offset = event.clientX - dragging.startX;
+  return Math.max(cellMinWidth, dragging.startWidth + offset);
 };

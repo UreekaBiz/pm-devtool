@@ -52,7 +52,7 @@ export const Table = new NodeExtension({
           return true;
         } /* else -- cannot go to the next Cell */
 
-        if(!addRowAfterCommand(editor.view.state, undefined/*just check*/)) {
+        if(!addRowAfterCommand(editor.view.state, undefined/*just check if possible*/)) {
           return false;
         } /* else -- can add a row after, do so and then go to next Cell */
 
