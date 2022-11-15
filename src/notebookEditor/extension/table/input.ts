@@ -133,14 +133,14 @@ export const handlePaste = (view: EditorView, event: ClipboardEvent, slice: Slic
   }
 };
 
-export const handleMouseDown = (view: EditorView, startEvent: MouseEvent) => {
+export const handleCellSelectionMousedown = (view: EditorView, startEvent: MouseEvent) => {
   // -- Helper --------------------------------------------------------------------
   // create a CellSelection between the given anchor and the position under the mouse
   const setCellSelection = ($anchor: ResolvedPos, event: Event) => {
     let $head = cellUnderMouse(view, event);
 
-    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue
-    const starting = tableEditingStateValue === null || tableEditingStateValue === undefined ;
+    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue;
+    const starting = tableEditingStateValue === null || tableEditingStateValue === undefined;
 
     if(!$head || !inSameTable($anchor, $head)) {
       if(starting) { $head = $anchor; }

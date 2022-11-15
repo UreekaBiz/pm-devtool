@@ -2,7 +2,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 
 import { drawCellSelection, fixTables, normalizeSelection } from 'common';
 
-import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleMouseDown } from '../input';
+import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleCellSelectionMousedown } from '../input';
 
 // == Constant ====================================================================
 // This file defines a plugin that handles the drawing of cell
@@ -73,15 +73,15 @@ export const tableEditingPlugin = (allowTableNodeSelection = false/*default*/) =
     // -- Prop --------------------------------------------------------------------
     props: {
       decorations: drawCellSelection,
-      handleDOMEvents: { mousedown: handleMouseDown },
+      handleDOMEvents: { mousedown: handleCellSelectionMousedown },
 
-      createSelectionBetween(view) {
+      createSelectionBetween: (view) => {
         const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue;
         if(tableEditingStateValue) {
           return view.state.selection;
         } /* else -- state is null */
 
-        return null;
+        return null/*no Selection*/;
       },
 
       handleTripleClick,
