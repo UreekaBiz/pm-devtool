@@ -11,7 +11,6 @@ export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableCo
   let fixedWidth = true/*default*/;
 
   let nextDOM = columnGroup.firstChild;
-  if(!isValidHTMLElement(nextDOM)) return/*nothing to do*/;
 
   const row = node.firstChild;
   if(!row) return/*nothing to do*/;
