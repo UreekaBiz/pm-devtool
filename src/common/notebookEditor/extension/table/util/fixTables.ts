@@ -22,8 +22,9 @@ const fixTablesKey = new PluginKey('fix-tables');
  * then that is assumed to hold a previous, known-good State, which
  * will be used to avoid re-scanning unchanged parts of the Document
  */
- export const fixTables = (oldState: EditorState, newState: EditorState) => {
+ export const fixTables = (oldState: EditorState | undefined/*validate descendants of newState*/, newState: EditorState): Transaction | undefined => {
   let tr: Transaction | undefined = undefined/*default*/;
+
   const check = (node: ProseMirrorNode, pos: number) =>  {
     if(node.type.spec.tableRole === TableRole.Table) {
       tr = fixTable(newState, node, pos, tr);

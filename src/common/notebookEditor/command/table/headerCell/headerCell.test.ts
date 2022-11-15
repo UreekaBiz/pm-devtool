@@ -2,7 +2,7 @@ import { cellBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, defaultRo
 import { toggleHeaderColumnCommand, toggleHeaderCommand, toggleHeaderRowCommand } from './headerCell';
 
 // ********************************************************************************
-// -- Header Cell -----------------------------------------------------------------
+// == Header Cell =================================================================
 describe('toggleHeaderRowCommand', () => {
   it('turns a non-header row into header', () =>
     executeTableTestCommand(
