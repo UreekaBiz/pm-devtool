@@ -18,10 +18,11 @@ export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableCo
   for(let i = 0, col = 0; i < row.childCount; i++) {
     const colSpan = row.child(i).attrs[AttributeType.ColSpan];
     const colWidth = row.child(i).attrs[AttributeType.ColWidth];
+
     for(let j = 0; j < colSpan; j++, col++) {
       const hasWidth = overrideCol === col ? overrideValue : colWidth && colWidth[j];
-
       const cssWidth = hasWidth ? hasWidth + 'px' : '';
+
       totalWidth += hasWidth || minimumCellWidth;
       if(!hasWidth) {
         fixedWidth = false;
@@ -54,4 +55,3 @@ export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableCo
     table.style.minWidth = totalWidth + 'px';
   }
 };
-
