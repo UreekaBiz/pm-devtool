@@ -11,7 +11,6 @@ import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleCellSele
 // transaction, the shapes of tables are normalized to be rectangular
 // and not contain overlapping cells.
 
-export const tableEditingPluginKey = new PluginKey<TableEditingState>('tableEditingPluginKey');
 
 // == Class =======================================================================
 class TableEditingState {
@@ -25,7 +24,7 @@ class TableEditingState {
 
   /*
    * the state remembers when a mouse-drag CellSelection is happening
-   * so that it can continue even as transactions (which might move its
+   * so that it can continue even as Transactions (which might move its
    * anchor cell) come in
    */
   public apply = (tr: Transaction, thisPluginState: TableEditingState, oldEditorState: EditorState, newEditorState: EditorState) => {
@@ -48,6 +47,9 @@ class TableEditingState {
     else { this.currentValue = pos; return this; }
   };
 }
+
+// == Key ========================================================================
+export const tableEditingPluginKey = new PluginKey<TableEditingState>('tableEditingPluginKey');
 
 // == Plugin ======================================================================
 /**
