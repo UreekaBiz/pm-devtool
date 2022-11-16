@@ -1,6 +1,6 @@
 /* -- Wrapper ------------------------------------------------------------------ */
 .tableWrapper {
-  padding: 1rem 0;
+  padding: 1rem;
   overflow-x: auto;
 }
 
@@ -62,5 +62,6 @@
 }
 
 .resize-cursor {
+  cursor: ew-resize;
   cursor: col-resize;
 }
