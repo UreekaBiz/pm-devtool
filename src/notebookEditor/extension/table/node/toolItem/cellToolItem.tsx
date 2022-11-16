@@ -2,8 +2,9 @@ import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { IoMdSquareOutline } from 'react-icons/io';
 import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
-import { goToCellCommand, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand } from 'common';
+import { goToCellCommand, isCellNode, isHeaderCellNode, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand, SelectionDepth } from 'common';
 
+import { Editor } from 'notebookEditor/editor';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
@@ -18,7 +19,7 @@ export const goToPreviousCellToolItem: ToolItem = {
   tooltip: 'Go to previous Cell',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
+  shouldShow: (editor, depth) => shouldShowCellToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('previous')),
 };
 
@@ -30,7 +31,7 @@ export const goToNextCellToolItem: ToolItem = {
   tooltip: 'Go to next Cell',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
+  shouldShow: (editor, depth) => shouldShowCellToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('next')),
 };
 
@@ -42,7 +43,7 @@ export const mergeCellsToolItem: ToolItem = {
   tooltip: 'Merge Cells',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
+  shouldShow: (editor, depth) => shouldShowCellToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, mergeCellsCommand),
 };
 
@@ -54,7 +55,7 @@ export const splitCellsToolItem: ToolItem = {
   tooltip: 'Split Cells',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
+  shouldShow: (editor, depth) => shouldShowCellToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCellCommand()),
 };
 
@@ -66,7 +67,7 @@ export const toggleHeaderCellToolItem: ToolItem = {
   tooltip: 'Toggle Header in Cell',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
+  shouldShow: (editor, depth) => shouldShowCellToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderCellCommand),
 };
 
@@ -78,3 +79,15 @@ export const cellToolItems = [
   splitCellsToolItem,
   toggleHeaderCellToolItem,
 ];
+
+// == Util ========================================================================
+const shouldShowCellToolItem = (editor: Editor, depth: SelectionDepth) => {
+  const { $anchor } = editor.view.state.selection;
+
+  const expectedCell = $anchor.node(1/*Cell Depth*/);
+  if(isCellNode(expectedCell) || isHeaderCellNode(expectedCell)) {
+    return true/*inside Cell at right depth*/;
+  } /* else -- not inside Cell at right depth, return default */
+
+  return shouldShowToolItem(editor, depth)/*default*/;
+};
