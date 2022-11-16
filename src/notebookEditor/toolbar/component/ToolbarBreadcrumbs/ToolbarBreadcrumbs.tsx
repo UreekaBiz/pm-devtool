@@ -5,6 +5,7 @@ import { getAllAscendantsFromSelection, getMarkName, getNodeName, isTextNode, Se
 import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { getMarkToolbar, getNodeToolbar } from 'notebookEditor/toolbar/toolbar';
+import { shouldShowToolbarOrBreadcrumb } from 'notebookEditor/toolbar/util';
 
 import { ToolbarBreadcrumbItem } from './ToolbarBreadcrumbItem';
 
@@ -50,6 +51,8 @@ export const ToolbarBreadcrumbs: React.FC<Props> = ({ onSelection, selectedDepth
     const toolbar = getNodeToolbar(node);
 
     if(!toolbar) return/*no corresponding toolbar for this node*/;
+
+    if(!shouldShowToolbarOrBreadcrumb(editor, toolbar, depth)) return/*continue*/;
 
     breadCrumbItems.push(
       <ToolbarBreadcrumbItem
