@@ -49,6 +49,10 @@ const buildNodeToolCollections = (node: ProseMirrorNode): { toolCollections: Too
   const toolCollections: ToolItem[][] = [];
   let rightContent = undefined/*default*/;
 
+  if(WRAPPER_NODES.includes(node.type.name as NodeName/*by definition*/)) {
+    return { toolCollections, rightContent };
+  } /* else -- not a Wrapper Node */
+
   if(node.isTextblock && TEXT_BLOCK_TOOL_ITEMS.length > 0) {
     toolCollections.push(TEXT_BLOCK_TOOL_ITEMS);
   } /* else -- not a TextBlock or no TextBlock ToolItems */
@@ -73,6 +77,13 @@ const buildNodeToolCollections = (node: ProseMirrorNode): { toolCollections: Too
 
   return { toolCollections, rightContent };
 };
+
+// --------------------------------------------------------------------------------
+// Nodes whose only purpose is to wrap other Nodes and
+// hence should not display any ToolItems
+const WRAPPER_NODES: NodeName[] = [
+  NodeName.ROW,
+];
 
 // == Mark ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorMark} */
