@@ -3,6 +3,7 @@ import { VscReferences } from 'react-icons/vsc';
 import { isNodeSelection, NodeName } from 'common';
 
 import { CodeBlockReferenceChipSelector } from 'notebookEditor/extension/codeblock/toolItem';
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
@@ -20,7 +21,7 @@ export const codeBlockReferenceToolItem: ToolItem = {
   tooltip: 'Code Block Reference (⌘ + ⇧ + ⌥ + C)',
 
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, insertAndSelectCodeBlockReferenceCommand),
 };
 

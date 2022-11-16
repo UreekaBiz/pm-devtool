@@ -4,6 +4,7 @@ import { getSelectedNode, isAsyncNode, isDemoAsyncNode, AttributeType, NodeName 
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { CodeBlockReferencesChipSelector } from 'notebookEditor/extension/codeblock';
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { SliderToolItem } from 'notebookEditor/extension/shared/component/SliderToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
@@ -30,7 +31,7 @@ export const demoAsyncNodeToolItem: ToolItem = {
 
     return false/*enabled*/;
   },
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, insertAndSelectDemoAsyncNodeCommand),
 };
 

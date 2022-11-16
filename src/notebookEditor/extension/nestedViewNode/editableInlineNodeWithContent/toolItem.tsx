@@ -2,6 +2,7 @@ import { MdCheckBoxOutlineBlank } from 'react-icons/md';
 
 import { generateNodeId, getEditableInlineNodeWithContentNodeType, isNodeSelection, AttributeType, NodeName } from 'common';
 
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { insertAndSelectNestedViewNode } from '../util';
@@ -22,8 +23,7 @@ export const editableInlineNodeWithContentToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
-
-  onClick: (editor, depth) => insertAndSelectNestedViewNode(editor, depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId }, 'toolItem'),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => editor.isNodeOrMarkActive(NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT),
+  onClick: (editor, depth) => insertAndSelectNestedViewNode(editor, depth, getEditableInlineNodeWithContentNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId }, 'toolItem'),
 };

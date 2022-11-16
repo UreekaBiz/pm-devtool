@@ -5,6 +5,7 @@ import { generateNodeId, isNodeSelection, AttributeType, NodeName } from 'common
 import { toggleBlock } from 'notebookEditor/command';
 import { SliderToolItem } from 'notebookEditor/extension/shared/component/SliderToolItem';
 import { InputToolItem } from 'notebookEditor/extension/shared/component/InputToolItem';
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 //*********************************************************************************
@@ -18,7 +19,7 @@ export const demoAsyncNode2ToolItem: ToolItem = {
   tooltip: 'Demo 2 Async Node (⌘ + ⇧ + ⌥ + D)',
 
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor) => toggleBlock(editor, NodeName.DEMO_ASYNC_NODE_2, { [AttributeType.Id]: generateNodeId() }),
 };
 

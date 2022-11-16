@@ -5,6 +5,7 @@ import { getLinkMarkType, isNodeSelection, MarkName } from 'common';
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { toggleMarkInMarkHolderCommand } from 'notebookEditor/extension/markHolder/command';
 import { getMarkHolder, inMarkHolder } from 'notebookEditor/extension/markHolder/util';
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { getDialogStorage } from 'notebookEditor/model/DialogStorage';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
@@ -25,7 +26,7 @@ export const linkToolItem: ToolItem = {
   tooltip: 'Link (⌘ + K)',
 
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.LINK)) return true/*is active in MarkHolder*/;
 

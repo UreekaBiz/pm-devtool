@@ -6,6 +6,7 @@ import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
+import { shouldShowToolItem } from '../util/ui';
 import { toggleSuperScriptCommand } from './command';
 
 // ********************************************************************************
@@ -19,7 +20,7 @@ export const markSuperScript: ToolItem = {
   tooltip: 'Superscript (⌘ + .)',
 
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.SUPER_SCRIPT)) return true/*is active in MarkHolder*/;
 

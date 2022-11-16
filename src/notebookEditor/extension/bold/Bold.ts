@@ -15,8 +15,6 @@ import { toggleBoldCommand } from './command';
 const cssFontWeightRegex = /^(bold(er)?|[5-9]\d{2}|1000)$/;
 
 // --------------------------------------------------------------------------------
-// FIXME: incorrect / inconsistent RegEx (negated '__')
-
 // NOTE: these are Markdown equivalents
 export const starInputRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))$/;
 export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))$/;

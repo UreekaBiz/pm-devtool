@@ -3,6 +3,7 @@ import { MdHorizontalRule } from 'react-icons/md';
 import { isNodeSelection, NodeName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { insertOrToggleHorizontalRuleCommand } from '../command';
@@ -20,7 +21,7 @@ export const horizontalRuleToolItem: ToolItem = {
   tooltip: 'Horizontal Rule',
 
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => editor.isNodeOrMarkActive(NodeName.HORIZONTAL_RULE),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, insertOrToggleHorizontalRuleCommand),
 };

@@ -6,6 +6,7 @@ import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
+import { shouldShowToolItem } from '../util/ui';
 import { toggleCodeCommand } from './command';
 
 // ********************************************************************************
@@ -24,7 +25,7 @@ export const markCode: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.CODE)) return true/*is active in MarkHolder*/;
 
