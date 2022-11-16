@@ -58,7 +58,7 @@ const buildNodeToolCollections = (node: ProseMirrorNode, depth: SelectionDepth, 
     const negativeDepth = negativeDepthChecker(selection);
     if(depth !== (selection.$anchor.depth - negativeDepth)) {
       return { toolCollections, rightContent };
-    } /* else -- Node is allowed ot show toolItems at this depth*/
+    } /* else -- Node is allowed to show toolItems at this depth*/
   } /* else -- Node has no specific negative depth checks */
 
   if(node.isTextblock && TEXT_BLOCK_TOOL_ITEMS.length > 0) {

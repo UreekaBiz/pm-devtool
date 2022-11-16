@@ -85,10 +85,10 @@ const shouldShowCellToolItem = (editor: Editor, depth: SelectionDepth) => {
   const { selection } = editor.view.state;
   const { $anchor } = selection;
 
-  const checkedDepth = isCellSelection(selection) ? 0/*CellSelection Depth*/ : 1/*Cell Depth*/;
-  const expectedCell = $anchor.node(-checkedDepth);
+  const negativeDepth = isCellSelection(selection) ? 0/*CellSelection Depth*/ : 1/*Cell Depth*/;
+  const expectedCell = $anchor.node(-negativeDepth);
   if(expectedCell && (isCellNode(expectedCell) || isHeaderCellNode(expectedCell))) {
-    return depth === $anchor.depth - checkedDepth;
+    return depth === $anchor.depth - negativeDepth;
   } /* else -- not inside Cell at right depth, return default */
 
   return shouldShowToolItem(editor, depth)/*default*/;
