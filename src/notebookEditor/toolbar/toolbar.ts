@@ -30,7 +30,7 @@ import { EditorToolComponentProps, Toolbar, ToolItem } from './type';
 // ********************************************************************************
 // == Node ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorNode} */
-export const getNodeToolbar = (node: ProseMirrorNode, depth: SelectionDepth, selection: Selection): Toolbar => {
+export const buildNodeToolbar = (node: ProseMirrorNode, depth: SelectionDepth, selection: Selection): Toolbar => {
   const { toolCollections, rightContent } = buildNodeToolCollections(node, depth, selection);
 
   return {
@@ -113,7 +113,7 @@ const NODES_WITH_SPECIFIC_NEGATIVE_DEPTH: Partial<Record<NodeName, (selection: S
 
 // == Mark ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorMark} */
-export const getMarkToolbar = (mark: ProseMirrorMark): Toolbar | null => {
+export const buildMarkToolbar = (mark: ProseMirrorMark): Toolbar | null => {
   const toolCollections = buildMarkToolCollections(mark);
   if(toolCollections.length < 1) return null/*do not show on Toolbar*/;
 
