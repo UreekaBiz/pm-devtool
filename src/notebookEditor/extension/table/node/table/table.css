@@ -1,7 +1,6 @@
 /* -- Wrapper ------------------------------------------------------------------ */
 .tableWrapper {
-  padding-right: 1rem;
-  padding-left: 1rem;
+  padding: 0.5rem;
   overflow-x: auto;
 }
 
