@@ -1,22 +1,22 @@
 /* -- Wrapper ------------------------------------------------------------------ */
-.ProseMirror .tableWrapper {
+.tableWrapper {
+  padding: 1rem;
   overflow-x: auto;
 }
 
 /* -- Table -------------------------------------------------------------------- */
-.ProseMirror table {
+[data-node-type="table"] {
   border-collapse: collapse;
   table-layout: fixed;
-  margin: 10px;
-  width: 95%;
+  width: 100%;
   overflow: hidden;
 }
-.ProseMirror table div[data-node-type="paragraph"] { margin: 0; }
+[data-node-type="table"] div[data-node-type="paragraph"] { margin: 0; }
 
 /* -- Cells -------------------------------------------------------------------- */
 /* .. Cell and HeaderCell ...................................................... */
-.ProseMirror td,
-.ProseMirror th {
+[data-node-type="cell"],
+[data-node-type="headerCell"] {
   vertical-align: top;
   box-sizing: border-box;
   position: relative;
@@ -24,20 +24,20 @@
   padding: 3px 5px;
   border: 2px solid #CED4DA;
 }
-.ProseMirror table td > *,
-.ProseMirror table th > * {
+[data-node-type="table"] [data-node-type="cell"] > *,
+[data-node-type="table"] [data-node-type="headerCell"] > * {
   margin-bottom: 0;
 }
 
 /* .. HeaderCell ............................................................... */
-.ProseMirror table th {
+[data-node-type="table"] [data-node-type="headerCell"] {
   background-color: #F1F3F5;
   text-align: left;
   font-weight: normal;
 }
 
 /* -- CellSelection ------------------------------------------------------------ */
-.ProseMirror table .selectedCell:after {
+[data-node-type="table"] .selectedCell:after {
   position: absolute;
   top: 0;
   right: 0;
@@ -50,7 +50,7 @@
 }
 
 /* -- Resize ------------------------------------------------------------------- */
-.ProseMirror table .resize-cursor {
+[data-node-type="table"] .resize-cursor {
   position: absolute;
   width: 4px;
   top: 0;
