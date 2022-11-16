@@ -184,10 +184,10 @@ const shouldShowTableToolItem = (editor: Editor, depth: SelectionDepth) => {
   const { selection } = editor.view.state;
   const { $anchor } = selection;
 
-  const negativeDepth = isCellSelection(selection) ? 2/*CellSelection Depth*/ : 3/*Table depth*/;
-  const expectedTable = $anchor.node(-negativeDepth);
+  const negativeDepth = isCellSelection(selection) ? -2/*CellSelection Depth*/ : -3/*Table depth*/;
+  const expectedTable = $anchor.node(negativeDepth);
   if(expectedTable && isTableNode(expectedTable)) {
-  return depth === $anchor.depth - negativeDepth;
+  return depth === ($anchor.depth - Math.abs(negativeDepth));
   } /* else -- not inside Table at right depth, return default */
 
   return shouldShowToolItem(editor, depth)/*default*/;

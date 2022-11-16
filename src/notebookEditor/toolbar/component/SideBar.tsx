@@ -6,7 +6,8 @@ import { getAllAscendantsFromSelection, getMarkName, getNodeName, SelectionDepth
 import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
-import { buildMarkToolbar, buildNodeToolbar } from '../toolbar/build';
+import { buildMarkToolbar } from '../toolbar/buildMarkToolbar';
+import { buildNodeToolbar } from '../toolbar/buildNodeToolbar';
 import { Debugger } from './Debugger';
 import { Toolbar } from './Toolbar';
 import { ToolbarBreadcrumbs } from './ToolbarBreadcrumbs';
