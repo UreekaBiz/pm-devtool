@@ -84,7 +84,7 @@ export const cellToolItems = [
 const shouldShowCellToolItem = (editor: Editor, depth: SelectionDepth) => {
   const { $anchor } = editor.view.state.selection;
 
-  const expectedCell = $anchor.node(1/*Cell Depth*/);
+  const expectedCell = $anchor.node(-1/*Cell Depth*/);
   if(expectedCell && (isCellNode(expectedCell) || isHeaderCellNode(expectedCell))) {
     return depth === $anchor.depth - 1/*Cell Depth*/;
   } /* else -- not inside Cell at right depth, return default */
