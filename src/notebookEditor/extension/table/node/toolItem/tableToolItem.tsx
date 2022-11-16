@@ -185,7 +185,7 @@ const shouldShowTableToolItem = (editor: Editor, depth: SelectionDepth) => {
 
   const expectedTable = $anchor.node(-3/*Table Depth*/);
   if(expectedTable && isTableNode(expectedTable)) {
-    return true/*inside Table at right depth*/;
+    return depth === $anchor.depth - 3/*Table Depth*/;
   } /* else -- not inside Table at right depth, return default */
 
   return shouldShowToolItem(editor, depth)/*default*/;
