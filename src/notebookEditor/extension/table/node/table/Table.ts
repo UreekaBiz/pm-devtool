@@ -50,6 +50,8 @@ export const Table = new NodeExtension({
     //        the Editor while the resizing columns
     tableColumnResizingPlugin(TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH, true/*make the last Column resizable*/),
 
+    // NOTE: this keymap plugin must be added before the tableEditingPlugin so that
+    //       keydown events are intercepted first
     keymap({
       'Tab': () => {
         if(goToCellCommand('next')(editor.view.state, editor.view.dispatch)) {
