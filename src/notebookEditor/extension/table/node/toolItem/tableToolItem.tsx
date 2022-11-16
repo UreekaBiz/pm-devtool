@@ -184,9 +184,10 @@ const shouldShowTableToolItem = (editor: Editor, depth: SelectionDepth) => {
   const { selection } = editor.view.state;
   const { $anchor } = selection;
 
-  const expectedTable = $anchor.node(-3/*Table Depth*/);
+  const checkedDepth = isCellSelection(selection) ? 2/*CellSelection Depth*/ : 3/*Table depth*/;
+  const expectedTable = $anchor.node(-checkedDepth);
   if(expectedTable && isTableNode(expectedTable)) {
-    return depth === $anchor.depth - (isCellSelection(selection) ? 2/*CellSelection Depth*/ : 3/*Table Depth*/);
+  return depth === $anchor.depth - checkedDepth;
   } /* else -- not inside Table at right depth, return default */
 
   return shouldShowToolItem(editor, depth)/*default*/;
