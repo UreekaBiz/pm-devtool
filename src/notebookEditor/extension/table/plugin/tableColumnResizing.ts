@@ -288,12 +288,7 @@ const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left'
   const foundPos = view.posAtCoords({ left: event.clientX, top: event.clientY });
   if(!foundPos) return -1/*default*/;
 
-  // prevent the handle from being shown for the Column if the Column is not
-  // immediately after or before the Mouse. This specifically prevents the previous
-  // Column from being highlighted incorrectly when hovering over the next one
   const { pos, inside: posAtFoundCell } = foundPos;
-  if(pos - posAtFoundCell > 1) return -1/*default*/;
-
   const $cellPos = cellAround(view.state.doc.resolve(pos));
   if(!$cellPos) return -1/*default*/;
 
@@ -304,7 +299,20 @@ const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left'
 
   const index = tableMap.map.indexOf($cellPos.pos - tableStart);
   if(index % tableMap.width === 0) { return -1/*default*/; }
-  else { return tableStart + tableMap.map[index - 1]; }
+  else {
+    const cellStartPos = tableStart + tableMap.map[index - 1];
+
+    // prevent the handle from being shown for the Column if the Column is not
+    // immediately after or before the Mouse. This specifically prevents the previous
+    // Column from being highlighted incorrectly when hovering over the next one
+
+    // this must be true for the normal behavior, yet it is incorrect when this
+    // else clause runs. Hence, the check is only done here, even if
+    // cellStartPos being less than posAtFoundCell is correct outside of this else
+    if(cellStartPos < posAtFoundCell) return -1/*default*/;
+
+    return cellStartPos;
+  }
 };
 
 // -- ColWidth --------------------------------------------------------------------
