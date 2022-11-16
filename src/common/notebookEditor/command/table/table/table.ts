@@ -12,7 +12,7 @@ import { isHeaderCellNode } from '../../../extension/table/node/headerCell';
 import { getTableNodeTypes, isTableNode, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from '../../../extension/table/node/table';
 import { TableRole } from '../../../extension/table/type';
 import { addColSpan, columnIsHeader, isInTable, removeColSpan, selectedRect, setTableNodeAttributes } from '../../..//extension/table/util';
-import { AbstractDocumentUpdate, DispatchType } from '../../type';
+import { AbstractDocumentUpdate } from '../../type';
 
 import { createTable } from './util';
 
@@ -43,48 +43,57 @@ export class CreateAndInsertTableDocumentUpdate implements AbstractDocumentUpdat
   }
 }
 /** deletes the Table around the Selection, if any */
-export const deleteTable = (state: EditorState, dispatch: DispatchType) => {
-  const $pos = state.selection.$anchor;
+export const deleteTableCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new DeleteTableDocumentUpdate().update(state, state.tr), dispatch);
+export class DeleteTableDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/}
 
-  for(let d = $pos.depth; d > 0; d--) {
-    const node = $pos.node(d);
-    if(node.type.spec.tableRole === TableRole.Table) {
-      if(dispatch)
-        dispatch(state.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView());
-      return true/*handled*/;
-    } /* else -- not a Table, do nothing */
+  public update(editorState: EditorState, tr: Transaction) {
+    const $pos = editorState.selection.$anchor;
+
+    for(let d = $pos.depth; d > 0; d--) {
+      const node = $pos.node(d);
+      if(node.type.spec.tableRole === TableRole.Table) {
+        editorState.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView();
+        return tr/*updated*/;
+      } /* else -- not a Table, do nothing */
+    }
+
+    return false/*not handled*/;
   }
-
-  return false/*not handled*/;
-};
+}
 
 /** delete a Table if all its Cells are currently selected */
-export const deleteTableWhenAllCellsSelected: Command = (state, dispatch) => {
-  const { selection } = state;
+export const deleteTableWhenAllCellsSelectedCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new DeleteTableWhenAllCellsSelectedDocumentUpdate().update(state, state.tr), dispatch);
+export class DeleteTableWhenAllCellsSelectedDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/}
 
-  if(!isCellSelection(selection)) {
-    return false;
-  } /* else -- see if all Cells are selected */
+  public update(editorState: EditorState, tr: Transaction){
+    const { selection } = editorState;
+    if(!isCellSelection(selection)) return false/*not a CellSelection, nothing to do*/;
 
-  let cellCount = 0;
-  const table = findParentNodeClosestToPos(selection.ranges[0/*first range*/].$from, (node) => isTableNode(node));
-  if(!table) return false/*Table does not exits*/;
+    let cellCount = 0;
+    const table = findParentNodeClosestToPos(selection.ranges[0/*first range*/].$from, (node) => isTableNode(node));
+    if(!table) return false/*Table does not exits*/;
 
-  table.node.descendants((node) => {
-    if(isTableNode(node)) return false/*do not descend further*/;
+    table.node.descendants((node) => {
+      if(isTableNode(node)) return false/*do not descend further*/;
 
-    if(isHeaderCellNode(node) || isCellNode(node)) {
-      cellCount += 1;
-    } /* else -- ignore */
+      if(isHeaderCellNode(node) || isCellNode(node)) {
+        cellCount += 1;
+      } /* else -- ignore */
 
-    return true/*keep descending*/;
-  });
+      return true/*keep descending*/;
+    });
 
-  const allCellsSelected = cellCount === selection.ranges.length;
-  if(!allCellsSelected) return false/*nothing to do*/;
+    const allCellsSelected = cellCount === selection.ranges.length;
+    if(!allCellsSelected) return false/*nothing to do*/;
 
-  return deleteTable(state, dispatch);
-};
+    const updatedTr = new DeleteTableDocumentUpdate().update(editorState, tr);
+    return updatedTr;
+  }
+}
 
 // == Row =========================================================================
 /** add a Table Row before the Selection */
@@ -130,7 +139,7 @@ export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 /** remove the selected Rows from a Table */
-export const deleteRowCommand = (state: EditorState, dispatch: DispatchType) =>
+export const deleteRowCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new DeleteRowDocumentUpdate().update(state, state.tr), dispatch);
 export class DeleteRowDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }

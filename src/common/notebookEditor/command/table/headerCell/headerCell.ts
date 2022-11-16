@@ -1,16 +1,16 @@
 import { NodeType } from 'prosemirror-model';
-import { EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { NodeName } from '../../../../notebookEditor/node/type';
 import { isNotNullOrUndefined } from '../../../../util';
 import { TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
 import { isInTable, selectedRect } from '../../..//extension/table/util';
-import { AbstractDocumentUpdate, DispatchType } from '../../type';
+import { AbstractDocumentUpdate } from '../../type';
 
 // ********************************************************************************
 /** toggles between row/column Header and normal Cells (only applies to first row/column) */
-export const toggleHeaderCommand = (type: 'row' | 'column' | 'cell') => (state: EditorState, dispatch: DispatchType) =>
+export const toggleHeaderCommand = (type: 'row' | 'column' | 'cell'): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new ToggleHeaderDocumentUpdate(type).update(state, state.tr), dispatch);
 export class ToggleHeaderDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly type: 'row' | 'column' | 'cell') {/*nothing additional*/ }

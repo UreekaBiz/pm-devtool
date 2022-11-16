@@ -2,7 +2,7 @@ import { MdOutlineTableChart } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, RiInsertRowBottom, RiInsertRowTop, RiMore2Line, RiMoreLine } from 'react-icons/ri';
 
-import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, isCellSelection, isTableNode, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, SelectionDepth, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTableCommand, isCellSelection, isTableNode, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, SelectionDepth, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -40,7 +40,7 @@ export const deleteTableToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor, depth) => shouldShowTableToolItem(editor, depth),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, deleteTable),
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, deleteTableCommand),
 };
 
 // -- Row -------------------------------------------------------------------------

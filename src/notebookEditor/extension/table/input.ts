@@ -15,7 +15,7 @@ import { isValidHTMLElement } from '../util';
 const tableArrowHandler = (axis: 'horizontal' | 'vertical', dir: 1 | -1): Command => (state, dispatch, view) => {
   const { selection } = state;
   if(isCellSelection(selection)) {
-    return maybeSetSelection(state, dispatch, Selection.near(selection.$headCell, dir));
+    return maybeSetCellSelection(state, dispatch, Selection.near(selection.$headCell, dir));
   } /* else -- not a CellSelection */
 
   if(axis !== 'horizontal' && !selection.empty) return false/*do not allow*/;
@@ -24,7 +24,7 @@ const tableArrowHandler = (axis: 'horizontal' | 'vertical', dir: 1 | -1): Comman
   if(!end || end === null) return false/*not at the end of the Cell*/;
 
   if(axis == 'horizontal') {
-    return maybeSetSelection(state, dispatch, Selection.near(state.doc.resolve(selection.head + dir), dir));
+    return maybeSetCellSelection(state, dispatch, Selection.near(state.doc.resolve(selection.head + dir), dir));
   } else {
     const $cell = state.doc.resolve(end);
     const $next = nextCell($cell, axis, dir);
@@ -34,7 +34,7 @@ const tableArrowHandler = (axis: 'horizontal' | 'vertical', dir: 1 | -1): Comman
     else if(dir < 0) { newSelection = Selection.near(state.doc.resolve($cell.before(-1)), -1); }
     else { newSelection = Selection.near(state.doc.resolve($cell.after(-1)), 1); }
 
-    return maybeSetSelection(state, dispatch, newSelection);
+    return maybeSetCellSelection(state, dispatch, newSelection);
   }
 };
 
@@ -50,12 +50,12 @@ const tableShiftArrowHandler = (axis: 'horizontal' | 'vertical', dir: 1 | -1): C
   const $head = nextCell((selection as CellSelection/*guaranteed by above check*/).$headCell, axis, dir);
   if(!$head) return false/*nothing to do*/;
 
-  return maybeSetSelection(state, dispatch, new CellSelection((selection as CellSelection/*guaranteed by above check*/).$anchorCell, $head));
+  return maybeSetCellSelection(state, dispatch, new CellSelection((selection as CellSelection/*guaranteed by above check*/).$anchorCell, $head));
 };
 
 // == Selection ===================================================================
 // -- Set -------------------------------------------------------------------------
-const maybeSetSelection = (state: EditorState, dispatch: DispatchType, selection: Selection) => {
+const maybeSetCellSelection = (state: EditorState, dispatch: DispatchType, selection: Selection) => {
   if(selection.eq(state.selection)) return false/*same Selection*/;
 
   if(dispatch) dispatch(state.tr.setSelection(selection).scrollIntoView());

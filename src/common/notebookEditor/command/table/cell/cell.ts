@@ -7,7 +7,7 @@ import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
 import { addColSpan, cellAround, findCellWrapperNode, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes } from '../../..//extension/table/util';
-import { AbstractDocumentUpdate, DispatchType } from '../../type';
+import { AbstractDocumentUpdate } from '../../type';
 
 // ********************************************************************************
 /**
@@ -167,7 +167,7 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 /** select the previous or the next Cell in a Table */
-export const goToCellCommand = (direction: 'previous' | 'next') => (state: EditorState, dispatch: DispatchType) =>
+export const goToCellCommand = (direction: 'previous' | 'next'): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new GoToCellDocumentUpdate(direction).update(state, state.tr), dispatch);
 export class GoToCellDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly direction: 'previous' | 'next') {/*nothing additional*/ }

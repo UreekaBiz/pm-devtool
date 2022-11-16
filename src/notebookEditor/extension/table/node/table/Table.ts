@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { deleteTableWhenAllCellsSelected, getNodeOutputSpec, goToCellCommand, isTableNode, AddRowAfterDocumentUpdate, GoToCellDocumentUpdate, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
+import { deleteTableWhenAllCellsSelectedCommand, getNodeOutputSpec, goToCellCommand, isTableNode, AddRowAfterDocumentUpdate, GoToCellDocumentUpdate, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command';
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
@@ -65,10 +65,10 @@ export const Table = new NodeExtension({
       },
 
       'Shift-Tab': () => goToCellCommand('previous')(editor.view.state, editor.view.dispatch),
-      'Backspace': deleteTableWhenAllCellsSelected,
-      'Mod-Backspace': deleteTableWhenAllCellsSelected,
-      'Delete': deleteTableWhenAllCellsSelected,
-      'Mod-Delete': deleteTableWhenAllCellsSelected,
+      'Backspace': deleteTableWhenAllCellsSelectedCommand,
+      'Mod-Backspace': deleteTableWhenAllCellsSelectedCommand,
+      'Delete': deleteTableWhenAllCellsSelectedCommand,
+      'Mod-Delete': deleteTableWhenAllCellsSelectedCommand,
     }),
   ],
 });
