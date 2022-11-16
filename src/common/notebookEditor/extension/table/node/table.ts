@@ -1,7 +1,7 @@
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec, NodeType, Schema } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../../../attribute';
-import { NodeRendererSpec } from '../../../htmlRenderer/type';
+import { createNodeDataTypeAttribute, NodeRendererSpec } from '../../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../../../node/type';
 import { NotebookSchemaType } from '../../../schema';
 import { TableRole } from '../type';
@@ -29,8 +29,18 @@ export const TableNodeSpec: NodeSpec = {
 };
 
 // -- Render Spec -----------------------------------------------------------------
+// -- Render Spec -----------------------------------------------------------------
+const renderCodeBlockNodeView = (attributes: TableAttributes, content: string) => {
+  const id = attributes[AttributeType.Id];
+
+  return `<div class="${TABLE_CONTAINER_CLASS}"><table id=${id} ${createNodeDataTypeAttribute(NodeName.TABLE)}>${content}</table></div>`;
+};
+
 export const TableNodeRendererSpec: NodeRendererSpec<TableAttributes> = {
   tag: 'table',
+
+  isNodeViewRenderer: true/*by definition*/,
+  renderNodeView: renderCodeBlockNodeView,
 
   attributes: {/*use the default renderer on all Attributes*/},
 };

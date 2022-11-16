@@ -45,7 +45,6 @@
   left: 0;
   content: '';
   pointer-events: none;
-  z-index: 2;
   background: rgba(200, 200, 255, 0.4);
 }
 
