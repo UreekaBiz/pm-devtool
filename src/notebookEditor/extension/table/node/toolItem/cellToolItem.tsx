@@ -2,7 +2,7 @@ import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { IoMdSquareOutline } from 'react-icons/io';
 import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
-import { goToCellCommand, isCellNode, isHeaderCellNode, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand, SelectionDepth } from 'common';
+import { goToCellCommand, isCellNode, isCellSelection, isHeaderCellNode, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand, SelectionDepth } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -82,11 +82,12 @@ export const cellToolItems = [
 
 // == Util ========================================================================
 const shouldShowCellToolItem = (editor: Editor, depth: SelectionDepth) => {
-  const { $anchor } = editor.view.state.selection;
+  const { selection } = editor.view.state;
+  const { $anchor } = selection;
 
   const expectedCell = $anchor.node(-1/*Cell Depth*/);
   if(expectedCell && (isCellNode(expectedCell) || isHeaderCellNode(expectedCell))) {
-    return depth === $anchor.depth - 1/*Cell Depth*/;
+    return depth === $anchor.depth - (isCellSelection(selection) ? 0/*CellSelection Depth*/ : 1/*Cell Depth*/);
   } /* else -- not inside Cell at right depth, return default */
 
   return shouldShowToolItem(editor, depth)/*default*/;

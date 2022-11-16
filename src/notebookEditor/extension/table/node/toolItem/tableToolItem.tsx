@@ -2,7 +2,7 @@ import { MdOutlineTableChart } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, RiInsertRowBottom, RiInsertRowTop, RiMore2Line, RiMoreLine } from 'react-icons/ri';
 
-import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, isTableNode, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, SelectionDepth, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, isCellSelection, isTableNode, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, SelectionDepth, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
@@ -181,11 +181,12 @@ export const generalTableToolItems: ToolItem[] = [
 
 // == Util ========================================================================
 const shouldShowTableToolItem = (editor: Editor, depth: SelectionDepth) => {
-  const { $anchor } = editor.view.state.selection;
+  const { selection } = editor.view.state;
+  const { $anchor } = selection;
 
   const expectedTable = $anchor.node(-3/*Table Depth*/);
   if(expectedTable && isTableNode(expectedTable)) {
-    return depth === $anchor.depth - 3/*Table Depth*/;
+    return depth === $anchor.depth - (isCellSelection(selection) ? 2/*CellSelection Depth*/ : 3/*Table Depth*/);
   } /* else -- not inside Table at right depth, return default */
 
   return shouldShowToolItem(editor, depth)/*default*/;
