@@ -11,7 +11,9 @@
   width: 100%;
   overflow: hidden;
 }
-[data-node-type="table"] div[data-node-type="paragraph"] { margin: 0; }
+[data-node-type="table"] div[data-node-type="paragraph"] {
+  margin: 0;
+}
 
 /* -- Cells -------------------------------------------------------------------- */
 /* .. Cell and HeaderCell ...................................................... */
