@@ -204,7 +204,6 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
     if(cellPos !== activeHandle) {
       if(!lastColumnResizable && cellPos !== -1) {
         const $cellPos = view.state.doc.resolve(cellPos);
-
         const tableNode = $cellPos.node(-1);
         const tableMap = TableMap.get(tableNode);
         const tableStart = $cellPos.start(-1);
@@ -282,15 +281,19 @@ const domCellAround = (target: HTMLElement | null) => {
       target = target.parentNode;
     }
   }
-
   return target;
 };
 
 const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left') => {
-  const found = view.posAtCoords({ left: event.clientX, top: event.clientY });
-  if(!found) return -1/*default*/;
+  const foundPos = view.posAtCoords({ left: event.clientX, top: event.clientY });
+  if(!foundPos) return -1/*default*/;
 
-  const { pos } = found;
+  // prevent the handle from being shown for the Column if the Column is not
+  // immediately after or before the Mouse. This specifically prevents the previous
+  // Column from being highlighted incorrectly when hovering over the next one
+  const { pos, inside: posAtFoundCell } = foundPos;
+  if(pos - posAtFoundCell > 1) return -1/*default*/;
+
   const $cellPos = cellAround(view.state.doc.resolve(pos));
   if(!$cellPos) return -1/*default*/;
 
