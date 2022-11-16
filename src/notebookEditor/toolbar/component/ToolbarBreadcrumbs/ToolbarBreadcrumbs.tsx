@@ -43,12 +43,13 @@ export const ToolbarBreadcrumbs: React.FC<Props> = ({ onSelection, selectedDepth
     return/*nothing else to do*/;
   });
 
-  const ascendantsNodes = getAllAscendantsFromSelection(editor.view.state);
+  const { state } = editor.view;
+  const ascendantsNodes = getAllAscendantsFromSelection(state);
   ascendantsNodes.forEach((node, i) => {
     if(!node || isTextNode(node)/*don't display text nodes*/) return/*nothing to do*/;
     const nodeName = getNodeName(node);
     const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
-    const toolbar = getNodeToolbar(node);
+    const toolbar = getNodeToolbar(node, depth, state.selection);
 
     if(!toolbar) return/*no corresponding toolbar for this node*/;
 

@@ -1,6 +1,7 @@
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode } from 'prosemirror-model';
+import { Selection } from 'prosemirror-state';
 
-import { camelToTitleCase, MarkName, NodeName } from 'common';
+import { camelToTitleCase, MarkName, NodeName, SelectionDepth } from 'common';
 
 import { markBold } from 'notebookEditor/extension/bold';
 import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem, blockquoteToolItem } from 'notebookEditor/extension/blockquote';
@@ -29,9 +30,8 @@ import { EditorToolComponentProps, Toolbar, ToolItem } from './type';
 // ********************************************************************************
 // == Node ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorNode} */
-export const getNodeToolbar = (node: ProseMirrorNode): Toolbar => {
-
-  const { toolCollections, rightContent } = buildNodeToolCollections(node);
+export const getNodeToolbar = (node: ProseMirrorNode, depth: SelectionDepth, selection: Selection): Toolbar => {
+  const { toolCollections, rightContent } = buildNodeToolCollections(node, depth, selection);
 
   return {
     title: camelToTitleCase(node.type.name),
@@ -45,13 +45,22 @@ export const getNodeToolbar = (node: ProseMirrorNode): Toolbar => {
  * build {@link Toolbar} for the given {@link ProseMirrorNode}
  * based on its characteristics
  */
-const buildNodeToolCollections = (node: ProseMirrorNode): { toolCollections: ToolItem[][]; rightContent: React.FC<EditorToolComponentProps> | undefined/*not required by Toolbar*/;  } => {
+const buildNodeToolCollections = (node: ProseMirrorNode, depth: SelectionDepth, selection: Selection): { toolCollections: ToolItem[][]; rightContent: React.FC<EditorToolComponentProps> | undefined/*not required by Toolbar*/;  } => {
   const toolCollections: ToolItem[][] = [];
   let rightContent = undefined/*default*/;
 
   if(WRAPPER_NODES.includes(node.type.name as NodeName/*by definition*/)) {
     return { toolCollections, rightContent };
   } /* else -- not a Wrapper Node */
+
+  const negativeDepthChecker = NODES_WITH_SPECIFIC_NEGATIVE_DEPTH[node.type.name as NodeName/*by definition*/];
+  if(negativeDepthChecker) {
+    const negativeDepth = negativeDepthChecker(selection);
+
+    if(depth !== selection.$anchor.depth - negativeDepth) {
+      return { toolCollections, rightContent };
+    } /* else -- Node is allowed ot show toolItems at this depth*/
+  } /* else -- Node has no specific negative depth checks */
 
   if(node.isTextblock && TEXT_BLOCK_TOOL_ITEMS.length > 0) {
     toolCollections.push(TEXT_BLOCK_TOOL_ITEMS);
@@ -79,11 +88,30 @@ const buildNodeToolCollections = (node: ProseMirrorNode): { toolCollections: Too
 };
 
 // --------------------------------------------------------------------------------
-// Nodes whose only purpose is to wrap other Nodes and
-// hence should not display any ToolItems
+/**
+ * Nodes whose only purpose is to wrap other Nodes, and hence should
+ * not display any ToolItems in the Toolbar
+ */
 const WRAPPER_NODES: NodeName[] = [
   NodeName.ROW,
 ];
+
+/**
+ * Nodes that should only display ToolItems when the SelectionDepth equals
+ * $anchor.depth minus the number returned from the function
+ * specified in this Record
+ */
+const NODES_WITH_SPECIFIC_NEGATIVE_DEPTH: Partial<Record<NodeName, (selection: Selection) => number>> = {
+  // for Nodes inside Tables, the expected order is SelectionDepth - 1 = Cell,
+  // SelectionDepth - 2 = Row, SelectionDepth - 3 = Table
+
+  // NOTE: the depth decreases in 1 since a CellSelection starts from the
+  //       anchor of the Cell, and not the content inside it (also, remember
+  //       that TextNodes do not augment the depth)
+  [NodeName.CELL]: (selection) => selection.empty ? 1 : 0,
+  [NodeName.HEADER_CELL]: (selection) => selection.empty ? 1 : 0,
+  [NodeName.TABLE]: (selection) => selection.empty ? 3 : 2,
+};
 
 // == Mark ========================================================================
 /** get a {@link Toolbar} for the given {@link ProseMirrorMark} */

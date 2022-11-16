@@ -63,7 +63,8 @@ export const SideBar = () => {
       return;
     });
 
-    const ascendantsNodes = getAllAscendantsFromSelection(editor.view.state);
+    const { state } = editor.view;
+    const ascendantsNodes = getAllAscendantsFromSelection(state);
 
     // Create a toolbar for each ascendant node.
     ascendantsNodes.forEach((node, i) => {
@@ -71,7 +72,8 @@ export const SideBar = () => {
 
       const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
       const nodeName = getNodeName(node);
-      const toolbar = getNodeToolbar(node);
+      const toolbar = getNodeToolbar(node, depth, state.selection);
+
       // Only render toolbar if it exists and allows it with shouldShow
       if(!toolbar || (toolbar.shouldShow && !toolbar.shouldShow(editor, undefined))) return/*nothing to do*/;
 
