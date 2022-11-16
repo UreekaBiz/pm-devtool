@@ -2,8 +2,8 @@ import { MdCheckBoxOutlineBlank } from 'react-icons/md';
 
 import { generateNodeId, getEditableInlineNodeWithContentNodeType, isNodeSelection, AttributeType, NodeName } from 'common';
 
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { insertAndSelectNestedViewNode } from '../util';
 

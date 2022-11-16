@@ -5,8 +5,8 @@ import { generateNodeId, isNodeSelection, AttributeType, NodeName } from 'common
 import { toggleBlock } from 'notebookEditor/command';
 import { SliderToolItem } from 'notebookEditor/extension/shared/component/SliderToolItem';
 import { InputToolItem } from 'notebookEditor/extension/shared/component/InputToolItem';
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 //*********************************************************************************
 // == Tool Items ==================================================================

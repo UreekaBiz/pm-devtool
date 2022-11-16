@@ -5,8 +5,8 @@ import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, R
 import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command';
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 //*********************************************************************************
 // == Tool Items ==================================================================

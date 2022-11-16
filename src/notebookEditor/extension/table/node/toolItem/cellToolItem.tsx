@@ -5,8 +5,8 @@ import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 import { goToCellCommand, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command';
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 //*********************************************************************************
 // == ToolItems ===================================================================

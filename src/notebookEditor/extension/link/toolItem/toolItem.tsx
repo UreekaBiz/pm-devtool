@@ -5,9 +5,9 @@ import { getLinkMarkType, isNodeSelection, MarkName } from 'common';
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { toggleMarkInMarkHolderCommand } from 'notebookEditor/extension/markHolder/command';
 import { getMarkHolder, inMarkHolder } from 'notebookEditor/extension/markHolder/util';
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { getDialogStorage } from 'notebookEditor/model/DialogStorage';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { LinkColorToolItem } from './component/LinkColorToolItem';
 import { LinkTargetToolItem } from './component/LinkTargetToolItem';

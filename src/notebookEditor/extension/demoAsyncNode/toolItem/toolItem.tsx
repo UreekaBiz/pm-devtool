@@ -4,9 +4,9 @@ import { getSelectedNode, isAsyncNode, isDemoAsyncNode, AttributeType, NodeName 
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { CodeBlockReferencesChipSelector } from 'notebookEditor/extension/codeblock';
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { SliderToolItem } from 'notebookEditor/extension/shared/component/SliderToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { insertAndSelectDemoAsyncNodeCommand } from '../command';
 

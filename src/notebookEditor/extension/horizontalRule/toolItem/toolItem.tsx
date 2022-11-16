@@ -3,8 +3,8 @@ import { MdHorizontalRule } from 'react-icons/md';
 import { isNodeSelection, NodeName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { insertOrToggleHorizontalRuleCommand } from '../command';
 import { HorizontalRuleHeightToolItem } from './HorizontalRuleHeightToolItem';

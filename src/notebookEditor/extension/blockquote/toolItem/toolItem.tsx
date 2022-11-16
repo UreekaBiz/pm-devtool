@@ -3,8 +3,8 @@ import { MdFormatQuote } from 'react-icons/md';
 import { getBlockquoteNodeType, isNodeSelection, toggleWrapCommand, NodeName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command';
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { BlockquoteBorderColorToolItem } from './BlockquoteBorderColorToolItem';
 import { BlockquoteBorderLeftWidthToolItem } from './BlockquoteBorderLeftWidthToolItem';

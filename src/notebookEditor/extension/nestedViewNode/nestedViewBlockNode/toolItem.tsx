@@ -2,8 +2,8 @@ import { MdOutlineViewDay } from 'react-icons/md';
 
 import { generateNodeId, getNestedViewBlockNodeType, isNodeSelection, AttributeType, NodeName } from 'common';
 
-import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { insertAndSelectNestedViewNode } from '../util';
 
