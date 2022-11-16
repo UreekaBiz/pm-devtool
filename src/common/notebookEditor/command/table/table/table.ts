@@ -54,12 +54,11 @@ export class DeleteTableDocumentUpdate implements AbstractDocumentUpdate {
     for(let d = $pos.depth; d > 0; d--) {
       const node = $pos.node(d);
       if(node.type.spec.tableRole === TableRole.Table) {
-        editorState.tr.delete($pos.before(d), $pos.after(d)).scrollIntoView();
-        return tr/*updated*/;
+        tr.delete($pos.before(d), $pos.after(d)).scrollIntoView();
       } /* else -- not a Table, do nothing */
     }
 
-    return false/*not handled*/;
+    return tr/*updated*/;
   }
 }
 
@@ -74,11 +73,13 @@ export class DeleteTableWhenAllCellsSelectedDocumentUpdate implements AbstractDo
     if(!isCellSelection(selection)) return false/*not a CellSelection, nothing to do*/;
 
     let cellCount = 0;
-    const table = findParentNodeClosestToPos(selection.ranges[0/*first range*/].$from, (node) => isTableNode(node));
-    if(!table) return false/*Table does not exits*/;
+    const tableParentObj = findParentNodeClosestToPos(selection.ranges[0/*first range*/].$from, (node) => isTableNode(node));
+    if(!tableParentObj) return false/*Table does not exits*/;
 
-    table.node.descendants((node) => {
-      if(isTableNode(node)) return false/*do not descend further*/;
+    tableParentObj.node.descendants((node) => {
+      if(isTableNode(node)) {
+        return false/*do not descend further*/;
+      }
 
       if(isHeaderCellNode(node) || isCellNode(node)) {
         cellCount += 1;

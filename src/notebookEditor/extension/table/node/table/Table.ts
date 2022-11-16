@@ -50,8 +50,6 @@ export const Table = new NodeExtension({
     //        the Editor while the resizing columns
     tableColumnResizingPlugin(TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH, true/*make the last Column resizable*/),
 
-    tableEditingPlugin(false/*do not allow Table Node Selection*/),
-
     keymap({
       'Tab': () => {
         if(goToCellCommand('next')(editor.view.state, editor.view.dispatch)) {
@@ -63,12 +61,13 @@ export const Table = new NodeExtension({
           new GoToCellDocumentUpdate('next'),
         ]);
       },
-
       'Shift-Tab': () => goToCellCommand('previous')(editor.view.state, editor.view.dispatch),
       'Backspace': deleteTableWhenAllCellsSelectedCommand,
       'Mod-Backspace': deleteTableWhenAllCellsSelectedCommand,
       'Delete': deleteTableWhenAllCellsSelectedCommand,
       'Mod-Delete': deleteTableWhenAllCellsSelectedCommand,
     }),
+
+    tableEditingPlugin(false/*do not allow Table Node Selection*/),
   ],
 });
