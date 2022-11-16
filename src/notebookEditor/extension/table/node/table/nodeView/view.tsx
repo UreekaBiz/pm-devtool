@@ -1,4 +1,4 @@
-import { getPosType, MIN_CELL_WIDTH, TableNodeType, TABLE_CONTAINER_CLASS } from 'common';
+import { DATA_NODE_TYPE, getPosType, MIN_CELL_WIDTH, NodeName, TableNodeType, TABLE_CONTAINER_CLASS } from 'common';
 
 import { Editor } from 'notebookEditor/editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -28,6 +28,7 @@ export class TableView extends AbstractNodeView<TableNodeType, TableStorageType,
     this.minimumCellWidth = MIN_CELL_WIDTH;
 
     this.table = document.createElement('table');
+    this.table.setAttribute(DATA_NODE_TYPE, NodeName.TABLE);
     this.dom.appendChild(this.table);
 
     this.columnGroup = document.createElement('colgroup');

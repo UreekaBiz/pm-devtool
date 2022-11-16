@@ -4,8 +4,9 @@ import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
 import { goToCellCommand, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand } from 'common';
 
-import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
+import { ToolItem } from 'notebookEditor/toolbar/type';
 
 //*********************************************************************************
 // == ToolItems ===================================================================
@@ -17,7 +18,7 @@ export const goToPreviousCellToolItem: ToolItem = {
   tooltip: 'Go to previous Cell',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor) => true,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('previous')),
 };
 
@@ -29,7 +30,7 @@ export const goToNextCellToolItem: ToolItem = {
   tooltip: 'Go to next Cell',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor) => true,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, goToCellCommand('next')),
 };
 
@@ -41,7 +42,7 @@ export const mergeCellsToolItem: ToolItem = {
   tooltip: 'Merge Cells',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor) => true,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, mergeCellsCommand),
 };
 
@@ -53,7 +54,7 @@ export const splitCellsToolItem: ToolItem = {
   tooltip: 'Split Cells',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor) => true,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, splitCellCommand()),
 };
 
@@ -65,7 +66,7 @@ export const toggleHeaderCellToolItem: ToolItem = {
   tooltip: 'Toggle Header in Cell',
 
   shouldBeDisabled: (editor) => false,
-  shouldShow: (editor) => true,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderCellCommand),
 };
 

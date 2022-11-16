@@ -2,10 +2,11 @@ import { MdOutlineTableChart } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, RiInsertRowBottom, RiInsertRowTop, RiMore2Line, RiMoreLine } from 'react-icons/ri';
 
-import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, isCellSelection, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTable, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
-import { ToolItem } from 'notebookEditor/toolbar/type';
 import { toolItemCommandWrapper } from 'notebookEditor/command';
+import { shouldShowToolItem } from 'notebookEditor/extension/util/ui';
+import { ToolItem } from 'notebookEditor/toolbar/type';
 
 //*********************************************************************************
 // == Tool Items ==================================================================
@@ -18,12 +19,8 @@ export const tableToolItem: ToolItem = {
   icon: <MdOutlineTableChart size={16} />,
   tooltip: 'Add a Table',
 
-  shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return true;
-    /* else -- selection not inside a table */
-    return false;
-  },
-  shouldShow: (editor) => true,
+  shouldBeDisabled: (editor) => false,
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, createAndInsertTableCommand(TABLE_DEFAULT_ROWS, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_WITH_HEDER_ROW)),
 };
 
@@ -41,7 +38,7 @@ export const deleteTableToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, deleteTable),
 };
 
@@ -58,7 +55,7 @@ export const deleteRowToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, deleteRowCommand),
 };
 
@@ -74,7 +71,7 @@ export const addRowAboveToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addRowBeforeCommand),
 };
 
@@ -90,7 +87,7 @@ export const addRowBelowToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addRowAfterCommand),
 };
 
@@ -107,7 +104,7 @@ export const deleteColumnToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, deleteColumnCommand),
 };
 
@@ -123,7 +120,7 @@ export const addColumnBeforeToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addColumnBeforeCommand),
 };
 
@@ -139,7 +136,7 @@ export const addColumnAfterToolItem: ToolItem = {
 
     return true;
   },
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, addColumnAfterCommand),
 };
 
@@ -152,7 +149,7 @@ export const toggleHeaderInFirstRowToolItem: ToolItem = {
   tooltip: 'Toggle Header in First Row',
 
   shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.TABLE),
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderRowCommand),
 };
 
@@ -164,7 +161,7 @@ export const toggleHeaderInFirstColumnToolItem: ToolItem = {
   tooltip: 'Toggle Header in First Column',
 
   shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.TABLE),
-  shouldShow: (editor) => isCellSelection(editor.view.state.selection),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth, 'table'),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderColumnCommand),
 };
 
