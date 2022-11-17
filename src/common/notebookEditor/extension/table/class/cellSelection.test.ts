@@ -11,6 +11,8 @@ import { isCellSelection } from '../../../../notebookEditor/selection';
 import { CellSelection } from './CellSelection';
 
 // ********************************************************************************
+// NOTE: these are taken from https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-cellselection.js
+
 // == Test ========================================================================
 describe('CellSelection', () => {
   // NOTE: the inline comments below are the positions of the

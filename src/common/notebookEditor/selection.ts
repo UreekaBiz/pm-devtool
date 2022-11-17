@@ -23,7 +23,7 @@ export const isGetPos = (object: any): object is (() => number) => typeof object
 /** Type guard that defines if a {@link Selection} is a {@link AllSelection} */
 export const isAllSelection = (selection: Selection): selection is AllSelection  => selection instanceof AllSelection;
 
-/** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */
+/** Type guard that defines if a {@link Selection} is a {@link CellSelection} */
 export const isCellSelection = (selection: Selection): selection is CellSelection => selection.toJSON().type === 'cell';
 
 /** Type guard that defines if a {@link Selection} is a {@link TextSelection} */

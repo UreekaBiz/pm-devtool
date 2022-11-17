@@ -55,7 +55,7 @@ export const removeColSpan = (attrs: Partial<Attributes>, pos: number, n = 1) =>
     result[AttributeType.ColWidth] = result[AttributeType.ColWidth].slice();
     result[AttributeType.ColWidth].splice(pos, n);
 
-    if(!result[AttributeType.ColWidth].some((w: number) => w > 0)) {
+    if(!result[AttributeType.ColWidth].some((columnWidth: number) => columnWidth > 0)) {
       result[AttributeType.ColWidth] = null;
     } /* else -- at least one of the colWidth array items is bigger than 0 */
   } /* else -- colWidth attribute is undefined */

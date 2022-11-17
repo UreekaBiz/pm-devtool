@@ -11,7 +11,6 @@ import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from
 import { TableRole } from '../type';
 import { TableMap } from './TableMap';
 
-// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/cellselection.js
 
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire
@@ -19,6 +18,9 @@ import { TableMap } from './TableMap';
 // actually get such selections when you select across cells).
 
 // ********************************************************************************
+// == Constant ====================================================================
+const SELECTED_CELL_CLASS = 'selectedCell'/*(SEE: table.css)*/;
+
 // == Interface ===================================================================
 // re defined since it is not exported from prosemirror-state
 interface SelectionBookmark {
@@ -37,6 +39,7 @@ type JSONCellSelection = {
 }
 
 // == Selection Class =============================================================
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/cellselection.js
 /**
   * A {@link Selection} subclass that represents a {@link CellSelection}
   * spanning part of a table. With the plugin enabled, these will be
@@ -65,27 +68,29 @@ export class CellSelection extends Selection {
    * single Cell
    */
   constructor($anchorCell: ResolvedPos, $headCell: ResolvedPos = $anchorCell/*default to the same cell*/) {
-    const table = $anchorCell.node(-1/*Table ancestor*/);
-    const map = TableMap.get(table);
-    const startOfTable = $anchorCell.start(-1/*Table ancestor depth*/);
+    const table = $anchorCell.node(-1/*Table ancestor*/),
+          tableMap = TableMap.get(table),
+          startOfTable = $anchorCell.start(-1/*Table ancestor depth*/);
 
-    const rect = map.rectBetween($anchorCell.pos - startOfTable, $headCell.pos - startOfTable);
+    const tableRect = tableMap.rectBetween($anchorCell.pos - startOfTable, $headCell.pos - startOfTable);
     const doc = $anchorCell.node(0);
-    const cells = map.cellsInRect(rect).filter((pos: number) => pos !== $headCell.pos - startOfTable);
+    const selectedCells = tableMap.cellsInRect(tableRect).filter((pos: number) => pos !== $headCell.pos - startOfTable);
 
     // make the head Cell the first range so that it counts
     // as the primary part of the Selection
-    cells.unshift($headCell.pos - startOfTable);
-    const ranges = cells.filter(pos => table.nodeAt(pos)).map((pos: number) => {
-      const cell = table.nodeAt(pos);
-      const from = pos + startOfTable + 1;
+    selectedCells.unshift($headCell.pos - startOfTable);
 
-      return new SelectionRange(doc.resolve(from), doc.resolve(from + cell/*guaranteed by filter*/!.content.size));
+    const selectedRanges = selectedCells.filter(pos => table.nodeAt(pos)).map((pos: number) => {
+    const selectedCell = table.nodeAt(pos);
+    const from = pos + startOfTable + 1;
+
+      return new SelectionRange(doc.resolve(from), doc.resolve(from + selectedCell/*guaranteed by filter*/!.content.size));
     });
 
-    super(ranges[0/*head Cell*/].$from, ranges[0/*head Cell*/].$to, ranges);
+    super(selectedRanges[0/*head Cell*/].$from, selectedRanges[0/*head Cell*/].$to, selectedRanges);
     this.$anchorCell = $anchorCell;
     this.$headCell = $headCell;
+    this.visible = false/*prevent the SelectedRange to be visible to the User in the browser*/;
   }
 
   // -- Method --------------------------------------------------------------------
@@ -98,10 +103,10 @@ export class CellSelection extends Selection {
       && pointsAtCell($headCell)
       && inSameTable($anchorCell, $headCell)
     ) {
-      const tableChanged = this.$anchorCell.node(-1) !== $anchorCell.node(-1);
+      const tableChanged = this.$anchorCell.node(-1/*grandParent*/) !== $anchorCell.node(-1/*grandParent*/);
 
-      if(tableChanged && this.isRowSelection()) { return CellSelection.rowSelection($anchorCell, $headCell); }
-      else if(tableChanged && this.isColSelection()) { return CellSelection.colSelection($anchorCell, $headCell); }
+      if(tableChanged && this.isRowSelection()) { return CellSelection.createRowSelection($anchorCell, $headCell); }
+      else if(tableChanged && this.isColSelection()) { return CellSelection.createColumnSelection($anchorCell, $headCell); }
       else { return new CellSelection($anchorCell, $headCell); }
     }
     return TextSelection.between($anchorCell, $headCell);
@@ -109,49 +114,51 @@ export class CellSelection extends Selection {
 
   /** returns a rectangular {@link Slice} of table rows containing the selected cells */
   public content() {
-    const table = this.$anchorCell.node(-1);
+    const selectedTable = this.$anchorCell.node(-1/*grandParent*/),
+          tableMap = TableMap.get(selectedTable),
+          tableStart = this.$anchorCell.start(-1/*grandParent depth*/);
 
-    const map = TableMap.get(table);
-    const start = this.$anchorCell.start(-1);
+    const tableRect = tableMap.rectBetween(this.$anchorCell.pos - tableStart, this.$headCell.pos - tableStart);
+    const seenCellPositions: { [key: number]: boolean; } = {};
+    const selectedRows = [/*default empty*/];
 
-    const rect = map.rectBetween(this.$anchorCell.pos - start, this.$headCell.pos - start);
-    const seen: { [key: number]: boolean; } = {};
-    const rows = [];
-    for(let row = rect.top; row < rect.bottom; row++) {
-      let rowContent: ProseMirrorNode[] = [];
+    for(let row = tableRect.top; row < tableRect.bottom; row++) {
+      const rowContent: ProseMirrorNode[] = [/*default emtpty*/];
 
-      for(let index = row * map.width + rect.left, col = rect.left; col < rect.right; col++, index++) {
-        const pos = map.map[index];
+      for(let index = row * tableMap.width + tableRect.left, col = tableRect.left; col < tableRect.right; col++, index++) {
+        const cellPos = tableMap.map[index];
 
-        if(!seen[pos]) {
-          seen[pos] = true;
-          const cellRect = map.findCell(pos);
-          let cell = table.nodeAt(pos);
+        if(!seenCellPositions[cellPos]) {
+          seenCellPositions[cellPos] = true;
+          const cellRect = tableMap.findCell(cellPos);
+          let cell = selectedTable.nodeAt(cellPos);
 
           if(cell) {
-            const extraLeft = rect.left - cellRect.left,
-              extraRight = cellRect.right - rect.right;
+            const extraLeft = tableRect.left - cellRect.left,
+                  extraRight = cellRect.right - tableRect.right;
 
             if(extraLeft > 0 || extraRight > 0) {
-              let { attrs } = cell;
-              if(extraLeft > 0) attrs = removeColSpan(attrs, 0, extraLeft);
+              let { attrs: cellAttrs } = cell;
+              if(extraLeft > 0) {
+                cellAttrs = removeColSpan(cellAttrs, 0/*start*/, extraLeft);
+              } /* else -- no need to account for extra spanning to the left */
 
               if(extraRight > 0) {
-                attrs = removeColSpan(attrs, attrs[AttributeType.ColSpan] - extraRight, extraRight);
-              } /* else -- extraRight is not bigger than 0 */
+                cellAttrs = removeColSpan(cellAttrs, cellAttrs[AttributeType.ColSpan] - extraRight, extraRight);
+              } /* else -- no need to account for extra spanning to the right  */
 
-              if(cellRect.left < rect.left) {
-                cell = cell.type.createAndFill(attrs);
+              if(cellRect.left < tableRect.left) {
+                cell = cell.type.createAndFill(cellAttrs);
               } else {
-                cell = cell.type.create(attrs, cell.content);
+                cell = cell.type.create(cellAttrs, cell.content);
               }
             } /* else -- neither extraLeft nor extraRight are bigger than 0*/
 
-            if(cellRect.top < rect.top || cellRect.bottom > rect.bottom) {
-              const attrs = cell && setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.min(cellRect.bottom, rect.bottom) - Math.max(cellRect.top, rect.top));
+            if(cellRect.top < tableRect.top || cellRect.bottom > tableRect.bottom) {
+              const cellAttrs = cell && setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.min(cellRect.bottom, tableRect.bottom) - Math.max(cellRect.top, tableRect.top));
 
-              if(cell && cellRect.top < rect.top) { cell = cell.type.createAndFill(attrs); }
-              else { cell = cell && cell.type.create(attrs, cell.content); }
+              if(cell && cellRect.top < tableRect.top) { cell = cell.type.createAndFill(cellAttrs); }
+              else { cell = cell && cell.type.create(cellAttrs, cell.content); }
             } /* else -- neither the cell rect top is smaller than the rect's top, nor the cell rect bottom is bigger than the rect bottom  */
 
             if(cell) {
@@ -162,20 +169,20 @@ export class CellSelection extends Selection {
         } /* else -- already seen the cell at this position */
       }
 
-      rows.push(table.child(row).copy(Fragment.from(rowContent)));
+      selectedRows.push(selectedTable.child(row).copy(Fragment.from(rowContent)));
     }
 
-    const fragment = this.isColSelection() && this.isRowSelection() ? table : rows;
-    return new Slice(Fragment.from(fragment), 1/*Slice is open by 1 at start*/, 1/*Slice is open by 1 at end*/);
+    const selectedFragment = this.isColSelection() && this.isRowSelection() ? selectedTable : selectedRows;
+    return new Slice(Fragment.from(selectedFragment), 1/*Slice is open by 1 at start*/, 1/*Slice is open by 1 at end*/);
   }
 
   /** (SEE: {@link Selection} replace) */
   public replace(tr: Transaction, content = Slice.empty) {
     const mapFrom = tr.steps.length;
-    const ranges = this.ranges;
+    const selectedRanges = this.ranges;
 
-    for(let i = 0; i < ranges.length; i++) {
-      const { $from, $to } = ranges[i];
+    for(let i = 0; i < selectedRanges.length; i++) {
+      const { $from, $to } = selectedRanges[i];
       const mapping = tr.mapping.slice(mapFrom);
       tr.replace(mapping.map($from.pos), mapping.map($to.pos), i ? Slice.empty : content);
     }
@@ -191,61 +198,62 @@ export class CellSelection extends Selection {
     this.replace(tr, new Slice(Fragment.from(node), 0/*use full Slice*/, 0/*use full Slice*/));
   }
 
-  /** execute the given callback for each cell in the Selection */
+  /** execute the given callback for each cell in the {@link CellSelection} */
   public forEachCell(callback: (node: ProseMirrorNode | null, pos: number) => void) {
-    const table = this.$anchorCell.node(-1);
+    const table = this.$anchorCell.node(-1/*grandParent*/),
+          tableMap = TableMap.get(table),
+          tableStart = this.$anchorCell.start(-1/*grandParent depth*/);
 
-    const map = TableMap.get(table);
-    const start = this.$anchorCell.start(-1);
-    const cells = map.cellsInRect(map.rectBetween(this.$anchorCell.pos - start, this.$headCell.pos - start));
-    for(let i = 0; i < cells.length; i++) {
-      callback(table.nodeAt(cells[i]), start + cells[i]);
+    const selectedCells = tableMap.cellsInRect(tableMap.rectBetween(this.$anchorCell.pos - tableStart, this.$headCell.pos - tableStart));
+    for(let i = 0; i < selectedCells.length; i++) {
+      callback(table.nodeAt(selectedCells[i]), tableStart + selectedCells[i]);
     }
   }
 
   /**
-   * return true if the Selection goes all the way from the
-   * to to the bottom of the Table
+   * return true if the {@link CellSelection} goes all the way from the
+   * top to the bottom of the Table
    */
   public isColSelection() {
-    const anchorTop = this.$anchorCell.index(-1);
-    const headTop = this.$headCell.index(-1);
+    const anchorTopIndex = this.$anchorCell.index(-1/*grandParent depth*/),
+          headTopIndex = this.$headCell.index(-1/*grandParent depth*/);
 
-    if(Math.min(anchorTop, headTop) > 0) return false/*by definition*/;
+    if(Math.min(anchorTopIndex, headTopIndex) > 0) return false/*by definition*/;
 
-    const anchorBot = anchorTop + this.$anchorCell.nodeAfter?.attrs[AttributeType.RowSpan];
-    const headBot = headTop + this.$headCell.nodeAfter?.attrs[AttributeType.RowSpan];
+    const anchorBottomIndex = anchorTopIndex + this.$anchorCell.nodeAfter?.attrs[AttributeType.RowSpan],
+          headBottomIndex = headTopIndex + this.$headCell.nodeAfter?.attrs[AttributeType.RowSpan];
 
-    return Math.max(anchorBot, headBot) == this.$headCell.node(-1).childCount;
+    return Math.max(anchorBottomIndex, headBottomIndex) === this.$headCell.node(-1/*grandParent*/).childCount;
   }
 
   /**
-   * return the smallest column Selection that cover the given
-   * anchor and head cells
+   * return the smallest column {@link CellSelection} that covers the Cells at the
+   * given anchor and head {@link ResolvedPos}itions
    */
-  static colSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
-    const map = TableMap.get($anchorCell.node(-1));
-    const start = $anchorCell.start(-1);
-    const anchorRect = map.findCell($anchorCell.pos - start);
-    const headRect = map.findCell($headCell.pos - start);
+  static createColumnSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
+    const tableMap = TableMap.get($anchorCell.node(-1/*grandParent*/)),
+          tableStart = $anchorCell.start(-1/*grandParent depth*/);
+
+    const anchorTableRect = tableMap.findCell($anchorCell.pos - tableStart),
+          headTableRect = tableMap.findCell($headCell.pos - tableStart);
 
     const doc = $anchorCell.node(0/*doc depth*/);
-    if(anchorRect.top <= headRect.top) {
-      if(anchorRect.top > 0) {
-        $anchorCell = doc.resolve(start + map.map[anchorRect.left]);
+    if(anchorTableRect.top <= headTableRect.top) {
+      if(anchorTableRect.top > 0) {
+        $anchorCell = doc.resolve(tableStart + tableMap.map[anchorTableRect.left]);
       } /* else -- anchor rect's top is not bigger than 0 */
 
-      if(headRect.bottom < map.height) {
-        $headCell = doc.resolve(start + map.map[map.width * (map.height - 1) + headRect.right - 1]);
+      if(headTableRect.bottom < tableMap.height) {
+        $headCell = doc.resolve(tableStart + tableMap.map[tableMap.width * (tableMap.height - 1) + headTableRect.right - 1]);
       } /* else -- head rect's bottom is not smaller than the height of the map*/
 
     } else {
-      if(headRect.top > 0) {
-        $headCell = doc.resolve(start + map.map[headRect.left]);
+      if(headTableRect.top > 0) {
+        $headCell = doc.resolve(tableStart + tableMap.map[headTableRect.left]);
       } /* else -- anchor rect's top is not bigger than 0 */
 
-      if(anchorRect.bottom < map.height) {
-        $anchorCell = doc.resolve(start + map.map[map.width * (map.height - 1) + anchorRect.right - 1]);
+      if(anchorTableRect.bottom < tableMap.height) {
+        $anchorCell = doc.resolve(tableStart + tableMap.map[tableMap.width * (tableMap.height - 1) + anchorTableRect.right - 1]);
       } /* else -- head rect's bottom is not smaller than the height of the map*/
     }
 
@@ -253,57 +261,54 @@ export class CellSelection extends Selection {
   }
 
   /**
-   * return true if the Selection goes all the way from the left to
+   * return true if the {@link CellSelection} goes all the way from the left to
    * the right of the Table
    */
   public isRowSelection() {
-    const map = TableMap.get(this.$anchorCell.node(-1));
-    const start = this.$anchorCell.start(-1);
+    const tableMap = TableMap.get(this.$anchorCell.node(-1/*grandParent*/)),
+          tableStart = this.$anchorCell.start(-1/*grandParent depth*/);
 
-    const anchorLeft = map.colCount(this.$anchorCell.pos - start);
-    const headLeft = map.colCount(this.$headCell.pos - start);
+    const anchorLeftSide = tableMap.colCount(this.$anchorCell.pos - tableStart),
+          headLeftSide = tableMap.colCount(this.$headCell.pos - tableStart);
+    if(Math.min(anchorLeftSide, headLeftSide) > 0) return false/*by definition*/;
 
-    if(Math.min(anchorLeft, headLeft) > 0) return false/*by definition*/;
+    const anchorRightSide = anchorLeftSide + this.$anchorCell.nodeAfter?.attrs[AttributeType.ColSpan],
+        headRightSide = headLeftSide + this.$headCell.nodeAfter?.attrs[AttributeType.ColSpan];
 
-    let anchorRight = anchorLeft + this.$anchorCell.nodeAfter?.attrs[AttributeType.ColSpan],
-      headRight = headLeft + this.$headCell.nodeAfter?.attrs[AttributeType.ColSpan];
-
-    return Math.max(anchorRight, headRight) == map.width;
+    return Math.max(anchorRightSide, headRightSide) == tableMap.width;
   }
 
   /** (SEE: {@link Selection} eq) */
   public eq(other: Selection) {
-    return (other instanceof CellSelection
-      && other.$anchorCell.pos == this.$anchorCell.pos
-      && other.$headCell.pos == this.$headCell.pos
-    );
+    return (other instanceof CellSelection && other.$anchorCell.pos == this.$anchorCell.pos && other.$headCell.pos == this.$headCell.pos);
   }
 
   /**
-   * return the smallest row Selection that covers the given anchor
-   * and head cells
+   * return the smallest row {@link CellSelection} that covers the Cells at the
+   * given anchor and head {@link ResolvedPos}itions
    */
-  public static rowSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
-    const map = TableMap.get($anchorCell.node(-1));
-    const start = $anchorCell.start(-1);
-    const anchorRect = map.findCell($anchorCell.pos - start);
-    const headRect = map.findCell($headCell.pos - start);
+  public static createRowSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
+    const tableMap = TableMap.get($anchorCell.node(-1/*grandParent*/)),
+          tableStart = $anchorCell.start(-1/*grandParent depth*/);
+
+    const anchorTableRect = tableMap.findCell($anchorCell.pos - tableStart),
+          headTableRect = tableMap.findCell($headCell.pos - tableStart);
 
     const doc = $anchorCell.node(0/*doc depth*/);
-    if(anchorRect.left <= headRect.left) {
-      if(anchorRect.left > 0) {
-        $anchorCell = doc.resolve(start + map.map[anchorRect.top * map.width]);
+    if(anchorTableRect.left <= headTableRect.left) {
+      if(anchorTableRect.left > 0) {
+        $anchorCell = doc.resolve(tableStart + tableMap.map[anchorTableRect.top * tableMap.width]);
       } /* else -- anchor rect's left is not bigger than 0 */
 
-      if(headRect.right < map.width) {
-        $headCell = doc.resolve(start + map.map[map.width * (headRect.top + 1) - 1]);
+      if(headTableRect.right < tableMap.width) {
+        $headCell = doc.resolve(tableStart + tableMap.map[tableMap.width * (headTableRect.top + 1) - 1]);
       } /* else -- head rect's right is not smaller than the width of the map*/
     } else {
-      if(headRect.left > 0) {
-        $headCell = doc.resolve(start + map.map[headRect.top * map.width]);
+      if(headTableRect.left > 0) {
+        $headCell = doc.resolve(tableStart + tableMap.map[headTableRect.top * tableMap.width]);
       } /* else -- anchor rect's left is not bigger than 0 */
-      if(anchorRect.right < map.width) {
-        $anchorCell = doc.resolve(start + map.map[map.width * (anchorRect.top + 1) - 1]);
+      if(anchorTableRect.right < tableMap.width) {
+        $anchorCell = doc.resolve(tableStart + tableMap.map[tableMap.width * (anchorTableRect.top + 1) - 1]);
       } /* else -- head rect's right is not smaller than the width of the map*/
     }
 
@@ -328,41 +333,39 @@ export class CellSelection extends Selection {
     return new CellBookmark(this.$anchorCell.pos, this.$headCell.pos);
   }
 }
-CellSelection.prototype.visible = false;
+
+// -- CellSelection defaults ------------------------------------------------------
+// register CellSelection to be de-serializable
 Selection.jsonID('cell', CellSelection);
 
 // == BookMark Class ==============================================================
 class CellBookmark implements SelectionBookmark {
-  // -- Attribute -----------------------------------------------------------------
-  public anchor: number;
-  public head: number;
-
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(anchor: number, head: number) {
-    this.anchor = anchor;
-    this.head = head;
+  constructor(public anchorPos: number, public headPos: number) {
+    this.anchorPos = anchorPos;
+    this.headPos = headPos;
   }
 
   // -- Method --------------------------------------------------------------------
   /** (SEE: {@link SelectionBookmark} map) */
   public map(mapping: Mappable) {
-    return new CellBookmark(mapping.map(this.anchor), mapping.map(this.head));
+    return new CellBookmark(mapping.map(this.anchorPos), mapping.map(this.headPos));
   }
 
   /** (SEE: {@link SelectionBookmark} resolve) */
   public resolve(doc: ProseMirrorNode) {
-    let $anchorCell = doc.resolve(this.anchor),
-      $headCell = doc.resolve(this.head);
-    if(
-      $anchorCell.parent.type.spec.tableRole === TableRole.Row &&
-      $headCell.parent.type.spec.tableRole === TableRole.Row &&
-      $anchorCell.index() < $anchorCell.parent.childCount &&
-      $headCell.index() < $headCell.parent.childCount &&
-      inSameTable($anchorCell, $headCell)
+    const $anchorCell = doc.resolve(this.anchorPos),
+          $headCell = doc.resolve(this.headPos);
+
+    if($anchorCell.parent.type.spec.tableRole === TableRole.Row
+      && $headCell.parent.type.spec.tableRole === TableRole.Row
+      && $anchorCell.index() < $anchorCell.parent.childCount
+      && $headCell.index() < $headCell.parent.childCount
+      && inSameTable($anchorCell, $headCell)
     ) {
       return new CellSelection($anchorCell, $headCell);
     } else {
-      return Selection.near($headCell, 1);
+      return Selection.near($headCell, 1/*bias to the right*/);
     }
   }
 }
@@ -370,54 +373,53 @@ class CellBookmark implements SelectionBookmark {
 // == Util ========================================================================
 /** add {@link Decoration}s for the selected cells in a {@link CellSelection} */
 export const drawCellSelection = (state: EditorState) => {
-  if(!(state.selection instanceof CellSelection)) return null/*nothing to do*/;
+  if(!(state.selection instanceof CellSelection)) return null/*not a CellSelection by definition, nothing to do*/;
 
-  const cellDecorations: Decoration[] = [];
+  const cellDecorations: Decoration[] = [/*default empty*/];
   state.selection.forEachCell((node, pos) => {
     if(node) {
-      cellDecorations.push(Decoration.node(pos, pos + node.nodeSize, { class: 'selectedCell' }));
+      cellDecorations.push(Decoration.node(pos, pos + node.nodeSize, { class: SELECTED_CELL_CLASS }));
     } /* else -- nothing to do */
   });
 
   return DecorationSet.create(state.doc, cellDecorations);
 };
 
-/** check if the Selection has a Cell boundary */
+/** check if the {@link CellSelection} has a Cell boundary */
 const isCellBoundarySelection = ({ $from, $to }: { $from: ResolvedPos; $to: ResolvedPos; }) => {
-  if($from.pos === $to.pos || $from.pos < $from.pos - 6) return false/*cheap elimination*/;
+  if($from.pos === $to.pos || $from.pos < $from.pos - 6) return false/*no boundary*/;
 
-  let afterFrom = $from.pos;
-  let beforeTo = $to.pos;
-  let depth = $from.depth;
-
-  for(; depth >= 0; depth--, afterFrom++) {
-    if($from.after(depth + 1) < $from.end(depth)) break;
+  let afterFromPos = $from.pos;
+  let fromDepth = $from.depth/*default start*/;
+  for(; fromDepth >= 0; fromDepth--, afterFromPos++) {
+    if($from.after(fromDepth + 1) < $from.end(fromDepth)) break;
   }
 
-  for(let d = $to.depth; d >= 0; d--, beforeTo--) {
-    if($to.before(d + 1) > $to.start(d)) break;
+  let beforeToPos = $to.pos;
+  for(let toDepth = $to.depth; toDepth >= 0; toDepth--, beforeToPos--) {
+    if($to.before(toDepth + 1) > $to.start(toDepth)) break;
   }
 
-  return (afterFrom === beforeTo &&/row|table/.test($from.node(depth).type.spec.tableRole));
+  return (afterFromPos === beforeToPos && ($from.node(fromDepth).type.spec.tableRole === TableRole.Table || $from.node(fromDepth).type.spec.tableRole === TableRole.Row));
 };
 
-/** check if the Selection is across cells */
+/** check if the {@link Selection} is across cells */
 const isTextSelectionAcrossCells = ({ $from, $to }: { $from: ResolvedPos; $to: ResolvedPos; }) => {
   let fromCellBoundaryNode;
   let toCellBoundaryNode;
 
-  for(let i = $from.depth; i > 0; i--) {
-    let node = $from.node(i);
-    if(node.type.spec.tableRole === TableRole.Cell || node.type.spec.tableRole === TableRole.HeaderCell) {
-      fromCellBoundaryNode = node;
+  for(let fromDepth = $from.depth; fromDepth > 0; fromDepth--) {
+    let nodeAtDepth = $from.node(fromDepth);
+    if(nodeAtDepth.type.spec.tableRole === TableRole.Cell || nodeAtDepth.type.spec.tableRole === TableRole.HeaderCell) {
+      fromCellBoundaryNode = nodeAtDepth;
       break;
     } /* else -- specs do not specify tableRole */
   }
 
-  for(let i = $to.depth; i > 0; i--) {
-    let node = $to.node(i);
-    if(node.type.spec.tableRole === TableRole.Cell || node.type.spec.tableRole === TableRole.HeaderCell) {
-      toCellBoundaryNode = node;
+  for(let toDepth = $to.depth; toDepth > 0; toDepth--) {
+    let nodeAtDepth = $to.node(toDepth);
+    if(nodeAtDepth.type.spec.tableRole === TableRole.Cell || nodeAtDepth.type.spec.tableRole === TableRole.HeaderCell) {
+      toCellBoundaryNode = nodeAtDepth;
       break;
     } /* else -- specs do not specify tableRole */
   }
@@ -428,33 +430,34 @@ const isTextSelectionAcrossCells = ({ $from, $to }: { $from: ResolvedPos; $to: R
 export const normalizeSelection = (newState: EditorState, allowTableNodeSelection: boolean, tr?: Transaction) => {
   const selection = (tr || newState).selection;
   const doc = (tr || newState).doc;
-  let normalize;
-  let role;
 
-  if(isNodeSelection(selection) && (role = selection.node.type.spec.tableRole)) {
-    if(role === TableRole.Cell || role == TableRole.HeaderCell) {
-      normalize = CellSelection.create(doc, selection.from);
+  let normalizedSelection: Selection | undefined = undefined/*default*/;
+  let tableRole: TableRole | undefined = undefined/*default*/;
 
-    } else if(role == TableRole.Row) {
+  if(isNodeSelection(selection) && (tableRole = selection.node.type.spec.tableRole)) {
+    if(tableRole === TableRole.Cell || tableRole === TableRole.HeaderCell) {
+      normalizedSelection = CellSelection.create(doc, selection.from);
+
+    } else if(tableRole === TableRole.Row) {
       const $cell = doc.resolve(selection.from + 1);
-      normalize = CellSelection.rowSelection($cell, $cell);
+      normalizedSelection = CellSelection.createRowSelection($cell, $cell);
 
     } else if(!allowTableNodeSelection) {
       const map = TableMap.get(selection.node);
       const start = selection.from + 1;
       const lastCell = start + map.map[map.width * map.height - 1];
-      normalize = CellSelection.create(doc, start + 1, lastCell);
+      normalizedSelection = CellSelection.create(doc, start + 1, lastCell);
     } /* else -- role is not Cell, HeaderCell and cannot select Table Node */
 
   } else if(isTextSelection(selection) && isCellBoundarySelection(selection)) {
-    normalize = TextSelection.create(doc, selection.from);
+    normalizedSelection = TextSelection.create(doc, selection.from);
   } else if(isTextSelection(selection) && isTextSelectionAcrossCells(selection)) {
-    normalize = TextSelection.create(doc, selection.$from.start(), selection.$from.end());
+    normalizedSelection = TextSelection.create(doc, selection.$from.start(), selection.$from.end());
   } /* else -- no TextSelection, not a CellBoundarySelection, or TextSelection is not across cells */
 
 
-  if(normalize) {
-    (tr || (tr = newState.tr)).setSelection(normalize);
+  if(normalizedSelection) {
+    (tr || (tr = newState.tr)).setSelection(normalizedSelection);
   } /* else -- do not normalize */
 
   return tr;
