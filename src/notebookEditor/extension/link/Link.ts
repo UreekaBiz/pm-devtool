@@ -2,13 +2,13 @@ import { find } from 'linkifyjs';
 
 import { getMarkOutputSpec, AttributeType, LinkMarkSpec, DEFAULT_LINK_TAG, MarkName, getLinkMarkType } from 'common';
 
+import { MarkExtension } from 'notebookEditor/extension';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 import { DialogStorage } from 'notebookEditor/model/DialogStorage';
-import { MarkExtension } from 'notebookEditor/extension';
+import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
 
 import { LinkAttrs } from './attribute';
 import { linkClick, linkCreate, linkPaste } from './plugin';
-import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
 
 // ********************************************************************************
 // == Mark ========================================================================
