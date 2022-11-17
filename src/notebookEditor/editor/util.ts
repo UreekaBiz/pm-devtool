@@ -8,6 +8,7 @@ import { MarkName, NodeName } from 'common';
  * get the Attributes of the {@link ProseMirrorNode} at the Selection
  * if it is present
  */
+// FIXME: from state?
 export const getNodeAttributesFromView = (state: EditorState, nodeName: NodeName) => {
   const nodes: ProseMirrorNode[] = [/*default empty*/];
 
@@ -27,6 +28,7 @@ export const getNodeAttributesFromView = (state: EditorState, nodeName: NodeName
  * get the Attributes of the {@link ProseMirrorMark} at the Selection
  * if it is present
  */
+// FIXME: from state?
  export const getMarkAttributesFromView = (state: EditorState, markName: MarkName) => {
   const { from, to, empty } = state.selection;
   const marks: ProseMirrorMark[] = [/*default empty*/];
