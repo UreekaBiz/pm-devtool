@@ -6,6 +6,8 @@ import { cellBuilder, CellSelection, defaultRowBuilder, defaultTableBuilder, tab
 import { tableEditingPlugin } from './tableEditing';
 
 // == Test ========================================================================
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-column-resizing.js
+
 describe('normalizeTableSelection', () => {
   // NOTE: the inline comments below are the positions of the
   //       start of the Cell Nodes

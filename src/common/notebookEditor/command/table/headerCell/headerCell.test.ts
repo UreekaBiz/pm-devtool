@@ -3,6 +3,8 @@ import { toggleHeaderColumnCommand, toggleHeaderCommand, toggleHeaderRowCommand 
 
 // ********************************************************************************
 // == Header Cell =================================================================
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-commands.js
+
 describe('toggleHeaderRowCommand', () => {
   it('turns a non-header row into header', () =>
     executeTableTestCommand(

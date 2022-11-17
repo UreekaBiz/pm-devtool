@@ -3,7 +3,10 @@ import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDime
 import { CURSOR, NODE } from '../../test/testUtil';
 import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, deleteColumnCommand, deleteRowCommand } from './table';
 
+// ********************************************************************************
 // == Table Test ==================================================================
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-commands.js
+
 // -- Column ----------------------------------------------------------------------
 describe('addColumnAfterCommand', () => {
   it('can add a plain column', () =>

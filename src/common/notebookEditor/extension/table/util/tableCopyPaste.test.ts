@@ -13,6 +13,8 @@ import { cellAround } from './util';
 
 // ********************************************************************************
 // == Table Copy Paste Test =======================================================
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-copypaste.js
+
 describe('pastedCells', () => {
   const executePastedCellsTest = (sliceNode: ProseMirrorNodeWithTag, width: number | null, height?: number, content?: ProseMirrorNode[][]) => {
     const { [A]: sliceFromPos, [B]: sliceToPos } = sliceNode.tag;

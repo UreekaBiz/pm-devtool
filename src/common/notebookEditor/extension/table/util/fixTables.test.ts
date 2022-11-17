@@ -9,6 +9,8 @@ import { fixTables } from './fixTables';
 
 // ********************************************************************************
 // == Table Fixing ================================================================
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-fixtable.js
+
 const applyTableFix = (table: ProseMirrorNode) => {
   const state = EditorState.create({ doc: tableDocBuilder(table) });
   const tr = fixTables(undefined/*no oldState, inspect given state*/, state);

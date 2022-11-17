@@ -7,7 +7,10 @@ import { ANCHOR, CURSOR } from '../../test/testUtil';
 
 import { mergeCellsCommand, splitCellCommand, GetCellTypeFunctionType } from './cell';
 
+// ********************************************************************************
 // == Cell Test ===================================================================
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-commands.js
+
 describe('mergeCellsCommand', () => {
   it('does not do anything when only one Cell is selected', () =>
     executeTableTestCommand(

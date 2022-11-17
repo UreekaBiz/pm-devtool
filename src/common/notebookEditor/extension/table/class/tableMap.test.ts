@@ -10,6 +10,8 @@ import { TableRect } from './TableRect';
 const areRectsEqual = (a: TableRect, b: TableRect) => (a.left === b.left && a.right === b.right && a.top === b.top && a.bottom === b.bottom);
 
 // == Test ========================================================================
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-tablemap.js
+
 describe('TableMap', () => {
   it('finds the right shape for a simple table', () => {
     ist(
