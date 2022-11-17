@@ -5,6 +5,8 @@ import { customNanoid } from 'common';
 import { Editor } from 'notebookEditor/editor';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/react/src/ReactRenderer.tsx
+
 // == Interface ===================================================================
 export interface ReactRendererOptions {
   editor: Editor;

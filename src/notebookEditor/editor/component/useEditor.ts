@@ -5,6 +5,8 @@ import { Extension } from 'notebookEditor/extension';
 import { Editor } from '../Editor';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/UreekaBiz/pm-devtool/blob/framework-full/src/notebookEditor/editor/component/useEditor.ts
+
 // == Component ===================================================================
 export const useEditor = (extensions: Extension[], deps: DependencyList = [/*none*/]) => {
   // -- State ---------------------------------------------------------------------
