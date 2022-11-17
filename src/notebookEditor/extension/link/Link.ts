@@ -1,6 +1,6 @@
 import { find } from 'linkifyjs';
 
-import { getMarkOutputSpec, AttributeType, LinkMarkSpec, DEFAULT_LINK_TAG, MarkName, getLinkMarkType } from 'common';
+import { getLinkMarkType, getMarkOutputSpec, AttributeType, LinkMarkSpec, MarkName, DEFAULT_LINK_TAG } from 'common';
 
 import { MarkExtension } from 'notebookEditor/extension';
 import { ExtensionPriority } from 'notebookEditor/model/type';
