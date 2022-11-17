@@ -4,6 +4,8 @@ import { isValidHTMLElement, isValidRegExp } from 'notebookEditor/extension/util
 import { PM_CLASS } from 'notebookEditor/theme';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/2b69f344c713befecd4ec606df5e9ba680aa2ce8/packages/core/src/PasteRule.ts
+
 // == Constant ====================================================================
 // gets added to a Transaction whenever it comes from a paste
 const UI_EVENT_META = 'uiEvent';
@@ -137,6 +139,8 @@ export const createPasteRulePlugins = ({ rules }: {rules: PasteRule[]; }): Plugi
                 textContent = textContent.slice(0, caretOffset) + data + textContent.slice(caretOffset);
               } /* else -- do not change  default */
 
+              view.dispatch(view.state.tr.insertText(textContent));
+              return true/*handled*/;
             } /* else -- drop target is not the Editor */
 
             return false/*not handled*/;

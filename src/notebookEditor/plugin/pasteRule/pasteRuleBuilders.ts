@@ -20,7 +20,6 @@ export const createMarkPasteRule = (matcher: PasteRuleMatcher, markType: MarkTyp
     const { tr } = state;
     const captureGroup = match[match.length - 1];
     const fullMatch = match[0/*matched Text*/];
-    let markEnd = end;
 
     if(captureGroup) {
       const startSpaces = fullMatch.search(/\S/);
@@ -43,7 +42,7 @@ export const createMarkPasteRule = (matcher: PasteRuleMatcher, markType: MarkTyp
         tr.delete(start + startSpaces, textStart);
       } /* else -- Text does not start after the match start */
 
-      markEnd = start + startSpaces + captureGroup.length;
+      const markEnd = start + startSpaces + captureGroup.length;
 
       tr.addMark(start + startSpaces, markEnd, markType.create(attributes || {/*no attrs*/ }));
       tr.removeStoredMark(markType);
