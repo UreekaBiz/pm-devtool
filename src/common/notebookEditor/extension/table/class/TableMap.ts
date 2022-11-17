@@ -18,10 +18,10 @@ import { TableRect } from './TableRect';
 // to or gotten from this structure by that amount
 
 // == Type ========================================================================
-type CollisionProblemType = { type: TableProblem.Collision; row: number; pos: number; n: number; };
-type ColWidthMismatchProblemType = { type: TableProblem.ColWidthMistMatch; pos: number; colWidth: number[]; };
+type CollisionProblemType = { type: TableProblem.Collision; row: number; position: number; n: number; };
+type ColWidthMismatchProblemType = { type: TableProblem.ColWidthMistMatch; position: number; colWidth: number[]; };
 type MissingProblemType = { type: TableProblem.Missing; row: number; n: number; };
-type OverlongRowspanProblemType = { type: TableProblem.OverlongRowSpan; pos: number; n: number; };
+type OverlongRowspanProblemType = { type: TableProblem.OverlongRowSpan; position: number; n: number; };
 type ProblemType = CollisionProblemType | ColWidthMismatchProblemType | MissingProblemType | OverlongRowspanProblemType;
 
 // == Cache =======================================================================
@@ -235,7 +235,7 @@ const computeMap = (table: ProseMirrorNode) => {
       const colWidth = cellNode.attrs[AttributeType.ColWidth];
       for(let h = 0; h < rowSpan; h++) {
         if(h + row >= height) {
-          problems.push({ type: TableProblem.OverlongRowSpan, pos, n: rowSpan - h });
+          problems.push({ type: TableProblem.OverlongRowSpan, position: pos, n: rowSpan - h });
           break;
         } /* else -- h + row is not bigger than or equal to height */
 
@@ -243,7 +243,7 @@ const computeMap = (table: ProseMirrorNode) => {
         const start = mapPos + h * width;
         for(let w = 0; w < colSpan; w++) {
           if(map[start + w] == 0) { map[start + w] = pos; }
-          else { problems.push({ type: TableProblem.Collision, row, pos, n: colSpan - w }); }
+          else { problems.push({ type: TableProblem.Collision, row, position: pos, n: colSpan - w }); }
 
           const colW = colWidth && colWidth[w];
           if(colW) {
@@ -360,7 +360,7 @@ const findBadColWidths = (map: TableMap, colWidths: number[], table: ProseMirror
     }
 
     if(updated) {
-      map.problems.unshift({ type: TableProblem.ColWidthMistMatch, pos, colWidth: updated });
+      map.problems.unshift({ type: TableProblem.ColWidthMistMatch, position: pos, colWidth: updated });
     } /* else -- updated is default (null) */
   }
 };

@@ -73,20 +73,13 @@ export const TABLE_CONTAINER_CLASS = 'tableWrapper';
  * returns the {@link NodeType}s in the given {@link Schema} that
  * have a {@link TableRole} in their definition
  */
-export const getTableNodeTypes = (schema: Schema): { [nodeName: string]: NodeType; } => {
-  let result = schema.cached.tableNodeTypes;
-  if(!result) {
-    result = schema.cached.tableNodeTypes = {/*default empty*/};
+export const getTableNodeTypes = (schema: Schema): { [nodeName: string]: NodeType; } =>
+  Object.entries(schema.nodes).reduce<{ [nodeName: string]: NodeType; }>((acc, entry) => {
+    const [nodeName, nodeType] = entry;
 
-    for(let name in schema.nodes) {
-      const tableType = schema.nodes[name];
-      const { tableRole } = tableType.spec;
+    if(nodeType.spec.tableRole) {
+      return { ...acc, [nodeName]: nodeType };
+    } /* else -- not a Node with a TableRole, ignore */
 
-      if(tableRole) {
-        result[tableRole] = tableType;
-      } /* else -- Node has no tableRole */
-    }
-  }
-
-  return result;
-};
+    return acc;
+  }, {/*default empty*/});

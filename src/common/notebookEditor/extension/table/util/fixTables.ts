@@ -53,88 +53,88 @@ const fixTablesKey = new PluginKey('fix-tables');
  * it was given (i.e. if non null), or create a new one if necessary
  */
  export const fixTable = (state: EditorState, table: ProseMirrorNode, tablePos: number, tr?: Transaction) => {
-  const map = TableMap.get(table);
-  if(!map.problems) return tr/*nothing to do*/;
+  const tableMap = TableMap.get(table);
+  if(!tableMap.problems) return tr/*nothing to do*/;
 
   if(!tr) {
     tr = state.tr;
   } /* else -- use the given Transaction */
 
-  // track which rows require Cells to be added so that they can be
-  // adjusted when fixing collisions
-  const mustAdd = [/*default empty*/];
-  for(let i = 0; i < map.height; i++) {
-    mustAdd.push(0);
+  // track which rows need Cells removed so that they can be adjusted
+  // when fixing collisions
+  const mustAddCellAmounts = [/*default empty*/];
+  for(let i = 0; i < tableMap.height; i++) {
+    mustAddCellAmounts.push(0);
   }
 
-  for(let i = 0; i < map.problems.length; i++) {
-    const problem = map.problems[i];
-    if(problem.type === TableProblem.Collision) {
-      const cell = table.nodeAt(problem.pos);
+  for(let i = 0; i < tableMap.problems.length; i++) {
+    const tableMapProblem = tableMap.problems[i];
+    if(tableMapProblem.type === TableProblem.Collision) {
+      const cell = table.nodeAt(tableMapProblem.position);
       if(!cell) continue/*nothing to do*/;
 
       for(let j = 0; j < cell.attrs[AttributeType.RowSpan]; j++) {
-        mustAdd[problem.row + j] += problem.n;
+        mustAddCellAmounts[tableMapProblem.row + j] += tableMapProblem.n;
       }
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + problem.pos), null/*maintain type*/, removeColSpan(cell.attrs, cell.attrs[AttributeType.ColSpan] - problem.n, problem.n));
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, removeColSpan(cell.attrs, cell.attrs[AttributeType.ColSpan] - tableMapProblem.n, tableMapProblem.n));
 
-    } else if(problem.type == TableProblem.Missing) {
-      mustAdd[problem.row] += problem.n;
+    } else if(tableMapProblem.type == TableProblem.Missing) {
+      mustAddCellAmounts[tableMapProblem.row] += tableMapProblem.n;
 
-    } else if(problem.type === TableProblem.OverlongRowSpan) {
-      const cell = table.nodeAt(problem.pos);
+    } else if(tableMapProblem.type === TableProblem.OverlongRowSpan) {
+      const cell = table.nodeAt(tableMapProblem.position);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + problem.pos), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - problem.n));
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - tableMapProblem.n));
 
-    } else if(problem.type === TableProblem.ColWidthMistMatch) {
-      const cell = table.nodeAt(problem.pos);
+    } else if(tableMapProblem.type === TableProblem.ColWidthMistMatch) {
+      const cell = table.nodeAt(tableMapProblem.position);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + problem.pos), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.ColWidth, problem.colWidth));
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.ColWidth, tableMapProblem.colWidth));
     }
   }
 
-  let first: number | null = null/*default*/;
-  let last: number | null = null/*default*/;
-  for(let i = 0; i < mustAdd.length; i++) {
-    if(mustAdd[i]) {
-      if(first == null) first = i;
-      last = i;
+  let firstPositionToAdd: number | null = null/*default*/;
+  let lastPositionToAdd: number | null = null/*default*/;
+  for(let i = 0; i < mustAddCellAmounts.length; i++) {
+    if(mustAddCellAmounts[i]) {
+      if(firstPositionToAdd === null) {
+        firstPositionToAdd = i;
+      } /* else -- already set the first position */
+
+      lastPositionToAdd = i;
     } /* else -- no need to add */
   }
 
-  // add the necessary Cells, using a heuristic for whether to add the
-  // Cells at the start or end of the rows (if it looks like a 'bite'
-  // was taken out of the table, add Cells at the start of the row
-  // after the bite. Otherwise add them at the end).
-  for(let i = 0, pos = tablePos + 1; i < map.height; i++) {
-    const row = table.child(i);
-    const end = pos + row.nodeSize;
-    const add = mustAdd[i];
+  // add the required Cells
+  for(let rowIndex = 0, rowPosition = tablePos + 1/*inside the Table*/; rowIndex < tableMap.height; rowIndex++) {
+    const row = table.child(rowIndex);
+    const rowEnd = rowPosition + row.nodeSize;
+    const amountOfCellsToAdd = mustAddCellAmounts[rowIndex];
 
-    if(add > 0) {
-      let tableNodeTypeName = NodeName.CELL/*default*/;
+    if(amountOfCellsToAdd > 0) {
+      let typeToAdd = NodeName.CELL/*default*/;
       if(row.firstChild) {
-        tableNodeTypeName = row.firstChild.type.spec.tableRole;
+        typeToAdd = row.firstChild.type.spec.tableRole;
       } /* else -- not the first child fo the row */
 
-      const nodes: ProseMirrorNode[] = [];
-      for(let j = 0; j < add; j++) {
-        const requiredType = getTableNodeTypes(state.schema)[tableNodeTypeName];
+      const addedCells: ProseMirrorNode[] = [/*default empty*/];
+      for(let j = 0; j < amountOfCellsToAdd; j++) {
+        const requiredType = getTableNodeTypes(state.schema)[typeToAdd];
         const requiredNode = requiredType.createAndFill();
 
         if(requiredNode) {
-          nodes.push(requiredNode);
+          addedCells.push(requiredNode);
         } /* else -- could not create Node, do not add*/
       }
 
-      let side = (i == 0 || first == i - 1) && last == i ? pos + 1 : end - 1;
-      tr.insert(tr.mapping.map(side), nodes);
+      let addedCellsInsertionPos = (rowIndex === 0/*first row*/ || firstPositionToAdd === rowIndex - 1/*previous row*/) && lastPositionToAdd === rowIndex ? rowPosition + 1/*start of row*/ : rowEnd - 1/*end of row but still inside it*/;
+      tr.insert(tr.mapping.map(addedCellsInsertionPos), addedCells);
     }
 
-    pos = end;
+    rowPosition = rowEnd;
   }
 
   return tr.setMeta(fixTablesKey, { fixTables: true });
@@ -142,28 +142,30 @@ const fixTablesKey = new PluginKey('fix-tables');
 
 // == Util ========================================================================
 /**
- * iterate through the Nodes that changed in a Document comparing it to the
- * previous one
+ * iterate through the Nodes that changed in a Doc comparing it
+ * to the previous one
  */
 const changedDescendants = (oldDoc: ProseMirrorNode, currentDoc: ProseMirrorNode, offset: number, callback: (node: ProseMirrorNode, offset: number) => void) => {
-  const oldSize = oldDoc.childCount;
-  const curSize = currentDoc.childCount;
+  const oldChildCount = oldDoc.childCount,
+        currentChildCount = currentDoc.childCount;
 
-  outerLoop: for(let i = 0, j = 0; i < curSize; i++) {
-    const child = currentDoc.child(i);
-    for(let scan = j, e = Math.min(oldSize, i + 3); scan < e; scan++) {
-      if(oldDoc.child(scan) == child) {
-        j = scan + 1;
-        offset += child.nodeSize;
+  outerLoop: for(let oldDocChildIndex = 0, currentDocChildIndex = 0; currentDocChildIndex < currentChildCount; currentDocChildIndex++) {
+    const currentDocChild = currentDoc.child(currentDocChildIndex);
+
+    for(let scanChildIndex = oldDocChildIndex, e = Math.min(oldChildCount, currentDocChildIndex + 3); scanChildIndex < e; scanChildIndex++) {
+      if(oldDoc.child(scanChildIndex) === currentDocChild) {
+        oldDocChildIndex = scanChildIndex + 1;
+        offset += currentDocChild.nodeSize;
         continue outerLoop;
       } /* else -- does not equal the child, do nothing special */
     }
 
-    callback(child, offset);
+    callback(currentDocChild, offset);
 
-    if(j < oldSize && oldDoc.child(j).sameMarkup(child)) { changedDescendants(oldDoc.child(j), child, offset + 1, callback); }
-    else { child.nodesBetween(0, child.content.size, callback, offset + 1); }
-    offset += child.nodeSize;
+    if(oldDocChildIndex < oldChildCount && oldDoc.child(oldDocChildIndex).sameMarkup(currentDocChild)) { changedDescendants(oldDoc.child(oldDocChildIndex), currentDocChild, offset + 1, callback); }
+    else { currentDocChild.nodesBetween(0/*start of child*/, currentDocChild.content.size, callback, offset + 1/*start 1 past the offset*/); }
+
+    offset += currentDocChild.nodeSize;
   }
 };
 
