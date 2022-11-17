@@ -30,10 +30,9 @@ import { removeColSpan, setTableNodeAttributes } from '.';
  */
 export type PastedCellsReturnType = { height: number; width: number; rows: Fragment[]; } | null;
 export const pastedCells = (slice: Slice): PastedCellsReturnType => {
-  if(!slice.size) return null/*nothing to do*/;
+  if(!slice.size) return null/*empty slice, nothing to do*/;
 
   let { content, openStart, openEnd } = slice;
-
   while(content.childCount === 1 && content.firstChild && ((openStart > 0 && openEnd > 0) || content.firstChild.type.spec.tableRole === TableRole.Table)) {
     openStart--;
     openEnd--;
@@ -45,84 +44,80 @@ export const pastedCells = (slice: Slice): PastedCellsReturnType => {
 
   const firstChildRole = firstChild.type.spec.tableRole;
   const schema = firstChild.type.schema;
-  const rows = [];
+  const pastedRows = [/*default empty*/];
 
   if(firstChildRole === TableRole.Row) {
     for(let i = 0; i < content.childCount; i++) {
-      let cells = content.child(i).content;
-
-      const left = i ? 0/*default*/ : Math.max(0, openStart - 1);
-      const right = i < content.childCount - 1 ? 0/*default*/ : Math.max(0, openEnd - 1);
-      if(left || right) {
-        cells = fitSlice(getTableNodeTypes(schema)[NodeName.ROW], new Slice(cells, left, right)).content;
+      let pastedCells = content.child(i).content;
+      const sliceOpenStart = i ? 0/*default*/ : Math.max(0, openStart - 1);
+      const sliceOpenEnd = i < content.childCount - 1 ? 0/*default*/ : Math.max(0, openEnd - 1);
+      if(sliceOpenStart || sliceOpenEnd) {
+        pastedCells = fitSlice(getTableNodeTypes(schema)[NodeName.ROW], new Slice(pastedCells, sliceOpenStart, sliceOpenEnd)).content;
       } /* else -- both left and right are 0 */
 
-      rows.push(cells);
+      pastedRows.push(pastedCells);
     }
   } else if(firstChildRole === TableRole.Cell || firstChildRole === TableRole.HeaderCell) {
-    rows.push(openStart || openEnd ? fitSlice(getTableNodeTypes(schema)[NodeName.ROW], new Slice(content, openStart, openEnd)).content : content);
+    pastedRows.push(openStart || openEnd ? fitSlice(getTableNodeTypes(schema)[NodeName.ROW], new Slice(content, openStart, openEnd)).content : content);
   } else {
     return null/*nothing to do*/;
   }
 
-  return ensureRectangular(schema, rows);
+  return ensureRectangular(schema, pastedRows);
 };
 
 // insert the given Cells (as returned by 'pastedCells') into a Table
 // at the position pointed at by the given rect
 export const insertCells = (state: EditorState, dispatch: DispatchType, tableStart: number, rect: TableRect, cells: { height: number; width: number; rows: Fragment[];}) => {
-  let table = tableStart ? state.doc.nodeAt(tableStart - 1) : state.doc;
+  let table = tableStart ? state.doc.nodeAt(tableStart - 1/*the Table itself*/) : state.doc;
   if(!table) return/*nothing to do*/;
 
-  let map = TableMap.get(table);
-  const { top, left } = rect;
-  const right = left + cells.width;
-  const bottom = top + cells.height;
+  let tableMap = TableMap.get(table);
+  const { top, left } = rect,
+        right = left + cells.width,
+        bottom = top + cells.height;
 
   const tr = state.tr;
-  let mapFrom = 0;
-
+  let mapFrom = 0/*default*/;
   const recomputeTableMap = () => {
-    table = tableStart ? tr.doc.nodeAt(tableStart - 1) : tr.doc;
+    table = tableStart ? tr.doc.nodeAt(tableStart - 1/*the Table itself*/) : tr.doc;
     if(!table) return/*nothing to do*/;
 
-    map = TableMap.get(table);
+    tableMap = TableMap.get(table);
     mapFrom = tr.mapping.maps.length;
   };
 
-  // prepare the Table to be large enough and not have any Cells crossing the
-  // boundaries of the Rectangle that it must be inserted into. If anything
-  // about it changes, recompute the TableMap so that subsequent operations
-  // can see the current shape
-  if(growTable(tr, map, table, tableStart, right, bottom, mapFrom)) {
+  // modify the Table to be large enough and not have Cells crossing boundaries
+  // of the TableRect they will be inserted into. Recompute the TableMap
+  // when something changes
+  if(growTable(tr, tableMap, table, tableStart, right, bottom, mapFrom)) {
     recomputeTableMap();
   } /* else -- no need to growTable */
 
-  if(isolateHorizontal(tr, map, table, tableStart, left, right, top, mapFrom)) {
+  if(isolateHorizontal(tr, table, tableMap, tableStart, left, right, top, mapFrom)) {
     recomputeTableMap();
   } /* else -- did not need to isolate horizontally */
 
-  if(isolateHorizontal(tr, map, table, tableStart, left, right, bottom, mapFrom)) {
+  if(isolateHorizontal(tr, table, tableMap, tableStart, left, right, bottom, mapFrom)) {
     recomputeTableMap();
   } /* else -- did not need to isolate horizontally */
 
-  if(isolateVertical(tr, map, table, tableStart, top, bottom, left, mapFrom)) {
+  if(isolateVertical(tr, table, tableMap, tableStart, top, bottom, left, mapFrom)) {
     recomputeTableMap();
   } /* else -- did not need to isolate vertically */
 
-  if(isolateVertical(tr, map, table, tableStart, top, bottom, right, mapFrom)) {
+  if(isolateVertical(tr, table, tableMap, tableStart, top, bottom, right, mapFrom)) {
     recomputeTableMap();
   } /* else -- did not need to isolate vertically */
 
   for(let row = top; row < bottom; row++) {
-    const from = map.positionAt(row, left, table);
-    const to = map.positionAt(row, right, table);
+    const from = tableMap.positionAt(row, left, table),
+          to = tableMap.positionAt(row, right, table);
     tr.replace(tr.mapping.slice(mapFrom).map(from + tableStart), tr.mapping.slice(mapFrom).map(to + tableStart), new Slice(cells.rows[row - top], 0/*use full Slice*/, 0/*use full Slice*/));
   }
 
   recomputeTableMap();
-
-  tr.setSelection(new CellSelection(tr.doc.resolve(tableStart + map.positionAt(top, left, table)), tr.doc.resolve(tableStart + map.positionAt(bottom - 1, right - 1, table))));
+  tr.setSelection(new CellSelection(tr.doc.resolve(tableStart + tableMap.positionAt(top, left, table)), tr.doc.resolve(tableStart + tableMap.positionAt(bottom - 1/*account for 0 indexing*/, right - 1/*account for 0 indexing*/, table))));
 
   if(dispatch) {
     dispatch(tr);
@@ -130,20 +125,19 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
 };
 
 /**
- * clip or extend (repeat) the given set of Cells to cover the given
- * width and height. Will clip rowSpan/colSpan cells at the edges when they
- * stick out
+ * clip or (repeat) the given Cells to cover the given
+ * width and height. Will Cells at the edges if required
  */
  export const clipCells = ({ width, height, rows }: { width: number; height: number; rows: Fragment[]; }, newWidth: number, newHeight: number) => {
   if(width !== newWidth) {
-    const added: number[] = [];
-    const newRows = [];
+    const addedCellPositions: number[] = [];
+    const newRows = [/*default empty*/];
 
     for(let row = 0; row < rows.length; row++) {
       const fragment = rows[row];
-      const cells = [];
+      const cells = [/*default empty*/];
 
-      for(let col = added[row] || 0, i = 0; col < newWidth; i++) {
+      for(let col = addedCellPositions[row] || 0, i = 0; col < newWidth; i++) {
         let cell = fragment.child(i % fragment.childCount);
         if(col + cell.attrs[AttributeType.ColSpan] > newWidth) {
           cell = cell.type.create(removeColSpan( cell.attrs, cell.attrs[AttributeType.ColSpan], col + cell.attrs[AttributeType.ColSpan] - newWidth), cell.content);
@@ -153,7 +147,7 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
         col += cell.attrs[AttributeType.ColSpan];
 
         for(let j = 1; j < cell.attrs[AttributeType.RowSpan]; j++) {
-          added[row + j] = (added[row + j] || 0) + cell.attrs[AttributeType.ColSpan];
+          addedCellPositions[row + j] = (addedCellPositions[row + j] || 0) + cell.attrs[AttributeType.ColSpan];
         }
       }
       newRows.push(Fragment.from(cells));
@@ -163,13 +157,13 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
   }
 
   if(height !== newHeight) {
-    const newRows = [];
+    const newRows = [/*default empty*/];
     for(let row = 0, i = 0; row < newHeight; row++, i++) {
-      const cells = [];
-      const source = rows[i % height];
+      const cells = [/*default empty*/];
+      const sourceCell = rows[i % height];
 
-      for(let j = 0; j < source.childCount; j++) {
-        let cell = source.child(j);
+      for(let j = 0; j < sourceCell.childCount; j++) {
+        let cell = sourceCell.child(j);
         if(row + cell.attrs[AttributeType.RowSpan] > newHeight) {
           cell = cell.type.create(setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.max(1, newHeight - cell.attrs[AttributeType.RowSpan])), cell.content);
         } /* else -- no need to recreate Cell */
@@ -197,8 +191,7 @@ export const fitSlice = (nodeType: NodeType, slice: Slice) => {
 
 
 // == Util ========================================================================
-// ensure that a Table has at least the given width and height. Return true
-// if something was changed
+// ensure that a Table has the given width and height
 const growTable = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start: number, width: number, height: number, mapFrom: number) => {
   const schema = tr.doc.type.schema;
   const tableTypes = getTableNodeTypes(schema);
@@ -209,7 +202,8 @@ const growTable = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start
   if(width > map.width) {
     for(let row = 0, rowEnd = 0; row < map.height; row++) {
       let rowNode = table.child(row);
-      rowEnd += rowNode.nodeSize;
+          rowEnd += rowNode.nodeSize;
+
       const cells: ProseMirrorNode[] = [];
       let addedNode: ProseMirrorNode | null = null/*default*/;
 
@@ -222,12 +216,12 @@ const growTable = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start
         } /* else -- do not add */
       }
 
-      tr.insert(tr.mapping.slice(mapFrom).map(rowEnd - 1 + start), cells);
+      tr.insert(tr.mapping.slice(mapFrom).map(rowEnd - 1/*inside it*/ + start), cells);
     }
   } /* else -- no need to adjust width */
 
   if(height > map.height) {
-    const cells: ProseMirrorNode[] = [];
+    const cells: ProseMirrorNode[] = [/*default empty*/];
     for(let i = 0, start = (map.height - 1) * map.width; i < Math.max(map.width, width); i++) {
       const addHeaderCellNode = i >= map.width ? false : table.nodeAt(map.map[start + i])?.type === tableTypes[NodeName.HEADER_CELL];
 
@@ -251,35 +245,34 @@ const growTable = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start
     }
 
     const emptyRow = tableTypes[NodeName.ROW].create(null/*no attrs*/, Fragment.from(cells));
-    const rows = [];
+    const rows = [/*default empty*/];
     for(let i = map.height; i < height; i++) {
       rows.push(emptyRow);
     }
 
-    tr.insert(tr.mapping.slice(mapFrom).map(start + table.nodeSize - 2), rows);
+    tr.insert(tr.mapping.slice(mapFrom).map(start + table.nodeSize - 2/*account for start and end*/), rows);
   } /* else -- no need to adjust height */
 
-
+  // return true if something changed
   return !!(emptyCell || emptyHeader);
 };
 
-// make sure the given line (left, top) to (left, bottom) does not
-// cross any colSpan Cells by splitting Cells that cross it. Return
-// true if something changed
-const isolateVertical = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start: number, top: number, bottom: number, left: number, mapFrom: number) => {
-  if(left === 0 || left === map.width) return false/*nothing to do*/;
+// ensure the line going from (left, top) to (left, bottom) does not
+// cross column spanning Cells by splitting those that do
+const isolateVertical = (tr: Transaction, table: ProseMirrorNode, tableMap: TableMap, start: number, top: number, bottom: number, left: number, mapFrom: number) => {
+  if(left === 0 || left === tableMap.width) return false/*nothing to do*/;
 
-  let found = false/*default*/;
+  let isolatedCellsVertically = false/*default*/;
   for(let row = top; row < bottom; row++) {
-    const index = row * map.width + left;
-    const pos = map.map[index];
+    const index = row * tableMap.width + left;
+    const pos = tableMap.map[index];
 
-    if(map.map[index - 1] == pos) {
-      found = true;
+    if(tableMap.map[index - 1] === pos) {
+      isolatedCellsVertically = true;
       const cell = table.nodeAt(pos);
       if(!cell) continue/*Cell does not exist, nothing to do*/;
 
-      const cellLeft = map.colCount(pos);
+      const cellLeft = tableMap.colCount(pos);
       const updatePos = tr.mapping.slice(mapFrom).map(pos + start);
 
       tr.setNodeMarkup(updatePos, null/*maintain type*/, removeColSpan( cell.attrs, left - cellLeft, cell.attrs[AttributeType.ColSpan] - (left - cellLeft)));
@@ -292,82 +285,81 @@ const isolateVertical = (tr: Transaction, map: TableMap, table: ProseMirrorNode,
     }
   }
 
-  return found;
+  return isolatedCellsVertically;
 };
 
-// make sure that the given line (left, top) to (right, top) does not
-// cross any rowSpan Cells by splitting Cells that cross it. Return
-// true if something changed
-const isolateHorizontal = (tr: Transaction, map: TableMap, table: ProseMirrorNode, start: number, left: number, right: number, top: number, mapFrom: number) => {
-  if(top === 0 || top === map.height) return false/*nothing to do*/;
+// ensure the line going from (left, top) to (right, top) does not
+// cross row spanning Cells by splitting those that do
+const isolateHorizontal = (tr: Transaction, table: ProseMirrorNode, tableMap: TableMap, start: number, left: number, right: number, top: number, mapFrom: number) => {
+  if(top === 0 || top === tableMap.height) return false/*nothing to do*/;
 
-  let found = false/*default*/;
+  let isolatedCellsHorizontally = false/*default*/;
   for(let col = left; col < right; col++) {
-    const index = top * map.width + col;
-    const pos = map.map[index];
+    const cellPosIndex = top * tableMap.width + col;
+    const cellPos = tableMap.map[cellPosIndex];
 
-    if(map.map[index - map.width] === pos) {
-      found = true;
-      const cell = table.nodeAt(pos);
+    if(tableMap.map[cellPosIndex - tableMap.width] === cellPos) {
+      isolatedCellsHorizontally = true;
+      const cell = table.nodeAt(cellPos);
       if(!cell) continue/*Cell does not exist, nothing to do*/;
 
-      const { top: cellTop, left: cellLeft } = map.findCell(pos);
-      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + start), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, top - cellTop));
+      const { top: cellTop, left: cellLeft } = tableMap.findCell(cellPos);
+      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(cellPos + start), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, top - cellTop));
 
       const newCell = cell.type.createAndFill(setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cellTop + cell.attrs[AttributeType.RowSpan] - top));
       if(!newCell) continue/*could not create Cell, do nothing*/;
 
-      tr.insert(tr.mapping.slice(mapFrom).map(map.positionAt(top, cellLeft, table)), newCell);
+      tr.insert(tr.mapping.slice(mapFrom).map(tableMap.positionAt(top, cellLeft, table)), newCell);
 
       col += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- no need to change anything */
   }
 
-  return found;
+  return isolatedCellsHorizontally;
 };
 
 /**
- * compute the width and height of a set of Cells and make sure each Row
- * has the same number of Cells
+ * compute the width and height of the given Cells, ensuring that Rows
+ * have the same number of them
  */
  const ensureRectangular = (schema: Schema, rows: Fragment[]) => {
-  const widths: number[] = [];
-  for(let i = 0; i < rows.length; i++) {
-    const row = rows[i];
+  const rowWidths: number[] = [];
+  for(let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    const row = rows[rowIndex];
 
-    for(let j = row.childCount - 1; j >= 0; j--) {
-      const colSpan = row.child(j).attrs[AttributeType.ColSpan];
-      const rowSpan = row.child(j).attrs[AttributeType.RowSpan];
+    for(let rowChildIndex = row.childCount - 1; rowChildIndex >= 0; rowChildIndex--) {
+      const colSpan = row.child(rowChildIndex).attrs[AttributeType.ColSpan];
+      const rowSpan = row.child(rowChildIndex).attrs[AttributeType.RowSpan];
 
-      for(let r = i; r < i + rowSpan; r++) {
-        widths[r] = (widths[r] || 0) + colSpan;
+      for(let rowWidthIndex = rowIndex; rowWidthIndex < rowIndex + rowSpan; rowWidthIndex++) {
+        rowWidths[rowWidthIndex] = (rowWidths[rowWidthIndex] || 0) + colSpan;
       }
     }
   }
 
-  let width = 0;
-  for(let r = 0; r < widths.length; r++) {
-    width = Math.max(width, widths[r]);
+  let maxWidth = 0/*default*/;
+  for(let rowWidthIndex = 0; rowWidthIndex < rowWidths.length; rowWidthIndex++) {
+    maxWidth = Math.max(maxWidth, rowWidths[rowWidthIndex]);
   }
 
-  for(let r = 0; r < widths.length; r++) {
-    if(r >= rows.length) {
+  for(let rowIndex = 0; rowIndex < rowWidths.length; rowIndex++) {
+    if(rowIndex >= rows.length) {
       rows.push(Fragment.empty);
     } /* else -- not bigger than the length of the rows array */
 
-    if(widths[r] < width) {
+    if(rowWidths[rowIndex] < maxWidth) {
       const emptyCell = getTableNodeTypes(schema)[NodeName.CELL].createAndFill();
-      const cells: ProseMirrorNode[] = [];
+      const cells: ProseMirrorNode[] = [/*default empty*/];
 
-      for(let i = widths[r]; i < width; i++) {
+      for(let i = rowWidths[rowIndex]; i < maxWidth; i++) {
         if(emptyCell) {
           cells.push(emptyCell);
         } /* else -- could not create empty Cell, do nothing */
       }
 
-      rows[r] = rows[r].append(Fragment.from(cells));
+      rows[rowIndex] = rows[rowIndex].append(Fragment.from(cells));
     } /* else -- row width is not smaller than width, no need to change */
   }
 
-  return { height: rows.length, width, rows };
+  return { height: rows.length, width: maxWidth, rows };
 };
