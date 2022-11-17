@@ -38,18 +38,14 @@ export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier)
 type NodePredicate = (node: ProseMirrorNode) => boolean;
 type FindParentNodeClosestToPosReturnObjType = { pos: number; start: number; depth: number; node: ProseMirrorNode; } | undefined
 export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePredicate): FindParentNodeClosestToPosReturnObjType => {
-  for(let i = $pos.depth; i > 0; i -= 1) {
-    const node = $pos.node(i);
-    if(predicate(node)) {
-      return {
-        pos: i > 0 ? $pos.before(i) : 0,
-        start: $pos.start(i),
-        depth: i,
-        node,
-      };
+  for(let depth = $pos.depth; depth > 0; depth--) {
+    const nodeAtDepth = $pos.node(depth);
+    if(predicate(nodeAtDepth)) {
+      return { pos: depth > 0 ? $pos.before(depth) : 0/*doc depth*/, start: $pos.start(depth), depth: depth, node: nodeAtDepth, };
     } /* else -- ignore Node */
   }
-  return/*undefined*/;
+
+  return/*default undefined*/;
 };
 
 /**
