@@ -2,7 +2,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 
 import { drawCellSelection, fixTables, normalizeSelection } from 'common';
 
-import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleCellSelectionMousedown } from '../tableInput';
+import { handleCellTripleClick, handleTableArrowKeydown, handleTablePaste, handleCellSelectionMousedown } from '../tableInput';
 
 // == Constant ====================================================================
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/index.js
@@ -81,8 +81,8 @@ export const tableEditingPlugin = (allowTableNodeSelection = false/*default*/) =
         return null/*no Selection*/;
       },
 
-      handleTripleClick,
+      handleTripleClick: handleCellTripleClick,
       handleKeyDown: handleTableArrowKeydown,
-      handlePaste,
+      handlePaste: handleTablePaste,
     },
   });
