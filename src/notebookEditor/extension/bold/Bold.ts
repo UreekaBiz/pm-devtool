@@ -21,10 +21,10 @@ const cssFontWeightRegex = /^(bold(er)?|[5-9]\d{2}|1000)$/;
 
 // NOTE: these are Markdown equivalents
 export const starInputRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))$/;
-export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))$/;
+export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^(__)]+))(?:__))$/;
 
 export const starPasteRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))/g;
-export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))/g;
+export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^(__)]+))(?:__))/g;
 
 // == Mark ========================================================================
 export const Bold = new MarkExtension({
