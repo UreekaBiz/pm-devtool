@@ -9,6 +9,8 @@ import { isInTable, selectedRect } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
 // ********************************************************************************
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/commands.js
+
 /** toggles between row/column Header and normal Cells (only applies to first row/column) */
 export const toggleHeaderCommand = (type: 'row' | 'column' | 'cell'): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new ToggleHeaderDocumentUpdate(type).update(state, state.tr), dispatch);

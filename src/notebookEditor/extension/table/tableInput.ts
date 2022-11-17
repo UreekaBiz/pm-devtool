@@ -9,6 +9,8 @@ import { tableEditingPluginKey } from './plugin/tableEditing';
 import { isValidHTMLElement } from '../util';
 
 // ********************************************************************************
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/input.js
+
 // helpers for wiring up User input to Table related functionality
 
 // == Arrow =======================================================================

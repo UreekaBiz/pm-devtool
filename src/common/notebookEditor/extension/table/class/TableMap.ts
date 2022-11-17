@@ -5,6 +5,8 @@ import { TableRole, TableProblem } from '../type';
 import { TableRect } from './TableRect';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/tablemap.js
+
 // this code builds up a descriptive structure for a given
 // Table node. The structures are cached with the (persistent) Table
 // Nodes as key, so that they only have to be recomputed when the

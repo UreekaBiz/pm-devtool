@@ -17,6 +17,8 @@ import { AbstractDocumentUpdate } from '../../type';
 import { createTable } from './util';
 
 // ********************************************************************************
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/commands.js
+
 // == Type ========================================================================
 type OptionalRectProps = { table: ProseMirrorNode | null | undefined; tableMap: TableMap | null | undefined; tableStart: number | null | undefined; };
 

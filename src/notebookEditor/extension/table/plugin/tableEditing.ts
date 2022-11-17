@@ -2,9 +2,11 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 
 import { drawCellSelection, fixTables, normalizeSelection } from 'common';
 
-import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleCellSelectionMousedown } from '../input';
+import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleCellSelectionMousedown } from '../tableInput';
 
 // == Constant ====================================================================
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/index.js
+
 // This file defines a plugin that handles the drawing of cell
 // selections and the basic user interactions for creating and working
 // with such selections. It also makes sure that, after each

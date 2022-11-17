@@ -8,6 +8,8 @@ import { getHeaderCellNodeType } from '../node/headerCell';
 import { TableRole } from '../type';
 
 // ********************************************************************************
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
+
 // == Table =======================================================================
 /** check if the head of the {@link EditorState} Selection is in a Table */
 export const isInTable = (state: EditorState) => {

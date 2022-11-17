@@ -8,6 +8,8 @@ import { isValidHTMLElement } from 'notebookEditor/extension/util';
 import { updateTableColumns } from '../node';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/columnresizing.js
+
 // == Constant ====================================================================
 const RESIZE_HANDLE_CLASS = 'resize-cursor'/*(SEE: table.css)*/;
 const DEFAULT_CLASS_OBJ = { class: ''/*none*/ };

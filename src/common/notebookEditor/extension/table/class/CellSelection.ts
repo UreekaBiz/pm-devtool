@@ -11,6 +11,8 @@ import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from
 import { TableRole } from '../type';
 import { TableMap } from './TableMap';
 
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/cellselection.js
+
 // This file defines a ProseMirror selection subclass that models
 // table cell selections. The table plugin needs to be active to wire
 // in the user interaction part of table selections (so that you

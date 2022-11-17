@@ -10,6 +10,8 @@ import { addColSpan, cellAround, findCellWrapperNode, isInTable, moveCellForward
 import { AbstractDocumentUpdate } from '../../type';
 
 // ********************************************************************************
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/commands.js
+
 /**
  * merge the selected Cells into a single Cell, only available
  * when the selected Cell's outline forms a Rectangle

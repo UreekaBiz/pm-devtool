@@ -11,6 +11,8 @@ import { TableRole } from '../type';
 import { removeColSpan, setTableNodeAttributes } from '.';
 
 // ********************************************************************************
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/copypaste.js
+
 // handle pasting Cell content into Tables, or pasting
 // anything into a CellSelection, as replacing a block of Cells with
 // the content of the Selection. When pasting Cells into a Cell, that

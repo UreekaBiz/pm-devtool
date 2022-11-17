@@ -5,6 +5,8 @@ import { Unit } from 'notebookEditor/theme';
 
 // ********************************************************************************
 // == Update ======================================================================
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/tableview.js
+
 /** update the Columns of a Table */
 export const updateTableColumns = (node: TableNodeType, columnGroup: HTMLTableColElement, tableDOM: HTMLTableElement, minimumCellWidth: number, overrideCol?: number, overrideValue?: number) => {
   let totalWidth = 0/*default*/;

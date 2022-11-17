@@ -9,10 +9,13 @@ import { getTableNodeTypes } from '../node';
 import { TableProblem, TableRole } from '../type';
 import { setTableNodeAttributes, removeColSpan } from '../util';
 
+
+// ********************************************************************************
+// NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/fixtables.js
+
 // helpers for normalizing Table Nodes, ensuring no Cells overlap and that each
 // row has the same width, using problems reported by TableMap
 
-// ********************************************************************************
 // == Constant ====================================================================
 const fixTablesKey = new PluginKey('fix-tables');
 

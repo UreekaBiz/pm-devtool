@@ -29,6 +29,7 @@ export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier)
   return nodeFound;
 };
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/helpers/findParentNodeClosestToPos.ts
 /**
  * look for the closest parent Node that matches the given {@link Predicate}
  * and return a {@link FindParentNodeClosestToPosReturnType} object
