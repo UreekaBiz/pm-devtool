@@ -5,7 +5,6 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 // ********************************************************************************
 // REF: https://discuss.prosemirror.net/t/cursor-appears-in-the-wrong-position-in-chrome-98/4409
-
 /**
  * this Plugin prevents wrong cursor position when the Selection is between two
  * inline Nodes that are not Text, which is a bug that happens on Chrome
@@ -13,7 +12,6 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
  * Decorations, and also managing the behavior of typing in between them
  */
 
-// NOTE: this is inspired by https://github.com/Saul-Mirone/milkdown/blob/main/packages/preset-commonmark/src/plugin/inline-nodes-cursor.ts
 
 // == Class =======================================================================
 class InBetweenInlineAtomsState {
@@ -55,6 +53,7 @@ export const inBetweenInlineAtomsPlugin = () => {
     },
 
     // -- Props -------------------------------------------------------------------
+    // NOTE: this is inspired by https://github.com/Saul-Mirone/milkdown/blob/main/packages/preset-commonmark/src/plugin/inline-nodes-cursor.ts
     props: {
       handleDOMEvents: {
         // REF: https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event

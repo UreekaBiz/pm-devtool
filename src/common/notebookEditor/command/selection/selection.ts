@@ -27,12 +27,13 @@ export class SetSelectionDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/setTextSelection.ts
 /** set a TextSelection given the Range */
 export const setTextSelectionCommand = (selectionRange: SelectionRange): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SetTextSelectionDocumentUpdate(selectionRange).update(state, state.tr), dispatch);
 export class SetTextSelectionDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly selectionRange: SelectionRange) {/*nothing additional*/}
+
+  // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/setTextSelection.ts
   /*
    * modify the given Transaction such that a TextSelection
    * is set across the given Range
@@ -66,27 +67,28 @@ export class SelectTextBlockStartOrEndDocumentUpdate implements AbstractDocument
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = editorState;
 
-    const $pos = this.side === 'start' ? selection.$from : selection.$to;
-    if(($pos.parent.type.name !== this.nodeName)) return false/*should not be handled by this Node*/;
+    const startOrEndPos = this.side === 'start' ? selection.$from : selection.$to;
+    if((startOrEndPos.parent.type.name !== this.nodeName)) return false/*should not be handled by this Node*/;
 
-    let depth = $pos.depth;
-    while($pos.node(depth).isInline) {
+    let depth = startOrEndPos.depth;
+    while(startOrEndPos.node(depth).isInline) {
       if(!depth) return false/*reached 0, depth of the Doc*/;
       depth--;
     }
-    if(!$pos.node(depth).isTextblock) return false/*highest depth available is not a TextBlock*/;
+    if(!startOrEndPos.node(depth).isTextblock) return false/*highest depth available is not a TextBlock*/;
 
-    tr.setSelection(TextSelection.create(editorState.doc, this.side === 'start' ? $pos.start(depth) : $pos.end(depth)));
+    tr.setSelection(TextSelection.create(editorState.doc, this.side === 'start' ? startOrEndPos.start(depth) : startOrEndPos.end(depth)));
     return tr/*updated*/;
   }
 }
 
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/313b8b8d0af7059c420ffc96c9362f0f4acc2138/packages/core/src/commands/setNodeSelection.ts
 /** set a NodeSelection at the given position */
 export const setNodeSelectionCommand = (nodePos: number): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SetNodeSelectionDocumentUpdate(nodePos).update(state, state.tr), dispatch);
 export class SetNodeSelectionDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodePos: number) {/*nothing additional*/}
+
+  // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/313b8b8d0af7059c420ffc96c9362f0f4acc2138/packages/core/src/commands/setNodeSelection.ts
   /*
    * modify the given Transaction such that a NodeSelection
    * is set at the given position
@@ -145,7 +147,6 @@ export class DeleteSelectionDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // ................................................................................
-// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L155
 /**
  * When the Selection is empty and at the start of a Text Block, select
  * the Node before that Text Block if possible
@@ -155,6 +156,7 @@ export const selectNodeBackwardCommand: Command = (state, dispatch, view) =>
 export class SelectNodeBackwardDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
+  // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L155
   /*
    * modify the given Transaction such that when the Selection is at
    * the start of a Text Block, the Node before it is selected
@@ -175,10 +177,10 @@ export class SelectNodeBackwardDocumentUpdate implements AbstractDocumentUpdate 
       $cutPos = findCutBefore($head);
     } /* else -- parent of $head is not a Text Block*/
 
-    const node = $cutPos && $cutPos.nodeBefore;
-    if(!node || !NodeSelection.isSelectable(node) || !$cutPos) return false;
+    const nodeBeforeCut = $cutPos && $cutPos.nodeBefore;
+    if(!nodeBeforeCut || !NodeSelection.isSelectable(nodeBeforeCut) || !$cutPos) return false;
 
-    tr.setSelection(NodeSelection.create(editorState.doc, $cutPos.pos - node.nodeSize)).scrollIntoView();
+    tr.setSelection(NodeSelection.create(editorState.doc, $cutPos.pos - nodeBeforeCut.nodeSize)).scrollIntoView();
     return tr/*updated*/;
   }
 }
@@ -192,6 +194,7 @@ export const selectNodeForwardCommand: Command = (state, dispatch, view) =>
 export class SelectNodeForwardDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
+  // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L155
   /*
    * modify the given Transaction such that when the Selection is at
    * the end of a Text Block, the Node after it is selected
@@ -213,8 +216,8 @@ export class SelectNodeForwardDocumentUpdate implements AbstractDocumentUpdate {
       $cut = findCutAfter($head);
     } /* else -- $head's parent is not a TextBlock */
 
-    const node = $cut && $cut.nodeAfter;
-    if(!node || !NodeSelection.isSelectable(node)) return false;
+    const nodeAfterCut = $cut && $cut.nodeAfter;
+    if(!nodeAfterCut || !NodeSelection.isSelectable(nodeAfterCut)) return false;
 
     tr.setSelection(NodeSelection.create(editorState.doc, $cut!.pos)).scrollIntoView();
     return tr/*updated*/;

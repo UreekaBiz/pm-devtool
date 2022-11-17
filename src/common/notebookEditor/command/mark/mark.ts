@@ -7,13 +7,13 @@ import { AbstractDocumentUpdate } from '../type';
 
 // ********************************************************************************
 // == Setter ======================================================================
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/17a41da5a7a14879cf490c81914084791c4c494c/packages/core/src/commands/setMark.ts
 /** set a Mark across the current Selection */
 export const setMarkCommand = (markName: MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SetMarkDocumentUpdate(markName, attributes).update(state, state.tr), dispatch);
 export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
+  // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/17a41da5a7a14879cf490c81914084791c4c494c/packages/core/src/commands/setMark.ts
   /*
    * modify the given Transaction such that a Mark
    * is set across the current Selection, and return it
@@ -26,8 +26,8 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
       tr.addStoredMark(markType.create({ ...oldAttributes, ...this.attributes }));
     } else {
       ranges.forEach(range => {
-        const from = range.$from.pos;
-        const to = range.$to.pos;
+        const from = range.$from.pos,
+              to = range.$to.pos;
 
         editorState.doc.nodesBetween(from, to, (node, pos) => {
           const trimmedFrom = Math.max(pos, from);
@@ -40,7 +40,7 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
             node.marks.forEach(mark => {
               if(markType === mark.type) {
                 tr.addMark(trimmedFrom, trimmedTo, markType.create({ ...mark.attrs, ...this.attributes }));
-              }
+              } /* else -- Mark of type not present */
             });
           } else {
             tr.addMark(trimmedFrom, trimmedTo, markType.create(this.attributes));
@@ -53,7 +53,6 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // --------------------------------------------------------------------------------
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/unsetMark.ts
 /**
  * Remove all Marks across the current Selection. If extendEmptyMarkRange,
  * is true, they will be removed even across (i.e. past) it
@@ -63,6 +62,7 @@ export const unsetMarkCommand = (markName: MarkName, extendEmptyMarkRange: boole
 export class UnsetMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly extendEmptyMarkRange: boolean) {/*nothing additional*/}
 
+  // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/unsetMark.ts
   /**
    * modify the given Transaction such that all Marks are removed
    * across the current Selection. If extendEmptyMarkRange,
@@ -94,26 +94,26 @@ export class UnsetMarkDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // --------------------------------------------------------------------------------
-// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L514
 /** Toggle the given Mark with the given name */
 export const toggleMarkCommand = (markType: MarkType, attributes: Partial<Attributes>): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new ToggleMarkDocumentUpdate(markType, attributes).update(state, state.tr), dispatch);
 export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markType: MarkType, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
+  // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L514
   /**
    * modify the given Transaction such that Mark with the given
    * Name is toggled
    */
   public update(editorState: EditorState, tr: Transaction) {
     const { empty, $cursor, ranges } = editorState.selection as TextSelection;
-    if((empty && !$cursor) || !markApplies(editorState.doc, ranges, this.markType)) return false;
+    if((empty && !$cursor) || !markApplies(editorState.doc, ranges, this.markType)) return false/*invalid state to toggle Mark*/;
 
     if($cursor) {
       if(this.markType.isInSet(editorState.storedMarks || $cursor.marks())) { tr.removeStoredMark(this.markType); }
       else { tr.addStoredMark(this.markType.create(this.attributes)); }
     } else {
-      let rangeHasMark = false;
+      let rangeHasMark = false/*default*/;
       for(let i = 0; !rangeHasMark && i < ranges.length; i++) {
         let { $from, $to } = ranges[i];
         rangeHasMark = editorState.doc.rangeHasMark($from.pos, $to.pos, this.markType);
@@ -137,10 +137,6 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
             } /* else -- do not change default */
           } /* else -- do not change default */
 
-
-          // NOTE: not using /\s*$/ like in the original PM implementation
-          //       since this can cause a 'Polynomial regular
-          //       expression used on uncontrolled data' LGTM warning
           let spaceEnd = 0/*default no space to account for*/;
           if(nodeBefore$ToEnd && nodeBefore$ToEnd.text) {
             spaceEnd = nodeBefore$ToEnd.text.length - nodeBefore$ToEnd.text.trimEnd().length;
@@ -163,7 +159,6 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // --------------------------------------------------------------------------------
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/extendMarkRange.ts
 /**
  * Checks to see whether the Selection currently contains a Range with a Mark
  * of the given name in it, and if it does, modifies it so that the Range covers
@@ -174,6 +169,7 @@ export const extendMarkRangeCommand = (markName: MarkName, attributes: Partial<A
 export class ExtendMarkRangeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
+  // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/extendMarkRange.ts
   /**
    * Checks to see whether the Selection currently contains a Range with a Mark
    * of the given name in it, and if it does, modifies the Transaction so that

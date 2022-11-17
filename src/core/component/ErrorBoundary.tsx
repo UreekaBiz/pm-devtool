@@ -14,15 +14,15 @@ interface Props {
   children: ReactNode;
 }
 
-interface State { hasError: boolean; redirect: boolean; }
+interface State { hasError: boolean; }
 
 // == Class =======================================================================
 class ErrorBoundary extends Component<Props, State> {
-  public state: State = { hasError: false/*no error by default*/, redirect: false/*no redirection by default*/ };
+  public state: State = { hasError: false/*no error by default*/ };
 
   public static getDerivedStateFromError(_: Error): State {
     // Update state so the next render will show the fallback UI.
-    return { hasError: true/*by definition*/, redirect: false/*set to true on button click*/ };
+    return { hasError: true/*by definition*/ };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) { console.error('Error rendering react component:', error, errorInfo); }
@@ -41,7 +41,7 @@ class ErrorBoundary extends Component<Props, State> {
           {/* WIP: Commented while removing chakra-ui/icons <WarningTwoIcon boxSize='50px' color='red' /> */}
           <Heading as='h1' marginBottom={2} marginTop={6} size='xl'>Error</Heading>
           <Text color='gray.500'>There was an error loading the App</Text>
-          <Button marginTop={5} onClick={() => this.setState({ hasError: true, redirect: true })}>Go back to main page</Button>
+          <Button marginTop={5} onClick={() => this.setState({ hasError: true })}>Go back to main page</Button>
         </Box>
       </Flex>
     );

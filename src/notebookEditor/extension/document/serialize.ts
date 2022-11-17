@@ -3,14 +3,14 @@ import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 import { NodeName } from 'common';
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-model/blob/eef20c8c6dbf841b1d70859df5d59c21b5108a4f/src/fragment.js#L46
-
 // == Constant ====================================================================
 // a Map defining specific Text serialization functions (i.e. how the Node) gets
 // pasted into the clipboard for Text only paste) for Nodes, given their NodeName
 const customSerializerMap = new Map<NodeName, (node: ProseMirrorNode) => string>(/*currently nothing*/);
 
 // == Serialize ===================================================================
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-model/blob/eef20c8c6dbf841b1d70859df5d59c21b5108a4f/src/fragment.js#L46
+
 // Define how to specifically serialize Nodes of different types to Text, so that
 // they get pasted to the clipboard as such. This will only affect their plain
 // text paste behavior, since otherwise they will be pasted as Nodes

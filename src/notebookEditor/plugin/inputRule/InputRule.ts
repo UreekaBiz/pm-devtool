@@ -2,7 +2,6 @@ import { EditorState, Plugin, Transaction, TextSelection } from 'prosemirror-sta
 import { EditorView } from 'prosemirror-view';
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-inputrules/blob/d60b7920d040e9b18ee893bad4213180fedc47f5/src/inputrules.ts
 
 // == Constant ====================================================================
 // the maximum length for the match of an InputRule
@@ -64,6 +63,7 @@ export class InputRule {
     },
 
     // -- Props -------------------------------------------------------------------
+    // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-inputrules/blob/d60b7920d040e9b18ee893bad4213180fedc47f5/src/inputrules.ts
     props: {
       // ensure that the inputRule applies on a given textInput if it matches
       handleTextInput: (view: EditorView, from: number, to: number, text: string) => {
@@ -75,7 +75,7 @@ export class InputRule {
         compositionend: (view: EditorView) => {
           let executed = false/*default*/;
           setTimeout(() => {
-            let { $cursor } = view.state.selection as TextSelection;
+            let { $cursor } = view.state.selection as TextSelection/*specifically looking for $cursor*/;
             if($cursor) {
               executeInputRule(view, $cursor.pos, $cursor.pos, '', rules, plugin);
               executed = true/*executed*/;
@@ -110,9 +110,9 @@ export const stringHandler = (replaceWithString: string) =>
       insertedText += match[0/*text to replace*/].slice(offset + match[1].length);
       start += offset;
 
-      let cutOff = start - end;
-      if(cutOff > 0) {
-        insertedText = match[0/*text to replace*/].slice(offset - cutOff, offset) + insertedText;
+      let cutOffLength = start - end;
+      if(cutOffLength > 0) {
+        insertedText = match[0/*text to replace*/].slice(offset - cutOffLength, offset) + insertedText;
         start = end;
       } /* else -- do not perform cut */
     } /* else -- no need to modify insertedText */

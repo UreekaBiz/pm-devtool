@@ -11,18 +11,17 @@ import { safeParseTag, wrapGetStyleAttrs, wrapGetTagAttrs } from '../util/parse'
 import { toggleBoldCommand } from './command';
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-bold/src/bold.ts
-
 // == RegEx =======================================================================
+// NOTE: these are inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-bold/src/bold.ts
 const cssFontWeightRegex = /^(bold(er)?|[5-9]\d{2}|1000)$/;
 
 // --------------------------------------------------------------------------------
 // NOTE: these are Markdown equivalents
 export const starInputRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))$/;
-export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))$/;
+export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^(__)]+))(?:__))$/;
 
 export const starPasteRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))/g;
-export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))/g;
+export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^(__)]+))(?:__))/g;
 
 // == Mark ========================================================================
 export const Bold = new MarkExtension({
