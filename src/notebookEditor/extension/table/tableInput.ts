@@ -1,9 +1,9 @@
 import { keydownHandler } from 'prosemirror-keymap';
 import { Slice, Fragment, ResolvedPos } from 'prosemirror-model';
-import { Command, EditorState, Selection } from 'prosemirror-state';
+import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { cellAround, clipCells, fitSlice, getTableNodeTypes, isCellSelection, insertCells, inSameTable, isTextSelection, isInTable, nextCell, selectionCell, pastedCells, CellSelection, DispatchType, NodeName, TableMap, TableRole, TD_NODENAME, TH_NODENAME } from 'common';
+import { cellAround, clipCells, fitSlice, getTableNodeTypes, isCellSelection, insertCells, inSameTable, isTextSelection, isInTable, nextCell, selectionCell, pastedCells, CellSelection, DispatchType, NodeName, TableMap, TableRole, TD_NODENAME, TH_NODENAME, AbstractDocumentUpdate } from 'common';
 
 import { isValidHTMLElement } from '../util';
 import { tableEditingPluginKey } from './plugin/tableEditing';
@@ -12,65 +12,94 @@ import { tableEditingPluginKey } from './plugin/tableEditing';
 // NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/input.js
 
 // == Arrow =======================================================================
-const tableArrowHandlerCommand = (axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/down*/): Command => (state, dispatch, view) => {
-  const { selection } = state;
-  if(isCellSelection(selection)) {
-    return maybeSetCellSelection(state, dispatch, Selection.near(selection.$headCell, direction));
-  } /* else -- not a CellSelection */
+/** handle arrow key behavior when inside a Table Node */
+const tableArrowHandlerCommand = (axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/down*/): Command => (state, dispatch, view) =>
+  AbstractDocumentUpdate.execute(new TableArrowHandlerDocumentUpdate(axis, direction).update(state, state.tr, view), dispatch);
+class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
+  constructor(private readonly axis: 'horizontal' | 'vertical', private readonly direction: -1/*left/up*/ | 1/*right/down*/) {/*nothing additional*/}
 
-  if(axis !== 'horizontal' && !selection.empty) return false/*do not allow*/;
+  /**
+   * modify the given Transaction such that arrow key behavior is handled when
+   * inside a Table Node
+   */
+  public update(editorState: EditorState, tr: Transaction, view?: EditorView) {
+    const { selection } = editorState;
+    if(isCellSelection(selection)) {
+      return maybeSetCellSelection(Selection.near(selection.$headCell), tr);
+    } /* else -- not a CellSelection */
 
-  const isAtEndOfCell = view && isCursorAtEndOfCell(view, axis, direction);
-  if(!isAtEndOfCell || isAtEndOfCell === null) return false/*not at the end of the Cell*/;
+    if(this.axis !== 'horizontal' && !selection.empty) return false/*do not allow*/;
 
-  if(axis == 'horizontal') {
-    return maybeSetCellSelection(state, dispatch, Selection.near(state.doc.resolve(selection.head + direction), direction));
-  } else {
-    const $cellPos = state.doc.resolve(isAtEndOfCell),
-          $nextCellPos = nextCell($cellPos, axis, direction);
+    const isAtEndOfCell = view && isCursorAtEndOfCell(view, this.axis, this.direction);
+    if(!isAtEndOfCell || isAtEndOfCell === null) return false/*not at the end of the Cell*/;
 
-    let newSelection;
-    if($nextCellPos) { newSelection = Selection.near($nextCellPos, 1); }
-    else if(direction < 0/*left*/) { newSelection = Selection.near(state.doc.resolve($cellPos.before(-1/*grandParent depth*/)), -1/*bias to the left*/); }
-    else { newSelection = Selection.near(state.doc.resolve($cellPos.after(-1/*grandParent depth*/)), 1/*bias to the right*/); }
+    if(this.axis == 'horizontal') {
+      return maybeSetCellSelection(Selection.near(editorState.doc.resolve(selection.head + this.direction), this.direction), tr);
+    } else {
+      const $cellPos = editorState.doc.resolve(isAtEndOfCell),
+            $nextCellPos = nextCell($cellPos, this.axis, this.direction);
 
-    return maybeSetCellSelection(state, dispatch, newSelection);
+      let newSelection;
+      if($nextCellPos) { newSelection = Selection.near($nextCellPos, 1); }
+      else if(this.direction < 0/*left*/) { newSelection = Selection.near(editorState.doc.resolve($cellPos.before(-1/*grandParent depth*/)), -1/*bias to the left*/); }
+      else { newSelection = Selection.near(editorState.doc.resolve($cellPos.after(-1/*grandParent depth*/)), 1/*bias to the right*/); }
+
+      return maybeSetCellSelection(newSelection, tr)/*updated*/;
+    }
   }
-};
+}
 
-const tableShiftArrowHandlerCommand = (axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/down*/): Command => (state, dispatch, view) => {
-  let { selection } = state;
-  if(!isCellSelection(selection)) {
-    const isAtEnd = view && isCursorAtEndOfCell(view, axis, direction);
-    if(!isAtEnd || isAtEnd === null) return false/*nothing to do*/;
+/** handle shift arrow key behavior when inside of a  Table Node */
+const tableShiftArrowHandlerCommand = (axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/down*/): Command => (state, dispatch, view) =>
+  AbstractDocumentUpdate.execute(new TableShiftArrowHandlerDocumentUpdate(axis, direction).update(state, state.tr, view), dispatch);
 
-    selection = new CellSelection(state.doc.resolve(isAtEnd));
-  } /* else -- Selection is CellSelection */
+class TableShiftArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
+  constructor(private readonly axis: 'horizontal' | 'vertical', private readonly direction: -1/*left/up*/ | 1/*right/down*/) {/*nothing additional*/}
 
-  const $nextCellHead = nextCell((selection as CellSelection/*guaranteed by above check*/).$headCell, axis, direction);
-  if(!$nextCellHead) return false/*nothing to do*/;
+  /**
+   * modify the given Transaction such that shift arrow key behavior is handled when
+   * inside of a Table Node
+  */
+  public update(editorState: EditorState, tr: Transaction, view?: EditorView) {
+    let { selection } = editorState;
+    if(!isCellSelection(selection)) {
+      const isAtEnd = view && isCursorAtEndOfCell(view, this.axis, this.direction);
+      if(!isAtEnd || isAtEnd === null) return false/*nothing to do*/;
 
-  return maybeSetCellSelection(state, dispatch, new CellSelection((selection as CellSelection/*guaranteed by above check*/).$anchorCell, $nextCellHead));
-};
+      selection = new CellSelection(editorState.doc.resolve(isAtEnd));
+    } /* else -- Selection is CellSelection */
+
+    const $nextCellHead = nextCell((selection as CellSelection/*guaranteed by above check*/).$headCell, this.axis, this.direction);
+    if(!$nextCellHead) return false/*nothing to do*/;
+
+    return maybeSetCellSelection(new CellSelection((selection as CellSelection/*guaranteed by above check*/).$anchorCell, $nextCellHead), tr)/*updated*/;
+  }
+}
 
 // == Selection ===================================================================
 // -- Set -------------------------------------------------------------------------
-const maybeSetCellSelection = (state: EditorState, dispatch: DispatchType, selection: Selection) => {
-  if(selection.eq(state.selection)) return false/*same Selection*/;
+const maybeSetCellSelection = (selection: Selection, tr: Transaction) => {
+  if(selection.eq(selection)) return false/*same Selection*/;
 
-  if(dispatch) dispatch(state.tr.setSelection(selection).scrollIntoView());
-  return true;
+  tr.setSelection(selection).scrollIntoView();
+  return tr/*updated*/;
 };
 
 // -- Delete ----------------------------------------------------------------------
-const deleteCellSelectionCommand = (state: EditorState, dispatch: DispatchType) => {
-  const { selection } = state;
-  if(!isCellSelection(selection)) return false/*nothing to do*/;
+/** delete a CellSelection if it exists */
+const deleteCellSelectionCommand = (state: EditorState, dispatch: DispatchType) =>
+  AbstractDocumentUpdate.execute(new DeleteCellSelectionDocumentUpdate().update(state, state.tr), dispatch);
+class DeleteCellSelectionDocumentUpdate implements AbstractDocumentUpdate {
+  constructor() {/*nothing additional*/}
 
-  if(dispatch) {
-    const { tr } = state;
+  /**
+   * modify the given Transaction such that a CellSelection is deleted if it exists
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const { selection } = editorState;
+    if(!isCellSelection(selection)) return false/*nothing to do*/;
 
-    const baseCell = getTableNodeTypes(state.schema)[NodeName.CELL].createAndFill();
+    const baseCell = getTableNodeTypes(editorState.schema)[NodeName.CELL].createAndFill();
     if(!baseCell) return false/*could not create baseCell*/;
 
     const baseContent = baseCell.content;
@@ -82,11 +111,9 @@ const deleteCellSelectionCommand = (state: EditorState, dispatch: DispatchType) 
       } /* else -- Cell already has the base content */
     });
 
-    if(tr.docChanged) dispatch(tr);
+    return tr/*updated*/;
   }
-
-  return true/*handled*/;
-};
+}
 
 // == Click =======================================================================
 export const handleCellTripleClick = (view: EditorView, pos: number) => {
@@ -133,8 +160,9 @@ export const handleTablePaste = (view: EditorView, event: ClipboardEvent, slice:
   }
 };
 
+// == Mousedown ===================================================================
 export const handleCellSelectionMousedown = (view: EditorView, startEvent: MouseEvent) => {
-  // == Helper ====================================================================
+  // --------------------------------------------------------------------------------
   // create a CellSelection between the given anchor and the position under the mouse
   const setCellSelection = ($anchor: ResolvedPos, event: Event) => {
     let $head = isCellUnderMouse(view, event);
@@ -196,7 +224,7 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
     } /* else -- not a valid $anchor, do not set a CellSelection */
   };
 
-  // == Mousedown Handler =========================================================
+  // -- Handler -------------------------------------------------------------------
   if(!startEvent.target || !isValidHTMLElement(startEvent.target)) return/*do not handle*/;
   if(startEvent.ctrlKey || startEvent.metaKey) return/*do not handle*/;
 
@@ -217,6 +245,7 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
     return/*not in a Cell, let PM handle the event*/;
   }
 
+  // NOTE: this order is not arbitrary. It is important to add the listeners here
   view.root.addEventListener('mouseup', stopMouseMotionTracking);
   view.root.addEventListener('dragstart', stopMouseMotionTracking);
   view.root.addEventListener('mousemove', handleMouseMove);
@@ -265,7 +294,7 @@ const isCellUnderMouse = (view: EditorView, event: Event | MouseEvent) => {
 // == Type Guard ==================================================================
 const isValidMouseEvent = (event: Event): event is MouseEvent => 'clientX' in event && 'clientY' in event;
 
-// == Handler =====================================================================
+// == Keydown Handler =============================================================
 export const handleTableArrowKeydown = keydownHandler({
   ArrowLeft: tableArrowHandlerCommand('horizontal', -1/*left*/),
   ArrowRight: tableArrowHandlerCommand('horizontal', 1/*right/down*/),
