@@ -141,7 +141,7 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
   const setCellSelection = ($anchor: ResolvedPos, event: Event) => {
     let $head = cellUnderMouse(view, event);
 
-    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue;
+    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentCellSelectionAnchor;
     const starting = tableEditingStateValue === null || tableEditingStateValue === undefined;
 
     if(!$head || !inSameTable($anchor, $head)) {
@@ -168,9 +168,9 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
     view.root.removeEventListener('dragstart', stop);
     view.root.removeEventListener('mousemove', move);
 
-    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue;
+    const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentCellSelectionAnchor;
     if(tableEditingStateValue) {
-      view.dispatch(view.state.tr.setMeta(tableEditingPluginKey, -1));
+      view.dispatch(view.state.tr.setMeta(tableEditingPluginKey, -1/*stop*/));
     } /* else -- no tableEditing state */
   };
 
@@ -178,7 +178,7 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
     if(!event.target || !isValidHTMLElement(event.target)) return/*nothing to do*/;
 
     const pluginState = tableEditingPluginKey.getState(view.state);
-    const anchor = pluginState?.currentValue;
+    const anchor = pluginState?.currentCellSelectionAnchor;
 
     let $anchor;
     if(anchor) {

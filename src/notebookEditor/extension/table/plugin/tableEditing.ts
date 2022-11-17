@@ -7,45 +7,38 @@ import { handleTripleClick, handleTableArrowKeydown, handlePaste, handleCellSele
 // == Constant ====================================================================
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/index.js
 
-// This file defines a plugin that handles the drawing of cell
-// selections and the basic user interactions for creating and working
-// with such selections. It also makes sure that, after each
-// transaction, the shapes of tables are normalized to be rectangular
-// and not contain overlapping cells.
+// handle the drawing of CellSelection, as well as the user interactions for
+// creating and working with them. Normalize the shape of Tables after each
+// Transaction to be rectangular and not contain overlapping Cells
 
 // == Class =======================================================================
 class TableEditingState {
-  // -- Attribute -----------------------------------------------------------------
-  currentValue: number | null;
-
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(currentValue: number | null) {
-    this.currentValue = currentValue;
-  }
+  constructor(public currentCellSelectionAnchor: number | null) {/*nothing additional*/}
 
   /*
-   * the state remembers when a mouse-drag CellSelection is happening
-   * so that it can continue even as Transactions (which might move its
-   * anchor cell) come in
+   * remember when a mouse-drag CellSelection is happening. Continue even
+   * if Transactions that move that might move its anchor Cell come in
    */
   public apply = (tr: Transaction, thisPluginState: TableEditingState, oldEditorState: EditorState, newEditorState: EditorState) => {
-    const meta = tr.getMeta(tableEditingPluginKey);
-    if(meta !== null) {
-      if(meta === -1) { this.currentValue = null; return this; }
-      else { this.currentValue = meta; return this; }
+    const tableEditingMeta = tr.getMeta(tableEditingPluginKey);
+
+    if(tableEditingMeta !== null) {
+      if(tableEditingMeta === -1/*stop keeping track of CellSelection*/) { this.currentCellSelectionAnchor = null/*stop*/; return this; }
+      else { this.currentCellSelectionAnchor = tableEditingMeta; return this/*updated*/; }
     } /* else -- meta is null */
 
-    if(thisPluginState.currentValue === null) {
-      return this;
+    if(thisPluginState.currentCellSelectionAnchor === null) {
+      return this/*continue without doing anything special*/;
     } /* else -- currentValue is not null */
 
     if(!tr.docChanged) {
-      return this;
+      return this/*continue without doing anything special*/;
     } /* else -- the doc changed */
 
-    const { deleted, pos } = tr.mapping.mapResult(thisPluginState.currentValue);
-    if(deleted) { this.currentValue = null; return this; }
-    else { this.currentValue = pos; return this; }
+    const { deleted, pos } = tr.mapping.mapResult(thisPluginState.currentCellSelectionAnchor);
+    if(deleted) { this.currentCellSelectionAnchor = null/*deleted the CellSelection*/; return this/*updated*/; }
+    else { this.currentCellSelectionAnchor = pos/*mapped the result*/; return this/*updated*/; }
   };
 }
 
@@ -79,8 +72,9 @@ export const tableEditingPlugin = (allowTableNodeSelection = false/*default*/) =
       handleDOMEvents: { mousedown: handleCellSelectionMousedown },
 
       createSelectionBetween: (view) => {
-        const tableEditingStateValue = tableEditingPluginKey.getState(view.state)?.currentValue;
-        if(tableEditingStateValue) {
+        const pluginState = tableEditingPluginKey.getState(view.state);
+
+        if(pluginState && pluginState.currentCellSelectionAnchor) {
           return view.state.selection;
         } /* else -- state is null */
 
