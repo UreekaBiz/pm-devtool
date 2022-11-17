@@ -60,7 +60,7 @@ class SuggestionState {
 
     // change active state if the previous Suggestion Range was left
     if(((from < thisPluginState.range.from) || from > thisPluginState.range.to) && !composing && !thisPluginState.composing) {
-      nextPluginState.active = false;
+      nextPluginState.active = false/*previous SuggestionRange was left, not active*/;
     } /* else -- do not change active state */
 
     // try to match against the current cursor position
