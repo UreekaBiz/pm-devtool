@@ -2,7 +2,7 @@ import { EditorState, Plugin, Transaction, TextSelection } from 'prosemirror-sta
 import { EditorView } from 'prosemirror-view';
 
 // ********************************************************************************
-// REF: https://raw.githubusercontent.com/ProseMirror/prosemirror-inputrules/master/src/inputrules.ts
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-inputrules/blob/d60b7920d040e9b18ee893bad4213180fedc47f5/src/inputrules.ts
 
 // == Constant ====================================================================
 // the maximum length for the match of an InputRule

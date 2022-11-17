@@ -8,7 +8,7 @@ import { DispatchType } from './type';
 // ********************************************************************************
 // == Command =====================================================================
 /**
- * REF: https://github.com/ProseMirror/prosemirror-commands/blob/9a187ecec867a44826d130c9d85d05598a8dbaf2/src/commands.ts
+ * REF: https://github.com/ProseMirror/prosemirror-commands/blob/9a187ecec867a44826d130c9d85d05598a8dbaf2/src/commands.ts#L595
  * combine the given Commands into a single function which calls
  * them until one returns true
  */
@@ -25,6 +25,8 @@ import { DispatchType } from './type';
 };
 
 // == Misc ========================================================================
+// NOTE: these functions are inspired by those at https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
+
 // check whether the first or last child of the given Node is a Text Block, if only
 // is given, then said first or last child must only have a single child
 export const textblockAt = (node: ProseMirrorNode, side: 'start' | 'end', onlyOneChild = false) => {

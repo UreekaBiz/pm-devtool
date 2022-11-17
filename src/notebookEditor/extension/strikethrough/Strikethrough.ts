@@ -11,6 +11,8 @@ import { safeParseTag } from '../util/parse';
 import { toggleStrikethroughCommand } from './command';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-strike/src/strike.ts
+
 // == RegEx =======================================================================
 const strikethroughInputRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))$/;
 const strikethroughPasteRegEx = /(?:^|\s)((?:~~)((?:[^~]+))(?:~~))/g;

@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
 import { Component, ErrorInfo, ReactNode } from 'react';
 
-// REF: https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/error_boundaries/
+// NOTE: this is inspired by https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/error_boundaries/
 
 // ********************************************************************************
 // == Interface ===================================================================

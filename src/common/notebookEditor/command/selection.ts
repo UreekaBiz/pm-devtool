@@ -27,6 +27,7 @@ export class SetSelectionDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/setTextSelection.ts
 /** set a TextSelection given the Range */
 export const setTextSelectionCommand = (selectionRange: SelectionRange): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SetTextSelectionDocumentUpdate(selectionRange).update(state, state.tr), dispatch);
@@ -53,6 +54,7 @@ export class SetTextSelectionDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/313b8b8d0af7059c420ffc96c9362f0f4acc2138/packages/core/src/commands/setNodeSelection.ts
 /** set a NodeSelection at the given position */
 export const setNodeSelectionCommand = (nodePos: number): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SetNodeSelectionDocumentUpdate(nodePos).update(state, state.tr), dispatch);
@@ -98,7 +100,7 @@ export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpd
 }
 
 // ................................................................................
-// Delete the selection, if there is one.
+// delete the Selection, if there is one
 export const deleteSelectionCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new DeleteSelectionDocumentUpdate().update(state, state.tr), dispatch);
 export class DeleteSelectionDocumentUpdate implements AbstractDocumentUpdate {
@@ -116,6 +118,7 @@ export class DeleteSelectionDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // ................................................................................
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L155
 /**
  * When the Selection is empty and at the start of a Text Block, select
  * the Node before that Text Block if possible
