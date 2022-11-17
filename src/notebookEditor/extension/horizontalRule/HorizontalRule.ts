@@ -11,9 +11,8 @@ import './horizontalRule.css';
 import { insertOrToggleHorizontalRuleCommand } from './command';
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-horizontal-rule/src/horizontal-rule.ts
-
 // == RegEx =======================================================================
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-horizontal-rule/src/horizontal-rule.ts
 const horizontalRuleRegEx = /^(?:---|—-|___\s|\*\*\*\s)$/;
 
 // == Node ========================================================================

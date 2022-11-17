@@ -7,8 +7,6 @@ import { NoPluginState } from 'notebookEditor/model/type';
 
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/helpers/autolink.ts
-
 // Plugin that automatically creates a link when the user writes a text that is a
 // valid link
 
@@ -20,6 +18,7 @@ export const linkCreate = (validate?: (url: string) => boolean): Plugin => {
     key: linkCreateKey,
 
     // -- Transaction -------------------------------------------------------------
+    // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/helpers/autolink.ts
     // ensures that Link get created when the user types something that is a valid
     // Link in the editor
     appendTransaction: (transactions, oldState, newState) => {
@@ -61,37 +60,31 @@ export const linkCreate = (validate?: (url: string) => boolean): Plugin => {
           .forEach(textBlock => {
             // a placeholder for Leaf Nodes must be defined
             // so that the Link position can be correctly calculated
-            const text = newState.doc.textBetween(
-              textBlock.position,
-              textBlock.position + textBlock.node.nodeSize,
-              undefined/*no Block separator*/,
-              ' '/*add a space for each non-text leaf-node found*/
-            );
+            const text = newState.doc.textBetween(textBlock.position, textBlock.position + textBlock.node.nodeSize, undefined/*no Block separator*/, ' '/*add a space for each non-text leaf-node found*/);
 
             // do not turn TextBlock into Link when user just inserted a Link and
             // adds a space (since this would incorrectly turn the previous
             // Text in the Block into a Link too)
-            if(text.endsWith(' ')) return;
+            if(text.endsWith(' ')) return/*prevent incorrect behavior*/;
 
             find(text)
               .filter(link => {
-                if(!link.isLink) return false;
-                if(validate) return validate(link.value);
+                if(!link.isLink) return false/*not a Link*/;
+                if(validate) return validate(link.value)/*delegate to function*/;
                 return true/*found by default*/;
               })
+
               // calculate Link position
-              .map(link => ({
-                ...link,
-                from: textBlock.position + link.start + 1,
-                to: textBlock.position + link.end + 1,
-              }))
+              .map(link => ({ ...link, from: textBlock.position + link.start + 1, to: textBlock.position + link.end + 1 }))
+
               // check if Link is within the changed range
               .filter(link => {
-                const fromIsInRange = newRange.from >= link.from && newRange.from <= link.to;
-                const toIsInRange = newRange.to >= link.from && newRange.to <= link.to;
+                const fromIsInRange = newRange.from >= link.from && newRange.from <= link.to,
+                      toIsInRange = newRange.to >= link.from && newRange.to <= link.to;
 
                 return fromIsInRange || toIsInRange;
               })
+
               // add Link mark
               .forEach(link => tr.addMark(link.from, link.to, linkMarkType.create({ [AttributeType.Href]: link.href, [AttributeType.Target]: LinkTarget.BLANK } )));
           });
@@ -99,7 +92,7 @@ export const linkCreate = (validate?: (url: string) => boolean): Plugin => {
 
       if(!tr.steps.length) return/*nothing to do*/;
 
-      return tr;
+      return tr/*modified*/;
     },
   });
 };

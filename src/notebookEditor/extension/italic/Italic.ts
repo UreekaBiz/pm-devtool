@@ -11,9 +11,8 @@ import { safeParseTag, wrapGetTagAttrs } from '../util/parse';
 import { toggleItalicCommand } from './command';
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-italic/src/italic.ts
-
 // == RegEx =======================================================================
+// NOTE: these are inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-italic/src/italic.ts
 // NOTE: these are Markdown equivalents
 const starInputRegex = /(?:^|\s)((?:\*)((?:[^*]+))(?:\*))$/;
 const underscoreInputRegex = /(?:^|\s)((?:_)((?:[^_]+))(?:_))$/;

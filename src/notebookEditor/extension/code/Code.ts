@@ -12,9 +12,8 @@ import './code.css';
 import { toggleCodeCommand } from './command';
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-code/src/code.ts
-
 // == RegEx =======================================================================
+// NOTE: these are inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-code/src/code.ts
 export const backtickInputRegex = /(?:^|\s)((?:`)((?:[^`]+))(?:`))$/;
 export const backtickPasteRegex = /(?:^|\s)((?:`)((?:[^`]+))(?:`))/g;
 
