@@ -6,6 +6,8 @@ import { ExtensionName } from 'notebookEditor/model';
 import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
 
 // ********************************************************************************
+// NOTE: default configuration inspired by https://github.com/ProseMirror/prosemirror-history/blob/master/src/history.ts
+
 // == Node ========================================================================
 export const History = new Extension({
   // -- Definition ----------------------------------------------------------------

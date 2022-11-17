@@ -14,7 +14,6 @@ import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt
 
 // ********************************************************************************
 // -- Create ----------------------------------------------------------------------
-// REF: https://github.com/ProseMirror/prosemirror-commands/blob/20fa086dfe21f7ce03e5a05b842cf04e0a91e653/src/commands.ts
 /** Creates a Block Node below the current Selection */
 export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new CreateBlockNodeDocumentUpdate(blockNodeName, attributes).update(state, state.tr), dispatch);
@@ -77,6 +76,7 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // -- Clear -----------------------------------------------------------------------
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/clearNodes.ts
 /** clear the Nodes in the current Block */
 export const clearNodesCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new ClearNodesDocumentUpdate().update(state, state.tr), dispatch);
@@ -143,7 +143,7 @@ export class InsertNewlineDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // -- Leave -----------------------------------------------------------------------
-// REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L246
 // create a default Block Node after the one at the current Selection and
 // move the cursor there
 export const leaveBlockNodeCommand = (nodeName: NodeName): Command => (state, dispatch) =>
@@ -180,7 +180,8 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // -- Split -----------------------------------------------------------------------
-/** split the Block at the Selection */
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L295
+// split the Block at the Selection
 export const splitBlockCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SplitBlockDocumentUpdate().update(state, state.tr), dispatch);
 export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
@@ -331,6 +332,7 @@ export class WrapInDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // -- Lift ------------------------------------------------------------------------
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L217
 /**
  * lift the selected block, or the closest ancestor block of the
  * selection that can be lifted, out of its parent Node
@@ -373,7 +375,7 @@ export class LiftBlockDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
-// REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L277
 // If the cursor is in an empty Text Block that can be lifted, lift it.
 export const liftEmptyBlockNodeCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new LiftEmptyBlockNodeDocumentUpdate().update(state, state.tr), dispatch);
@@ -404,7 +406,7 @@ export class LiftEmptyBlockNodeDocumentUpdate implements AbstractDocumentUpdate 
 }
 
 // -- Join ------------------------------------------------------------------------
-// REF: https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L21
 // if the Selection is empty and at the start of a Text Block, try to reduce the
 // distance between that Block and the one before it if there's a Block directly
 // before it that can be joined, by joining them. Otherwise try to move the
@@ -469,6 +471,7 @@ export class JoinBackwardDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L109
 // When the Selection is empty and at the end of a TextBlock, select
 // the node coming after that textblock, if possible
 export const joinForwardCommand: Command = (state, dispatch, view) => AbstractDocumentUpdate.execute(new JoinForwardDocumentUpdate().update(state, state.tr, view), dispatch);

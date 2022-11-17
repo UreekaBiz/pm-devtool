@@ -13,6 +13,8 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
  * Decorations, and also managing the behavior of typing in between them
  */
 
+// NOTE: this is inspired by https://github.com/Saul-Mirone/milkdown/blob/main/packages/preset-commonmark/src/plugin/inline-nodes-cursor.ts
+
 // == Class =======================================================================
 class InBetweenInlineAtomsState {
   constructor(public inBetweenInlineNodes: boolean) {/*nothing additional*/}
