@@ -14,7 +14,7 @@ export const EDITOR_CONTAINER_ID = 'NotebookEditorContainerID';
 const EDITOR_ACTIONABLE_CLASS = 'Editor-actionable';
 
 // == Interface ===================================================================
-interface Props {/*currently nothing*/ }
+interface Props {/*currently nothing*/}
 
 // == Component ===================================================================
 export const Editor: React.FC<Props> = () => {

@@ -9,6 +9,8 @@ import { Editor } from 'notebookEditor/editor';
 import { NoPluginState } from 'notebookEditor/model/type';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/helpers/pasteHandler.ts
+
 // ensure Links that get pasted into the Editor receive the Link Mark
 
 // == Plugin ======================================================================

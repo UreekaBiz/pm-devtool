@@ -7,6 +7,8 @@ import { NoPluginState } from 'notebookEditor/model/type';
 
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/helpers/autolink.ts
+
 // Plugin that automatically creates a link when the user writes a text that is a
 // valid link
 

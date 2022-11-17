@@ -12,6 +12,8 @@ import { createNodeFromContent, isFragment } from 'notebookEditor/extension/util
 import { applyDocumentUpdates } from '../update';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/insertContentAt.ts
+
 // -- Insertion -------------------------------------------------------------------
 type InsertContentAtOptions = {
   parseOptions?: ParseOptions;

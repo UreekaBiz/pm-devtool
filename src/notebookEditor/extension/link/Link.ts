@@ -11,6 +11,8 @@ import { linkClick, linkCreate, linkPaste } from './plugin';
 import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
 
 // ********************************************************************************
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/link.ts
+
 // == Mark ========================================================================
 export const Link = new MarkExtension({
   name: MarkName.LINK,
