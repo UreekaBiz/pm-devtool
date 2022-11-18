@@ -34,11 +34,15 @@ export enum ExtensionPriority {
   //       unspecified, the default block Node on document creation will be the
   //       first block Node encountered in the editor Extension array
   // SEE: notebookEditor/type.ts
-  PARAGRAPH = 118,
+  PARAGRAPH = 119,
 
   // NOTE: since the Plugins added by Tables handle Keydown and Mouse events,
-  // .     they should run before other Plugins
-  TABLE = 117,
+  //       they should run before other Plugins
+  TABLE = 118,
+
+  // NOTE: since the Commands added by Lists handle Keydown,
+  //       they should run before other Plugins
+  LIST_ITEM = 117,
 
   // NOTE: Link must have a higher priority than other marks so that it gets
   //       preference over them when creating, pasting or applying parse rules
