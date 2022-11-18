@@ -12,6 +12,7 @@ export * from './horizontalRule';
 export * from './image';
 export * from './italic';
 export * from './link';
+export * from './list';
 export * from './markHolder';
 export * from './nestedViewNode/editableInlineNodeWithContent';
 export * from './nestedViewNode/nestedViewBlockNode';
