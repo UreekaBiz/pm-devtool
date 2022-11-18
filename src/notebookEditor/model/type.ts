@@ -40,10 +40,6 @@ export enum ExtensionPriority {
   //       they should run before other Plugins
   TABLE = 118,
 
-  // NOTE: since the Commands added by Lists handle Keydown,
-  //       they should run before other Plugins
-  LIST_ITEM = 117,
-
   // NOTE: Link must have a higher priority than other marks so that it gets
   //       preference over them when creating, pasting or applying parse rules
   LINK = 116/*T&E*/,
@@ -77,6 +73,11 @@ export enum ExtensionPriority {
 
   // NOTE: for consistency with EditableInlineNodeWithContent
   NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
+
+  // NOTE: since the Commands added by Lists handle Keydown,
+  //       they should run before other Plugins that also do so, but after
+  //       other TextBlock Nodes
+  LIST_ITEM = 108,
 
   // NOTE: since the Text Extension adds '\t' whenever Tab is pressed, but this
   //       behavior is not always guaranteed to be the desired one (e.g. when

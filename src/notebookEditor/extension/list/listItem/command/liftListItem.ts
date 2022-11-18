@@ -43,7 +43,8 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
     if(!listItemBlockStart.nodeAfter) return tr/*no node after the range's start*/;
     if(!tr.doc.type.contentMatch.defaultType) return tr/*cannot insert a default NodeType at this position*/;
 
-    const liftedContent = listItemBlockStart.nodeAfter/*the listItem*/.firstChild?.copy();
+    const firstChildOfList = listItemBlockStart.nodeAfter/*the listItem*/.firstChild;
+    const liftedContent = firstChildOfList?.copy(firstChildOfList.content);
     if(!liftedContent) return tr/*no child to lift*/;
 
     tr.replaceWith(listItemBlockStart.pos, listItemBlockStart.pos + listItemBlockStart.nodeAfter/*the listItem*/.nodeSize, liftedContent)
