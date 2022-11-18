@@ -3,7 +3,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { isNodeSelection } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { SELECTED_TEXT_CLASS } from 'notebookEditor/theme';
 
 // ********************************************************************************

@@ -1,6 +1,6 @@
 import { generateNodeId, getHeadingLevelFromTag, HeadingAttributes, AttributeType, SetAttributeType, HeadingLevel } from 'common';
 
-import { NodeExtensionAttributes } from '../type';
+import { NodeExtensionAttributes } from '../type/NodeExtension/type';
 import { setAttributeParsingBehavior } from '../util';
 
 // ********************************************************************************

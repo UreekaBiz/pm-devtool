@@ -1,5 +1,4 @@
-import { Loading } from 'core';
-import { useEditor } from 'notebookEditor/hook/useEditor';
+import { Loading } from 'core/component/Loading';
 
 // ********************************************************************************
 // == Interface ===================================================================

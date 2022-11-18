@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 
 import { MarkName, NodeName, SelectionDepth } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 // ********************************************************************************
 // == Toolbar =====================================================================

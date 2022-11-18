@@ -2,7 +2,7 @@ import { DOMOutputSpec, Mark as ProseMirrorMark, MarkSpec, ParseRule } from 'pro
 
 import { AttributeSpecWithParseHTML } from 'notebookEditor/extension/util';
 
-import { ExtensionDefinition, ExtensionStorageType } from '../Extension';
+import { ExtensionDefinition, ExtensionStorageType } from '../Extension/type';
 
 // ********************************************************************************
 // == Type ========================================================================

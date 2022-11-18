@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom/client';
 
 import { getPosType, HTMLAttributes } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 import { NoStorage } from './type';
 import { AbstractNodeController } from './AbstractNodeController';

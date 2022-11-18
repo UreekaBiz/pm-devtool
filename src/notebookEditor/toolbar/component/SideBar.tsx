@@ -8,8 +8,8 @@ import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
 import { getMarkToolbar, getNodeToolbar } from '../toolbar';
 import { Debugger } from './Debugger';
-import { Toolbar } from './Toolbar';
-import { ToolbarBreadcrumbs } from './ToolbarBreadcrumbs';
+import { Toolbar } from './Toolbar/Toolbar';
+import { ToolbarBreadcrumbs } from './ToolbarBreadcrumbs/ToolbarBreadcrumbs';
 
 // ********************************************************************************
 export const SideBar = () => {

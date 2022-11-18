@@ -4,10 +4,10 @@ import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-st
 
 import { isGapCursorSelection, AbstractDocumentUpdate, Attributes, ClearNodesDocumentUpdate, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, NotebookSchemaType } from 'common';
 
-import { applyDocumentUpdates } from 'notebookEditor/command';
-import { Editor } from 'notebookEditor/editor';
+import { applyDocumentUpdates } from 'notebookEditor/command/update';
+import { Editor } from 'notebookEditor/editor/Editor';
 
-import { SetParagraphDocumentUpdate } from '../paragraph';
+import { SetParagraphDocumentUpdate } from '../paragraph/command';
 import { elementFromString } from './parse';
 
 // ********************************************************************************

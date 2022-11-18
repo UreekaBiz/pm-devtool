@@ -3,7 +3,7 @@ import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
 import { customNanoid, SelectionRange } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 import { SuggestionOptions, SuggestionProps } from './type';
 import { findSuggestionMatch } from './util';

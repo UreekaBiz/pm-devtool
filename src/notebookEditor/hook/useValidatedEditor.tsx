@@ -1,4 +1,4 @@
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 import { useEditor } from './useEditor';
 

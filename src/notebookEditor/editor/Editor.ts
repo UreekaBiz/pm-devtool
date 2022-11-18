@@ -2,15 +2,19 @@ import { Schema } from 'prosemirror-model';
 import { Command, EditorState, Plugin } from 'prosemirror-state';
 import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 
-import { Attributes, MarkName, NodeName } from 'common';
+import { Attributes, isMarkActive, isNodeActive, MarkName, NodeName } from 'common';
 
-import { sortExtensionsByPriority, getNodeSpecs, getMarkSpecs, getTopNode, isNodeExtension, Extension, TransactionListenerType } from 'notebookEditor/extension';
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
-import { inputRulesPlugin, InputRule } from 'notebookEditor/plugin/inputRule';
-import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule';
+import { Extension } from 'notebookEditor/extension/type/Extension/Extension';
+import { TransactionListenerType } from 'notebookEditor/extension/type/Extension/type';
+import { sortExtensionsByPriority } from 'notebookEditor/extension/type/Extension/util';
+import { getMarkSpecs } from 'notebookEditor/extension/type/MarkExtension/util';
+import { getNodeSpecs, getTopNode, isNodeExtension } from 'notebookEditor/extension/type/NodeExtension/util';
+import { InputRule, inputRulesPlugin } from 'notebookEditor/plugin/inputRule/InputRule';
+import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
-import { getMarkAttributesFromView, getNodeAttributesFromView, isMarkActive, isNodeActive } from './util';
-import { EditorContentProps, EditorContentState } from './component';
+import { EditorContentProps, EditorContentState } from './component/EditorContent';
+import { getMarkAttributesFromView, getNodeAttributesFromView } from './util';
 
 // ********************************************************************************
 // == Class =======================================================================

@@ -4,7 +4,7 @@ import { getTextDOMRenderedValue } from 'notebookEditor/extension/util/attribute
 import { Unit } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { SpacingControls } from './SpacingControls';
+import { SpacingControls } from './SpacingControls/SpacingControls';
 
 // Value used when there is no value defined withing the node or the Theme.
 const DEFAULT_VALUE = `0${Unit.Pixel}`;
@@ -48,7 +48,5 @@ export const SpacingToolItem: React.FC<Props> = ({ depth, editor }) => {
   };
 
   // -- UI ------------------------------------------------------------------------
-  return (
-    <SpacingControls margin={margin} padding={padding} name='Spacing' onChange={handleChange} />
-  );
+  return (<SpacingControls margin={margin} padding={padding} name='Spacing' onChange={handleChange} />);
 };

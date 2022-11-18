@@ -3,7 +3,7 @@ import React, { useEffect, useRef, ReactElement } from 'react';
 
 import { Attributes } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 import { AbstractNodeModel } from './AbstractNodeModel';
 import { AbstractNodeView } from './AbstractNodeView';

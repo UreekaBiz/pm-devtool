@@ -1,5 +1,6 @@
 import { TextStyleAttributes, AttributeType } from 'common';
-import { NodeExtensionAttributes } from '../type';
+
+import { NodeExtensionAttributes } from '../type/NodeExtension/type';
 
 // ********************************************************************************
 // == Constant ====================================================================

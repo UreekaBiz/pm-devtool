@@ -2,8 +2,8 @@ import { Box } from '@chakra-ui/react';
 
 import { setTextSelectionCommand } from 'common';
 
-import { EditorContent } from 'notebookEditor/editor/component';
-import { useValidatedEditor } from 'notebookEditor/hook';
+import { EditorContent } from 'notebookEditor/editor/component/EditorContent';
+import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
 // ********************************************************************************
 // == Constant ====================================================================

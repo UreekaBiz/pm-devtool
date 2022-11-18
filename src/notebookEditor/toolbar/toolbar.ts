@@ -2,11 +2,12 @@ import { Mark as ProseMirrorMark, Node as ProseMirrorNode } from 'prosemirror-mo
 
 import { camelToTitleCase, MarkName, NodeName } from 'common';
 
-import { markBold } from 'notebookEditor/extension/bold';
-import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
-import { headingLevelToolItem } from 'notebookEditor/extension/heading';
-import { markStrikethrough } from 'notebookEditor/extension/strikethrough';
-import { backgroundColorMarkToolItem, backgroundColorToolItem, fontSizeToolItem, spacingToolItem, textColorMarkToolItem } from 'notebookEditor/extension/textStyle';
+
+import { markBold } from 'notebookEditor/extension/bold/toolItem';
+import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document/toolItem';
+import { headingLevelToolItem } from 'notebookEditor/extension/heading/toolItem/toolItem';
+import { markStrikethrough } from 'notebookEditor/extension/strikethrough/toolItem';
+import { backgroundColorToolItem, fontSizeToolItem, textColorMarkToolItem, backgroundColorMarkToolItem, spacingToolItem } from 'notebookEditor/extension/textStyle/toolItem';
 
 import { EditorToolComponentProps, Toolbar, ToolItem } from './type';
 
@@ -29,7 +30,7 @@ export const getNodeToolbar = (node: ProseMirrorNode): Toolbar => {
  * build {@link Toolbar} for the given {@link ProseMirrorNode}
  * based on its characteristics
  */
-const buildNodeToolCollections = (node: ProseMirrorNode): { toolCollections: ToolItem[][], rightContent: React.FC<EditorToolComponentProps> | undefined/*not required by Toolbar*/;  } => {
+const buildNodeToolCollections = (node: ProseMirrorNode): { toolCollections: ToolItem[][]; rightContent: React.FC<EditorToolComponentProps> | undefined/*not required by Toolbar*/;  } => {
   const toolCollections: ToolItem[][] = [];
   let rightContent = undefined/*default*/;
 
