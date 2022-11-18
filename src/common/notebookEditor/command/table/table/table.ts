@@ -11,7 +11,7 @@ import { isCellNode } from '../../..//extension/table/node/cell';
 import { isHeaderCellNode } from '../../../extension/table/node/headerCell';
 import { getTableNodeTypes, isTableNode, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from '../../../extension/table/node/table';
 import { TableRole } from '../../../extension/table/type';
-import { addColSpan, columnIsHeader, isInTable, removeColSpan, selectedRect, setTableNodeAttributes } from '../../..//extension/table/util';
+import { addColumnSpans, isColumnHeader, isSelectionHeadInTable, removeColumnSpans, getSelectedTableRect, updateTableNodeAttributes } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
 import { createTable } from './util';
@@ -110,9 +110,9 @@ export class AddRowBeforeDocumentUpdate implements AbstractDocumentUpdate {
    * a Table Row is added before the Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const updatedTr = addRow(tr, rect, rect.top);
@@ -131,9 +131,9 @@ export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
    * a Table Row is added after the Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const updatedTr = addRow(tr, rect, rect.bottom);
@@ -152,9 +152,9 @@ export class DeleteRowDocumentUpdate implements AbstractDocumentUpdate {
    * the selected Rows are removed from a Table
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const { table, tableMap } = rect;
@@ -213,7 +213,7 @@ const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectPr
       if(!node) continue/*nothing to do*/;
 
       const { attrs } = node;
-      tr.setNodeMarkup(tableStart + pos, null/*maintain type*/, setTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] + 1));
+      tr.setNodeMarkup(tableStart + pos, null/*maintain type*/, updateTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] + 1));
       col += attrs[AttributeType.ColSpan] - 1;
     } else {
       const type =
@@ -253,7 +253,7 @@ const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRec
       if(!cell) continue/*nothing to do*/;
 
       const { attrs } = cell;
-      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + tableStart), null/*maintain type*/, setTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] - 1));
+      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + tableStart), null/*maintain type*/, updateTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] - 1));
       col += attrs[AttributeType.ColSpan] - 1;
 
     } else if(row < tableMap.width && pos == tableMap.map[index + tableMap.width]) {
@@ -262,7 +262,7 @@ const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRec
       if(!cell) continue/*nothing to do*/;
 
       const { attrs } = cell;
-      const cellCopy = cell.type.create(setTableNodeAttributes(attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - 1), cell.content);
+      const cellCopy = cell.type.create(updateTableNodeAttributes(attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - 1), cell.content);
 
       const newPos = tableMap.positionAt(row + 1, col, table);
       tr.insert(tr.mapping.slice(mapFrom).map(tableStart + newPos), cellCopy);
@@ -283,9 +283,9 @@ export class AddColumnBeforeDocumentUpdate implements AbstractDocumentUpdate {
    * before the column with the current Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const updatedTr = addColumn(tr, rect, rect.left);
@@ -304,9 +304,9 @@ export class AddColumnAfterDocumentUpdate implements AbstractDocumentUpdate {
    * after the column with the current Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const updatedTr = addColumn(tr, rect, rect.right);
@@ -325,9 +325,9 @@ export class DeleteColumnDocumentUpdate implements AbstractDocumentUpdate {
    * modify the given Transaction such that the selected Columns
    * are removed from a Table */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const { table, tableMap, tableStart } = rect;
@@ -353,7 +353,7 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
   if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return tr/*do nothing*/;
 
   let referenceColumn: number | null = col > 0 ? -1 : 0;
-  if(columnIsHeader(tableMap, table, col + referenceColumn)) {
+  if(isColumnHeader(table, tableMap, col + referenceColumn)) {
     referenceColumn = col === 0 || col === tableMap.width ? null : 0;
   } /* else -- computed column is not a Header */
 
@@ -366,7 +366,7 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
       const cell = table.nodeAt(pos);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null/*maintain type*/, addColSpan(cell.attrs, col - tableMap.colCount(pos)));
+      tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null/*maintain type*/, addColumnSpans(cell.attrs, col - tableMap.colCount(pos)));
       // skip ahead if rowSpan > 1
       row += cell.attrs[AttributeType.RowSpan] - 1;
 
@@ -401,7 +401,7 @@ const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: Optional
 
     // if this is part of a col-spanning cell
     if((col > 0 && tableMap.map[index - 1] == pos) || (col < tableMap.width - 1 && tableMap.map[index + 1] == pos)) {
-      tr.setNodeMarkup(tr.mapping.slice(mapStart).map(tableStart + pos), null/*maintain type*/, removeColSpan(cell.attrs, col - tableMap.colCount(pos)));
+      tr.setNodeMarkup(tr.mapping.slice(mapStart).map(tableStart + pos), null/*maintain type*/, removeColumnSpans(cell.attrs, col - tableMap.colCount(pos)));
     } else {
       const start = tr.mapping.slice(mapStart).map(tableStart + pos);
       tr.delete(start, start + cell.nodeSize);

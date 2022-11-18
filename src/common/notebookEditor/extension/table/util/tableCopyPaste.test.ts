@@ -9,7 +9,7 @@ import { A, ANCHOR, B, ProseMirrorNodeWithTag, validateNodeWithTag } from '../..
 import { TableMap } from '../class';
 
 import { clipCells, insertCells, pastedCells, PastedCellsReturnType } from './tableCopyPaste';
-import { cellAround } from './util';
+import { getResolvedCellPosAroundResolvedPos } from './util';
 
 // ********************************************************************************
 // == Table Copy Paste Test =======================================================
@@ -238,7 +238,7 @@ describe('insertCells', () => {
     if(anchorPos === null/*explicit check since it can be 0*/) throw new Error('expected anchor pos to be defined its not');
 
     let state = EditorState.create({ doc: table });
-    const $cellPos = cellAround(table.resolve(anchorPos));
+    const $cellPos = getResolvedCellPosAroundResolvedPos(table.resolve(anchorPos));
     if($cellPos === null/*explicit check since it can be 0*/) throw new Error('$cellPos does not exist');
 
     const tableMap = TableMap.get(table);

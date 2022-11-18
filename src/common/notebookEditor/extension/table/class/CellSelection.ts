@@ -7,7 +7,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { AttributeType } from '../../../attribute';
 import { isNodeSelection, isTextSelection } from '../../../selection';
-import { inSameTable, pointsAtCell, setTableNodeAttributes, removeColSpan } from '../util';
+import { areResolvedPositionsInTable, isResolvedPosPointingAtCell, updateTableNodeAttributes, removeColumnSpans } from '../util';
 import { TableRole } from '../type';
 import { TableMap } from './TableMap';
 
@@ -99,9 +99,9 @@ export class CellSelection extends Selection {
     const $anchorCell = doc.resolve(mapping.map(this.$anchorCell.pos));
     const $headCell = doc.resolve(mapping.map(this.$headCell.pos));
 
-    if(pointsAtCell($anchorCell)
-      && pointsAtCell($headCell)
-      && inSameTable($anchorCell, $headCell)
+    if(isResolvedPosPointingAtCell($anchorCell)
+      && isResolvedPosPointingAtCell($headCell)
+      && areResolvedPositionsInTable($anchorCell, $headCell)
     ) {
       const tableChanged = this.$anchorCell.node(-1/*grandParent*/) !== $anchorCell.node(-1/*grandParent*/);
 
@@ -140,11 +140,11 @@ export class CellSelection extends Selection {
             if(extraLeft > 0 || extraRight > 0) {
               let { attrs: cellAttrs } = cell;
               if(extraLeft > 0) {
-                cellAttrs = removeColSpan(cellAttrs, 0/*start*/, extraLeft);
+                cellAttrs = removeColumnSpans(cellAttrs, 0/*start*/, extraLeft);
               } /* else -- no need to account for extra spanning to the left */
 
               if(extraRight > 0) {
-                cellAttrs = removeColSpan(cellAttrs, cellAttrs[AttributeType.ColSpan] - extraRight, extraRight);
+                cellAttrs = removeColumnSpans(cellAttrs, cellAttrs[AttributeType.ColSpan] - extraRight, extraRight);
               } /* else -- no need to account for extra spanning to the right  */
 
               if(cellRect.left < tableRect.left) {
@@ -155,7 +155,7 @@ export class CellSelection extends Selection {
             } /* else -- neither extraLeft nor extraRight are bigger than 0*/
 
             if(cellRect.top < tableRect.top || cellRect.bottom > tableRect.bottom) {
-              const cellAttrs = cell && setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.min(cellRect.bottom, tableRect.bottom) - Math.max(cellRect.top, tableRect.top));
+              const cellAttrs = cell && updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.min(cellRect.bottom, tableRect.bottom) - Math.max(cellRect.top, tableRect.top));
 
               if(cell && cellRect.top < tableRect.top) { cell = cell.type.createAndFill(cellAttrs); }
               else { cell = cell && cell.type.create(cellAttrs, cell.content); }
@@ -361,7 +361,7 @@ class CellBookmark implements SelectionBookmark {
       && $headCell.parent.type.spec.tableRole === TableRole.Row
       && $anchorCell.index() < $anchorCell.parent.childCount
       && $headCell.index() < $headCell.parent.childCount
-      && inSameTable($anchorCell, $headCell)
+      && areResolvedPositionsInTable($anchorCell, $headCell)
     ) {
       return new CellSelection($anchorCell, $headCell);
     } else {

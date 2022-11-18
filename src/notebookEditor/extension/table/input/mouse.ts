@@ -1,7 +1,7 @@
 import { ResolvedPos } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
-import { cellAround, isCellSelection, inSameTable, CellSelection } from 'common';
+import { getResolvedCellPosAroundResolvedPos, isCellSelection, areResolvedPositionsInTable, CellSelection } from 'common';
 
 import { isValidHTMLElement } from '../../util';
 import { tableEditingPluginKey } from '../plugin/tableEditing';
@@ -18,7 +18,7 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
     const currentCellSelectionAnchor = tableEditingPluginKey.getState(view.state)?.currentCellSelectionAnchor;
     const isCellSelectionStarting = currentCellSelectionAnchor === null || currentCellSelectionAnchor === undefined;
 
-    if(!$head || !inSameTable($anchor, $head)) {
+    if(!$head || !areResolvedPositionsInTable($anchor, $head)) {
       if(isCellSelectionStarting) { $head = $anchor/*default to be the same*/; }
       else { return/*do not handle*/; }
     } /* else -- valid $head or $anchor and $head are in the same Table */
@@ -83,7 +83,7 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
     setCellSelection(view.state.selection.$anchorCell, startEvent);
     startEvent.preventDefault();
 
-  } else if(startEvent.shiftKey && startDOMCell && ($anchor = cellAround(view.state.selection.$anchor)) !== null && isCellUnderMouse(view, startEvent)?.pos !== $anchor.pos) {
+  } else if(startEvent.shiftKey && startDOMCell && ($anchor = getResolvedCellPosAroundResolvedPos(view.state.selection.$anchor)) !== null && isCellUnderMouse(view, startEvent)?.pos !== $anchor.pos) {
     // adding to a Selection that starts in another Cell (causing a CellSelection
     // to be created)
     setCellSelection($anchor, startEvent);
@@ -103,7 +103,7 @@ export const handleCellSelectionMousedown = (view: EditorView, startEvent: Mouse
 export const handleCellTripleClick = (view: EditorView, pos: number) => {
   const { doc } = view.state;
 
-  const $cellPos = cellAround(doc.resolve(pos));
+  const $cellPos = getResolvedCellPosAroundResolvedPos(doc.resolve(pos));
   if(!$cellPos) return false/*did not click on a Cell*/;
 
   view.dispatch(view.state.tr.setSelection(new CellSelection($cellPos)));

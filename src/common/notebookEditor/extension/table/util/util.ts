@@ -3,7 +3,7 @@ import { EditorState } from 'prosemirror-state';
 
 import { Attributes, AttributeType } from '../../../attribute';
 import { isCellSelection, isNodeSelection } from '../../../selection';
-import { CellSelection, TableMap, TableRect } from '../class';
+import { TableMap, TableRect } from '../class';
 import { getHeaderCellNodeType } from '../node/headerCell';
 import { TableRole } from '../type';
 
@@ -12,10 +12,10 @@ import { TableRole } from '../type';
 
 // == Table =======================================================================
 /** check if the head of the {@link EditorState} Selection is in a Table */
-export const isInTable = (state: EditorState) => {
+export const isSelectionHeadInTable = (state: EditorState) => {
   const { $head } = state.selection;
-  for(let d = $head.depth; d > 0/*not the top level (Document)*/; d--) {
-    if($head.node(d).type.spec.tableRole === TableRole.Row) {
+  for(let depth = $head.depth; depth > 0/*not the top level (Document)*/; depth--) {
+    if($head.node(depth).type.spec.tableRole === TableRole.Row) {
       return true;
     } /* else -- Node at depth is not a Row */
   }
@@ -24,52 +24,56 @@ export const isInTable = (state: EditorState) => {
 };
 
 /** check if the two given {@link ResolvedPos} objs are in the same Table Node */
-export const inSameTable = ($a: ResolvedPos, $b: ResolvedPos) => {
+export const areResolvedPositionsInTable = ($a: ResolvedPos, $b: ResolvedPos) => {
   return $a.depth == $b.depth && $a.pos >= $b.start(-1) && $a.pos <= $b.end(-1);
 };
 
 // == Column ======================================================================
 /** return the column count of the Table at the given {@link ResolvedPos} */
-export const colCount = ($pos: ResolvedPos) => {
-  const map = TableMap.get($pos.node(-1));
-  return map.colCount($pos.pos - $pos.start(-1));
+export const getColumnCountAtPos = ($pos: ResolvedPos) => {
+  const tableMap = TableMap.get($pos.node(-1));
+  return tableMap.colCount($pos.pos - $pos.start(-1));
 };
 
-export const addColSpan = (attrs: Partial<Attributes>, pos: number, n = 1) => {
-  const result = setTableNodeAttributes(attrs, AttributeType.ColSpan, attrs[AttributeType.ColSpan] + n);
+/**
+ * add 'amount' columnSpans with value 0 to the given attributes, inserting them
+ * at insertionPosition in the attribute's colWidth array
+ */
+export const addColumnSpans = (attrs: Partial<Attributes>, insertionPosition: number, amount = 1) => {
+  const updatedAttrs = updateTableNodeAttributes(attrs, AttributeType.ColSpan, attrs[AttributeType.ColSpan] + amount);
 
-  if(result[AttributeType.ColWidth]) {
-    result[AttributeType.ColWidth] = result[AttributeType.ColWidth].slice();
-    for(let i = 0; i < n; i++) {
-      result[AttributeType.ColWidth].splice(pos, 0/*do not remove anything*/, 0/*add a 0*/);
+  if(updatedAttrs[AttributeType.ColWidth]) {
+    updatedAttrs[AttributeType.ColWidth] = updatedAttrs[AttributeType.ColWidth].slice();
+    for(let i = 0; i < amount; i++) {
+      updatedAttrs[AttributeType.ColWidth].splice(insertionPosition, 0/*do not remove anything*/, 0/*add a 0*/);
     }
   }
 
-  return result;
+  return updatedAttrs;
 };
 
-export const removeColSpan = (attrs: Partial<Attributes>, pos: number, n = 1) => {
-  const result = setTableNodeAttributes(attrs, AttributeType.ColSpan, attrs[AttributeType.ColSpan] - n);
+export const removeColumnSpans = (attrs: Partial<Attributes>, removalPosition: number, amount = 1) => {
+  const updatedAttrs = updateTableNodeAttributes(attrs, AttributeType.ColSpan, attrs[AttributeType.ColSpan] - amount);
 
-  if(result[AttributeType.ColWidth]) {
-    result[AttributeType.ColWidth] = result[AttributeType.ColWidth].slice();
-    result[AttributeType.ColWidth].splice(pos, n);
+  if(updatedAttrs[AttributeType.ColWidth]) {
+    updatedAttrs[AttributeType.ColWidth] = updatedAttrs[AttributeType.ColWidth].slice(/*make a copy*/);
+    updatedAttrs[AttributeType.ColWidth].splice(removalPosition, amount);
 
-    if(!result[AttributeType.ColWidth].some((columnWidth: number) => columnWidth > 0)) {
-      result[AttributeType.ColWidth] = null;
+    if(!updatedAttrs[AttributeType.ColWidth].some((columnWidth: number) => columnWidth > 0)) {
+      updatedAttrs[AttributeType.ColWidth] = null/*default state, no column widths*/;
     } /* else -- at least one of the colWidth array items is bigger than 0 */
   } /* else -- colWidth attribute is undefined */
 
-  return result;
+  return updatedAttrs;
 };
 
-/** check if a column is a header column */
-export const columnIsHeader = (map: TableMap, table: ProseMirrorNode, col: number) => {
+/** check if the column at the given columnPos is a header column */
+export const isColumnHeader = (table: ProseMirrorNode, tableMap: TableMap, columnPos: number) => {
   const headerCellType = getHeaderCellNodeType(table.type.schema);
 
-  for(let row = 0; row < map.height; row++) {
-    if(table.nodeAt(map.map[col + row * map.width])?.type !== headerCellType) {
-      return false;
+  for(let row = 0; row < tableMap.height; row++) {
+    if(table.nodeAt(tableMap.map[columnPos + row * tableMap.width])?.type !== headerCellType) {
+      return false/*not a headerCell*/;
     } /* else -- Node is a headerCell */
   }
 
@@ -77,45 +81,54 @@ export const columnIsHeader = (map: TableMap, table: ProseMirrorNode, col: numbe
 };
 
 // == Cell ========================================================================
-export const cellAround = ($pos: ResolvedPos) => {
-  for(let d = $pos.depth - 1; d > 0; d--) {
-    if($pos.node(d).type.spec.tableRole === TableRole.Row) {
-      return $pos.node(0).resolve($pos.before(d + 1));
+/**
+ * get a {@link ResolvedPos} pointing at the start of the cell around
+ * the given {@link ResolvedPos}
+ */
+export const getResolvedCellPosAroundResolvedPos = ($pos: ResolvedPos) => {
+  for(let depth = $pos.depth - 1; depth > 0; depth--) {
+    if($pos.node(depth).type.spec.tableRole === TableRole.Row) {
+      return $pos.node(0/*the document*/).resolve($pos.before(depth + 1/*Cell depth*/));
     } /* else -- Node has no tableRole */
   }
 
   return null/*default*/;
 };
 
-export const findCellWrapperNode = ($pos: ResolvedPos) => {
-  for(let d = $pos.depth; d > 0; d--) {
+/**
+ * get the Node whose type should be used to wrap Cells at the
+ * given {@link ResolvedPos}
+ */
+export const getCellWrapperAtResolvedPos = ($pos: ResolvedPos) => {
+  for(let depth = $pos.depth; depth > 0; depth--) {
     // it is possible for Cell to be at the same depth
-    const role = $pos.node(d).type.spec.tableRole;
+    const role = $pos.node(depth).type.spec.tableRole;
 
     if(role === TableRole.HeaderCell || role === TableRole.Cell) {
-      return $pos.node(d);
+      return $pos.node(depth);
     } /* else -- keep looking upwards through depth */
   }
 
   return null/*default*/;
 };
 
-export const selectionCell = (state: EditorState) => {
+export const getResolvedCellPos = (state: EditorState) => {
   const { selection } = state;
 
-  if('$anchorCell' in selection) {
-    const { $anchorCell, $headCell } = selection as CellSelection;
+  if(isCellSelection(selection)) {
+    const { $anchorCell, $headCell } = selection;
     return $anchorCell.pos > $headCell.pos
       ? $anchorCell
       : $headCell;
 
   } else if(isNodeSelection(selection) && selection.node && selection.node.type.spec.tableRole === TableRole.Cell) {
     return selection.$anchor;
-  }
+  } /* else -- look for $cellPos */
 
-  return cellAround(selection.$head) || cellNear(selection.$head);
+  return getResolvedCellPosAroundResolvedPos(selection.$head) || getResolvedCellPosNearResolvedPos(selection.$head);
 };
-const cellNear = ($pos: ResolvedPos) => {
+const getResolvedCellPosNearResolvedPos = ($pos: ResolvedPos) => {
+  // look at positions immediately after
   for(let after = $pos.nodeAfter, pos = $pos.pos; after; after = after.firstChild, pos++) {
     const role = after.type.spec.tableRole;
 
@@ -124,6 +137,7 @@ const cellNear = ($pos: ResolvedPos) => {
     } /* else -- Node has no TableRole */
   }
 
+  // look at positions that are before the given one
   for(let before = $pos.nodeBefore, pos = $pos.pos; before; before = before.lastChild, pos--) {
     const role = before.type.spec.tableRole;
     if(role == TableRole.Cell || role == TableRole.HeaderCell) {
@@ -134,55 +148,64 @@ const cellNear = ($pos: ResolvedPos) => {
   return/*default undefined*/;
 };
 
-export const pointsAtCell = ($pos: ResolvedPos) => $pos.parent.type.spec.tableRole === TableRole.Row && $pos.nodeAfter;
+/** return whether the given {@link ResolvedPos} points at a Cell */
+export const isResolvedPosPointingAtCell = ($pos: ResolvedPos) => $pos.parent.type.spec.tableRole === TableRole.Row && $pos.nodeAfter/*there is a Cell*/;
 
-export const moveCellForward = ($pos: ResolvedPos) => $pos.nodeAfter && $pos.node(0).resolve($pos.pos + $pos.nodeAfter.nodeSize);
+/** return a {@link ResolvedPos} that points past its nodeAfter */
+export const moveResolvedCellPosForward = ($pos: ResolvedPos) => $pos.nodeAfter && $pos.node(0/*the document*/).resolve($pos.pos + $pos.nodeAfter.nodeSize);
 
-export const findCell = ($pos: ResolvedPos) => {
-  const map = TableMap.get($pos.node(-1));
-  return map.findCell($pos.pos - $pos.start(-1));
-};
-
-export const nextCell = ($pos: ResolvedPos, axis: 'horizontal' | 'vertical', dir: 1 | -1) => {
-  const start = $pos.start(-1);
-
-  const map = TableMap.get($pos.node(-1));
-  const moved = map.nextCell($pos.pos - start, axis, dir);
-  return moved === null ? null : $pos.node(0).resolve(start + moved);
-};
-
-// == Rect ========================================================================
 /**
- * get the selected Rectangle in a Table if any, adding the TableMap,
- * TableNode, and TableStartOffset to the object for convenience.
+ * get the {@link TableRect} of the Cell at the given {@link ResolvedPos}
  */
- export const selectedRect = (state: EditorState) => {
-  const { selection } = state;
-  const $pos = selectionCell(state);
-  if(!$pos) return null/*selection not in a Cell*/;
-
-  const table = $pos.node(-1);
-  const tableStart = $pos.start(-1);
-  const tableMap = TableMap.get(table);
-
-  let rect: TableRect;
-  if(isCellSelection(selection)) { rect = tableMap.rectBetween(selection.$anchorCell.pos - tableStart, selection.$headCell.pos - tableStart); }
-  else { rect = tableMap.findCell($pos.pos - tableStart); }
-
-  rect.tableStart = tableStart;
-  rect.tableMap = tableMap;
-  rect.table = table;
-  return rect;
+export const getCellTableRect = ($pos: ResolvedPos) => {
+  const tableMap = TableMap.get($pos.node(-1));
+  return tableMap.findCell($pos.pos - $pos.start(-1));
 };
 
-// == Attr ========================================================================
-export const setTableNodeAttributes = (attrs: Attrs, name: string, value: any) => {
-  const result: Record<string, any> = {};
+/**
+ * get the absolute position of the Cell at the given {@link ResolvedPos}
+ * after moving it
+ */
+export const getMovedCellResolvedPos = ($pos: ResolvedPos, axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/bottom*/) => {
+  const tableMap = TableMap.get($pos.node(-1/*grandParent*/)),
+        tableStart = $pos.start(-1/*grandParent depth*/);
+
+  const movedPosition = tableMap.nextCell($pos.pos - tableStart, axis, direction);
+  return movedPosition === null ? null : $pos.node(0/*the doc*/).resolve(tableStart + movedPosition);
+};
+
+// == TableRect ===================================================================
+/**
+ * get the selected TableRect in a Table if any, adding the TableMap,
+ * TableNode, and TableStartOffset to the object
+ */
+ export const getSelectedTableRect = (state: EditorState) => {
+  const { selection } = state;
+  const cellPos = getResolvedCellPos(state);
+  if(!cellPos) return null/*selection not in a Cell*/;
+
+  const table = cellPos.node(-1/*grandParent*/),
+        tableStart = cellPos.start(-1/*grandParent depth*/),
+        tableMap = TableMap.get(table);
+
+  let tableRect: TableRect;
+  if(isCellSelection(selection)) { tableRect = tableMap.rectBetween(selection.$anchorCell.pos - tableStart, selection.$headCell.pos - tableStart); }
+  else { tableRect = tableMap.findCell(cellPos.pos - tableStart); }
+
+  tableRect.tableStart = tableStart;
+  tableRect.tableMap = tableMap;
+  tableRect.table = table;
+  return tableRect;
+};
+
+// == Attribute ===================================================================
+export const updateTableNodeAttributes = (attrs: Attrs, updatedAttributeName: string, newValue: any) => {
+  const updatedAttrs: Record<string, any> = {/*default empty*/};
 
   for(let prop in attrs) {
-    result[prop] = attrs[prop];
+    updatedAttrs[prop] = attrs[prop];
   }
 
-  result[name] = value;
-  return result;
+  updatedAttrs[updatedAttributeName] = newValue;
+  return updatedAttrs;
 };

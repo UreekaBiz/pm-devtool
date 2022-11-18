@@ -1,7 +1,7 @@
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
-import { cellAround, isNotNullOrUndefined, isTableNode, pointsAtCell, setTableNodeAttributes, AttributeType, TableMap, PM_CLASS, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
+import { getResolvedCellPosAroundResolvedPos, isNotNullOrUndefined, isTableNode, isResolvedPosPointingAtCell, updateTableNodeAttributes, AttributeType, TableMap, PM_CLASS, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
 
@@ -80,7 +80,7 @@ class ResizeState {
 
     if(this.activeHandle && this.activeHandle > -1 && tr.docChanged) {
       let mappedHandle: number | null = tr.mapping.map(this.activeHandle, -1/*associate to the left*/);
-      if(!pointsAtCell(tr.doc.resolve(mappedHandle))) {
+      if(!isResolvedPosPointingAtCell(tr.doc.resolve(mappedHandle))) {
         mappedHandle = null/*none*/;
       } /* else -- not pointing at a Cell */
 
@@ -291,7 +291,7 @@ const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left'
   if(!foundPos) return -1/*default*/;
 
   const { pos, inside: posAtFoundCell } = foundPos;
-  const $cellPos = cellAround(view.state.doc.resolve(pos));
+  const $cellPos = getResolvedCellPosAroundResolvedPos(view.state.doc.resolve(pos));
   if(!$cellPos) return -1/*default*/;
 
   if(side === 'right') return $cellPos.pos;
@@ -366,7 +366,7 @@ const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => 
       : createZeroesArray(attrs[AttributeType.ColSpan]);
 
     newColWidth[index] = width;
-    tr.setNodeMarkup(tableStart + cellPos, null/*maintain type*/, setTableNodeAttributes(attrs, AttributeType.ColWidth, newColWidth));
+    tr.setNodeMarkup(tableStart + cellPos, null/*maintain type*/, updateTableNodeAttributes(attrs, AttributeType.ColWidth, newColWidth));
   }
 
   if(tr.docChanged) {

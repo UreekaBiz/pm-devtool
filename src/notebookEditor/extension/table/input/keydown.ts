@@ -2,7 +2,7 @@ import { keydownHandler } from 'prosemirror-keymap';
 import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isCellSelection, nextCell, AbstractDocumentUpdate, CellSelection } from 'common';
+import { isCellSelection, getMovedCellResolvedPos, AbstractDocumentUpdate, CellSelection } from 'common';
 import { deleteCellSelectionCommand, setNewCellSelectionFromInput } from './selection';
 import { isCursorAtEndOfCell } from './util';
 
@@ -34,7 +34,7 @@ class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
       return setNewCellSelectionFromInput(editorState, Selection.near(editorState.doc.resolve(selection.head + this.direction), this.direction), tr);
     } else {
       const $cellPos = editorState.doc.resolve(isAtEndOfCell),
-            $nextCellPos = nextCell($cellPos, this.axis, this.direction);
+            $nextCellPos = getMovedCellResolvedPos($cellPos, this.axis, this.direction);
 
       let newSelection;
       if($nextCellPos) { newSelection = Selection.near($nextCellPos, 1); }
@@ -66,7 +66,7 @@ class TableShiftArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
       selection = new CellSelection(editorState.doc.resolve(isAtEnd));
     } /* else -- Selection is CellSelection */
 
-    const $nextCellHead = nextCell((selection as CellSelection/*guaranteed by above check*/).$headCell, this.axis, this.direction);
+    const $nextCellHead = getMovedCellResolvedPos((selection as CellSelection/*guaranteed by above check*/).$headCell, this.axis, this.direction);
     if(!$nextCellHead) return false/*nothing to do*/;
 
     return setNewCellSelectionFromInput(editorState, new CellSelection((selection as CellSelection/*guaranteed by above check*/).$anchorCell, $nextCellHead), tr)/*updated*/;

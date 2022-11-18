@@ -7,7 +7,7 @@ import { NodeName } from '../../../node';
 import { TableMap } from '../class';
 import { getTableNodeTypes } from '../node';
 import { TableProblem, TableRole } from '../type';
-import { setTableNodeAttributes, removeColSpan } from '../util';
+import { updateTableNodeAttributes, removeColumnSpans } from '../util';
 
 
 // ********************************************************************************
@@ -77,7 +77,7 @@ const fixTablesKey = new PluginKey('fix-tables');
         mustAddCellAmounts[tableMapProblem.row + j] += tableMapProblem.n;
       }
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, removeColSpan(cell.attrs, cell.attrs[AttributeType.ColSpan] - tableMapProblem.n, tableMapProblem.n));
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, removeColumnSpans(cell.attrs, cell.attrs[AttributeType.ColSpan] - tableMapProblem.n, tableMapProblem.n));
 
     } else if(tableMapProblem.type == TableProblem.Missing) {
       mustAddCellAmounts[tableMapProblem.row] += tableMapProblem.n;
@@ -86,13 +86,13 @@ const fixTablesKey = new PluginKey('fix-tables');
       const cell = table.nodeAt(tableMapProblem.position);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - tableMapProblem.n));
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - tableMapProblem.n));
 
     } else if(tableMapProblem.type === TableProblem.ColWidthMistMatch) {
       const cell = table.nodeAt(tableMapProblem.position);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.ColWidth, tableMapProblem.colWidth));
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, updateTableNodeAttributes(cell.attrs, AttributeType.ColWidth, tableMapProblem.colWidth));
     }
   }
 

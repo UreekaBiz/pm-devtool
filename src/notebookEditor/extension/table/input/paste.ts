@@ -1,12 +1,12 @@
 import { Slice, Fragment } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 
-import { clipCells, fitSlice, getTableNodeTypes, isCellSelection, insertCells, isInTable, selectionCell, pastedCells, TableMap } from 'common';
+import { clipCells, fitSlice, getTableNodeTypes, isCellSelection, insertCells, isSelectionHeadInTable, getResolvedCellPos, pastedCells, TableMap } from 'common';
 
 // ********************************************************************************
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/input.js#L121
 export const handleTablePaste = (view: EditorView, event: ClipboardEvent, slice: Slice) => {
-  if(!isInTable(view.state)) return false/*do not handle*/;
+  if(!isSelectionHeadInTable(view.state)) return false/*do not handle*/;
 
   let cells = pastedCells(slice);
   const { selection } = view.state;
@@ -26,7 +26,7 @@ export const handleTablePaste = (view: EditorView, event: ClipboardEvent, slice:
 
     return true/*handled*/;
   } else if(cells) {
-    const selectedCell = selectionCell(view.state);
+    const selectedCell = getResolvedCellPos(view.state);
     if(!selectedCell) return false/*do not handle*/;
 
     const tableMap = TableMap.get(selectedCell.node(-1/*grandParent*/)),

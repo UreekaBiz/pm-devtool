@@ -6,7 +6,7 @@ import { isCellSelection } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
-import { addColSpan, cellAround, findCellWrapperNode, isInTable, moveCellForward, selectedRect, selectionCell, setTableNodeAttributes } from '../../..//extension/table/util';
+import { addColumnSpans, getResolvedCellPosAroundResolvedPos, getCellWrapperAtResolvedPos, isSelectionHeadInTable, moveResolvedCellPosForward, getSelectedTableRect, getResolvedCellPos, updateTableNodeAttributes } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
 // ********************************************************************************
@@ -25,7 +25,7 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
     const { selection } = editorState;
     if(!isCellSelection(selection) || selection.$anchorCell.pos == selection.$headCell.pos) return false/*nothing to do*/;
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*nothing to do*/;
 
     const { table, tableMap, tableStart } = rect;
@@ -61,7 +61,7 @@ export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
 
     if(!isNotNullOrUndefined<number>(mergedPos) || !mergedCell) return false/*nothing to do*/;
 
-    tr.setNodeMarkup(mergedPos + tableStart, null/*maintain type*/, setTableNodeAttributes(addColSpan(mergedCell.attrs, mergedCell.attrs[AttributeType.ColSpan], rect.right - rect.left - mergedCell.attrs[AttributeType.ColSpan]), AttributeType.RowSpan, rect.bottom - rect.top));
+    tr.setNodeMarkup(mergedPos + tableStart, null/*maintain type*/, updateTableNodeAttributes(addColumnSpans(mergedCell.attrs, mergedCell.attrs[AttributeType.ColSpan], rect.right - rect.left - mergedCell.attrs[AttributeType.ColSpan]), AttributeType.RowSpan, rect.bottom - rect.top));
     if(content.size) {
       let end = mergedPos + 1 + mergedCell.content.size;
       let start = isCellEmpty(mergedCell) ? mergedPos + 1 : end;
@@ -100,10 +100,10 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
     let cellPos: number | undefined = undefined/*default*/;
 
     if(!isCellSelection(selection)) {
-      cellNode = findCellWrapperNode(selection.$from);
+      cellNode = getCellWrapperAtResolvedPos(selection.$from);
       if(!cellNode) return false/*nothing to do*/;
 
-      cellPos = cellAround(selection.$from)?.pos;
+      cellPos = getResolvedCellPosAroundResolvedPos(selection.$from)?.pos;
 
     } else {
       if(selection.$anchorCell.pos !== selection.$headCell.pos) return false/*nothing to do*/;
@@ -119,21 +119,21 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
     const colWidth = baseAttrs[AttributeType.ColWidth];
 
     if(baseAttrs[AttributeType.RowSpan] > 1) {
-      baseAttrs = setTableNodeAttributes(baseAttrs, AttributeType.RowSpan, 1);
+      baseAttrs = updateTableNodeAttributes(baseAttrs, AttributeType.RowSpan, 1);
     } /* else -- no need to change rowSpan */
 
     if(baseAttrs[AttributeType.ColSpan] > 1) {
-      baseAttrs = setTableNodeAttributes(baseAttrs, AttributeType.ColSpan, 1);
+      baseAttrs = updateTableNodeAttributes(baseAttrs, AttributeType.ColSpan, 1);
     } /* else -- no need to change colSpan */
 
-    const rect = selectedRect(editorState);
+    const rect = getSelectedTableRect(editorState);
     if(!rect) return false/*no selected Rectangle in Table*/;
 
     const { table, tableMap, tableStart } = rect;
     if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return false/*nothing to do*/;
 
     for(let i = 0; i < rect.right - rect.left; i++) {
-      attrs.push(colWidth ? setTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colWidth && colWidth[i] ? [colWidth[i]] : null) : baseAttrs);
+      attrs.push(colWidth ? updateTableNodeAttributes(baseAttrs, AttributeType.ColWidth, colWidth && colWidth[i] ? [colWidth[i]] : null) : baseAttrs);
     }
 
     let lastCell;
@@ -175,16 +175,16 @@ export class GoToCellDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly direction: 'previous' | 'next') {/*nothing additional*/ }
 
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
 
-    let $cell = selectionCell(editorState);
+    let $cell = getResolvedCellPos(editorState);
     if(!$cell) return false/*nothing to do*/;
 
     const cellPos = findCell($cell, this.direction);
     if(!cellPos) return false/*nothing to do*/;
 
     $cell = editorState.doc.resolve(cellPos);
-    const $movedForwardCell = moveCellForward($cell);
+    const $movedForwardCell = moveResolvedCellPosForward($cell);
     if(!$movedForwardCell) return false/*could not move cell forward*/;
 
     tr.setSelection(TextSelection.between($cell, $movedForwardCell)).scrollIntoView();

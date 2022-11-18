@@ -8,7 +8,7 @@ import { NodeName } from '../../../node';
 import { CellSelection, TableMap, TableRect } from '../class';
 import { getTableNodeTypes } from '../node/table';
 import { TableRole } from '../type';
-import { removeColSpan, setTableNodeAttributes } from '.';
+import { removeColumnSpans, updateTableNodeAttributes } from '.';
 
 // ********************************************************************************
 // NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/copypaste.js
@@ -140,7 +140,7 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
       for(let col = addedCellPositions[row] || 0, i = 0; col < newWidth; i++) {
         let cell = fragment.child(i % fragment.childCount);
         if(col + cell.attrs[AttributeType.ColSpan] > newWidth) {
-          cell = cell.type.create(removeColSpan( cell.attrs, cell.attrs[AttributeType.ColSpan], col + cell.attrs[AttributeType.ColSpan] - newWidth), cell.content);
+          cell = cell.type.create(removeColumnSpans( cell.attrs, cell.attrs[AttributeType.ColSpan], col + cell.attrs[AttributeType.ColSpan] - newWidth), cell.content);
         } /* else -- no need to recreate Cell */
 
         cells.push(cell);
@@ -165,7 +165,7 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
       for(let j = 0; j < sourceCell.childCount; j++) {
         let cell = sourceCell.child(j);
         if(row + cell.attrs[AttributeType.RowSpan] > newHeight) {
-          cell = cell.type.create(setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.max(1, newHeight - cell.attrs[AttributeType.RowSpan])), cell.content);
+          cell = cell.type.create(updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, Math.max(1, newHeight - cell.attrs[AttributeType.RowSpan])), cell.content);
         } /* else -- no need to recreate Cell */
         cells.push(cell);
       }
@@ -275,9 +275,9 @@ const isolateVertical = (tr: Transaction, table: ProseMirrorNode, tableMap: Tabl
       const cellLeft = tableMap.colCount(pos);
       const updatePos = tr.mapping.slice(mapFrom).map(pos + start);
 
-      tr.setNodeMarkup(updatePos, null/*maintain type*/, removeColSpan( cell.attrs, left - cellLeft, cell.attrs[AttributeType.ColSpan] - (left - cellLeft)));
+      tr.setNodeMarkup(updatePos, null/*maintain type*/, removeColumnSpans( cell.attrs, left - cellLeft, cell.attrs[AttributeType.ColSpan] - (left - cellLeft)));
 
-      const newCell = cell.type.createAndFill(removeColSpan(cell.attrs, 0, left - cellLeft));
+      const newCell = cell.type.createAndFill(removeColumnSpans(cell.attrs, 0, left - cellLeft));
       if(!newCell) continue/*could not create Cell, do nothing*/;
 
       tr.insert(updatePos + cell.nodeSize, newCell);
@@ -304,9 +304,9 @@ const isolateHorizontal = (tr: Transaction, table: ProseMirrorNode, tableMap: Ta
       if(!cell) continue/*Cell does not exist, nothing to do*/;
 
       const { top: cellTop, left: cellLeft } = tableMap.findCell(cellPos);
-      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(cellPos + start), null/*maintain type*/, setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, top - cellTop));
+      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(cellPos + start), null/*maintain type*/, updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, top - cellTop));
 
-      const newCell = cell.type.createAndFill(setTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cellTop + cell.attrs[AttributeType.RowSpan] - top));
+      const newCell = cell.type.createAndFill(updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cellTop + cell.attrs[AttributeType.RowSpan] - top));
       if(!newCell) continue/*could not create Cell, do nothing*/;
 
       tr.insert(tr.mapping.slice(mapFrom).map(tableMap.positionAt(top, cellLeft, table)), newCell);

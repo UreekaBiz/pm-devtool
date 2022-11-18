@@ -1,6 +1,6 @@
 import { EditorView } from 'prosemirror-view';
 
-import { cellAround, isTextSelection, TableRole, TD_NODENAME, TH_NODENAME } from 'common';
+import { getResolvedCellPosAroundResolvedPos, isTextSelection, TableRole, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { isValidHTMLElement } from '../../util';
 
@@ -45,7 +45,7 @@ export const isCellUnderMouse = (view: EditorView, event: Event | MouseEvent) =>
   const mousePos = view.posAtCoords({ left: event.clientX, top: event.clientY });
   if(!mousePos) return null/*no valid ViewPos at mousePos*/;
 
-  return mousePos ? cellAround(view.state.doc.resolve(mousePos.pos)) : null/*no Cell under mousePos*/;
+  return mousePos ? getResolvedCellPosAroundResolvedPos(view.state.doc.resolve(mousePos.pos)) : null/*no Cell under mousePos*/;
 };
 
 // == Type Guard ==================================================================

@@ -7,7 +7,7 @@ import { NodeSpecs, SchemaV1 } from '../../../notebookEditor/schema';
 import { NodeName } from '../../node/type';
 import { CellSelection } from '../../extension/table/class';
 import { CELL_COL_SPAN, CELL_ROW_SPAN } from '../../extension/table/node/cell';
-import { cellAround } from '../../extension/table/util';
+import { getResolvedCellPosAroundResolvedPos } from '../../extension/table/util';
 import { AttributeType } from '../../attribute';
 import { getNotebookSchemaNodeBuilders, validateNodeWithTag, ANCHOR, CURSOR, HEAD, NODE } from './testUtil';
 
@@ -115,6 +115,6 @@ export const selectionForTableTest = (doc: ProseMirrorNode) => {
 // -- Cell ------------------------------------------------------------------------
 const resolveCell = (doc: ProseMirrorNode, tag: number | null) => {
   if(!tag) return null;
-  return cellAround(doc.resolve(tag));
+  return getResolvedCellPosAroundResolvedPos(doc.resolve(tag));
 };
 
