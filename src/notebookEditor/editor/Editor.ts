@@ -2,7 +2,7 @@ import { Schema } from 'prosemirror-model';
 import { Command, EditorState, Plugin } from 'prosemirror-state';
 import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 
-import { Attributes, isMarkActive, isNodeActive, MarkName, NodeName } from 'common';
+import { Attributes, MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { Extension } from 'notebookEditor/extension/type/Extension/Extension';
@@ -14,7 +14,7 @@ import { InputRule, inputRulesPlugin } from 'notebookEditor/plugin/inputRule/Inp
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
 import { EditorContentProps, EditorContentState } from './component/EditorContent';
-import { getMarkAttributesFromView, getNodeAttributesFromView } from './util';
+import { getMarkAttributesFromView, getNodeAttributesFromView, isMarkActive, isNodeActive } from './util';
 
 // ********************************************************************************
 // == Class =======================================================================

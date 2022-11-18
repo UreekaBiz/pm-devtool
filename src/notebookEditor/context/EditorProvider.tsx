@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { setThemeStylesheet } from 'notebookEditor/theme';
 import { editorDefinition } from 'notebookEditor/editor/type';
-import { useEditor } from 'notebookEditor/hook/useEditor';
+import { useEditor } from 'notebookEditor/editor/component/useEditor';
 
 import { EditorContext } from './EditorContext';
 

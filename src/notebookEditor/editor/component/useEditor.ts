@@ -1,6 +1,6 @@
 import { useEffect, useState, DependencyList } from 'react';
 
-import { Extension } from 'notebookEditor/extension';
+import { Extension } from 'notebookEditor/extension/type/Extension/Extension';
 
 import { Editor } from '../Editor';
 
