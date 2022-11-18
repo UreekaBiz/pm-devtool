@@ -3,7 +3,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { SelectionDepth } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 // ********************************************************************************
 // == Wrapper =====================================================================

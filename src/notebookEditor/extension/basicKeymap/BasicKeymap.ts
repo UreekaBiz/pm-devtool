@@ -3,9 +3,10 @@ import { keymap } from 'prosemirror-keymap';
 import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockKeepMarksCommand } from 'common';
 
 import { ExtensionName } from 'notebookEditor/model';
-import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule';
+import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule/command';
 
-import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { Extension } from '../type/Extension/Extension';
 import { basicKeymapPlugin } from './plugin';
 
 // ********************************************************************************

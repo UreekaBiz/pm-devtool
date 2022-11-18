@@ -3,10 +3,11 @@ import { keymap } from 'prosemirror-keymap';
 import { createBoldMark, createMarkHolderNode, getBlockNodeRange, getHeadingNodeType, generateNodeId, getNodeOutputSpec, stringifyMarksArray, AttributeType, HeadingLevel, HeadingNodeSpec, NodeName } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { InputRule } from 'notebookEditor/plugin/inputRule';
+import { InputRule } from 'notebookEditor/plugin/inputRule/InputRule';
 
-import { createExtensionParseRules, getExtensionAttributesObject, DEFAULT_EXTENSION_PRIORITY } from '../type';
-import { NodeExtension } from '../type/NodeExtension';
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { HeadingAttrs } from './attribute';
 import { setHeadingCommand } from './command';
 import { headingPlugin } from './plugin';

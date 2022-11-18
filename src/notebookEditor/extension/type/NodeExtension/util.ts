@@ -2,10 +2,10 @@ import { Node as ProsemirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { AttributeType, NodeName } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
 import { isNodeViewStorage } from 'notebookEditor/model';
+import { Editor } from 'notebookEditor/editor/Editor';
 
-import { Extension } from '../Extension';
+import { Extension } from '../Extension/Extension';
 import { NodeExtension } from './NodeExtension';
 
 // == NodeExtension ===============================================================

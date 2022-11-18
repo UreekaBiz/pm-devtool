@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { DATA_NODE_TYPE, nodeToContent } from 'common';
 
-import { NotebookViewer, NOTEBOOK_VIEWER_ID } from 'notebookEditor/component';
-import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
+import { NotebookViewer, NOTEBOOK_VIEWER_ID } from 'notebookEditor/component/NotebookViewer';
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
+import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
 // == Interface ===================================================================

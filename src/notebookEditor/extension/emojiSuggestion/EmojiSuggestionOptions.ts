@@ -3,8 +3,8 @@ import { RefAttributes } from 'react';
 import tippy, { Instance as TippyInstance, Props as TippyProps } from 'tippy.js';
 
 import { insertContentAtCommand } from 'notebookEditor/command/node';
-import { ReactRenderer } from 'notebookEditor/editor/component';
-import { isValidClientRect, SuggestionOptions, SuggestionSymbol } from 'notebookEditor/plugin/suggestion';
+import { ReactRenderer } from 'notebookEditor/editor/component/ReactRenderer';
+import { isValidClientRect, SuggestionOptions, SuggestionSymbol } from 'notebookEditor/plugin/suggestion/type';
 
 import { EmojiSuggestionForwardedObject, EmojiSuggestionList, EmojiSuggestionListProps } from './component/EmojiSuggestionList';
 import { emojiSymbols } from './symbol';

@@ -5,7 +5,7 @@ import { NodeName, TextNodeSpec } from 'common';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model';
 
-import { NodeExtension } from '../type/NodeExtension';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { insertTabCommand } from './command';
 
 // ********************************************************************************

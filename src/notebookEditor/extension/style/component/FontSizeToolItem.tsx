@@ -3,7 +3,7 @@ import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeV
 import { getTextDOMRenderedValue } from 'notebookEditor/extension/util/attribute';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { UnitPickerInput } from './UnitPickerInput';
+import { UnitPickerInput } from './UnitPickerInput/UnitPickerInput';
 
 // ********************************************************************************
 // == Interface ===================================================================

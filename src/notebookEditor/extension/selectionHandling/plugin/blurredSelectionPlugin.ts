@@ -3,7 +3,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { isNodeSelection, SELECTED_TEXT_CLASS } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 // ********************************************************************************
 // REF: https://discuss.prosemirror.net/t/add-css-class-to-current-node-or-selected-nodes/1287

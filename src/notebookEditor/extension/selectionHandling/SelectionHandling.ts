@@ -1,7 +1,9 @@
 import { ExtensionName } from 'notebookEditor/model/type';
 
-import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
-import { inBetweenInlineAtomsPlugin, blurredSelectionPlugin } from './plugin';
+import { Extension } from '../type/Extension/Extension';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { blurredSelectionPlugin } from './plugin/blurredSelectionPlugin';
+import { inBetweenInlineAtomsPlugin } from './plugin/inBetweenInlineAtomsPlugin';
 
 // ********************************************************************************
 // (SEE: index.css)

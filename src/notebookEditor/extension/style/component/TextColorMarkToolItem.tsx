@@ -4,7 +4,7 @@ import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribut
 import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { ColorPicker } from './ColorPicker';
+import { ColorPicker } from './ColorPicker/ColorPicker';
 
 // ********************************************************************************
 // NOTE: This component adds a TextStyle mark in the selected text that adds the

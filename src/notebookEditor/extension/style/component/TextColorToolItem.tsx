@@ -1,9 +1,10 @@
 import { getSelectedNode, updateAttributesInRangeCommand, AttributeType, InvalidMergedAttributeValue } from 'common';
 
-import { KeyboardShortcutColorPicker } from 'notebookEditor/extension/style/component/KeyboardShortcutColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
 import { keyboardShortcutTextColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
+
+import { KeyboardShortcutColorPicker } from './KeyboardShortcutColorPicker/KeyboardShortcutColorPicker';
 
 // ********************************************************************************
 // NOTE: This component update the Color attribute of the selected Node. This

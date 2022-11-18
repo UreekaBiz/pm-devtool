@@ -1,5 +1,6 @@
 import { storedMarksFromDOM, AttributeType, MarkHolderAttributes } from 'common';
-import { NodeExtensionAttributes } from '../type';
+
+import { NodeExtensionAttributes } from '../type/NodeExtension/type';
 
 // ********************************************************************************
 // == Attribute ===================================================================

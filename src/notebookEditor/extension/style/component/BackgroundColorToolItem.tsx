@@ -1,9 +1,10 @@
 import { getSelectedNode, updateAttributesInRangeCommand, AttributeType, InvalidMergedAttributeValue } from 'common';
 
-import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
 import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
+
+import { ColorPicker } from './ColorPicker/ColorPicker';
 
 // ********************************************************************************
 // NOTE: This component update the Color attribute of the selected Node. This
