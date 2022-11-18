@@ -2,7 +2,7 @@ import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 
 import { drawCellSelection, fixTables, normalizeSelection } from 'common';
 
-import { handleCellTripleClick, handleTableArrowKeydown, handleTablePaste, handleCellSelectionMousedown } from '../tableInput';
+import { handleCellSelectionMousedown, handleCellTripleClick, handleTableArrowKeydown, handleTablePaste } from '../input';
 
 // == Constant ====================================================================
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/index.js
