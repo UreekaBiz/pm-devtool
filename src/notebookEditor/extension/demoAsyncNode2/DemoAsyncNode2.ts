@@ -2,7 +2,7 @@ import { keymap } from 'prosemirror-keymap';
 
 import { chainCommands, generateNodeId, getNodeOutputSpec, isDemoAsyncNode2, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, DemoAsyncNode2Spec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { applyDocumentUpdates, blockArrowUpCommand, blockBackspaceCommand, blockModBackspaceCommand, shortcutCommandWrapper, toggleBlock } from 'notebookEditor/command';
+import { applyDocumentUpdates, blockArrowDownCommand, blockArrowUpCommand, blockBackspaceCommand, blockModBackspaceCommand, shortcutCommandWrapper, toggleBlock } from 'notebookEditor/command';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 
@@ -56,7 +56,7 @@ export const DemoAsyncNode2 = new NodeExtension({
 
       // set GapCursor or Selection at start or end of Block if necessary
       'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('start', NodeName.DEMO_ASYNC_NODE_2)),
-      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('end', NodeName.DEMO_ASYNC_NODE_2)),
+      'ArrowDown': chainCommands(blockArrowDownCommand(NodeName.DEMO_ASYNC_NODE_2), selectTextBlockStartOrEndCommand('end', NodeName.DEMO_ASYNC_NODE_2)),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.DEMO_ASYNC_NODE_2)),

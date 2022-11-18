@@ -35,7 +35,7 @@ class DeleteCellSelectionDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // == Util ========================================================================
-export const setNewCellSelection = (editorState: EditorState, selection: Selection, tr: Transaction) => {
+export const setNewCellSelectionFromInput = (editorState: EditorState, selection: Selection, tr: Transaction) => {
   if(editorState.selection.eq(selection)) return false/*same Selection as the current one*/;
 
   tr.setSelection(selection).scrollIntoView();

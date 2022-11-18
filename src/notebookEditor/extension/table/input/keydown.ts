@@ -3,7 +3,7 @@ import { Command, EditorState, Selection, Transaction } from 'prosemirror-state'
 import { EditorView } from 'prosemirror-view';
 
 import { isCellSelection, nextCell, AbstractDocumentUpdate, CellSelection } from 'common';
-import { deleteCellSelectionCommand, setNewCellSelection } from './selection';
+import { deleteCellSelectionCommand, setNewCellSelectionFromInput } from './selection';
 import { isCursorAtEndOfCell } from './util';
 
 // ********************************************************************************
@@ -22,7 +22,7 @@ class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction, view?: EditorView) {
     const { selection } = editorState;
     if(isCellSelection(selection)) {
-      return setNewCellSelection(editorState, Selection.near(selection.$headCell), tr);
+      return setNewCellSelectionFromInput(editorState, Selection.near(selection.$headCell), tr);
     } /* else -- not a CellSelection */
 
     if(this.axis !== 'horizontal' && !selection.empty) return false/*do not allow*/;
@@ -31,7 +31,7 @@ class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
     if(!isAtEndOfCell || isAtEndOfCell === null) return false/*not at the end of the Cell*/;
 
     if(this.axis == 'horizontal') {
-      return setNewCellSelection(editorState, Selection.near(editorState.doc.resolve(selection.head + this.direction), this.direction), tr);
+      return setNewCellSelectionFromInput(editorState, Selection.near(editorState.doc.resolve(selection.head + this.direction), this.direction), tr);
     } else {
       const $cellPos = editorState.doc.resolve(isAtEndOfCell),
             $nextCellPos = nextCell($cellPos, this.axis, this.direction);
@@ -41,7 +41,7 @@ class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
       else if(this.direction < 0/*left*/) { newSelection = Selection.near(editorState.doc.resolve($cellPos.before(-1/*grandParent depth*/)), -1/*bias to the left*/); }
       else { newSelection = Selection.near(editorState.doc.resolve($cellPos.after(-1/*grandParent depth*/)), 1/*bias to the right*/); }
 
-      return setNewCellSelection(editorState, newSelection, tr)/*updated*/;
+      return setNewCellSelectionFromInput(editorState, newSelection, tr)/*updated*/;
     }
   }
 }
@@ -69,7 +69,7 @@ class TableShiftArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
     const $nextCellHead = nextCell((selection as CellSelection/*guaranteed by above check*/).$headCell, this.axis, this.direction);
     if(!$nextCellHead) return false/*nothing to do*/;
 
-    return setNewCellSelection(editorState, new CellSelection((selection as CellSelection/*guaranteed by above check*/).$anchorCell, $nextCellHead), tr)/*updated*/;
+    return setNewCellSelectionFromInput(editorState, new CellSelection((selection as CellSelection/*guaranteed by above check*/).$anchorCell, $nextCellHead), tr)/*updated*/;
   }
 }
 

@@ -3,7 +3,7 @@ import { chainCommands, getCodeBlockNodeType, generateNodeId, getNodeOutputSpec,
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension';
-import { blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, toggleBlock } from 'notebookEditor/command';
+import { blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, toggleBlock, blockArrowDownCommand } from 'notebookEditor/command';
 import { ExtensionPriority } from 'notebookEditor/model';
 import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule';
 import { keymap } from 'prosemirror-keymap';
@@ -65,7 +65,7 @@ export const CodeBlock = new NodeExtension({
 
       // set GapCursor or Selection at start or end of Block if necessary
       'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('start', NodeName.CODEBLOCK)),
-      'ArrowDown': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('end', NodeName.CODEBLOCK)),
+      'ArrowDown': chainCommands(blockArrowDownCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('end', NodeName.CODEBLOCK)),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),
