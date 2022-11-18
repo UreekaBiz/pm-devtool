@@ -1,10 +1,10 @@
 import { getPosType, AsyncNodeType, AsyncNodeStatus, isAsyncNode, AttributeType } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
-import { getCodeBlockViewStorage } from 'notebookEditor/extension/codeblock';
+import { Editor } from 'notebookEditor/editor/Editor';
+import { getCodeBlockViewStorage } from 'notebookEditor/extension/codeblock/nodeView/storage';
 import { AbstractNodeModel } from 'notebookEditor/model/AbstractNodeModel';
-import { replaceAsyncNodeCommand } from '../command';
 
+import { replaceAsyncNodeCommand } from '../command';
 import { codeBlockHash, hashesFromCodeBlockReferences } from '../util';
 import { AbstractAsyncNodeStorageType } from './controller';
 

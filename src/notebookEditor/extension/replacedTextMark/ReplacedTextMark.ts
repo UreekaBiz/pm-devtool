@@ -1,6 +1,7 @@
 import { getMarkOutputSpec, MarkName, ReplacedTextMarkMarkSpec, DATA_MARK_TYPE } from 'common';
 
-import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { MarkExtension } from '../type/MarkExtension/MarkExtension';
 import { replacedTextMarkPlugin } from './plugin';
 
 // ********************************************************************************

@@ -6,8 +6,8 @@ import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 import { ColorPickerTool } from 'notebookEditor/extension/shared/component/ColorPickerToolItem/ColorPickerTool';
+import { DropdownToolItem } from 'notebookEditor/extension/shared/component/DropdownToolItem/DropdownToolItem';
 import { InputWithUnitNodeToolItem } from 'notebookEditor/extension/shared/component/InputWithUnitToolItem';
-import { DropdownToolItem } from 'notebookEditor/extension/shared/component/DropdownToolItem';
 
 // ********************************************************************************
 // == Constant ====================================================================

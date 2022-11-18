@@ -1,17 +1,19 @@
-import { chainCommands, getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
-
-import { applyDocumentUpdates } from 'notebookEditor/command/update';
-import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension';
-import { blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, toggleBlock, blockArrowDownCommand } from 'notebookEditor/command';
-import { ExtensionPriority } from 'notebookEditor/model';
-import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule';
 import { keymap } from 'prosemirror-keymap';
 
+import { chainCommands, getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
+
+import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/command/node';
+import { applyDocumentUpdates } from 'notebookEditor/command/update';
+import { shortcutCommandWrapper } from 'notebookEditor/command/util';
+import { ExtensionPriority } from 'notebookEditor/model';
+import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
+
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
-import { CodeBlockController } from './nodeView/controller';
-import { CodeBlockStorage } from './nodeView/storage';
+import { CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
 
 // ********************************************************************************

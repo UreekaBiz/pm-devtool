@@ -1,7 +1,10 @@
 
 import { getNodeOutputSpec, isImageNode, ImageNodeSpec, NodeName, DATA_NODE_TYPE, DEFAULT_IMAGE_PARSE_TAG } from 'common';
 
-import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getImageAttrs } from './attribute';
 import { ImageController } from './nodeView';
 import { ImageStorage } from './nodeView/storage';

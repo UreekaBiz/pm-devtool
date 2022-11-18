@@ -2,10 +2,13 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getHorizontalRuleNodeType, getNodeOutputSpec, HorizontalRuleNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { blockArrowDownCommand, blockArrowUpCommand, shortcutCommandWrapper } from 'notebookEditor/command';
-import { createNodeInputRule } from 'notebookEditor/plugin/inputRule';
+import { blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/command/node';
+import { shortcutCommandWrapper } from 'notebookEditor/command/util';
+import { createNodeInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { HorizontalRuleAttrs } from './attribute';
 import './horizontalRule.css';
 import { insertOrToggleHorizontalRuleCommand } from './command';

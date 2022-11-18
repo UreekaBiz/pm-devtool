@@ -1,6 +1,8 @@
 import { getNodeOutputSpec, NodeName, CellNodeSpec, DATA_NODE_TYPE } from 'common';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type';
+import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
+import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
 import { CellAttrs } from './attribute';
 

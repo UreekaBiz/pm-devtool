@@ -4,7 +4,8 @@ import { getMarkOutputSpec, UnderlineMarkSpec, MarkName } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
-import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { MarkExtension } from '../type/MarkExtension/MarkExtension';
 import { safeParseTag, wrapGetStyleAttrs } from '../util/parse';
 import { toggleUnderlineCommand } from './command';
 

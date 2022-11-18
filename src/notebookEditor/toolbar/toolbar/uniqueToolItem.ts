@@ -1,15 +1,15 @@
 import { MarkName, NodeName } from 'common';
 
-import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem } from 'notebookEditor/extension/blockquote';
-import { codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/extension/codeblock';
-import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem } from 'notebookEditor/extension/codeBlockReference';
-import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, DemoAsyncNodeExecuteButtons } from 'notebookEditor/extension/demoAsyncNode';
-import { demoAsyncNode2DelaySlider, demoAsyncNode2ReplaceTextToolItem, DemoAsyncNode2ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode2';
-import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document';
-import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem } from 'notebookEditor/extension/horizontalRule';
-import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem, verticalAlignBottomToolItem, verticalAlignMiddleToolItem, verticalAlignTopToolItem } from 'notebookEditor/extension/image';
-import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link';
-import { cellToolItems, generalTableToolItems } from 'notebookEditor/extension/table';
+import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem } from 'notebookEditor/extension/blockquote/toolItem';
+import { codeBlockTypeToolItem, codeBlockWrapToolItem } from 'notebookEditor/extension/codeblock/toolItem';
+import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem } from 'notebookEditor/extension/codeBlockReference/toolItem';
+import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, DemoAsyncNodeExecuteButtons } from 'notebookEditor/extension/demoAsyncNode/toolItem';
+import { demoAsyncNode2DelaySlider, demoAsyncNode2ReplaceTextToolItem, DemoAsyncNode2ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode2/toolItem';
+import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document/toolItem';
+import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem } from 'notebookEditor/extension/horizontalRule/toolItem';
+import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem, verticalAlignBottomToolItem, verticalAlignMiddleToolItem, verticalAlignTopToolItem } from 'notebookEditor/extension/image/toolItem';
+import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link/toolItem';
+import { cellToolItems, generalTableToolItems } from 'notebookEditor/extension/table/toolItem';
 
 import { EditorToolComponentProps, ToolItem } from '../type';
 

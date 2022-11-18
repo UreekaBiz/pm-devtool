@@ -6,7 +6,7 @@ import { isNodeSelection, AttributeType, NodeName, VerticalAlign, DEFAULT_IMAGE_
 import { getTextDOMRenderedValue } from 'notebookEditor/extension/util/attribute';
 import { getDialogStorage } from 'notebookEditor/model/DialogStorage';
 import { setVerticalAlign } from 'notebookEditor/shared/command';
-import { InputToolItem } from 'notebookEditor/extension/shared/component/InputToolItem';
+import { InputToolItem } from 'notebookEditor/extension/shared/component/InputToolItem/InputToolItem';
 import { InputWithUnitNodeToolItem } from 'notebookEditor/extension/shared/component/InputWithUnitToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 

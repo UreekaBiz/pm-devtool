@@ -4,7 +4,8 @@ import { getMarkOutputSpec, MarkName, SuperScriptMarkSpec } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 
-import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { MarkExtension } from '../type/MarkExtension/MarkExtension';
 import { safeParseTag } from '../util/parse';
 import { toggleSuperScriptCommand } from './command';
 

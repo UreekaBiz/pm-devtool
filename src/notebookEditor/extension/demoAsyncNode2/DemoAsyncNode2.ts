@@ -2,11 +2,15 @@ import { keymap } from 'prosemirror-keymap';
 
 import { chainCommands, generateNodeId, getNodeOutputSpec, isDemoAsyncNode2, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, DemoAsyncNode2Spec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { applyDocumentUpdates, blockArrowDownCommand, blockArrowUpCommand, blockBackspaceCommand, blockModBackspaceCommand, shortcutCommandWrapper, toggleBlock } from 'notebookEditor/command';
+import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/command/node';
+import { applyDocumentUpdates } from 'notebookEditor/command/update';
+import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { ExtensionPriority } from 'notebookEditor/model/type';
 
-import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from '../type';
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getDemoAsyncNode2Attrs } from './attribute';
 import './demoAsyncNode2.css';
 import { DemoAsyncNode2Controller } from './nodeView/controller';
