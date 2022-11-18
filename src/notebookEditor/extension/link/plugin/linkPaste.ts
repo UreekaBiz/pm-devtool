@@ -5,7 +5,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { urlSchema, setMarkCommand, AttributeType, MarkName, LinkTarget } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { NoPluginState } from 'notebookEditor/model/type';
 
 // ********************************************************************************

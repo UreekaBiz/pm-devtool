@@ -2,8 +2,8 @@ import { NodeType } from 'prosemirror-model';
 
 import { Attributes, AttributeType, NodeName, SelectionDepth } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
 import { shortcutCommandWrapper, toolItemCommandWrapper } from 'notebookEditor/command/util';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { getNodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
 import { insertNestedViewNodeCommand } from './command';

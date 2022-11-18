@@ -1,6 +1,6 @@
 import { SelectionDepth } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 import { Toolbar } from './type';
 

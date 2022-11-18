@@ -1,6 +1,6 @@
 import { getPosType, NestedViewNodeType } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeModel } from 'notebookEditor/model/AbstractNodeModel';
 
 import { AbstractNestedNodeViewNodeStorageType } from './controller';

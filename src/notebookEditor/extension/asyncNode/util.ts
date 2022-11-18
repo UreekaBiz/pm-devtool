@@ -1,6 +1,6 @@
 import { hashString, isBlank, isCodeBlockNode, CodeBlockNodeType, CodeBlockReference, NodeName, EMPTY_CODEBLOCK_HASH, REMOVED_CODEBLOCK_VISUALID } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { getCodeBlockViewStorage } from 'notebookEditor/extension/codeblock/nodeView/storage';
 import { visualIdFromCodeBlockReference } from 'notebookEditor/extension/codeblock/util';
 

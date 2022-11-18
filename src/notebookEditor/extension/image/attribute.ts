@@ -1,6 +1,7 @@
 import { AttributeType, SetAttributeType, ImageAttributes, DEFAULT_IMAGE_BORDER_COLOR, DEFAULT_IMAGE_BORDER_STYLE, DEFAULT_IMAGE_BORDER_WIDTH, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT } from 'common';
 
-import { ExtensionStorageType, NodeExtensionAttributes } from '../type';
+import { ExtensionStorageType } from '../type/Extension/type';
+import { NodeExtensionAttributes } from '../type/NodeExtension/type';
 import { setAttributeParsingBehavior, uniqueIdParsingBehavior } from '../util';
 
 // ********************************************************************************

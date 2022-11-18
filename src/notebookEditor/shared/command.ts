@@ -1,7 +1,7 @@
 import { isNodeSelection, AttributeType, NodeName, SetNodeSelectionDocumentUpdate, UpdateAttributesDocumentUpdate, VerticalAlign } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 // ********************************************************************************
 // .. Vertical Align ..............................................................

@@ -1,6 +1,6 @@
 import { getPosType, DemoAsyncNode2Type } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractAsyncNodeController } from 'notebookEditor/extension/asyncNode/nodeView/controller';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 

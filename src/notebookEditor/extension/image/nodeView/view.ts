@@ -1,6 +1,6 @@
 import { getPosType, isBlank, AttributeType, ImageNodeType, NodeName, VerticalAlign, DEFAULT_IMAGE_BORDER_COLOR, DATA_NODE_TYPE, DEFAULT_IMAGE_BORDER_STYLE, DEFAULT_IMAGE_BORDER_WIDTH, DEFAULT_IMAGE_ERROR_SRC, DEFAULT_IMAGE_SRC, DEFAULT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT, IMAGE_ERROR_CLASS } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { createInlineNodeContainer } from 'notebookEditor/extension/util/ui';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
 

@@ -1,6 +1,6 @@
 import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
 
 import { CodeBlockModel } from './model';

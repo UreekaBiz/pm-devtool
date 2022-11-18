@@ -3,7 +3,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { getParentNode, NodeName, SelectionDepth } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { ICON_BUTTON_CLASS } from 'notebookEditor/theme/theme';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 

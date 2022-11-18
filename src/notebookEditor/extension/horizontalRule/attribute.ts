@@ -1,6 +1,6 @@
 import { HorizontalRuleAttributes, AttributeType, SetAttributeType, DEFAULT_HORIZONTAL_RULE_BACKGROUND_COLOR, DEFAULT_HORIZONTAL_RULE_HEIGHT } from 'common';
 
-import { NodeExtensionAttributes } from '../type';
+import { NodeExtensionAttributes } from '../type/NodeExtension/type';
 import { setAttributeParsingBehavior } from '../util';
 
 // ********************************************************************************

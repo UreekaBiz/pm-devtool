@@ -1,6 +1,6 @@
 import { asyncNodeStatusToColor, getPosType, AsyncNodeStatus, AttributeType, DemoAsyncNodeType, NodeName, DATA_NODE_TYPE, DEMO_ASYNC_NODE_STATUS_CONTAINER_CLASS } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractAsyncNodeView } from 'notebookEditor/extension/asyncNode/nodeView/view';
 import { createInlineNodeContainer } from 'notebookEditor/extension/util/ui';
 

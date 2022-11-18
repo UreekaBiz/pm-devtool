@@ -1,6 +1,6 @@
 import { AttributeType, SetAttributeType, LinkAttributes, DEFAULT_LINK_HREF, DEFAULT_LINK_TARGET } from 'common';
 
-import { MarkExtensionAttributes } from '../type';
+import { MarkExtensionAttributes } from '../type/MarkExtension/type';
 import { setAttributeParsingBehavior } from '../util';
 
 // ********************************************************************************

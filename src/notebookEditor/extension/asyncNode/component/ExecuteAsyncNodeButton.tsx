@@ -2,7 +2,7 @@ import { useToast, Spinner } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { FiPlay } from 'react-icons/fi';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractAsyncNodeController } from 'notebookEditor/extension/asyncNode/nodeView/controller';
 import { RightContentButton } from 'notebookEditor/extension/shared/component/RightContentButton';
 import { useAsyncStatus } from 'notebookEditor/shared/hook/useAsyncStatus';
