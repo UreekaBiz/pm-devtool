@@ -6,7 +6,7 @@ import { isCellSelection } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
-import { addColumnSpans, getResolvedCellPosAroundResolvedPos, getCellWrapperAtResolvedPos, isSelectionHeadInTable, moveResolvedCellPosForward, getSelectedTableRect, getResolvedCellPos, updateTableNodeAttributes } from '../../..//extension/table/util';
+import { addColumnSpans, getResolvedCellPosAroundResolvedPos, getCellWrapperAtResolvedPos, isSelectionHeadInRow, moveResolvedCellPosForward, getSelectedTableRect, getResolvedCellPos, updateTableNodeAttributes } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
 // ********************************************************************************
@@ -175,7 +175,7 @@ export class GoToCellDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly direction: 'previous' | 'next') {/*nothing additional*/ }
 
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
     let $cell = getResolvedCellPos(editorState);
     if(!$cell) return false/*nothing to do*/;

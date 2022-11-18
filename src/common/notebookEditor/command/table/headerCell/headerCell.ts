@@ -5,7 +5,7 @@ import { NodeName } from '../../../../notebookEditor/node/type';
 import { isNotNullOrUndefined } from '../../../../util';
 import { TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
-import { isSelectionHeadInTable, getSelectedTableRect } from '../../..//extension/table/util';
+import { isSelectionHeadInRow, getSelectedTableRect } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
 // ********************************************************************************
@@ -18,7 +18,7 @@ export class ToggleHeaderDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly type: 'row' | 'column' | 'cell') {/*nothing additional*/ }
 
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
     const tableTypes = getTableNodeTypes(editorState.schema);
     const rect = getSelectedTableRect(editorState);

@@ -11,7 +11,7 @@ import { isCellNode } from '../../..//extension/table/node/cell';
 import { isHeaderCellNode } from '../../../extension/table/node/headerCell';
 import { getTableNodeTypes, isTableNode, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from '../../../extension/table/node/table';
 import { TableRole } from '../../../extension/table/type';
-import { addColumnSpans, isColumnHeader, isSelectionHeadInTable, removeColumnSpans, getSelectedTableRect, updateTableNodeAttributes } from '../../..//extension/table/util';
+import { addColumnSpans, isColumnHeader, isSelectionHeadInRow, removeColumnSpans, getSelectedTableRect, updateTableNodeAttributes } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
 import { createTable } from './util';
@@ -34,12 +34,12 @@ export class CreateAndInsertTableDocumentUpdate implements AbstractDocumentUpdat
    * that a Table Node is created and inserted
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const node = createTable(editorState.schema, this.rows, this.columns, this.withHeaderRow);
-    const offset = tr.selection.anchor + 1/*inside the table*/;
+    const tableNode = createTable(editorState.schema, this.rows, this.columns, this.withHeaderRow);
+    const selectionOffset = tr.selection.anchor + 1/*inside the table*/;
 
-    tr.replaceSelectionWith(node)
+    tr.replaceSelectionWith(tableNode)
       .scrollIntoView()
-      .setSelection(TextSelection.near(tr.doc.resolve(offset)));
+      .setSelection(TextSelection.near(tr.doc.resolve(selectionOffset)));
 
     return tr/*updated*/;
   }
@@ -53,10 +53,10 @@ export class DeleteTableDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     const $pos = editorState.selection.$anchor;
 
-    for(let d = $pos.depth; d > 0; d--) {
-      const node = $pos.node(d);
-      if(node.type.spec.tableRole === TableRole.Table) {
-        tr.delete($pos.before(d), $pos.after(d)).scrollIntoView();
+    for(let depth = $pos.depth; depth > 0; depth--) {
+      const nodeAtDepth = $pos.node(depth);
+      if(nodeAtDepth.type.spec.tableRole === TableRole.Table) {
+        tr.delete($pos.before(depth), $pos.after(depth)).scrollIntoView();
       } /* else -- not a Table, do nothing */
     }
 
@@ -74,14 +74,12 @@ export class DeleteTableWhenAllCellsSelectedDocumentUpdate implements AbstractDo
     const { selection } = editorState;
     if(!isCellSelection(selection)) return false/*not a CellSelection, nothing to do*/;
 
-    let cellCount = 0;
+    let cellCount = 0/*default*/;
     const tableParentObj = findParentNodeClosestToPos(selection.ranges[0/*first range*/].$from, (node) => isTableNode(node));
     if(!tableParentObj) return false/*Table does not exits*/;
 
     tableParentObj.node.descendants((node) => {
-      if(isTableNode(node)) {
-        return false/*do not descend further*/;
-      }
+      if(isTableNode(node)) return false/*do not descend further*/;
 
       if(isHeaderCellNode(node) || isCellNode(node)) {
         cellCount += 1;
@@ -110,12 +108,12 @@ export class AddRowBeforeDocumentUpdate implements AbstractDocumentUpdate {
    * a Table Row is added before the Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
-    const rect = getSelectedTableRect(editorState);
-    if(!rect) return false/*no selected Rectangle in Table*/;
+    const tableRect = getSelectedTableRect(editorState);
+    if(!tableRect) return false/*no selected TableRect in Table*/;
 
-    const updatedTr = addRow(tr, rect, rect.top);
+    const updatedTr = addRow(tr, tableRect, tableRect.top);
     return updatedTr/*updated*/;
   }
 }
@@ -131,12 +129,12 @@ export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
    * a Table Row is added after the Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
-    const rect = getSelectedTableRect(editorState);
-    if(!rect) return false/*no selected Rectangle in Table*/;
+    const tableRect = getSelectedTableRect(editorState);
+    if(!tableRect) return false/*no TableRect in Table*/;
 
-    const updatedTr = addRow(tr, rect, rect.bottom);
+    const updatedTr = addRow(tr, tableRect, tableRect.bottom);
     return updatedTr/*updated*/;
   }
 }
@@ -152,36 +150,37 @@ export class DeleteRowDocumentUpdate implements AbstractDocumentUpdate {
    * the selected Rows are removed from a Table
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
-    const rect = getSelectedTableRect(editorState);
-    if(!rect) return false/*no selected Rectangle in Table*/;
+    const tableRect = getSelectedTableRect(editorState);
+    if(!tableRect) return false/*no TableRect in Table*/;
 
-    const { table, tableMap } = rect;
+    const { table, tableMap } = tableRect;
     if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap)) return false/*do nothing*/;
-    if(rect.top === 0 && rect.bottom === tableMap.height) return false/*nothing to do*/;
+    if(tableRect.top === 0 && tableRect.bottom === tableMap.height) return false/*nothing to do*/;
 
-    for(let i = rect.bottom - 1; ; i--) {
-      removeRow(tr, rect, i);
-      if(i === rect.top) break/*nothing left to do*/;
+    for(let i = tableRect.bottom - 1; ; i--) {
+      removeRow(tr, tableRect, i);
+      if(i === tableRect.top) break/*nothing left to do*/;
 
-      rect.table = rect.tableStart
-        ? tr.doc.nodeAt(rect.tableStart - 1)
+      tableRect.table = tableRect.tableStart
+        ? tr.doc.nodeAt(tableRect.tableStart - 1)
         : tr.doc;
-      if(!rect.table) break/*nothing to do */;
+      if(!tableRect.table) break/*nothing to do */;
 
-      rect.tableMap = TableMap.getTableMap(rect.table);
+      tableRect.tableMap = TableMap.getTableMap(tableRect.table);
     }
 
     return tr/*updated*/;
   }
 }
 
-const rowIsHeader = (map: TableMap, table: ProseMirrorNode, row: number) => {
+/** check if the row at the given rowIndex is a HeaderCell  */
+const isRowHeader = (table: ProseMirrorNode, tableMap: TableMap, rowIndex: number) => {
   const headerCellType = getTableNodeTypes(table.type.schema)[NodeName.HEADER_CELL];
 
-  for(let col = 0; col < map.width; col++) {
-    const cellAt = table.nodeAt(map.map[col + row * map.width]);
+  for(let columnIndex = 0; columnIndex < tableMap.width; columnIndex++) {
+    const cellAt = table.nodeAt(tableMap.map[columnIndex + rowIndex * tableMap.width]);
     if(!cellAt) return false/*by definition*/;
 
     if(!(cellAt.type === headerCellType)) return false/*not a header Cell*/;
@@ -190,83 +189,84 @@ const rowIsHeader = (map: TableMap, table: ProseMirrorNode, row: number) => {
   return true/*row is Header*/;
 };
 
-const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectProps, row: number) => {
+/** add a row below or above the one at the given rowNumber */
+const addRow = (tr: Transaction, { tableMap, tableStart, table }: OptionalRectProps, rowNumber: number) => {
   if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return tr/*do nothing*/;
 
-  let rowPos: number | null | undefined = tableStart;
-  for(let i = 0; i < row; i++) {
-    rowPos += table.child(i).nodeSize;
+  let newRowInsertionPos: number | null | undefined = tableStart/*default*/;
+  for(let i = 0; i < rowNumber; i++) {
+    newRowInsertionPos += table.child(i).nodeSize;
   }
 
-  const cells: ProseMirrorNode[] = [];
-  let refRow: number | null = row > 0 ? -1 : 0;
-  if(rowIsHeader(tableMap, table, row + refRow)) {
-    refRow = row === 0 || row === tableMap.height ? null : 0;
+  const newRowCells: ProseMirrorNode[] = [/*default empty*/];
+  let referenceRowNumber: number | null = rowNumber > 0 ? -1/*not adding at the first row of the Table*/ : 0/*adding at the first row of the Table*/;
+  if(isRowHeader(table, tableMap, rowNumber + referenceRowNumber)) {
+    referenceRowNumber = rowNumber === 0 || rowNumber === tableMap.height/*adding at end*/ ? null : 0/*default*/;
   } /* else -- row is not a Header */
 
-  for(let col = 0, index = tableMap.width * row; col < tableMap.width; col++, index++) {
+  for(let columnIndex = 0, mapIndex = tableMap.width * rowNumber; columnIndex < tableMap.width; columnIndex++, mapIndex++) {
+    // covered by a rowSpan Cell
+    if(rowNumber > 0 && rowNumber < tableMap.height && tableMap.map[mapIndex] === tableMap.map[mapIndex - tableMap.width]) {
+      const cellPos = tableMap.map[mapIndex];
+      const cellNode = table.nodeAt(cellPos);
+      if(!cellNode) continue/*nothing to do*/;
 
-    // covered by a rowSpan cell
-    if(row > 0 && row < tableMap.height && tableMap.map[index] === tableMap.map[index - tableMap.width]) {
-      const pos = tableMap.map[index];
-      const node = table.nodeAt(pos);
-      if(!node) continue/*nothing to do*/;
-
-      const { attrs } = node;
-      tr.setNodeMarkup(tableStart + pos, null/*maintain type*/, updateTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] + 1));
-      col += attrs[AttributeType.ColSpan] - 1;
+      const { attrs } = cellNode;
+      tr.setNodeMarkup(tableStart + cellPos, null/*maintain type*/, updateTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] + 1));
+      columnIndex += attrs[AttributeType.ColSpan] - 1;
     } else {
       const type =
-        refRow == null
-          ? getTableNodeTypes(table.type.schema)[NodeName.CELL]
-          : table.nodeAt(tableMap.map[index + refRow * tableMap.width])?.type;
+        referenceRowNumber == null
+          ? getTableNodeTypes(table.type.schema)[NodeName.CELL]/*default*/
+          : table.nodeAt(tableMap.map[mapIndex + referenceRowNumber * tableMap.width])?.type/*type of the referenced Row*/;
 
       if(type) {
         const nodeOfType = type.createAndFill();
         if(!nodeOfType) continue/*could not create, nothing to do*/;
 
-        cells.push(nodeOfType);
+        newRowCells.push(nodeOfType);
       } /* else -- no type to create */
     }
   }
-  tr.insert(rowPos, getTableNodeTypes(table.type.schema)[NodeName.ROW].create(null/*no attrs*/, cells));
+  tr.insert(newRowInsertionPos, getTableNodeTypes(table.type.schema)[NodeName.ROW].create(null/*no attrs*/, newRowCells));
   return tr;
 };
 
-const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRectProps, row: number) => {
+/** remove a row below or above the one at the given rowNumber */
+const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRectProps, rowNumber: number) => {
   if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return/*do nothing*/;
 
-  let rowPos = 0;
-  for(let i = 0; i < row; i++) {
-    rowPos += table.child(i).nodeSize;
+  let deletedRowPos = 0;
+  for(let i = 0; i < rowNumber; i++) {
+    deletedRowPos += table.child(i).nodeSize;
   }
 
-  const nextRow = rowPos + table.child(row).nodeSize;
+  const nextRow = deletedRowPos + table.child(rowNumber).nodeSize;
   const mapFrom = tr.mapping.maps.length;
+  tr.delete(deletedRowPos + tableStart, nextRow + tableStart);
 
-  tr.delete(rowPos + tableStart, nextRow + tableStart);
-  for(let col = 0, index = row * tableMap.width; col < tableMap.width; col++, index++) {
-    const pos = tableMap.map[index];
-    if(row > 0 && pos == tableMap.map[index - tableMap.width]) {
-      // if the cell starts in the Row above, reduce its rowSpan
-      const cell = table.nodeAt(pos);
+  for(let column = 0, mapIndex = rowNumber * tableMap.width; column < tableMap.width; column++, mapIndex++) {
+    const cellPos = tableMap.map[mapIndex];
+    if(rowNumber > 0 && cellPos == tableMap.map[mapIndex - tableMap.width]) {
+      // reduce the rowSpan of the Cell above if it exists
+      const cell = table.nodeAt(cellPos);
       if(!cell) continue/*nothing to do*/;
 
       const { attrs } = cell;
-      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(pos + tableStart), null/*maintain type*/, updateTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] - 1));
-      col += attrs[AttributeType.ColSpan] - 1;
+      tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(cellPos + tableStart), null/*maintain type*/, updateTableNodeAttributes(attrs, AttributeType.RowSpan, attrs[AttributeType.RowSpan] - 1));
+      column += attrs[AttributeType.ColSpan] - 1;
 
-    } else if(row < tableMap.width && pos == tableMap.map[index + tableMap.width]) {
-      // if it continues in the Row below, it has to be moved down
-      const cell = table.nodeAt(pos);
+    } else if(rowNumber < tableMap.width && cellPos == tableMap.map[mapIndex + tableMap.width]) {
+      // move the Cell down if it continues in the Row below
+      const cell = table.nodeAt(cellPos);
       if(!cell) continue/*nothing to do*/;
 
       const { attrs } = cell;
       const cellCopy = cell.type.create(updateTableNodeAttributes(attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - 1), cell.content);
 
-      const newPos = tableMap.cellPositionAt(row + 1, col, table);
+      const newPos = tableMap.cellPositionAt(rowNumber + 1, column, table);
       tr.insert(tr.mapping.slice(mapFrom).map(tableStart + newPos), cellCopy);
-      col += cell.attrs[AttributeType.ColSpan] - 1;
+      column += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- do nothing */
   }
 };
@@ -283,12 +283,12 @@ export class AddColumnBeforeDocumentUpdate implements AbstractDocumentUpdate {
    * before the column with the current Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
-    const rect = getSelectedTableRect(editorState);
-    if(!rect) return false/*no selected Rectangle in Table*/;
+    const tableRect = getSelectedTableRect(editorState);
+    if(!tableRect) return false/*no selected TableRect in Table*/;
 
-    const updatedTr = addColumn(tr, rect, rect.left);
+    const updatedTr = addColumn(tr, tableRect, tableRect.left);
     return updatedTr;
   }
 }
@@ -304,12 +304,12 @@ export class AddColumnAfterDocumentUpdate implements AbstractDocumentUpdate {
    * after the column with the current Selection
    */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
-    const rect = getSelectedTableRect(editorState);
-    if(!rect) return false/*no selected Rectangle in Table*/;
+    const tableRect = getSelectedTableRect(editorState);
+    if(!tableRect) return false/*no selected TableRect in Table*/;
 
-    const updatedTr = addColumn(tr, rect, rect.right);
+    const updatedTr = addColumn(tr, tableRect, tableRect.right);
     return updatedTr;
   }
 }
@@ -325,62 +325,65 @@ export class DeleteColumnDocumentUpdate implements AbstractDocumentUpdate {
    * modify the given Transaction such that the selected Columns
    * are removed from a Table */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!isSelectionHeadInTable(editorState)) return false/*nothing to do*/;
+    if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
-    const rect = getSelectedTableRect(editorState);
-    if(!rect) return false/*no selected Rectangle in Table*/;
+    const tableRect = getSelectedTableRect(editorState);
+    if(!tableRect) return false/*no selected Rectangle in Table*/;
 
-    const { table, tableMap, tableStart } = rect;
+    const { table, tableMap, tableStart } = tableRect;
     if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return false/*do nothing*/;
-    if(rect.left === 0 && rect.right === tableMap.width) return false/*do nothing*/;
+    if(tableRect.left === 0 && tableRect.right === tableMap.width) return false/*do nothing*/;
 
-    for(let i = rect.right - 1; ; i--) {
-      removeColumn(tr, rect, i);
-      if(i === rect.left) break/*nothing left to do*/;
+    for(let i = tableRect.right - 1; ; i--) {
+      removeColumn(tr, tableRect, i);
+      if(i === tableRect.left) break/*nothing left to do*/;
 
-      rect.table = rect.tableStart ? tr.doc.nodeAt(rect.tableStart - 1) : tr.doc;
-      if(!rect.table) return false/*Table does not exist*/;
+      tableRect.table = tableRect.tableStart ? tr.doc.nodeAt(tableRect.tableStart - 1) : tr.doc;
+      if(!tableRect.table) return false/*Table does not exist*/;
 
-      rect.tableMap = TableMap.getTableMap(rect.table);
+      tableRect.tableMap = TableMap.getTableMap(tableRect.table);
     }
 
     return tr/*updated*/;
   }
 }
 
-/** add a Column at the given position in a Table Node */
-const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
+/**
+ * add a Column to the left or the right of the one at the
+ * given columnNumber in a Table Node
+ */
+const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, columnNumber: number) => {
   if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return tr/*do nothing*/;
 
-  let referenceColumn: number | null = col > 0 ? -1 : 0;
-  if(isColumnHeader(table, tableMap, col + referenceColumn)) {
-    referenceColumn = col === 0 || col === tableMap.width ? null : 0;
+  let referenceColumn: number | null = columnNumber > 0 ? -1/*not adding at the first column of the Table*/ : 0/*adding at the first column of the Table*/;
+  if(isColumnHeader(table, tableMap, columnNumber + referenceColumn)) {
+    referenceColumn = (columnNumber === 0 || columnNumber === tableMap.width/*adding at end*/) ? null : 0/*default*/;
   } /* else -- computed column is not a Header */
 
   for(let row = 0; row < tableMap.height; row++) {
-    const index = row * tableMap.width + col;
+    const mapIndex = row * tableMap.width + columnNumber;
 
     // if the position falls inside a column spanning Cell
-    if(col > 0 && col < tableMap.width && tableMap.map[index - 1] === tableMap.map[index]) {
-      let pos = tableMap.map[index];
-      const cell = table.nodeAt(pos);
-      if(!cell) continue/*nothing to do*/;
+    if(columnNumber > 0 && columnNumber < tableMap.width && tableMap.map[mapIndex - 1] === tableMap.map[mapIndex]) {
+      let cellPos = tableMap.map[mapIndex];
+      const cellNode = table.nodeAt(cellPos);
+      if(!cellNode) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null/*maintain type*/, addColumnSpans(cell.attrs, col - tableMap.getColumnAmountBeforePos(pos)));
-      // skip ahead if rowSpan > 1
-      row += cell.attrs[AttributeType.RowSpan] - 1;
+      tr.setNodeMarkup(tr.mapping.map(tableStart + cellPos), null/*maintain type*/, addColumnSpans(cellNode.attrs, columnNumber - tableMap.getColumnAmountBeforePos(cellPos)));
 
+      // skip if rowSpan > 1
+      row += cellNode.attrs[AttributeType.RowSpan] - 1;
     } else {
-      const type =
+      const cellType =
         referenceColumn === null
           ? getTableNodeTypes(table.type.schema)[NodeName.CELL]
-          : table.nodeAt(tableMap.map[index + referenceColumn])?.type;
+          : table.nodeAt(tableMap.map[mapIndex + referenceColumn])?.type;
 
-      const mappedPos = tableMap.cellPositionAt(row, col, table);
-      const nodeOfType = type?.createAndFill();
+      const mappedPos = tableMap.cellPositionAt(row, columnNumber, table);
+      const cellOfType = cellType?.createAndFill();
 
-      if(nodeOfType) {
-        tr.insert(tr.mapping.map(tableStart + mappedPos), nodeOfType);
+      if(cellOfType) {
+        tr.insert(tr.mapping.map(tableStart + mappedPos), cellOfType);
       } /* else -- could not create Node, do not insert anything */
     }
   }
@@ -388,24 +391,28 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
   return tr;
 };
 
-const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, col: number) => {
+/**
+ * remove a Column to the left or the right of the one at the
+ * given columnNumber in a Table Node
+ */
+const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRectProps, columnNumber: number) => {
   if(!isNotNullOrUndefined<ProseMirrorNode>(table) || !isNotNullOrUndefined<TableMap>(tableMap) || !isNotNullOrUndefined<number>(tableStart)) return/*do nothing*/;
 
   const mapStart = tr.mapping.maps.length;
   for(let row = 0; row < tableMap.height;) {
-    const index = row * tableMap.width + col;
-    const pos = tableMap.map[index];
+    const mapIndex = row * tableMap.width + columnNumber;
+    const cellPos = tableMap.map[mapIndex];
 
-    const cell = table.nodeAt(pos);
-    if(!cell) continue/*nothing to do*/;
+    const cellNode = table.nodeAt(cellPos);
+    if(!cellNode) continue/*nothing to do*/;
 
-    // if this is part of a col-spanning cell
-    if((col > 0 && tableMap.map[index - 1] == pos) || (col < tableMap.width - 1 && tableMap.map[index + 1] == pos)) {
-      tr.setNodeMarkup(tr.mapping.slice(mapStart).map(tableStart + pos), null/*maintain type*/, removeColumnSpans(cell.attrs, col - tableMap.getColumnAmountBeforePos(pos)));
+    // if this is part of a column spanning Cell
+    if((columnNumber > 0 && tableMap.map[mapIndex - 1] === cellPos) || (columnNumber < tableMap.width - 1 && tableMap.map[mapIndex + 1] === cellPos)) {
+      tr.setNodeMarkup(tr.mapping.slice(mapStart).map(tableStart + cellPos), null/*maintain type*/, removeColumnSpans(cellNode.attrs, columnNumber - tableMap.getColumnAmountBeforePos(cellPos)));
     } else {
-      const start = tr.mapping.slice(mapStart).map(tableStart + pos);
-      tr.delete(start, start + cell.nodeSize);
+      const start = tr.mapping.slice(mapStart).map(tableStart + cellPos);
+      tr.delete(start, start + cellNode.nodeSize);
     }
-    row += cell.attrs[AttributeType.RowSpan];
+    row += cellNode.attrs[AttributeType.RowSpan];
   }
 };
