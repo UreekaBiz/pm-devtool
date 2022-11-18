@@ -5,7 +5,7 @@ import * as Validate from 'yup';
 
 import { urlSchema, defaultImageAttributes } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { fitImageDimension, getImageMeta } from 'notebookEditor/extension/image/util';
 import { insertAndSelectImageCommand } from 'notebookEditor/extension/image/command';
 import { useIsMounted } from 'notebookEditor/shared/hook/useIsMounted';

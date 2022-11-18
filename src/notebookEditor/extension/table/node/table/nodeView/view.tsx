@@ -1,9 +1,9 @@
 import { DATA_NODE_TYPE, getPosType, MIN_CELL_WIDTH, NodeName, TableNodeType, TABLE_CONTAINER_CLASS } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
-import { updateTableColumns } from '../util';
 
+import { updateTableColumns } from '../util';
 import { TableStorageType } from './controller';
 import { TableModel } from './model';
 

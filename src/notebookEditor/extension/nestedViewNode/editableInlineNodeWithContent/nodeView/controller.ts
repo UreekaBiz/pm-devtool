@@ -1,6 +1,6 @@
 import { getPosType, EditableInlineNodeWithContentNodeType } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNestedNodeViewNodeController } from 'notebookEditor/extension/nestedViewNode/nodeView/controller';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 

@@ -1,6 +1,6 @@
 import { AttributeType, CellAttributes, SetAttributeType, CELL_COL_SPAN, CELL_ROW_SPAN } from 'common';
 
-import { NodeExtensionAttributes } from 'notebookEditor/extension/type';
+import { NodeExtensionAttributes } from 'notebookEditor/extension/type/NodeExtension/type';
 import { setAttributeParsingBehavior } from 'notebookEditor/extension/util';
 
 // ********************************************************************************

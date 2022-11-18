@@ -1,6 +1,6 @@
 import { AttributeType, CodeBlockReference, VisualId, REMOVED_CODEBLOCK_VISUALID, SetTextSelectionDocumentUpdate } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 import { getCodeBlockViewStorage, CodeBlockController } from './nodeView';
 

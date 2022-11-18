@@ -1,6 +1,6 @@
 import { getPosType, CodeBlockNodeType, AttributeType } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 
 import { CodeBlockModel } from './model';

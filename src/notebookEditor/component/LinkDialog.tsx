@@ -7,7 +7,7 @@ import { urlSchema, AttributeType, LinkTarget, SetTextSelectionDocumentUpdate, D
 
 import { insertLinkCommand, SetLinkDocumentUpdate } from 'notebookEditor/extension/link/command';
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { useIsMounted } from 'notebookEditor/shared/hook/useIsMounted';
 
 // ********************************************************************************

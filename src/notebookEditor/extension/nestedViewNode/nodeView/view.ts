@@ -2,7 +2,7 @@ import { EditorView } from 'prosemirror-view';
 
 import { getNestedViewNodeTextString, getPosType, NestedViewNodeType, DATA_NODE_TYPE, NESTED_VIEW_NODE_EMPTY_NODE_CLASS, NESTED_NODE_VIEW_INNER_VIEW_DISPLAY_CONTAINER_CLASS, NESTED_NODE_VIEW_RENDER_DISPLAY_CONTAINER_CLASS } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
 
 import { AbstractNestedNodeViewNodeStorageType } from './controller';

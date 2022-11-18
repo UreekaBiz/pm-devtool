@@ -2,7 +2,7 @@ import { Transaction } from 'prosemirror-state';
 
 import { getNodesAffectedByStepMap, isHeadingNode, AttributeType, NodeName } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { getNodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
 import { getCodeBlockViewStorage } from './nodeView/storage';

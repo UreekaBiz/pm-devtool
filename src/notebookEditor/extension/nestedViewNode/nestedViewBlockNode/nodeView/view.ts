@@ -1,6 +1,6 @@
 import { getPosType, NestedViewBlockNodeType } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNestedViewNodeView } from 'notebookEditor/extension/nestedViewNode/nodeView/view';
 
 import { NestedViewBlockNodeModel } from './model';

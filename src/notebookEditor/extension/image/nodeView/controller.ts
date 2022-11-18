@@ -1,7 +1,6 @@
 import { getPosType, ImageNodeType } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
-
+import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 
 import { ImageModel } from './model';

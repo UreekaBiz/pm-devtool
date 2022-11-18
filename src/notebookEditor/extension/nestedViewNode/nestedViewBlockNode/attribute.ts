@@ -1,6 +1,7 @@
 import { NestedViewBlockNodeAttributes, AttributeType } from 'common';
 
-import { ExtensionStorageType, NodeExtensionAttributes } from 'notebookEditor/extension/type';
+import { ExtensionStorageType } from 'notebookEditor/extension/type/Extension/type';
+import { NodeExtensionAttributes } from 'notebookEditor/extension/type/NodeExtension/type';
 import { uniqueIdParsingBehavior } from 'notebookEditor/extension/util';
 
 // ********************************************************************************

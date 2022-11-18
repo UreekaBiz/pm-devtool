@@ -1,6 +1,7 @@
 import { DemoAsyncNode2Attributes, AttributeType, SetAttributeType, DEFAULT_DEMO_2_ASYNC_NODE_DELAY, DEFAULT_DEMO_2_ASYNC_NODE_STATUS } from 'common';
 
-import { ExtensionStorageType, NodeExtensionAttributes } from '../type';
+import { ExtensionStorageType } from '../type/Extension/type';
+import { NodeExtensionAttributes } from '../type/NodeExtension/type';
 import { setAttributeParsingBehavior, uniqueIdParsingBehavior } from '../util';
 
 // ********************************************************************************
