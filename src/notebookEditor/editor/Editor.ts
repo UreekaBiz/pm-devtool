@@ -1,4 +1,4 @@
-import { Schema } from 'prosemirror-model';
+import { DOMParser, Schema } from 'prosemirror-model';
 import { Command, EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, DirectEditorProps, NodeViewConstructor } from 'prosemirror-view';
 
@@ -112,6 +112,8 @@ export class Editor {
   public mountView(root: HTMLElement) {
     const props: DirectEditorProps = {
       state: EditorState.create({
+        doc: DOMParser.fromSchema(this.schema).parse(new window.DOMParser().parseFromString('<ul><li></li></ul>', 'text/html')),
+
         schema: this.schema,
         // NOTE: expects the extensions to be ordered by priority (which happens
         //       in the Editor constructor)
