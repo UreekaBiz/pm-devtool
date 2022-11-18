@@ -2,23 +2,23 @@ import { NodeType } from 'prosemirror-model';
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
 import { canJoin } from 'prosemirror-transform';
 
-import { SelectionRange } from 'common';
+import { isListItemNode, SelectionRange } from 'common';
 
 // == Util ========================================================================
 // get the positions of the start of the ListItems in the given Range
-export const getListItemPositions = (editorState: EditorState, range: SelectionRange, listItemType: NodeType) => {
+export const getListItemPositions = (editorState: EditorState, range: SelectionRange) => {
   const { from, to } = range;
-  const listItemStartPositions: number[] = [/*default empty*/];
+  const listItemPositions: number[] = [/*default empty*/];
 
   editorState.doc.nodesBetween(from, to, (node, pos) => {
-    if(node.type === listItemType) {
-      listItemStartPositions.push(pos);
+    if(isListItemNode(node)) {
+      listItemPositions.push(pos);
     } /* else -- not an item of the specified type, ignore */
 
     return !node.isLeaf/*keep descending if node is not a Leaf*/;
   });
 
-  return listItemStartPositions;
+  return listItemPositions;
 };
 
 // check the given Selection to see if its from or its to are inside a ListItem

@@ -117,7 +117,7 @@ export class Editor {
   public mountView(root: HTMLElement) {
     const props: DirectEditorProps = {
       state: EditorState.create({
-        doc: DOMParser.fromSchema(this.schema).parse(new window.DOMParser().parseFromString('<ul><li><p>hello</p></li></ul>', 'text/html')),
+        doc: DOMParser.fromSchema(this.schema).parse(new window.DOMParser().parseFromString('<ul><li><p></p></li></ul>', 'text/html')),
 
         schema: this.schema,
         // NOTE: expects the extensions to be ordered by priority (which happens

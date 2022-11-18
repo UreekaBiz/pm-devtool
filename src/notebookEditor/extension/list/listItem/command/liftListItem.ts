@@ -1,7 +1,7 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { getListItemNodeType, AbstractDocumentUpdate, NodeGroup } from 'common';
+import { AbstractDocumentUpdate, NodeGroup } from 'common';
 
 import { getListItemPositions } from './util';
 
@@ -16,7 +16,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction) {
     const { from, to } = editorState.selection;
-    const listItemPositions = getListItemPositions(editorState, { from, to }, getListItemNodeType(editorState.schema)).reverse();
+    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse();
     listItemPositions.forEach(listItemPos => liftListItem(tr, listItemPos));
     return tr/*updated*/;
   }
