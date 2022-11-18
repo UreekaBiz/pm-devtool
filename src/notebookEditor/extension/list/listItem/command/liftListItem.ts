@@ -48,27 +48,3 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
 
   return tr;
 };
-
-// --------------------------------------------------------------------------------
-// lift the ListItem at the Selection if afterwards its content would become
-// direct child of the Document
-export const liftListItemToDocumentCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftListItemAtHeadDocumentUpdate().update(state, state.tr), dispatch);
-export class LiftListItemAtHeadDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
-
-  /**
-   * modify the given Transaction such that ListItem at the Selection is lifted
-   * if afterwards its content would become a direct child of the Document
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    if(editorState.selection.empty && !editorState.selection.$from.nodeBefore) {
-      const updatedTr = new LiftListItemDocumentUpdate().update(editorState, tr);
-      if(updatedTr) {
-        return updatedTr;
-      } /* else -- could not lift ListItem */
-    } /* else -- Selection is not empty or there is a nodeBefore */
-
-    return false/*default*/;
-  }
-}

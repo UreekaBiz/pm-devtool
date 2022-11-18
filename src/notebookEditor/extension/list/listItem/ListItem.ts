@@ -2,13 +2,12 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
-import { liftListItemToDocumentCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
+import { liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
@@ -44,10 +43,10 @@ export const ListItem = new NodeExtension({
   addProseMirrorPlugins: (editor) => [
     listItemPlugin(),
     keymap({
-      'Enter': () => shortcutCommandWrapper(editor, splitListItemKeepMarksCommand),
-      'Shift-Tab': () => shortcutCommandWrapper(editor, liftListItemCommand),
-      'Tab': () => shortcutCommandWrapper(editor, sinkListItemCommand),
-      'Backspace': () => shortcutCommandWrapper(editor, liftListItemToDocumentCommand),
+      'Enter':  splitListItemKeepMarksCommand,
+      'Shift-Tab':  liftListItemCommand,
+      'Tab':  sinkListItemCommand,
+      'Backspace':  liftListItemCommand,
     }),
   ],
 });
