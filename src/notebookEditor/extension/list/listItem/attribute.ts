@@ -1,6 +1,6 @@
 import { AttributeType, ListItemAttributes, ListStyle, SetAttributeType, DATA_LIST_ITEM_LIST_STYLE, LIST_ITEM_DEFAULT_SEPARATOR, DATA_LIST_ITEM_SEPARATOR } from 'common';
 
-import { NodeExtensionAttributes } from 'notebookEditor/extension/type';
+import { NodeExtensionAttributes } from 'notebookEditor/extension/type/NodeExtension/type';
 import { setAttributeParsingBehavior } from 'notebookEditor/extension/util';
 
 // ********************************************************************************

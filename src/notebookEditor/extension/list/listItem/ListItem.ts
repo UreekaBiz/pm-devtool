@@ -3,7 +3,8 @@ import { keymap } from 'prosemirror-keymap';
 import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
+import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';

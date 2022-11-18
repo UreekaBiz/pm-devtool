@@ -1,6 +1,6 @@
 import { AttributeType, OrderedListAttributes, SetAttributeType, ORDERED_LIST_DEFAULT_START } from 'common';
 
-import { NodeExtensionAttributes } from 'notebookEditor/extension/type';
+import { NodeExtensionAttributes } from 'notebookEditor/extension/type/NodeExtension/type';
 import { setAttributeParsingBehavior } from 'notebookEditor/extension/util';
 
 // ********************************************************************************
