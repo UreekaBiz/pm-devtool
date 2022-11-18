@@ -42,6 +42,7 @@ export const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfig
       blockquoteBorderLeftWidthToolItem,
     ],
   },
+  [NodeName.BULLET_LIST]: defaultUniqueToolItemConfiguration,
   [NodeName.CELL]: {
     position: 'start',
     items: [...cellToolItems],
@@ -110,9 +111,11 @@ export const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfig
       verticalAlignTopToolItem,
     ],
   },
+  [NodeName.LIST_ITEM]: defaultUniqueToolItemConfiguration,
   [NodeName.MARK_HOLDER]: defaultUniqueToolItemConfiguration,
   [NodeName.NESTED_VIEW_BLOCK_NODE]: defaultUniqueToolItemConfiguration,
   [NodeName.ROW]: defaultUniqueToolItemConfiguration,
+  [NodeName.ORDERED_LIST]: defaultUniqueToolItemConfiguration,
   [NodeName.PARAGRAPH]: defaultUniqueToolItemConfiguration,
   [NodeName.TABLE]: {
     position: 'start',

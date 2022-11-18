@@ -69,6 +69,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
     },
+    [NodeName.BULLET_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
     [NodeName.CELL]: {/*no defined value*/},
     [NodeName.CODEBLOCK]: {
       [AttributeType.PaddingLeft]: '4px',
@@ -117,9 +118,15 @@ export const DefaultTheme: Theme = {
       [AttributeType.TextAlign]: TextAlign.left,
       [AttributeType.VerticalAlign]: VerticalAlign.bottom,
     },
+    [NodeName.LIST_ITEM]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '16px',
+    },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
     [NodeName.ROW]: {/*no defined value*/},
+    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#000000',
@@ -192,6 +199,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
     },
+    [NodeName.BULLET_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
     [NodeName.CELL]: {/*no defined value*/},
     [NodeName.CODEBLOCK]: {
       [AttributeType.PaddingLeft]: '4px',
@@ -239,9 +247,15 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.TextAlign]: TextAlign.left,
       [AttributeType.VerticalAlign]: VerticalAlign.bottom,
     },
+    [NodeName.LIST_ITEM]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '16px',
+    },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
     [NodeName.ROW]: {/*no defined value*/},
+    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#353744',

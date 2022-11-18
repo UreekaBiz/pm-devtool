@@ -14,6 +14,9 @@ import { HorizontalRuleNodeSpec } from './extension/horizontalRule';
 import { ImageNodeSpec } from './extension/image';
 import { ItalicMarkSpec } from './extension/italic';
 import { LinkMarkSpec } from './extension/link';
+import { BulletListNodeSpec } from './extension/list/bulletList';
+import { ListItemNodeSpec } from './extension/list/listItem';
+import { OrderedListNodeSpec } from './extension/list/orderedList';
 import { MarkHolderNodeSpec } from './extension/markHolder';
 import { NestedViewBlockNodeSpec } from './extension/nestedViewNode/nestedViewBlockNode';
 import { ParagraphNodeSpec } from './extension/paragraph';
@@ -47,6 +50,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeSpec,
 
   // -- priority does not matter --------------------------------------------------
+  [NodeName.BULLET_LIST]: BulletListNodeSpec,
   [NodeName.CELL]: CellNodeSpec,
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeSpec,
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeSpec,
@@ -55,7 +59,9 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeSpec,
   [NodeName.IMAGE]: ImageNodeSpec,
+  [NodeName.LIST_ITEM]: ListItemNodeSpec,
   [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
+  [NodeName.ORDERED_LIST]: OrderedListNodeSpec,
   [NodeName.ROW]: RowNodeSpec,
 
   // -- priority at last ----------------------------------------------------------
