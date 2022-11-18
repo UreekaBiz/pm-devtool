@@ -20,15 +20,15 @@ export class ToggleHeaderDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!isSelectionHeadInRow(editorState)) return false/*nothing to do*/;
 
-    const tableTypes = getTableNodeTypes(editorState.schema);
-    const rect = getSelectedTableRect(editorState);
-    if(!rect) return false/*no selected Rectangle in Table*/;
+    const tableNodeTypes = getTableNodeTypes(editorState.schema);
+    const tableRect = getSelectedTableRect(editorState);
+    if(!tableRect) return false/*no selected Rectangle in Table*/;
 
-    const { tableMap } = rect;
+    const { tableMap } = tableRect;
     if(!isNotNullOrUndefined<TableMap>(tableMap)) return false/*nothing to do*/;
 
-    const isHeaderRowEnabled = isHeaderEnabledByType('row', rect, tableTypes);
-    const isHeaderColumnEnabled = isHeaderEnabledByType('column', rect, tableTypes);
+    const isHeaderRowEnabled = isHeaderEnabledByType('row', tableRect, tableNodeTypes),
+          isHeaderColumnEnabled = isHeaderEnabledByType('column', tableRect, tableNodeTypes);
 
     let isHeaderEnabled = false/*default*/;
     if(this.type === 'column') { isHeaderEnabled = isHeaderRowEnabled; }
@@ -36,27 +36,27 @@ export class ToggleHeaderDocumentUpdate implements AbstractDocumentUpdate {
 
     const selectionStartsAt = isHeaderEnabled ? 1 : 0;
 
-    let cellsRect = rect/*default*/;
-    if(this.type === 'column') { cellsRect = new TableRect(0, selectionStartsAt, 1, tableMap.height); }
-    else if(this.type === 'row') { cellsRect = new TableRect(selectionStartsAt, 0, tableMap.width, 1); }
+    let cellsRect = tableRect/*default*/;
+    if(this.type === 'column') { cellsRect = new TableRect(0/*left*/, selectionStartsAt/*top*/, 1/*right*/, tableMap.height/*bottom*/); }
+    else if(this.type === 'row') { cellsRect = new TableRect(selectionStartsAt/*left*/, 0/*top*/, tableMap.width/*right*/, 1/*bottom*/); }
     /* else -- do not change default */
 
-    let newType = tableTypes[NodeName.CELL]/*default*/;
+    let newCellType = tableNodeTypes[NodeName.CELL]/*default*/;
     if(this.type === 'column') {
-      if(isHeaderColumnEnabled) { newType = tableTypes[NodeName.CELL]; }
-      else { newType = tableTypes[NodeName.HEADER_CELL]; }
+      if(isHeaderColumnEnabled) { newCellType = tableNodeTypes[NodeName.CELL]; }
+      else { newCellType = tableNodeTypes[NodeName.HEADER_CELL]; }
 
     } else if(this.type === 'row') {
-      if(isHeaderRowEnabled) { newType = tableTypes[NodeName.CELL]; }
-      else { newType = tableTypes[NodeName.HEADER_CELL]; }
+      if(isHeaderRowEnabled) { newCellType = tableNodeTypes[NodeName.CELL]; }
+      else { newCellType = tableNodeTypes[NodeName.HEADER_CELL]; }
     } /* else -- do not change default */
 
     tableMap.getCellsInTableRect(cellsRect).forEach((relativeCellPos) => {
-      const cellPos = relativeCellPos + (rect.tableStart ?? 0/*no tableStart*/);
-      const cell = tr.doc.nodeAt(cellPos);
+      const cellPos = relativeCellPos + (tableRect.tableStart ?? 0/*no tableStart*/),
+            cellNode = tr.doc.nodeAt(cellPos);
 
-      if(cell) {
-        tr.setNodeMarkup(cellPos, newType, cell.attrs);
+      if(cellNode) {
+        tr.setNodeMarkup(cellPos, newCellType, cellNode.attrs);
       } /* else -- no Cell exists at cellPos */
     });
 
@@ -74,26 +74,27 @@ export const toggleHeaderColumnCommand = toggleHeaderCommand('column');
 export const toggleHeaderCellCommand = toggleHeaderCommand('cell');
 
 // == Util ========================================================================
-const isHeaderEnabledByType = (type: 'column' | 'row', rect: TableRect, types: { [nodeName: string]: NodeType; }) => {
-  if(!rect.table || !rect.tableMap) return false/*no tablemap available*/;
+/** check if a Header is enabled  */
+const isHeaderEnabledByType = (type: 'column' | 'row', tableRect: TableRect, types: { [nodeName: string]: NodeType; }) => {
+  if(!tableRect.table || !tableRect.tableMap) return false/*no tablemap available*/;
 
   // Get cell positions for first row or first column
-  const cellPositions = rect.tableMap.getCellsInTableRect({
+  const cellPositions = tableRect.tableMap.getCellsInTableRect({
+    // NOTE these are defaults
     left: 0,
     top: 0,
-    right: type === 'row' ? rect.tableMap.width : 1,
-    bottom: type === 'column' ? rect.tableMap.height : 1,
+    right: type === 'row' ? tableRect.tableMap.width : 1,
+    bottom: type === 'column' ? tableRect.tableMap.height : 1,
     table: undefined,
     tableMap: undefined,
     tableStart: undefined,
   });
 
   for(let i = 0; i < cellPositions.length; i++) {
-    const cell = rect.table.nodeAt(cellPositions[i]);
-
-    if(cell && cell.type !== types[NodeName.HEADER_CELL]) {
+    const cellNode = tableRect.table.nodeAt(cellPositions[i]);
+    if(cellNode && cellNode.type !== types[NodeName.HEADER_CELL]) {
       return false;
-    } /* else -- cell does not exist or is not a Header Cell */
+    } /* else -- Cell does not exist or it is a Header Cell */
   }
 
   return true/*default*/;
