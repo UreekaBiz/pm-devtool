@@ -12,7 +12,7 @@ export const getListItemPositions = (editorState: EditorState, range: SelectionR
 
   editorState.doc.nodesBetween(from, to, (node, pos) => {
     if(node.type === listItemType) {
-      listItemStartPositions.push(pos + 1/*inside the ListItem*/);
+      listItemStartPositions.push(pos);
     } /* else -- not an item of the specified type, ignore */
 
     return !node.isLeaf/*keep descending if node is not a Leaf*/;
@@ -24,7 +24,7 @@ export const getListItemPositions = (editorState: EditorState, range: SelectionR
 // check the given Selection to see if its from or its to are inside a ListItem
 export const fromOrToInListItem = (itemType: NodeType, selection: Selection) => {
   const { $from, $to } = selection;
-  if($from.parent.type !== itemType || $to.parent.type !== itemType) return false/*no part of the given Selection is inside a ListItem*/;
+  if($from.node(-1/*grandParent listItem*/)?.type !== itemType || $to.node(-1/*grandParent listItem*/)?.type !== itemType) return false/*no part of the given Selection is inside a ListItem*/;
 
   return true/*either from or to are inside a ListItem*/;
 };

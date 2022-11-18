@@ -22,7 +22,6 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
     const listItemPositions = getListItemPositions(editorState, { from, to }, getListItemNodeType(editorState.schema));
     listItemPositions.reverse(/*start from deepest depth*/).forEach((listItemPos) => {
       const $listItemPos = tr.doc.resolve(listItemPos);
-
       if($listItemPos.depth > 1/*nested*/) {
         parentListType = $listItemPos.node(-1/*grandParent*/).type;
       } /* else -- not nested */
