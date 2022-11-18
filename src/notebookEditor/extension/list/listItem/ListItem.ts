@@ -12,7 +12,7 @@ import { listItemPlugin } from './plugin';
 // == Node ========================================================================
 export const ListItem = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
-  name: NodeName.ORDERED_LIST,
+  name: NodeName.LIST_ITEM,
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Attribute -----------------------------------------------------------------
