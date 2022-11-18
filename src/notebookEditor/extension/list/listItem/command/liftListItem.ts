@@ -1,4 +1,4 @@
-import { Command, EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { AbstractDocumentUpdate, NodeGroup } from 'common';
@@ -43,7 +43,12 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
     if(!listItemBlockStart.nodeAfter) return tr/*no node after the range's start*/;
     if(!tr.doc.type.contentMatch.defaultType) return tr/*cannot insert a default NodeType at this position*/;
 
-    tr.delete(listItemBlockStart.pos, listItemBlockStart.pos + listItemBlockStart.nodeAfter.nodeSize);
+    const liftedContent = listItemBlockStart.nodeAfter/*the listItem*/.firstChild?.copy();
+    if(!liftedContent) return tr/*no child to lift*/;
+
+    tr.replaceWith(listItemBlockStart.pos, listItemBlockStart.pos + listItemBlockStart.nodeAfter/*the listItem*/.nodeSize, liftedContent)
+      .setSelection(Selection.near(tr.doc.resolve(listItemBlockStart.pos)));
+
   } /* else -- depth is defined or parent of range start is of type List */
 
   return tr;
