@@ -140,7 +140,7 @@ export class Editor {
     this.view.updateState(this.view.state.apply(transaction));
     this.updateReactEditorCallback();
 
-    // call the transaction listeners
+    // call the Transaction listeners
     this.transactionListeners.forEach(listener => listener(this, transaction));
   };
 

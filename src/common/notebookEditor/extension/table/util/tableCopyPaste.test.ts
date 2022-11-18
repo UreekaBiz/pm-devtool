@@ -241,7 +241,7 @@ describe('insertCells', () => {
     const $cellPos = getResolvedCellPosAroundResolvedPos(table.resolve(anchorPos));
     if($cellPos === null/*explicit check since it can be 0*/) throw new Error('$cellPos does not exist');
 
-    const tableMap = TableMap.get(table);
+    const tableMap = TableMap.getTableMap(table);
 
     const { [A]: cellsSliceFromPos, [B]: cellsSliceToPos } = cells.tag;
     if(cellsSliceFromPos === null/*explicit check since it can be 0*/ || cellsSliceToPos === null/*explicit check since it can be 0*/) throw new Error('expected A and B positions to be defined for the test and they are not');
@@ -249,7 +249,7 @@ describe('insertCells', () => {
     const pastedResult = pastedCells(cells.slice(cellsSliceFromPos, cellsSliceToPos));
     if(pastedResult === null) throw new Error('expected pastedResult to be valid');
 
-    insertCells(state, (tr) => (state = state.apply(tr)), 0/*tableStart pos*/, tableMap.findCell($cellPos.pos), pastedResult);
+    insertCells(state, (tr) => (state = state.apply(tr)), 0/*tableStart pos*/, tableMap.getCellTableRect($cellPos.pos), pastedResult);
     ist(state.doc, result, eq);
   };
 

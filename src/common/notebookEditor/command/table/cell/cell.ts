@@ -138,7 +138,7 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
 
     let lastCell;
     for(let row = rect.top; row < rect.bottom; row++) {
-      let pos = tableMap.positionAt(row, rect.left, table);
+      let pos = tableMap.cellPositionAt(row, rect.left, table);
       if(row === rect.top) {
         pos += cellNode.nodeSize;
       } /* else -- no need to change row */

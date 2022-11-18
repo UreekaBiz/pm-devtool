@@ -29,10 +29,10 @@ export const areResolvedPositionsInTable = ($a: ResolvedPos, $b: ResolvedPos) =>
 };
 
 // == Column ======================================================================
-/** return the column count of the Table at the given {@link ResolvedPos} */
-export const getColumnCountAtPos = ($pos: ResolvedPos) => {
-  const tableMap = TableMap.get($pos.node(-1));
-  return tableMap.colCount($pos.pos - $pos.start(-1));
+  /** get the amount of columns that lie before the Cell at the given {@link ResolvedPos} */
+export const getColumnAmountBeforeResolvedPos = ($pos: ResolvedPos) => {
+  const tableMap = TableMap.getTableMap($pos.node(-1));
+  return tableMap.getColumnAmountBeforePos($pos.pos - $pos.start(-1));
 };
 
 /**
@@ -158,8 +158,8 @@ export const moveResolvedCellPosForward = ($pos: ResolvedPos) => $pos.nodeAfter 
  * get the {@link TableRect} of the Cell at the given {@link ResolvedPos}
  */
 export const getCellTableRect = ($pos: ResolvedPos) => {
-  const tableMap = TableMap.get($pos.node(-1));
-  return tableMap.findCell($pos.pos - $pos.start(-1));
+  const tableMap = TableMap.getTableMap($pos.node(-1));
+  return tableMap.getCellTableRect($pos.pos - $pos.start(-1));
 };
 
 /**
@@ -167,10 +167,10 @@ export const getCellTableRect = ($pos: ResolvedPos) => {
  * after moving it
  */
 export const getMovedCellResolvedPos = ($pos: ResolvedPos, axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/bottom*/) => {
-  const tableMap = TableMap.get($pos.node(-1/*grandParent*/)),
+  const tableMap = TableMap.getTableMap($pos.node(-1/*grandParent*/)),
         tableStart = $pos.start(-1/*grandParent depth*/);
 
-  const movedPosition = tableMap.nextCell($pos.pos - tableStart, axis, direction);
+  const movedPosition = tableMap.getNextCellPos($pos.pos - tableStart, axis, direction);
   return movedPosition === null ? null : $pos.node(0/*the doc*/).resolve(tableStart + movedPosition);
 };
 
@@ -186,11 +186,11 @@ export const getMovedCellResolvedPos = ($pos: ResolvedPos, axis: 'horizontal' | 
 
   const table = cellPos.node(-1/*grandParent*/),
         tableStart = cellPos.start(-1/*grandParent depth*/),
-        tableMap = TableMap.get(table);
+        tableMap = TableMap.getTableMap(table);
 
   let tableRect: TableRect;
-  if(isCellSelection(selection)) { tableRect = tableMap.rectBetween(selection.$anchorCell.pos - tableStart, selection.$headCell.pos - tableStart); }
-  else { tableRect = tableMap.findCell(cellPos.pos - tableStart); }
+  if(isCellSelection(selection)) { tableRect = tableMap.getTableRectBetweenCellPositions(selection.$anchorCell.pos - tableStart, selection.$headCell.pos - tableStart); }
+  else { tableRect = tableMap.getCellTableRect(cellPos.pos - tableStart); }
 
   tableRect.tableStart = tableStart;
   tableRect.tableMap = tableMap;

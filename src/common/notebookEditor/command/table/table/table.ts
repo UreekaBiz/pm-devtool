@@ -170,7 +170,7 @@ export class DeleteRowDocumentUpdate implements AbstractDocumentUpdate {
         : tr.doc;
       if(!rect.table) break/*nothing to do */;
 
-      rect.tableMap = TableMap.get(rect.table);
+      rect.tableMap = TableMap.getTableMap(rect.table);
     }
 
     return tr/*updated*/;
@@ -264,7 +264,7 @@ const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRec
       const { attrs } = cell;
       const cellCopy = cell.type.create(updateTableNodeAttributes(attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - 1), cell.content);
 
-      const newPos = tableMap.positionAt(row + 1, col, table);
+      const newPos = tableMap.cellPositionAt(row + 1, col, table);
       tr.insert(tr.mapping.slice(mapFrom).map(tableStart + newPos), cellCopy);
       col += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- do nothing */
@@ -341,7 +341,7 @@ export class DeleteColumnDocumentUpdate implements AbstractDocumentUpdate {
       rect.table = rect.tableStart ? tr.doc.nodeAt(rect.tableStart - 1) : tr.doc;
       if(!rect.table) return false/*Table does not exist*/;
 
-      rect.tableMap = TableMap.get(rect.table);
+      rect.tableMap = TableMap.getTableMap(rect.table);
     }
 
     return tr/*updated*/;
@@ -366,7 +366,7 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
       const cell = table.nodeAt(pos);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null/*maintain type*/, addColumnSpans(cell.attrs, col - tableMap.colCount(pos)));
+      tr.setNodeMarkup(tr.mapping.map(tableStart + pos), null/*maintain type*/, addColumnSpans(cell.attrs, col - tableMap.getColumnAmountBeforePos(pos)));
       // skip ahead if rowSpan > 1
       row += cell.attrs[AttributeType.RowSpan] - 1;
 
@@ -376,7 +376,7 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
           ? getTableNodeTypes(table.type.schema)[NodeName.CELL]
           : table.nodeAt(tableMap.map[index + referenceColumn])?.type;
 
-      const mappedPos = tableMap.positionAt(row, col, table);
+      const mappedPos = tableMap.cellPositionAt(row, col, table);
       const nodeOfType = type?.createAndFill();
 
       if(nodeOfType) {
@@ -401,7 +401,7 @@ const removeColumn = (tr: Transaction, { table, tableMap, tableStart }: Optional
 
     // if this is part of a col-spanning cell
     if((col > 0 && tableMap.map[index - 1] == pos) || (col < tableMap.width - 1 && tableMap.map[index + 1] == pos)) {
-      tr.setNodeMarkup(tr.mapping.slice(mapStart).map(tableStart + pos), null/*maintain type*/, removeColumnSpans(cell.attrs, col - tableMap.colCount(pos)));
+      tr.setNodeMarkup(tr.mapping.slice(mapStart).map(tableStart + pos), null/*maintain type*/, removeColumnSpans(cell.attrs, col - tableMap.getColumnAmountBeforePos(pos)));
     } else {
       const start = tr.mapping.slice(mapStart).map(tableStart + pos);
       tr.delete(start, start + cell.nodeSize);

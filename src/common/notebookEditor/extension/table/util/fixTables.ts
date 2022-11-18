@@ -53,7 +53,7 @@ const fixTablesKey = new PluginKey('fix-tables');
  * it was given (i.e. if non null), or create a new one if necessary
  */
  export const fixTable = (state: EditorState, table: ProseMirrorNode, tablePos: number, tr?: Transaction) => {
-  const tableMap = TableMap.get(table);
+  const tableMap = TableMap.getTableMap(table);
   if(!tableMap.problems) return tr/*nothing to do*/;
 
   if(!tr) {
@@ -74,20 +74,17 @@ const fixTablesKey = new PluginKey('fix-tables');
       if(!cell) continue/*nothing to do*/;
 
       for(let j = 0; j < cell.attrs[AttributeType.RowSpan]; j++) {
-        mustAddCellAmounts[tableMapProblem.row + j] += tableMapProblem.n;
+        mustAddCellAmounts[tableMapProblem.row + j] += tableMapProblem.amount;
       }
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, removeColumnSpans(cell.attrs, cell.attrs[AttributeType.ColSpan] - tableMapProblem.n, tableMapProblem.n));
-
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, removeColumnSpans(cell.attrs, cell.attrs[AttributeType.ColSpan] - tableMapProblem.amount, tableMapProblem.amount));
     } else if(tableMapProblem.type == TableProblem.Missing) {
-      mustAddCellAmounts[tableMapProblem.row] += tableMapProblem.n;
-
+      mustAddCellAmounts[tableMapProblem.row] += tableMapProblem.amount;
     } else if(tableMapProblem.type === TableProblem.OverlongRowSpan) {
       const cell = table.nodeAt(tableMapProblem.position);
       if(!cell) continue/*nothing to do*/;
 
-      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - tableMapProblem.n));
-
+      tr.setNodeMarkup(tr.mapping.map(tablePos + 1 + tableMapProblem.position), null/*maintain type*/, updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - tableMapProblem.amount));
     } else if(tableMapProblem.type === TableProblem.ColWidthMistMatch) {
       const cell = table.nodeAt(tableMapProblem.position);
       if(!cell) continue/*nothing to do*/;

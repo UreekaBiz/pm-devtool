@@ -69,12 +69,12 @@ export class CellSelection extends Selection {
    */
   constructor($anchorCell: ResolvedPos, $headCell: ResolvedPos = $anchorCell/*default to the same cell*/) {
     const table = $anchorCell.node(-1/*Table ancestor*/),
-          tableMap = TableMap.get(table),
+          tableMap = TableMap.getTableMap(table),
           startOfTable = $anchorCell.start(-1/*Table ancestor depth*/);
 
-    const tableRect = tableMap.rectBetween($anchorCell.pos - startOfTable, $headCell.pos - startOfTable);
+    const tableRect = tableMap.getTableRectBetweenCellPositions($anchorCell.pos - startOfTable, $headCell.pos - startOfTable);
     const doc = $anchorCell.node(0);
-    const selectedCells = tableMap.cellsInRect(tableRect).filter((pos: number) => pos !== $headCell.pos - startOfTable);
+    const selectedCells = tableMap.getCellsInTableRect(tableRect).filter((pos: number) => pos !== $headCell.pos - startOfTable);
 
     // make the head Cell the first range so that it counts
     // as the primary part of the Selection
@@ -115,10 +115,10 @@ export class CellSelection extends Selection {
   /** returns a rectangular {@link Slice} of table rows containing the selected cells */
   public content() {
     const selectedTable = this.$anchorCell.node(-1/*grandParent*/),
-          tableMap = TableMap.get(selectedTable),
+          tableMap = TableMap.getTableMap(selectedTable),
           tableStart = this.$anchorCell.start(-1/*grandParent depth*/);
 
-    const tableRect = tableMap.rectBetween(this.$anchorCell.pos - tableStart, this.$headCell.pos - tableStart);
+    const tableRect = tableMap.getTableRectBetweenCellPositions(this.$anchorCell.pos - tableStart, this.$headCell.pos - tableStart);
     const seenCellPositions: { [key: number]: boolean; } = {};
     const selectedRows = [/*default empty*/];
 
@@ -130,7 +130,7 @@ export class CellSelection extends Selection {
 
         if(!seenCellPositions[cellPos]) {
           seenCellPositions[cellPos] = true;
-          const cellRect = tableMap.findCell(cellPos);
+          const cellRect = tableMap.getCellTableRect(cellPos);
           let cell = selectedTable.nodeAt(cellPos);
 
           if(cell) {
@@ -201,10 +201,10 @@ export class CellSelection extends Selection {
   /** execute the given callback for each cell in the {@link CellSelection} */
   public forEachCell(callback: (node: ProseMirrorNode | null, pos: number) => void) {
     const table = this.$anchorCell.node(-1/*grandParent*/),
-          tableMap = TableMap.get(table),
+          tableMap = TableMap.getTableMap(table),
           tableStart = this.$anchorCell.start(-1/*grandParent depth*/);
 
-    const selectedCells = tableMap.cellsInRect(tableMap.rectBetween(this.$anchorCell.pos - tableStart, this.$headCell.pos - tableStart));
+    const selectedCells = tableMap.getCellsInTableRect(tableMap.getTableRectBetweenCellPositions(this.$anchorCell.pos - tableStart, this.$headCell.pos - tableStart));
     for(let i = 0; i < selectedCells.length; i++) {
       callback(table.nodeAt(selectedCells[i]), tableStart + selectedCells[i]);
     }
@@ -231,11 +231,11 @@ export class CellSelection extends Selection {
    * given anchor and head {@link ResolvedPos}itions
    */
   static createColumnSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
-    const tableMap = TableMap.get($anchorCell.node(-1/*grandParent*/)),
+    const tableMap = TableMap.getTableMap($anchorCell.node(-1/*grandParent*/)),
           tableStart = $anchorCell.start(-1/*grandParent depth*/);
 
-    const anchorTableRect = tableMap.findCell($anchorCell.pos - tableStart),
-          headTableRect = tableMap.findCell($headCell.pos - tableStart);
+    const anchorTableRect = tableMap.getCellTableRect($anchorCell.pos - tableStart),
+          headTableRect = tableMap.getCellTableRect($headCell.pos - tableStart);
 
     const doc = $anchorCell.node(0/*doc depth*/);
     if(anchorTableRect.top <= headTableRect.top) {
@@ -265,11 +265,11 @@ export class CellSelection extends Selection {
    * the right of the Table
    */
   public isRowSelection() {
-    const tableMap = TableMap.get(this.$anchorCell.node(-1/*grandParent*/)),
+    const tableMap = TableMap.getTableMap(this.$anchorCell.node(-1/*grandParent*/)),
           tableStart = this.$anchorCell.start(-1/*grandParent depth*/);
 
-    const anchorLeftSide = tableMap.colCount(this.$anchorCell.pos - tableStart),
-          headLeftSide = tableMap.colCount(this.$headCell.pos - tableStart);
+    const anchorLeftSide = tableMap.getColumnAmountBeforePos(this.$anchorCell.pos - tableStart),
+          headLeftSide = tableMap.getColumnAmountBeforePos(this.$headCell.pos - tableStart);
     if(Math.min(anchorLeftSide, headLeftSide) > 0) return false/*by definition*/;
 
     const anchorRightSide = anchorLeftSide + this.$anchorCell.nodeAfter?.attrs[AttributeType.ColSpan],
@@ -288,11 +288,11 @@ export class CellSelection extends Selection {
    * given anchor and head {@link ResolvedPos}itions
    */
   public static createRowSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
-    const tableMap = TableMap.get($anchorCell.node(-1/*grandParent*/)),
+    const tableMap = TableMap.getTableMap($anchorCell.node(-1/*grandParent*/)),
           tableStart = $anchorCell.start(-1/*grandParent depth*/);
 
-    const anchorTableRect = tableMap.findCell($anchorCell.pos - tableStart),
-          headTableRect = tableMap.findCell($headCell.pos - tableStart);
+    const anchorTableRect = tableMap.getCellTableRect($anchorCell.pos - tableStart),
+          headTableRect = tableMap.getCellTableRect($headCell.pos - tableStart);
 
     const doc = $anchorCell.node(0/*doc depth*/);
     if(anchorTableRect.left <= headTableRect.left) {
@@ -443,7 +443,7 @@ export const normalizeSelection = (newState: EditorState, allowTableNodeSelectio
       normalizedSelection = CellSelection.createRowSelection($cell, $cell);
 
     } else if(!allowTableNodeSelection) {
-      const map = TableMap.get(selection.node);
+      const map = TableMap.getTableMap(selection.node);
       const start = selection.from + 1;
       const lastCell = start + map.map[map.width * map.height - 1];
       normalizedSelection = CellSelection.create(doc, start + 1, lastCell);

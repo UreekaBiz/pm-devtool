@@ -72,7 +72,7 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
   let table = tableStart ? state.doc.nodeAt(tableStart - 1/*the Table itself*/) : state.doc;
   if(!table) return/*nothing to do*/;
 
-  let tableMap = TableMap.get(table);
+  let tableMap = TableMap.getTableMap(table);
   const { top, left } = rect,
         right = left + cells.width,
         bottom = top + cells.height;
@@ -83,7 +83,7 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
     table = tableStart ? tr.doc.nodeAt(tableStart - 1/*the Table itself*/) : tr.doc;
     if(!table) return/*nothing to do*/;
 
-    tableMap = TableMap.get(table);
+    tableMap = TableMap.getTableMap(table);
     mapFrom = tr.mapping.maps.length;
   };
 
@@ -111,13 +111,13 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
   } /* else -- did not need to isolate vertically */
 
   for(let row = top; row < bottom; row++) {
-    const from = tableMap.positionAt(row, left, table),
-          to = tableMap.positionAt(row, right, table);
+    const from = tableMap.cellPositionAt(row, left, table),
+          to = tableMap.cellPositionAt(row, right, table);
     tr.replace(tr.mapping.slice(mapFrom).map(from + tableStart), tr.mapping.slice(mapFrom).map(to + tableStart), new Slice(cells.rows[row - top], 0/*use full Slice*/, 0/*use full Slice*/));
   }
 
   recomputeTableMap();
-  tr.setSelection(new CellSelection(tr.doc.resolve(tableStart + tableMap.positionAt(top, left, table)), tr.doc.resolve(tableStart + tableMap.positionAt(bottom - 1/*account for 0 indexing*/, right - 1/*account for 0 indexing*/, table))));
+  tr.setSelection(new CellSelection(tr.doc.resolve(tableStart + tableMap.cellPositionAt(top, left, table)), tr.doc.resolve(tableStart + tableMap.cellPositionAt(bottom - 1/*account for 0 indexing*/, right - 1/*account for 0 indexing*/, table))));
 
   if(dispatch) {
     dispatch(tr);
@@ -272,7 +272,7 @@ const isolateVertical = (tr: Transaction, table: ProseMirrorNode, tableMap: Tabl
       const cell = table.nodeAt(pos);
       if(!cell) continue/*Cell does not exist, nothing to do*/;
 
-      const cellLeft = tableMap.colCount(pos);
+      const cellLeft = tableMap.getColumnAmountBeforePos(pos);
       const updatePos = tr.mapping.slice(mapFrom).map(pos + start);
 
       tr.setNodeMarkup(updatePos, null/*maintain type*/, removeColumnSpans( cell.attrs, left - cellLeft, cell.attrs[AttributeType.ColSpan] - (left - cellLeft)));
@@ -303,13 +303,13 @@ const isolateHorizontal = (tr: Transaction, table: ProseMirrorNode, tableMap: Ta
       const cell = table.nodeAt(cellPos);
       if(!cell) continue/*Cell does not exist, nothing to do*/;
 
-      const { top: cellTop, left: cellLeft } = tableMap.findCell(cellPos);
+      const { top: cellTop, left: cellLeft } = tableMap.getCellTableRect(cellPos);
       tr.setNodeMarkup(tr.mapping.slice(mapFrom).map(cellPos + start), null/*maintain type*/, updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, top - cellTop));
 
       const newCell = cell.type.createAndFill(updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cellTop + cell.attrs[AttributeType.RowSpan] - top));
       if(!newCell) continue/*could not create Cell, do nothing*/;
 
-      tr.insert(tr.mapping.slice(mapFrom).map(tableMap.positionAt(top, cellLeft, table)), newCell);
+      tr.insert(tr.mapping.slice(mapFrom).map(tableMap.cellPositionAt(top, cellLeft, table)), newCell);
 
       col += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- no need to change anything */

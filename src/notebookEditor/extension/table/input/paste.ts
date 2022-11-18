@@ -17,10 +17,10 @@ export const handleTablePaste = (view: EditorView, event: ClipboardEvent, slice:
     } /* else -- Cells exist */
 
     const table = selection.$anchorCell.node(-1/*grandParent*/),
-          tableMap = TableMap.get(table),
+          tableMap = TableMap.getTableMap(table),
           tableStart = selection.$anchorCell.start(-1/*grandParent depth*/);
 
-    const tableRect = tableMap.rectBetween(selection.$anchorCell.pos - tableStart, selection.$headCell.pos - tableStart);
+    const tableRect = tableMap.getTableRectBetweenCellPositions(selection.$anchorCell.pos - tableStart, selection.$headCell.pos - tableStart);
     cells = clipCells(cells, tableRect.right - tableRect.left, tableRect.bottom - tableRect.top);
     insertCells(view.state, view.dispatch, tableStart, tableRect, cells);
 
@@ -29,9 +29,9 @@ export const handleTablePaste = (view: EditorView, event: ClipboardEvent, slice:
     const selectedCell = getResolvedCellPos(view.state);
     if(!selectedCell) return false/*do not handle*/;
 
-    const tableMap = TableMap.get(selectedCell.node(-1/*grandParent*/)),
+    const tableMap = TableMap.getTableMap(selectedCell.node(-1/*grandParent*/)),
           tableStart = selectedCell.start(-1/*grandParent depth*/);
-    insertCells(view.state, view.dispatch, tableStart, tableMap.findCell(selectedCell.pos - tableStart), cells);
+    insertCells(view.state, view.dispatch, tableStart, tableMap.getCellTableRect(selectedCell.pos - tableStart), cells);
     return true/*handled*/;
   } else {
     return false/*do not handle*/;

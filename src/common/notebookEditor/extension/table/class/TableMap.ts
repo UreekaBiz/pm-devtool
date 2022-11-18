@@ -18,42 +18,34 @@ import { TableRect } from './TableRect';
 // to or gotten from this structure by that amount
 
 // == Type ========================================================================
-type CollisionProblemType = { type: TableProblem.Collision; row: number; position: number; n: number; };
+type CollisionProblemType = { type: TableProblem.Collision; row: number; position: number; amount: number; };
 type ColWidthMismatchProblemType = { type: TableProblem.ColWidthMistMatch; position: number; colWidth: number[]; };
-type MissingProblemType = { type: TableProblem.Missing; row: number; n: number; };
-type OverlongRowspanProblemType = { type: TableProblem.OverlongRowSpan; position: number; n: number; };
-type ProblemType = CollisionProblemType | ColWidthMismatchProblemType | MissingProblemType | OverlongRowspanProblemType;
+type MissingProblemType = { type: TableProblem.Missing; row: number; amount: number; };
+type OverlongRowspanProblemType = { type: TableProblem.OverlongRowSpan; position: number; amount: number; };
+type TableMapProblemType = CollisionProblemType | ColWidthMismatchProblemType | MissingProblemType | OverlongRowspanProblemType;
 
 // == Cache =======================================================================
-const cache = new WeakMap<ProseMirrorNode, TableMap>();
-const readFromCache = (key: ProseMirrorNode) => cache.get(key);
-const addToCache = (key: ProseMirrorNode, value: TableMap) => {
-  cache.set(key, value);
+const tableMapCache = new WeakMap<ProseMirrorNode, TableMap>();
+const readFromTableMapCache = (key: ProseMirrorNode) => tableMapCache.get(key);
+const addToTableMapCache = (key: ProseMirrorNode, value: TableMap) => {
+  tableMapCache.set(key, value);
   return value;
 };
 
 // == TableMap Class ==============================================================
-// ::- A table map describes the structure of a given table. To avoid
-// recomputing them all the time, they are cached per table node. To
-// be able to do that, positions saved in the map are relative to the
-// start of the table, rather than the start of the document.
-/**
- * a TableMap describes the structure of a given Table. To avoid
- * recomputing them all the time, they are cached per Table Node. To
- * do that, positions saved in the Map are relative to the start of the Table,
- * rather than the start of the document
- */
+// a TableMap represents the structure of a Table Node. Positions saved in its map
+// are relative to the start of the Table Node, not the start of the Document
 export class TableMap {
   // -- Attribute -----------------------------------------------------------------
-  /** the width of the table */
+  /** the width of the Table Node */
   public width: number;
 
-  /** the height of the table */
+  /** the height of the Table Node */
   public height: number;
 
   /*
-   * a width * height array with the start position of the Cell covering that part
-   * of the table in each slot
+   * a width * height array with the start position of the (i.e. 1 position before
+   * the Cell position) covering that part of the Table Node in each slot
    */
   public map: number[];
 
@@ -61,131 +53,128 @@ export class TableMap {
    * an optional array of problems (Cell overlap or non-rectangular shape) for
    * the Table, used by the Table normalizer
    */
-  public problems: ProblemType[];
+  public problems: TableMapProblemType[];
 
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(width: number, height: number, map: number[], problems: ProblemType[]) {
+  constructor(width: number, height: number, map: number[], problems: TableMapProblemType[]) {
     this.width = width;
     this.height = height;
     this.map = map;
     this.problems = problems;
   }
 
-  /** find the dimensions of the Cell at the given position */
-  public findCell(pos: number) {
+  /** get the {@link TableRect} of the Cell at the given position, relative to the Table */
+  public getCellTableRect(cellPos: number) {
     for(let i = 0; i < this.map.length; i++) {
-      const curPos = this.map[i];
-      if(curPos !== pos) continue;
+      const cursorPos = this.map[i];
+      if(cursorPos !== cellPos) continue/*no Cell at cursor*/;
 
-      let left = i % this.width;
-      let top = (i / this.width) | 0;
+      let left = i % this.width,
+          top = (i / this.width) | 0/*default*/,
+          right = left + 1/*by definition*/,
+          bottom = top + 1/*by definition*/;
 
-      let right = left + 1;
-      let bottom = top + 1;
-
-      for(let j = 1; right < this.width && this.map[i + j] === curPos; j++) {
+      for(let j = 1; right < this.width && this.map[i + j] === cursorPos; j++) {
         right++;
       }
 
-      for(let j = 1; bottom < this.height && this.map[i + this.width * j] === curPos; j++) {
+      for(let j = 1; bottom < this.height && this.map[i + this.width * j] === cursorPos; j++) {
         bottom++;
       }
 
       return new TableRect(left, top, right, bottom);
     }
 
-    throw new RangeError('findCell: No cell with offset ' + pos + ' found');
+    throw new RangeError('getCellTableRect: No Cell with offset ' + cellPos + ' found');
   }
 
-  /** find the left side of the Cell at the given position */
-  public colCount(pos: number) {
+  /** get the amount of columns that lie before the cell at the given position */
+  public getColumnAmountBeforePos(cellPos: number) {
     for(let i = 0; i < this.map.length; i++) {
-      if(this.map[i] === pos) {
+      if(this.map[i] === cellPos) {
         return i % this.width;
       } /* else -- map at pos is not the looked-for position */
     }
 
-    throw new RangeError('colCount: No cell with offset ' + pos + ' found');
+    throw new RangeError('getColumnAmountBeforePos: No cell with offset ' + cellPos + ' found');
   }
 
   /**
-   * find the next Cell in the given direction, starting from the Cell
-   * at the given pos, if any
+   * find the position of the next Cell in the given direction,
+   * starting from the Cell at the given position, if any
    */
-   public nextCell(pos: number, axis: 'horizontal' | 'vertical', dir: 1 | -1) {
-    let { left, right, top, bottom } = this.findCell(pos);
+   public getNextCellPos(startingCellPos: number, axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*down/right*/) {
+    let { left, right, top, bottom } = this.getCellTableRect(startingCellPos);
+
     if(axis === 'horizontal') {
-      if(dir < 0 ? left === 0 : right === this.width) {
-        return null;
-      } /* else -- left is not equal to zero or right equals width */
+      if(direction < 0 ? left === 0 : right === this.width) {
+        return null/*by definition there cannot be a Cell to the left or to the right*/;
+      } /* else -- left is not equal to zero or right does not equal width */
 
-      return this.map[top * this.width + (dir < 0 ? left - 1 : right)];
+      return this.map[top * this.width + (direction < 0 ? left - 1/*previous*/ : right/*next*/)];
     } else {
-      if(dir < 0 ? top == 0 : bottom == this.height) {
-        return null;
-      } /* else -- top is not equal to zero or bottom equals height */
+      if(direction < 0 ? top === 0 : bottom === this.height) {
+        return null/*by definition there cannot be a Cell above or below*/;
+      } /* else -- top is not equal to zero or bottom does not equal height */
 
-      return this.map[left + this.width * (dir < 0 ? top - 1 : bottom)];
+      return this.map[left + this.width * (direction < 0 ? top - 1/*above*/ : bottom/*below*/)];
     }
   }
 
   /** get the {@link TableRect} spanning the two given Cells */
-  public rectBetween(firstCellPos: number, secondCellPos: number) {
-    const { left: leftA, right: rightA, top: topA, bottom: bottomA } = this.findCell(firstCellPos);
-    const { left: leftB, right: rightB, top: topB, bottom: bottomB } = this.findCell(secondCellPos);
+  public getTableRectBetweenCellPositions(firstCellPos: number, secondCellPos: number) {
+    const { left: leftA, right: rightA, top: topA, bottom: bottomA } = this.getCellTableRect(firstCellPos);
+    const { left: leftB, right: rightB, top: topB, bottom: bottomB } = this.getCellTableRect(secondCellPos);
 
-    const minLeft = Math.min(leftA, leftB);
-    const minTop = Math.min(topA, topB);
-    const maxRight = Math.max(rightA, rightB);
-    const maxBottom = Math.max(bottomA, bottomB);
+    const minLeft = Math.min(leftA, leftB),
+          minTop = Math.min(topA, topB),
+          maxRight = Math.max(rightA, rightB),
+          maxBottom = Math.max(bottomA, bottomB);
 
     return new TableRect(minLeft, minTop, maxRight, maxBottom);
   }
 
   /**
    * return the position of all Cells that have the top left corner
-   * in the given {@link TableRect}. Recall that the positions are
-   * such that they are relative to the start of the Table
+   * in the given {@link TableRect}
    */
-  public cellsInRect(rect: TableRect) {
-    const result: number[] = [];
-    const seen: { [key: number]: boolean; } = {};
+  public getCellsInTableRect(tableRect: TableRect) {
+    const cellPositions: number[] = [/*default empty*/],
+          seenCellPositions: { [key: number]: boolean; } = {/*default empty*/};
 
-    for(let row = rect.top; row < rect.bottom; row++) {
-      for(let col = rect.left; col < rect.right; col++) {
-        const index = row * this.width + col;
-        const pos = this.map[index];
+    for(let row = tableRect.top; row < tableRect.bottom; row++) {
+      for(let column = tableRect.left; column < tableRect.right; column++) {
+        const indexOfCell = row * this.width + column;
+        const cellPos = this.map[indexOfCell];
 
-        if(seen[pos]) {
-          continue;
-        } /* else -- not seen yet */
-        seen[pos] = true;
+        if(seenCellPositions[cellPos]) continue/*already seen*/;
 
-        if((col !== rect.left || !col || this.map[index - 1] !== pos) && (row !== rect.top || !row || this.map[index - this.width] !== pos)) {
-          result.push(pos);
+        seenCellPositions[cellPos] = true/*by definition*/;
+        if((column !== tableRect.left || !column || this.map[indexOfCell - 1/*account for 0 indexing*/] !== cellPos) && (row !== tableRect.top || !row || this.map[indexOfCell - this.width] !== cellPos)) {
+          cellPositions.push(cellPos);
         }
       }
     }
-    return result;
+    return cellPositions;
   }
 
   /**
    * return the position at which the Cell at the given row and
-   * column starts, or would start, if a Cell started there
+   * column starts, or would start, if any
    */
-  public positionAt(row: number, col: number, table: ProseMirrorNode) {
-    for(let i = 0, rowStart = 0; ; i++) {
-      const rowEnd = rowStart + table.child(i).nodeSize;
-      if(i === row) {
-        let index = col + row * this.width;
-        const rowEndIndex = (row + 1) * this.width;
+  public cellPositionAt(row: number, column: number, table: ProseMirrorNode) {
+    for(let rowIndex = 0, rowStart = 0; ; rowIndex++) {
+      const rowEnd = rowStart + table.child(rowIndex).nodeSize;
+      if(rowIndex === row) {
+        let cellIndex = column + row * this.width;
+        const rowEndIndex = (row + 1/*account for 0 indexing*/) * this.width;
 
-        // skip past cells from previous rows (via rowSpan)
-        while(index < rowEndIndex && this.map[index] < rowStart) {
-          index++;
+        // skip past cells from previous rows using the rowSpan
+        while(cellIndex < rowEndIndex && this.map[cellIndex] < rowStart) {
+          cellIndex++;
         }
 
-        return index == rowEndIndex ? rowEnd - 1 : this.map[index];
+        return cellIndex == rowEndIndex ? rowEnd - 1 : this.map[cellIndex];
       }
 
       rowStart = rowEnd;
@@ -193,113 +182,114 @@ export class TableMap {
   }
 
   /** find the {@link TableMap} for the given TableNode */
-  public static get(table: ProseMirrorNode) {
-    return readFromCache(table) || addToCache(table, computeMap(table));
+  public static getTableMap(table: ProseMirrorNode) {
+    return readFromTableMapCache(table) || addToTableMapCache(table, computeTableMap(table));
   }
 }
 
 // == Util ========================================================================
 /** compute a {@link TableMap} */
-const computeMap = (table: ProseMirrorNode) => {
+const computeTableMap = (table: ProseMirrorNode) => {
   if(table.type.spec.tableRole !== TableRole.Table) {
     throw new RangeError('Not a table node: ' + table.type.name);
   } /* else -- given Node is a Table Node */
 
-  const width = findWidth(table),
-        height = table.childCount;
+  const tableWidth = getTableWidth(table),
+        tableHeight = table.childCount;
 
-  const map = [];
-  let mapPos = 0/*default*/;
+  const map = [/*default empty*/];
+  let mapIndexPosition = 0/*default*/;
 
-  const problems: ProblemType[/*default empty*/] = [];
-  const colWidths: number[] = [];
+  const problems: TableMapProblemType[] = [/*default empty*/];
+  const columnWidths: number[] = [/*default empty*/];
 
-  for(let i = 0, e = width * height; i < e; i++) {
-    map[i] = 0;
+  for(let i = 0, tableArea = tableWidth * tableHeight; i < tableArea; i++) {
+    map[i] = 0/*default*/;
   }
 
-  for(let row = 0, pos = 0; row < height; row++) {
-    const rowNode = table.child(row);
-    pos++;
+  for(let rowIndex = 0, rowPos = 0; rowIndex < tableHeight; rowIndex++) {
+    const rowNode = table.child(rowIndex);
+    rowPos++;
 
-    for(let i = 0; ; i++) {
-      while(mapPos < map.length && map[mapPos] !== 0) {
-        mapPos++;
+    for(let cellIndex = 0; ; cellIndex++) {
+      while(mapIndexPosition < map.length && map[mapIndexPosition] !== 0/*already initialized*/) {
+        mapIndexPosition++;
       }
 
-      if(i === rowNode.childCount) break;
+      if(cellIndex === rowNode.childCount) break;
 
-      const cellNode = rowNode.child(i);
-      const colSpan = cellNode.attrs[AttributeType.ColSpan];
-      const rowSpan = cellNode.attrs[AttributeType.RowSpan];
-      const colWidth = cellNode.attrs[AttributeType.ColWidth];
-      for(let h = 0; h < rowSpan; h++) {
-        if(h + row >= height) {
-          problems.push({ type: TableProblem.OverlongRowSpan, position: pos, n: rowSpan - h });
+      const cellNode = rowNode.child(cellIndex),
+            cellColumnSpan = cellNode.attrs[AttributeType.ColSpan],
+            cellRowSpan = cellNode.attrs[AttributeType.RowSpan],
+            cellColumnWidth = cellNode.attrs[AttributeType.ColWidth];
+
+      for(let currentCellRowSpan = 0; currentCellRowSpan < cellRowSpan; currentCellRowSpan++) {
+        if(currentCellRowSpan + rowIndex >= tableHeight) {
+          problems.push({ type: TableProblem.OverlongRowSpan, position: rowPos, amount: cellRowSpan - currentCellRowSpan });
           break;
-        } /* else -- h + row is not bigger than or equal to height */
+        } /* else -- currentTableHeight + rowIndex is not bigger than or equal to height */
 
+        // the position (in the map, i.e. from 0-tableCellAmount) where the current Cell starts
+        const cellStartIndexInMap = mapIndexPosition + (currentCellRowSpan * tableWidth);
 
-        const start = mapPos + h * width;
-        for(let w = 0; w < colSpan; w++) {
-          if(map[start + w] == 0) { map[start + w] = pos; }
-          else { problems.push({ type: TableProblem.Collision, row, position: pos, n: colSpan - w }); }
+        for(let currentCellColumnSpan = 0; currentCellColumnSpan < cellColumnSpan; currentCellColumnSpan++) {
+          if(map[cellStartIndexInMap + currentCellColumnSpan] === 0/*not initialized yet*/) { map[cellStartIndexInMap + currentCellColumnSpan] = rowPos; }
+          else { problems.push({ type: TableProblem.Collision, row: rowIndex, position: rowPos, amount: cellColumnSpan - currentCellColumnSpan }); }
 
-          const colW = colWidth && colWidth[w];
-          if(colW) {
-            const widthIndex = ((start + w) % width) * 2;
-            const prev = colWidths[widthIndex];
+          const columnWidth = cellColumnWidth && cellColumnWidth[currentCellColumnSpan];
+          if(columnWidth) {
+            const columnWidthIndex = ((cellStartIndexInMap + currentCellColumnSpan) % tableWidth) * 2;
+            const previousColumnWidth = columnWidths[columnWidthIndex];
 
-            if(prev === null || (prev !== colW && colWidths[widthIndex + 1] == 1)) {
-              colWidths[widthIndex] = colW;
-              colWidths[widthIndex + 1] = 1;
-            } else if(prev === colW) {
-              colWidths[widthIndex + 1]++;
-            } /* else -- prev is not equal to colW */
-          } /* else -- colW is 0 or undefined */
+            if(previousColumnWidth === null || (previousColumnWidth !== columnWidth && columnWidths[columnWidthIndex + 1] === 1)) {
+              columnWidths[columnWidthIndex] = columnWidth;
+              columnWidths[columnWidthIndex + 1] = 1;
+            } else if(previousColumnWidth === columnWidth) {
+              columnWidths[columnWidthIndex + 1]++;
+            } /* else -- previousWidth is not equal to columnWidth */
+          } /* else -- columnWidth is 0 or undefined */
         }
       }
 
-      mapPos += colSpan;
-      pos += cellNode.nodeSize;
+      mapIndexPosition += cellColumnSpan;
+      rowPos += cellNode.nodeSize;
     }
 
-    const expectedPos = (row + 1) * width;
-
-    let missing = 0;
-    while(mapPos < expectedPos) {
-      if(map[mapPos++] === 0) {
-        missing++;
+    const expectedRowIndex = (rowIndex + 1/*account for 0 indexing*/) * tableWidth;
+    let missingCellAmount = 0/*default*/;
+    while(mapIndexPosition < expectedRowIndex) {
+      if(map[mapIndexPosition++] === 0) {
+        missingCellAmount++;
       } /* else -- result from incrementing map at mapPos+1 is not 0 */
     }
 
-    if(missing) {
-      problems.push({ type: TableProblem.Missing, row, n: missing });
+    if(missingCellAmount) {
+      problems.push({ type: TableProblem.Missing, row: rowIndex, amount: missingCellAmount });
     } /* else -- no missing problems */
 
-    pos++;
+    rowPos++;
   }
 
-  const tableMap = new TableMap(width, height, map, problems);
+  const tableMap = new TableMap(tableWidth, tableHeight, map, problems);
 
-  // for columns that have defined widths, but whose widths disagree
-  // between rows, fix up the cells whose width does not match the computed one
-  let badWidths = false/*default*/;
-  for(let i = 0; !badWidths && i < colWidths.length; i += 2) {
-    if(colWidths[i] !== null && colWidths[i + 1] < height) {
-      badWidths = true;
+  // modify the Cells whose with does not match the computed columnWidth
+  // when said width is defined
+  let hasBadWidths = false/*default*/;
+  for(let i = 0; !hasBadWidths && i < columnWidths.length; i += 2) {
+    if(columnWidths[i] !== null && columnWidths[i + 1] < tableHeight) {
+      hasBadWidths = true;
     } /* else -- not a bad width */
   }
 
-  if(badWidths) {
-    findBadColWidths(tableMap, colWidths, table);
+  if(hasBadWidths) {
+    findBadColumnWidths(table, tableMap, columnWidths);
   } /* else -- no bad column widths */
 
   return tableMap;
 };
 
 /** find the width of a Table Node */
-const findWidth = (table: ProseMirrorNode) => {
+const getTableWidth = (table: ProseMirrorNode) => {
   let width = -1/*default*/;
   let hasRowSpan = false/*default*/;
 
@@ -328,7 +318,7 @@ const findWidth = (table: ProseMirrorNode) => {
       } /* else -- rowSpan is not greater than 1 */
     }
 
-    if(width === -1) {
+    if(width === -1/*default*/) {
       width = rowWidth;
     } else if(width !== rowWidth) {
       width = Math.max(width, rowWidth);
@@ -337,47 +327,47 @@ const findWidth = (table: ProseMirrorNode) => {
   return width;
 };
 
-const findBadColWidths = (map: TableMap, colWidths: number[], table: ProseMirrorNode) => {
-  if(!map.problems) {
-    map.problems = [/*default empty*/];
+const findBadColumnWidths = (table: ProseMirrorNode, tableMap: TableMap, columnWidths: number[]) => {
+  if(!tableMap.problems) {
+    tableMap.problems = [/*default empty*/];
   } /* else -- problems array already defined */
 
-  for(let i = 0, seen: { [key: number]: boolean; } = {}; i < map.map.length; i++) {
-    const pos = map.map[i];
-    if(seen[pos]) continue/*already seen*/;
+  for(let i = 0, seenCellPositions: { [key: number]: boolean; } = {}; i < tableMap.map.length; i++) {
+    const cellPos = tableMap.map[i];
+    if(seenCellPositions[cellPos]) continue/*already seen*/;
 
-    seen[pos] = true;
-    const node = table.nodeAt(pos);
+    seenCellPositions[cellPos] = true;
+    const cellNode = table.nodeAt(cellPos);
     let updated = null/*default*/;
 
-    for(let j = 0; j < node?.attrs[AttributeType.ColSpan]; j++) {
-      const col = (i + j) % map.width;
-      const colWidth = colWidths[col * 2];
+    for(let j = 0; j < cellNode?.attrs[AttributeType.ColSpan]; j++) {
+      const column = (i + j) % tableMap.width,
+            columnWidth = columnWidths[column * 2];
 
-      if(colWidth !== null && node && (!node.attrs[AttributeType.ColWidth] || node.attrs[AttributeType.ColWidth][j] !== colWidth)) {
-        (updated || (updated = freshColWidth(node.attrs)))[j] = colWidth;
-      } /* else -- colWidth is null, node does not exist, or the colWidth attrs is non-existent or does not match colWidth in position j */
+      if(columnWidth !== null && cellNode && (!cellNode.attrs[AttributeType.ColWidth] || cellNode.attrs[AttributeType.ColWidth][j] !== columnWidth)) {
+        (updated || (updated = createDefaultColumnWidthsArray(cellNode.attrs)))[j] = columnWidth;
+      } /* else -- columnWidth is null, cellNode does not exist, or the columnWidth attrs is non-existent or does not match columnWidth in position j */
     }
 
     if(updated) {
-      map.problems.unshift({ type: TableProblem.ColWidthMistMatch, position: pos, colWidth: updated });
+      tableMap.problems.unshift({ type: TableProblem.ColWidthMistMatch, position: cellPos, colWidth: updated });
     } /* else -- updated is default (null) */
   }
 };
 
 /**
- * compute a columnWidth represented as a number array given the
- * colWidth attribute of the attrs object or the colSpan attr if
- * colWidth is not defined
+ * create a columnWidth array given the columnWidth attribute of the
+ * given attributes object or the colSpan attribute if the columnWidth
+ * one is not defined
  */
-const freshColWidth = (attrs: Partial<Attributes>): number[] => {
-  if(attrs[AttributeType.ColWidth]) return attrs[AttributeType.ColWidth].slice();
+const createDefaultColumnWidthsArray = (attrs: Partial<Attributes>): number[] => {
+  if(attrs[AttributeType.ColWidth]) return attrs[AttributeType.ColWidth].slice(/*copy*/);
 
-  const result: number[] = [];
+  const columnWidths: number[] = [];
   for(let i = 0; i < attrs[AttributeType.ColSpan]; i++) {
-    result.push(0);
+    columnWidths.push(0/*default*/);
   }
 
-  return result;
+  return columnWidths;
 };
 

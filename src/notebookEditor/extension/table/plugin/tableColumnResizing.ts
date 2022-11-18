@@ -208,10 +208,10 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
         const $cellPos = view.state.doc.resolve(cellPos);
 
         const table = $cellPos.node(-1/*grandParent*/),
-              tableMap = TableMap.get(table),
+              tableMap = TableMap.getTableMap(table),
               tableStart = $cellPos.start(-1/*grandParentDepth*/);
 
-        const columnCount = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
+        const columnCount = tableMap.getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
         if(columnCount === tableMap.width - 1) {
           return false/*do not handle*/;
         } /* else -- update the handle  */
@@ -246,10 +246,10 @@ export const handleColumnResizingDecorations = (state: EditorState, cellPos: num
   const table = $cellPos.node(-1/*grandParent*/);
   if(!table) return DecorationSet.empty/*no Decorations*/;
 
-  const tableMap = TableMap.get(table),
+  const tableMap = TableMap.getTableMap(table),
         tableStart = $cellPos.start(-1/*grandParent depth*/);
 
-  const columnCount = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan];
+  const columnCount = tableMap.getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan];
   for(let row = 0; row < tableMap.height; row++) {
     const index = columnCount + row * tableMap.width - 1;
 
@@ -296,7 +296,7 @@ const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left'
 
   if(side === 'right') return $cellPos.pos;
 
-  const tableMap = TableMap.get($cellPos.node(-1/*grandParent*/)),
+  const tableMap = TableMap.getTableMap($cellPos.node(-1/*grandParent*/)),
         tableStart = $cellPos.start(-1/*grandParent depth*/);
 
   const cellPosTableMapIndex = tableMap.map.indexOf($cellPos.pos - tableStart);
@@ -344,10 +344,10 @@ const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => 
   const $cellPos = view.state.doc.resolve(cellPos);
 
   const table = $cellPos.node(-1/*grandParent*/),
-        tableMap = TableMap.get(table),
+        tableMap = TableMap.getTableMap(table),
         tableStart = $cellPos.start(-1/*grandParent depth*/);
 
-  const columnCount = tableMap.colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
+  const columnCount = tableMap.getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
   const { tr } = view.state;
   for(let row = 0; row < tableMap.height; row++) {
     const mapIndex = row * tableMap.width + columnCount;
@@ -358,7 +358,7 @@ const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => 
     if(!cellNode) throw new Error('expected Node to exist at pos');
 
     const { attrs } = cellNode;
-    const index = attrs[AttributeType.ColSpan] === 1 ? 0 : columnCount - tableMap.colCount(cellPos);
+    const index = attrs[AttributeType.ColSpan] === 1 ? 0 : columnCount - tableMap.getColumnAmountBeforePos(cellPos);
     if(attrs[AttributeType.ColWidth] && attrs[AttributeType.ColWidth][index] === width) continue/*no need to change column width*/;
 
     const newColWidth = attrs[AttributeType.ColWidth]
@@ -382,7 +382,7 @@ const displayColumnWidth = (view: EditorView, cellPos: number, width: number, ce
 
   const tableStart = $cellPos.start(-1/*grandParent depth*/);
 
-  const columnCount = TableMap.get(tableNode).colCount($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
+  const columnCount = TableMap.getTableMap(tableNode).getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
   let domNode = view.domAtPos($cellPos.start(-1/*grandParent depth*/)).node;
   while(domNode.parentNode && domNode.nodeName !== TABLE_NODENAME) {
     domNode = domNode.parentNode;

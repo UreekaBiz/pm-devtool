@@ -51,7 +51,7 @@ export class ToggleHeaderDocumentUpdate implements AbstractDocumentUpdate {
       else { newType = tableTypes[NodeName.HEADER_CELL]; }
     } /* else -- do not change default */
 
-    tableMap.cellsInRect(cellsRect).forEach((relativeCellPos) => {
+    tableMap.getCellsInTableRect(cellsRect).forEach((relativeCellPos) => {
       const cellPos = relativeCellPos + (rect.tableStart ?? 0/*no tableStart*/);
       const cell = tr.doc.nodeAt(cellPos);
 
@@ -78,7 +78,7 @@ const isHeaderEnabledByType = (type: 'column' | 'row', rect: TableRect, types: {
   if(!rect.table || !rect.tableMap) return false/*no tablemap available*/;
 
   // Get cell positions for first row or first column
-  const cellPositions = rect.tableMap.cellsInRect({
+  const cellPositions = rect.tableMap.getCellsInTableRect({
     left: 0,
     top: 0,
     right: type === 'row' ? rect.tableMap.width : 1,
