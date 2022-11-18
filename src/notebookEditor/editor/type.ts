@@ -18,6 +18,9 @@ import { HorizontalRule } from 'notebookEditor/extension/horizontalRule';
 import { Image } from 'notebookEditor/extension/image';
 import { Italic } from 'notebookEditor/extension/italic';
 import { Link } from 'notebookEditor/extension/link';
+import { BulletList } from 'notebookEditor/extension/list/bulletList';
+import { ListItem } from 'notebookEditor/extension/list/listItem';
+import { OrderedList } from 'notebookEditor/extension/list/orderedList';
 import { MarkHolder } from 'notebookEditor/extension/markHolder';
 import { EditableInlineNodeWithContent } from 'notebookEditor/extension/nestedViewNode/editableInlineNodeWithContent';
 import { NestedViewBlockNode } from 'notebookEditor/extension/nestedViewNode/nestedViewBlockNode';
@@ -47,6 +50,7 @@ export const editorDefinition: Extension[] = [
   BasicKeymap,
   Blockquote,
   Bold,
+  BulletList,
   Cell,
   Code,
   CodeBlock,
@@ -65,9 +69,11 @@ export const editorDefinition: Extension[] = [
   Image,
   Italic,
   Link,
+  ListItem,
   MarkHolder,
   NestedViewBlockNode,
   NestedViewNode,
+  OrderedList,
   Paragraph,
   ReplacedTextMark,
   Row,
