@@ -2,7 +2,8 @@ import { AttributeType, CodeBlockAttributes, CodeBlockType, SetAttributeType } f
 
 import { setAttributeParsingBehavior, uniqueIdParsingBehavior } from 'notebookEditor/extension/util';
 
-import { ExtensionStorageType, NodeExtensionAttributes } from 'notebookEditor/extension';
+import { ExtensionStorageType } from '../type/Extension/type';
+import { NodeExtensionAttributes } from '../type/NodeExtension/type';
 
 // ********************************************************************************
 // == Attribute ===================================================================

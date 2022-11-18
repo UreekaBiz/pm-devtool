@@ -2,7 +2,7 @@ import { flushSync } from 'react-dom';
 
 import { customNanoid } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from '../Editor';
 
 // ********************************************************************************
 // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/react/src/ReactRenderer.tsx

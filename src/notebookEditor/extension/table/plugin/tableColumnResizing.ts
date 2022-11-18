@@ -5,7 +5,7 @@ import { getResolvedCellPosAroundResolvedPos, isNotNullOrUndefined, isTableNode,
 
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
 
-import { updateTableColumns } from '../node';
+import { updateTableColumns } from '../node/table/util';
 
 // ********************************************************************************
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/columnresizing.js

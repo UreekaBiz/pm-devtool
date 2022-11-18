@@ -1,14 +1,17 @@
 import { getMarkAttributes, getThemeValue, isLinkMarkAttributes, AttributeType, MarkName, ExtendMarkRangeDocumentUpdate, SetTextSelectionDocumentUpdate } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
-import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker';
+import { ColorPicker } from 'notebookEditor/extension/style/component/ColorPicker/ColorPicker';
 import { textColors } from 'notebookEditor/theme';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 import { SetLinkDocumentUpdate } from '../../command';
 
 // ********************************************************************************
+// == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/}
+
+// == Component ===================================================================
 // NOTE: Using custom ToolItem Component instead of using the ColorPickerInputToolItem
 //       since the Link must be updated with custom meta tags and cannot work with
 //       default behavior.
@@ -20,7 +23,7 @@ export const LinkColorToolItem: React.FC<Props> = ({ editor, depth }) => {
   const themeValue = getThemeValue(MarkName.LINK, AttributeType.Color);
   const inputValue = attrs[AttributeType.Color] ?? themeValue ?? '';
 
-  // == Handler ===================================================================
+  // -- Handler -------------------------------------------------------------------
   const handleChange = (value: string) => {
     const { anchor: prevPos } = editor.view.state.selection;
 
@@ -33,6 +36,6 @@ export const LinkColorToolItem: React.FC<Props> = ({ editor, depth }) => {
     editor.view.focus();
   };
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   return (<ColorPicker name='Color' value={inputValue} colors={textColors} onChange={handleChange} />);
 };

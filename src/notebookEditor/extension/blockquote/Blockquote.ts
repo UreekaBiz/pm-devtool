@@ -2,11 +2,12 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getBlockquoteNodeType, getNodeOutputSpec, BlockquoteNodeSpec, NodeName, DATA_NODE_TYPE, toggleWrapCommand } from 'common';
 
-import { shortcutCommandWrapper } from 'notebookEditor/command';
+import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
-import {  createWrappingInputRule } from 'notebookEditor/plugin/inputRule';
+import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension } from '../type';
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { BlockquoteAttrs } from './attribute';
 import './blockquote.css';
 

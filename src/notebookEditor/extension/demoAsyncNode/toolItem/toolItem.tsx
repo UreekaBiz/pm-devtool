@@ -3,7 +3,7 @@ import { AiOutlineClockCircle } from 'react-icons/ai';
 import { getSelectedNode, isAsyncNode, isDemoAsyncNode, AttributeType, NodeName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
-import { CodeBlockReferencesChipSelector } from 'notebookEditor/extension/codeblock';
+import { CodeBlockReferencesChipSelector } from 'notebookEditor/extension/codeblock/toolItem';
 import { SliderToolItem } from 'notebookEditor/extension/shared/component/SliderToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';

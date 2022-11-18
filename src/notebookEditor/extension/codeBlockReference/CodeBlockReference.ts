@@ -3,13 +3,16 @@ import { keymap } from 'prosemirror-keymap';
 import { getNodeOutputSpec, isCodeBlockReferenceNode, CodeBlockReferenceNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockReferenceAttrs } from './attribute';
 import './codeBlockReference.css';
 import { insertAndSelectCodeBlockReferenceCommand } from './command';
-import { CodeBlockReferenceController } from './nodeView/controller';
+import { CodeBlockReferenceController } from './nodeView';
 
 // ********************************************************************************
 // == Node ========================================================================

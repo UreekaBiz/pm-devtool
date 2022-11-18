@@ -2,7 +2,9 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getEditableInlineNodeWithContentNodeType, generateNodeId, getNodeOutputSpec, isEditableInlineNodeWithContentNode, AttributeType, EditableInlineNodeWithContentNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, defineNodeViewBehavior } from 'notebookEditor/extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
+import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from 'notebookEditor/extension/type/NodeExtension/util';
 import { ExtensionPriority } from 'notebookEditor/model';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 

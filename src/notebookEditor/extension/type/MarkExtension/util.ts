@@ -1,6 +1,6 @@
 import { MarkSpec } from 'prosemirror-model';
 
-import { Extension } from '../Extension';
+import { Extension } from '../Extension/Extension';
 import { MarkExtension } from './MarkExtension';
 
 // == MarkExtension ===============================================================

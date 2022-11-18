@@ -1,7 +1,8 @@
 import { EditorState } from 'prosemirror-state';
 
-import { Editor } from 'notebookEditor/editor';
 import { getMarkName, isMarkHolderNode, markFromJSONMark, parseStringifiedMarksArray, AttributeType, MarkName, NotebookSchemaType } from 'common';
+
+import { Editor } from 'notebookEditor/editor/Editor';
 
 // ********************************************************************************
 /**

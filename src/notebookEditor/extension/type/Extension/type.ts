@@ -1,9 +1,9 @@
 import { Plugin as ProseMirrorPlugin, Transaction } from 'prosemirror-state';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { NodeViewStorage, DialogStorage } from 'notebookEditor/model';
-import { InputRule } from 'notebookEditor/plugin/inputRule';
-import { PasteRule } from 'notebookEditor/plugin/pasteRule';
+import { InputRule } from 'notebookEditor/plugin/inputRule/InputRule';
+import { PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
 // == Constant ====================================================================
 /** priority used by Extensions whose order of execution is not relevant*/

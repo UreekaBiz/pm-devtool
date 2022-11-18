@@ -1,4 +1,4 @@
-import { SuggestionSymbol } from 'notebookEditor/plugin/suggestion';
+import { SuggestionSymbol } from 'notebookEditor/plugin/suggestion/type';
 
 // ********************************************************************************
 // an array of Emoji symbols

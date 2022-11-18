@@ -1,11 +1,11 @@
 import { DOMOutputSpec, Node as ProseMirrorNode, NodeSpec, ParseRule } from 'prosemirror-model';
 import { Decoration, DecorationSource } from 'prosemirror-view';
 
-import { Editor } from 'notebookEditor/editor';
 import { AttributeSpecWithParseHTML } from 'notebookEditor/extension/util';
 import { AbstractNodeController } from 'notebookEditor/model';
+import { Editor } from 'notebookEditor/editor/Editor';
 
-import { ExtensionDefinition, ExtensionStorageType } from '../Extension';
+import { ExtensionDefinition, ExtensionStorageType } from '../Extension/type';
 
 // ********************************************************************************
 // == Type ========================================================================

@@ -3,10 +3,11 @@ import { keymap } from 'prosemirror-keymap';
 import { getMarkOutputSpec, CodeMarkSpec, MarkName, getCodeMarkType } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { createMarkInputRule } from 'notebookEditor/plugin/inputRule';
-import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule';
+import { createMarkInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
+import { createMarkPasteRule } from 'notebookEditor/plugin/pasteRule/pasteRuleBuilders';
 
-import { MarkExtension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { MarkExtension } from '../type/MarkExtension/MarkExtension';
 import { safeParseTag } from '../util/parse';
 import './code.css';
 import { toggleCodeCommand } from './command';

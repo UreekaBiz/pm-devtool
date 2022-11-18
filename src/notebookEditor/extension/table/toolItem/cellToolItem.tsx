@@ -4,8 +4,8 @@ import { RiMergeCellsHorizontal, RiSplitCellsHorizontal } from 'react-icons/ri';
 
 import { goToCellCommand, isCellNode, isCellSelection, isHeaderCellNode, mergeCellsCommand, splitCellCommand, toggleHeaderCellCommand, SelectionDepth } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
-import { toolItemCommandWrapper } from 'notebookEditor/command';
+import { toolItemCommandWrapper } from 'notebookEditor/command/util';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 

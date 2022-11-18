@@ -2,7 +2,9 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNestedViewBlockNodeType, generateNodeId, getNodeOutputSpec, isNestedViewBlockNode, AttributeType, NestedViewBlockNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, defineNodeViewBehavior } from 'notebookEditor/extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
+import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from 'notebookEditor/extension/type/NodeExtension/util';
 import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
 
 import { getNestedViewBlockNodeAttrs } from './attribute';

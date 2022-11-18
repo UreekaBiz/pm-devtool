@@ -2,7 +2,7 @@ import { MdFormatQuote } from 'react-icons/md';
 
 import { getBlockquoteNodeType, isNodeSelection, toggleWrapCommand, NodeName } from 'common';
 
-import { toolItemCommandWrapper } from 'notebookEditor/command';
+import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 

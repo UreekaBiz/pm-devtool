@@ -1,6 +1,6 @@
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model/type';
 
-import { Extension } from '../type';
+import { Extension } from '../type/Extension/Extension';
 import { checkDirty } from './transaction';
 
 // ********************************************************************************

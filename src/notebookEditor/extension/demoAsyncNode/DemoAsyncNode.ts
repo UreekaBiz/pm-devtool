@@ -5,7 +5,10 @@ import { getNodeOutputSpec, isDemoAsyncNode, DemoAsyncNodeSpec, NodeName, DATA_N
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
-import { createExtensionParseRules, getExtensionAttributesObject, NodeExtension, DEFAULT_EXTENSION_PRIORITY, defineNodeViewBehavior } from '../type';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
+import { NodeExtension } from '../type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getDemoAsyncNodeAttrs } from './attribute';
 import { insertAndSelectDemoAsyncNodeCommand } from './command';
 import './demoAsyncNode.css';

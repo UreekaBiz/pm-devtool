@@ -1,6 +1,6 @@
-import { SideBarLayout } from 'core';
 
-import { EditorProvider } from 'notebookEditor/context';
+import { SideBarLayout } from 'core/layout/SideBarLayout';
+import { EditorProvider } from 'notebookEditor/context/EditorProvider';
 import { SideBar } from 'notebookEditor/toolbar/component/SideBar';
 
 import { Editor } from './Editor';

@@ -3,7 +3,7 @@ import { Step } from 'prosemirror-transform';
 
 import { isNodeSelection, AbstractDocumentUpdate } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 
 // ********************************************************************************
 /**

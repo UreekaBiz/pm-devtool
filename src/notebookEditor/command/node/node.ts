@@ -5,8 +5,8 @@ import { ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 
 import { isGapCursorSelection, AbstractDocumentUpdate, Attributes, ClearNodesDocumentUpdate, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, SelectionRange } from 'common';
 
-import { Editor } from 'notebookEditor/editor';
-import { SetParagraphDocumentUpdate } from 'notebookEditor/extension/paragraph';
+import { Editor } from 'notebookEditor/editor/Editor';
+import { SetParagraphDocumentUpdate } from 'notebookEditor/extension/paragraph/command';
 import { createNodeFromContent, isFragment } from 'notebookEditor/extension/util';
 
 import { applyDocumentUpdates } from '../update';

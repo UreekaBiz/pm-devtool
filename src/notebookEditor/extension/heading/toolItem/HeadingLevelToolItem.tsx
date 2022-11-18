@@ -4,7 +4,7 @@ import { BiHeading } from 'react-icons/bi';
 import { isHeadingLevel, isHeadingNode, isNumber, AttributeType, HeadingLevel, SelectionDepth, NodeName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
-import { Editor } from 'notebookEditor/editor';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { DropdownButtonToolItem } from 'notebookEditor/extension/style/component/DropdownButtonToolItem';
 import { ACTIVE_BUTTON_COLOR } from 'notebookEditor/theme/theme';
 import { EditorToolComponentProps, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';

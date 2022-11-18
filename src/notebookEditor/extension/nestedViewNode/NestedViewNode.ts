@@ -2,7 +2,8 @@ import { keymap } from 'prosemirror-keymap';
 
 import { ExtensionName } from 'notebookEditor/model/type';
 
-import { DEFAULT_EXTENSION_PRIORITY, Extension } from '../type';
+import { Extension } from '../type/Extension/Extension';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 import { nestedViewNodeBackspaceCommand } from './command';
 import './nestedViewNode.css';
 import { nestedViewNodePlugin } from './plugin';

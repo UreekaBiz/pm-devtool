@@ -2,9 +2,9 @@ import { MdFindReplace } from 'react-icons/md';
 
 import { generateNodeId, isNodeSelection, AttributeType, NodeName } from 'common';
 
-import { toggleBlock } from 'notebookEditor/command';
+import { toggleBlock } from 'notebookEditor/command/node';
+import { InputToolItem } from 'notebookEditor/extension/shared/component/InputToolItem/InputToolItem';
 import { SliderToolItem } from 'notebookEditor/extension/shared/component/SliderToolItem';
-import { InputToolItem } from 'notebookEditor/extension/shared/component/InputToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 

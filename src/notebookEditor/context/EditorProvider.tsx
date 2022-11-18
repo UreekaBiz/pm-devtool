@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { setThemeStylesheet } from 'notebookEditor/theme';
-import { useEditor } from 'notebookEditor/editor/component';
-import { editorDefinition } from 'notebookEditor/editor';
+import { editorDefinition } from 'notebookEditor/editor/type';
+import { useEditor } from 'notebookEditor/editor/component/useEditor';
 
 import { EditorContext } from './EditorContext';
 

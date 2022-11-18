@@ -2,7 +2,7 @@ import { BiCodeAlt } from 'react-icons/bi';
 
 import { generateNodeId, getParentNode, getSelectedNode, isCodeBlockNode, isNodeSelection, AttributeType, NodeName } from 'common';
 
-import { toggleBlock } from 'notebookEditor/command';
+import { toggleBlock } from 'notebookEditor/command/node';
 import { CheckBoxToolItem } from 'notebookEditor/extension/shared/component/CheckBoxToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 

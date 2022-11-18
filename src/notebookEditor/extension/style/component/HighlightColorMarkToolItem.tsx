@@ -3,7 +3,8 @@ import { getSelectedNode, setMarkCommand, AttributeType, InvalidMergedAttributeV
 import { getTextDOMRenderedValue  } from 'notebookEditor/extension/util/attribute';
 import { textColors } from 'notebookEditor/theme/type';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
-import { ColorPicker } from './ColorPicker';
+
+import { ColorPicker } from './ColorPicker/ColorPicker';
 
 // ********************************************************************************
 // NOTE: This component adds a TextStyle Mark in the selected text that adds the

@@ -1,8 +1,8 @@
 import { Box, Button } from '@chakra-ui/react';
 import { forwardRef, useEffect, useImperativeHandle, useState, ForwardedRef } from 'react';
 
-import { Editor } from 'notebookEditor/editor';
-import { SuggestionKeyDownProps, SuggestionSymbol } from 'notebookEditor/plugin/suggestion';
+import { Editor } from 'notebookEditor/editor/Editor';
+import { SuggestionKeyDownProps, SuggestionSymbol } from 'notebookEditor/plugin/suggestion/type';
 
 // ********************************************************************************
 // == Type ========================================================================

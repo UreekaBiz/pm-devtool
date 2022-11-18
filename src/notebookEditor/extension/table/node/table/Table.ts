@@ -2,8 +2,10 @@ import { keymap } from 'prosemirror-keymap';
 
 import { deleteTableWhenAllCellsSelectedCommand, getNodeOutputSpec, goToCellCommand, isTableNode, AddRowAfterDocumentUpdate, GoToCellDocumentUpdate, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
 
-import { applyDocumentUpdates } from 'notebookEditor/command';
-import { createExtensionParseRules, defineNodeViewBehavior, getExtensionAttributesObject, NodeExtension } from 'notebookEditor/extension/type';
+import { applyDocumentUpdates } from 'notebookEditor/command/update';
+import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
+import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+import { defineNodeViewBehavior } from 'notebookEditor/extension/type/NodeExtension/util';
 import { ExtensionPriority, NodeViewStorage } from 'notebookEditor/model';
 
 import { tableColumnResizingPlugin } from '../../plugin/tableColumnResizing';

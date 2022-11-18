@@ -1,7 +1,8 @@
 import { ExtensionName } from 'notebookEditor/model';
-import { defaultInputRules } from 'notebookEditor/plugin/inputRule';
+import { defaultInputRules } from 'notebookEditor/plugin/inputRule/defaultRules';
 
-import { Extension, DEFAULT_EXTENSION_PRIORITY } from '../type';
+import { Extension } from '../type/Extension/Extension';
+import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 
 // ********************************************************************************
 // == Node ========================================================================

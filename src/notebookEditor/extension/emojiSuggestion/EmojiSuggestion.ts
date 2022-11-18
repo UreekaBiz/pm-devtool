@@ -2,7 +2,7 @@
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model/type';
 import { suggestionPlugin } from 'notebookEditor/plugin/suggestion/suggestionPlugin';
 
-import { Extension } from '../type';
+import { Extension } from '../type/Extension/Extension';
 import { emojiSuggestionOptions } from './EmojiSuggestionOptions';
 
 // ********************************************************************************
