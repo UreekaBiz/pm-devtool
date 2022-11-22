@@ -32,15 +32,12 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
         && closestParentList/*exists*/
         && blockRange.depth - closestParentList.depth <= 1/*can lift*/) {
 
-        if(closestParentList.node.type === listType) {
-          return new LiftListItemDocumentUpdate('Shift-Tab'/*dedent*/).update(editorState, tr);
-        } else /*change type */ {
-
-        }
+        if(closestParentList.node.type === listType) { return new LiftListItemDocumentUpdate('Shift-Tab'/*dedent*/).update(editorState, tr); }
+        else /*change type */ { tr.setNodeMarkup(closestParentList.pos, listType, this.attrs); }
       } /* else - not nested, list does not exist, or cannot lift*/
     } else /*wrap*/ {
       let outerRange = blockRange/*default*/;
-      let doJoin = false/*default*/;
+      let performJoin = false/*default*/;
 
       if(blockRange.depth >= 2/*nested*/ && $from.node(blockRange.depth-1/*depth of ancestor*/).type.compatibleContent(listItemType) && blockRange.startIndex === 0/*first child of parent*/) {
         if($from.index(blockRange.depth - 1/*depth of ancestor*/) === 0) return false/*at the top of the List*/;
@@ -51,13 +48,13 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
         if(blockRange.endIndex < blockRange.parent.childCount) {
           blockRange = new NodeRange($from, editorState.doc.resolve($to.end(blockRange.depth)), blockRange.depth);
         } /* else -- the endIndex is not less than the childCount of the parent */
-        doJoin = true;
+        performJoin = true;
       }
 
       const listWrapping = findWrapping(outerRange, listType, this.attrs, blockRange);
       if(!listWrapping) return false/*no valid wrapping was found*/;
 
-      tr = applyListWrapping(tr, blockRange, listWrapping, doJoin, listType).scrollIntoView();
+      tr = applyListWrapping(tr, blockRange, listWrapping, performJoin, listType).scrollIntoView();
     }
 
     return tr/*updated*/;

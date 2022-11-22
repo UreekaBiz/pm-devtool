@@ -17,7 +17,7 @@ export type BulletListAttributes = AttributesTypeFromNodeSpecAttributes<typeof B
 // -- Node Spec -------------------------------------------------------------------
 export const BulletListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  content: `(${NodeName.LIST_ITEM}|${NodeName.BULLET_LIST})+`,
+  content: `(${NodeName.LIST_ITEM}|${NodeName.BULLET_LIST}|${NodeName.ORDERED_LIST})+`,
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
 
   // .. Attribute .................................................................
