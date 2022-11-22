@@ -19,7 +19,7 @@ const { bold: boldType } = notebookSchema.marks;
 
 const {
   [NodeName.BLOCKQUOTE]: blockquoteBuilder,
-  [NodeName.BLOCKQUOTE]: bulletListBuilder,
+  [NodeName.BULLET_LIST]: bulletListBuilder,
   [NodeName.CODEBLOCK]: codeBlockBuilder,
   [NodeName.DOC]: docBuilder,
   [NodeName.HEADING]: headingBuilder,
@@ -28,7 +28,7 @@ const {
   [NodeName.HORIZONTAL_RULE]: horizontalRuleBuilder,
   [NodeName.ORDERED_LIST]: orderedListBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.BULLET_LIST, NodeName.CODEBLOCK, NodeName.DOC, NodeName.HEADING, NodeName.LIST_ITEM, NodeName.HORIZONTAL_RULE, NodeName.IMAGE, NodeName.PARAGRAPH]);
+} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.BULLET_LIST, NodeName.CODEBLOCK, NodeName.DOC, NodeName.HEADING, NodeName.LIST_ITEM, NodeName.HORIZONTAL_RULE, NodeName.IMAGE, NodeName.ORDERED_LIST, NodeName.PARAGRAPH]);
 
 const { [MarkName.BOLD]: boldBuilder, [MarkName.ITALIC]: italicBuilder } = getNotebookSchemaMarkBuilders([MarkName.BOLD, MarkName.ITALIC]);
 
@@ -187,7 +187,7 @@ describe('liftCommand', () => {
     wrapTest(startState, liftCommand, expectedEndState);
   });
 
-  it('can lift out of a list', () => {
+  it('can lift out of a List', () => {
     const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
     const expectedEndState = docBuilder(paragraphBuilder('foo'));
     wrapTest(startState, liftCommand, expectedEndState);
