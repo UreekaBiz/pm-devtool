@@ -1,5 +1,4 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
-import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
@@ -52,7 +51,13 @@ export const Debugger = () => {
 // == Util ========================================================================
 const stringifyDocWithPositions = (editor: Editor) => {
   const doc = editor.view.state.doc;
-  const output: { pos: number; node: ProseMirrorNode; }[] = [];
-  doc.descendants((node, pos) => { output.push({ pos, node  }); });
-  return JSON.stringify(output, null/*no replacer*/, 2/*T&E indentation*/);
+
+  doc.descendants((node, pos) => {
+    // NOTE: since this is only used for debugging purposes and is not actually
+    //       in the real Document, add the startPos of each Node to its stringified
+    //       representation
+    // @ts-ignore
+    node.attrs['startPos'] = pos;
+  });
+  return JSON.stringify(doc, null/*no replacer*/, 2/*T&E indentation*/);
 };
