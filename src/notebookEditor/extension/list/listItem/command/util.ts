@@ -22,9 +22,9 @@ export const getListItemPositions = (editorState: EditorState, range: SelectionR
 };
 
 // check the given Selection to see if its from or its to are inside a ListItem
-export const fromOrToInListItem = (itemType: NodeType, selection: Selection) => {
+export const fromOrToInListItem = (selection: Selection) => {
   const { $from, $to } = selection;
-  if($from.node(-1/*grandParent listItem*/)?.type !== itemType || $to.node(-1/*grandParent listItem*/)?.type !== itemType) return false/*no part of the given Selection is inside a ListItem*/;
+  if(!isListItemNode($from.node(-1/*grandParent listItem*/)) || !isListItemNode($to.node(-1/*grandParent listItem*/))) return false/*no part of the given Selection is inside a ListItem*/;
 
   return true/*either from or to are inside a ListItem*/;
 };
@@ -33,7 +33,7 @@ export const fromOrToInListItem = (itemType: NodeType, selection: Selection) => 
 // can be merged together at the given position
 export const checkAndMergeListAtPos = (listItemType: NodeType, tr: Transaction, posToCheck: number) => {
   let checkedAndMergedList = false/*default*/;
-  if(!fromOrToInListItem(listItemType, tr.selection)) return checkedAndMergedList/*nothing to do, return default*/;
+  if(!fromOrToInListItem(tr.selection)) return checkedAndMergedList/*Selection not inside a ListItem*/;
 
   const $pos = tr.doc.resolve(posToCheck);
   let posBefore = posToCheck/*default*/,

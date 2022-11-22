@@ -20,7 +20,7 @@ export class SplitListItemKeepMarksDocumentUpdate implements AbstractDocumentUpd
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = editorState;
     const listItemType = getListItemNodeType(editorState.schema);
-    if(!fromOrToInListItem(listItemType, selection)) return false/*Selection not inside a ListItem*/;
+    if(!fromOrToInListItem(selection)) return false/*Selection not inside a ListItem*/;
 
     // check if lifting must be done
     const { $from, $to } = selection;

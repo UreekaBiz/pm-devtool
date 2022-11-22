@@ -14,7 +14,7 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
 
   /** modify the given Transaction such that a ListItem augments its depth */
   public update(editorState: EditorState, tr: Transaction) {
-    if(!fromOrToInListItem(getListItemNodeType(editorState.schema), editorState.selection)) return false;
+    if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
     const { from, to } = editorState.selection;
     let parentListType = editorState.schema.nodes[NodeName.BULLET_LIST]/*default*/;
