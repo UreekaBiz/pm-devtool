@@ -15,7 +15,7 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor): boolean => {
   if($from.before()+1/*inside the TextBlock*/ !== from) return false/*Selection is not at the start of the parent TextBlock*/;
 
   const parentIndex =  $from.index(0/*direct Doc depth*/),
-        previousChildIndex = parentIndex -1;
+        previousChildIndex = parentIndex -1/*by definition*/;
   if(parentIndex === 0/*first direct child of Doc*/) return false/*no previous child by definition*/;
 
   const previousChild = doc.child(previousChildIndex);
@@ -25,8 +25,6 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor): boolean => {
   previousChild.descendants((node, pos) => { lastChildOfListPos = pos; });
 
   let { depth: lastChildOfListDepth } = doc.resolve(lastChildOfListPos);
-  lastChildOfListDepth += 1/*ensure result is firstChild of the last ListItem*/;
-
   const updates = [/*default empty*/];
   for(let i=0; i<=lastChildOfListDepth; i++) { updates.push(new JoinBackwardDocumentUpdate()); }
 
