@@ -17,8 +17,11 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
-    const { empty, from, to } = editorState.selection;
-    if(this.from === 'Backspace' && !empty) return false/*do not allow if Selection not empty when Back*/;
+    const { empty, $from, from, to } = editorState.selection;
+    if(this.from === 'Backspace') {
+      if(!empty) return false/*do not allow if Selection not empty when Back*/;
+      if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
+    } /* else -- backspace checks done */
 
     const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
 
