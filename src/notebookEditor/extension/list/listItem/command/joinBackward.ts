@@ -34,9 +34,7 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor): boolean => {
   } /* else -- has Text content */
 
   const updates = [/*default empty*/];
-  for(let i=0; i<=lastChildOfListDepth; i++) {
-    updates.push(new JoinBackwardDocumentUpdate());
-  }
+  for(let i=0; i<=lastChildOfListDepth; i++) { updates.push(new JoinBackwardDocumentUpdate()); }
 
   return applyDocumentUpdates(editor, updates);
 };

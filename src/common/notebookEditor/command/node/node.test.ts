@@ -188,11 +188,11 @@ describe('liftCommand', () => {
   });
 
   // TODO: redefine and handle once Lists are added
-  // it('can lift out of a list', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
-  //   const expectedEndState = docBuilder(paragraphBuilder('foo'));
-  //   wrapTest(startState, liftCommand, expectedEndState);
-  // });
+  it('can lift out of a list', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
+    const expectedEndState = docBuilder(paragraphBuilder('foo'));
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
 
   // it('lifts out of the innermost parent', () => {
   //   const startState = docBuilder(blockquoteBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`foo<${A}>`)))));

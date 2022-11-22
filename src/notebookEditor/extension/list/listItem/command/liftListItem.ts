@@ -1,4 +1,4 @@
-import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { AbstractDocumentUpdate, NodeGroup } from 'common';
@@ -18,6 +18,8 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
     const { empty, $from, from, to } = editorState.selection;
+    const { parentOffset: initialParentOffset } = $from;
+
     if(this.from === 'Backspace') {
       if(!empty) return false/*do not allow if Selection not empty when Back*/;
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
@@ -31,6 +33,8 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       else { return false/*could not lift*/; }
     }
 
+    const startOfParent = tr.selection.$from.pos - tr.selection.$from.parentOffset;
+    tr.setSelection(TextSelection.create(tr.doc, startOfParent + initialParentOffset));
     return tr/*updated*/;
   }
 }
