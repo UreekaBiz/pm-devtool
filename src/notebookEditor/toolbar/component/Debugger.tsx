@@ -1,5 +1,7 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
+import { Node as ProseMirrorNode } from 'prosemirror-model';
 
+import { Editor } from 'notebookEditor/editor/Editor';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
 // ********************************************************************************
@@ -40,9 +42,17 @@ export const Debugger = () => {
           Document
         </Text>
         <Box overflow='auto' fontSize={12}>
-          <pre>{JSON.stringify(editor.view.state.doc, null/*no replacer*/, 2)}</pre>
+          <pre>{stringifyDocWithPositions(editor)}</pre>
         </Box>
       </Box>
     </>
   );
+};
+
+// == Util ========================================================================
+const stringifyDocWithPositions = (editor: Editor) => {
+  const doc = editor.view.state.doc;
+  const output: { pos: number; node: ProseMirrorNode; }[] = [];
+  doc.descendants((node, pos) => { output.push({ pos, node  }); });
+  return JSON.stringify(output, null/*no replacer*/, 2/*T&E indentation*/);
 };
