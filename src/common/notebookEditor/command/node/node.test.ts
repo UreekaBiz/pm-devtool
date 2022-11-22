@@ -277,41 +277,35 @@ describe('joinBackwardCommand', () => {
   });
 
   // TODO: redefine and handle once Lists are added
-  // it('moves a block into a list item', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder(`<${A}>there`));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
-  //   wrapTest(startState, joinBackwardCommand, expectedEndState);
-  // });
+  it('moves a block into a ListItem', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder(`<${A}>there`));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
+    wrapTest(startState, joinBackwardCommand, expectedEndState);
+  });
 
-  // it('joins lists', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>there`))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
-  //   wrapTest(startState, joinBackwardCommand, expectedEndState);
-  // });
+  it('joins Lists', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>there`))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
+    wrapTest(startState, joinBackwardCommand, expectedEndState);
+  });
 
-  // it('joins list items', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder(`<${A}>there`))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'), paragraphBuilder('there'))));
-  //   wrapTest(startState, joinBackwardCommand, expectedEndState);
-  // });
+  it('joins ListItems', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder(`<${A}>there`))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'), paragraphBuilder('there'))));
+    wrapTest(startState, joinBackwardCommand, expectedEndState);
+  });
 
-  // it('lifts out of a list at the start', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>there`))));
-  //   const expectedEndState = docBuilder(paragraphBuilder(`<${A}>there`));
-  //   wrapTest(startState, joinBackwardCommand, expectedEndState);
-  // });
+  it('lifts out of a List at the start', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>there`))));
+    const expectedEndState = docBuilder(paragraphBuilder(`<${A}>there`));
+    wrapTest(startState, joinBackwardCommand, expectedEndState);
+  });
 
-  // it('joins lists before and after', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder(`<${A}>there`), bulletListBuilder(listItemBuilder(paragraphBuilder('x'))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there')), listItemBuilder(paragraphBuilder('x'))));
-  //   wrapTest(startState, joinBackwardCommand, expectedEndState);
-  // });
-
-  // it('does not return true on empty blocks that cannot be deleted', () => {
-  //   const startState = docBuilder(paragraphBuilder('a'), bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>`), bulletListBuilder(listItemBuilder('b')))));
-  //   const expectedEndState = null;
-  //   wrapTest(startState, joinBackwardCommand, expectedEndState);
-  // });
+  it('joins Lists before and after', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder(`<${A}>there`), bulletListBuilder(listItemBuilder(paragraphBuilder('x'))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there')), listItemBuilder(paragraphBuilder('x'))));
+    wrapTest(startState, joinBackwardCommand, expectedEndState);
+  });
 
   it('deletes leaf nodes before', () => {
     const startState = docBuilder(horizontalRuleBuilder, paragraphBuilder(`<${A}>there`));

@@ -86,7 +86,7 @@ export const findCutAfter = ($pos: ResolvedPos): ResolvedPos | null => {
 // If this is not possible, try to Join or Delete forwards by performing an
 // adequate replacement
 export const deleteBarrier = (state: EditorState, $cut: ResolvedPos) => {
-  const nodeBefore = $cut.nodeBefore,
+  const nodeBefore = $cut.nodeBefore!,
         nodeAfter = $cut.nodeAfter!;
   if(nodeBefore.type.spec.isolating || nodeAfter.type.spec.isolating) return false/*do not check*/;
 

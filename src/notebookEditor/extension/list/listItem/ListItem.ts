@@ -52,6 +52,7 @@ export const ListItem = new NodeExtension({
 
         return joinBackwardToEndOfClosestListItem(editor);
       },
+      // 'Delete': () => joinListItemForward,
     }),
   ],
 });
