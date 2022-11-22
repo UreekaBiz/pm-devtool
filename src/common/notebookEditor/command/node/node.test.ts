@@ -200,7 +200,7 @@ describe('liftCommand', () => {
   //   wrapTest(startState, liftCommand, expectedEndState);
   // });
 
-  // it('can lift a node selection', () => {
+  // it('can lift a NodeSelection', () => {
   //   const startState = docBuilder(blockquoteBuilder(`<${A}>`, bulletListBuilder(listItemBuilder(paragraphBuilder('foo')))));
   //   const expectedEndState = docBuilder(`<${A}>`, bulletListBuilder(listItemBuilder(paragraphBuilder('foo'))));
   //   wrapTest(startState, liftCommand, expectedEndState);
