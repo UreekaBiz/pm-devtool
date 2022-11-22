@@ -5,11 +5,13 @@ import { deleteSelectionCommand, selectNodeBackwardCommand, selectNodeForwardCom
 // ********************************************************************************
 // == Constant ====================================================================
 const {
+  [NodeName.BULLET_LIST]: bulletListBuilder,
   [NodeName.BLOCKQUOTE]: blockquoteBuilder,
   [NodeName.DOC]: docBuilder,
   [NodeName.HORIZONTAL_RULE]: horizontalRuleBuilder,
+  [NodeName.LIST_ITEM]: listItemBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.DOC, NodeName.HORIZONTAL_RULE, NodeName.PARAGRAPH]);
+} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.BULLET_LIST, NodeName.DOC, NodeName.HORIZONTAL_RULE, NodeName.LIST_ITEM, NodeName.PARAGRAPH]);
 
 // == Node ========================================================================
 describe('selectNodeBackwardCommand', () => {
@@ -27,12 +29,11 @@ describe('selectNodeBackwardCommand', () => {
 });
 
 describe('selectNodeForwardCommand', () => {
-  // TODO: redefine and handle test once Lists are added
-  // it('selects the next Node', () => {
-  //   const startState = docBuilder(paragraphBuilder(`foo<${A}>`), unorderedListBuilder(listItemBuilder(paragraphBuilder('bar'), unorderedListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
-  //   const expectedEndState = docBuilder(paragraphBuilder(`foo<${A}>`), `<${A}>`, unorderedListBuilder(listItemBuilder(paragraphBuilder('bar'), unorderedListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
-  //   wrapTest(startState, selectNodeForwardCommand, expectedEndState);
-  // });
+  it('selects the next Node', () => {
+    const startState = docBuilder(paragraphBuilder(`foo<${A}>`), bulletListBuilder(listItemBuilder(paragraphBuilder('bar'), bulletListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
+    const expectedEndState = docBuilder(paragraphBuilder(`foo<${A}>`), `<${A}>`, bulletListBuilder(listItemBuilder(paragraphBuilder('bar'), bulletListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
+    wrapTest(startState, selectNodeForwardCommand, expectedEndState);
+  });
 
   it('does nothing at the end of the document', () => {
     const startState = docBuilder(paragraphBuilder(`foo<${A}>`));
