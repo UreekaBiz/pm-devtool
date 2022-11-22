@@ -515,7 +515,6 @@ export class JoinForwardDocumentUpdate implements AbstractDocumentUpdate {
     if($cursor.parent.content.size === 0/*empty*/
       && (textblockAt(nodeAfterCut, 'start') || NodeSelection.isSelectable(nodeAfterCut))
     ) {
-
       const deleteStep = replaceStep(editorState.doc, $cursor.before(), $cursor.after(), Slice.empty);
       if(deleteStep && (deleteStep as ReplaceStep).slice.size < (deleteStep as ReplaceStep).to - (deleteStep as ReplaceStep).from) {
           tr.step(deleteStep)

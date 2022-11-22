@@ -384,35 +384,29 @@ describe('joinForwardCommand', () => {
   });
 
   // TODO: redefine and handle once Lists are added
-  // it('pulls the next Block into the current ListItem', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`)), listItemBuilder(paragraphBuilder('b'))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('a'), paragraphBuilder('b'))));
-  //   wrapTest(startState, joinForwardCommand, expectedEndState);
-  // });
+  it('pulls the next Block into the current ListItem', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`)), listItemBuilder(paragraphBuilder('b'))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('a'), paragraphBuilder('b'))));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
 
-  // it('joins two Blocks inside of a ListItem', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`), paragraphBuilder('b'))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('ab'))));
-  //   wrapTest(startState, joinForwardCommand, expectedEndState);
-  // });
+  it('joins two Blocks inside of a ListItem', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`), paragraphBuilder('b'))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('ab'))));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
 
-  // it('joins two lists', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`hi<${A}>`))), bulletListBuilder(listItemBuilder(paragraphBuilder('there'))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
-  //   wrapTest(startState, joinForwardCommand, expectedEndState);
-  // });
+  it('joins two lists', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`hi<${A}>`))), bulletListBuilder(listItemBuilder(paragraphBuilder('there'))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
 
-  // it('does nothing in a nested node at the end of the document', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`there<${A}>`))));
-  //   const expectedEndState = null/*same state*/;
-  //   wrapTest(startState, joinForwardCommand, expectedEndState);
-  // });
-
-  // it('does nothing when it cannot join', () => {
-  //   const startState = docBuilder(paragraphBuilder(`foo<${A}>`), bulletListBuilder(listItemBuilder(paragraphBuilder('bar'), bulletListBuilder(listItemBuilder(paragraphBuilder('baz'))))));
-  //   const expectedEndState = null/*same state*/;
-  //   wrapTest(startState, joinForwardCommand, expectedEndState);
-  // });
+  it('does nothing in a Nested node at the end of the document', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`there<${A}>`))));
+    const expectedEndState = null/*same state*/;
+    wrapTest(startState, joinForwardCommand, expectedEndState);
+  });
 
   it('pulls the next block into a Blockquote', () => {
     const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`foo<${A}>`)), paragraphBuilder('bar'));
