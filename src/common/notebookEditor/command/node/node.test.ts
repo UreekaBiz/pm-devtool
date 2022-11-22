@@ -187,30 +187,29 @@ describe('liftCommand', () => {
     wrapTest(startState, liftCommand, expectedEndState);
   });
 
-  // TODO: redefine and handle once Lists are added
-  // it('can lift out of a list', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
-  //   const expectedEndState = docBuilder(paragraphBuilder('foo'));
-  //   wrapTest(startState, liftCommand, expectedEndState);
-  // });
+  it('can lift out of a list', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
+    const expectedEndState = docBuilder(paragraphBuilder('foo'));
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
 
-  // it('lifts out of the innermost parent', () => {
-  //   const startState = docBuilder(blockquoteBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`foo<${A}>`)))));
-  //   const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder(`foo<${A}>`)));
-  //   wrapTest(startState, liftCommand, expectedEndState);
-  // });
+  it('lifts out of the innermost parent', () => {
+    const startState = docBuilder(blockquoteBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`foo<${A}>`)))));
+    const expectedEndState = docBuilder(blockquoteBuilder(paragraphBuilder(`foo<${A}>`)));
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
 
-  // it('can lift a node selection', () => {
-  //   const startState = docBuilder(blockquoteBuilder(`<${A}>`, bulletListBuilder(listItemBuilder(paragraphBuilder('foo')))));
-  //   const expectedEndState = docBuilder(`<${A}>`, bulletListBuilder(listItemBuilder(paragraphBuilder('foo'))));
-  //   wrapTest(startState, liftCommand, expectedEndState);
-  // });
+  it('can lift a node selection', () => {
+    const startState = docBuilder(blockquoteBuilder(`<${A}>`, bulletListBuilder(listItemBuilder(paragraphBuilder('foo')))));
+    const expectedEndState = docBuilder(`<${A}>`, bulletListBuilder(listItemBuilder(paragraphBuilder('foo'))));
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
 
-  // it('lifts out of a nested list', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('one'), bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>sub1`)), listItemBuilder(paragraphBuilder('sub2')))), listItemBuilder(paragraphBuilder('two'))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('one'), paragraphBuilder(`<${A}>sub1`), bulletListBuilder(listItemBuilder(paragraphBuilder('sub2')))), listItemBuilder(paragraphBuilder('two'))));
-  //   wrapTest(startState, liftCommand, expectedEndState);
-  // });
+  it('lifts out of a nested list', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('one'), bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>sub1`)), listItemBuilder(paragraphBuilder('sub2')))), listItemBuilder(paragraphBuilder('two'))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('one'), paragraphBuilder(`<${A}>sub1`), bulletListBuilder(listItemBuilder(paragraphBuilder('sub2')))), listItemBuilder(paragraphBuilder('two'))));
+    wrapTest(startState, liftCommand, expectedEndState);
+  });
 });
 
 describe('liftEmptyBlockNodeCommand', () => {
