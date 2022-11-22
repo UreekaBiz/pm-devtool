@@ -18,7 +18,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
     const { from, to } = editorState.selection;
-    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse();
+    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
 
     for(let i=0; i<listItemPositions.length; i++) {
       const updatedTr = liftListItem(tr, listItemPositions[i]);
