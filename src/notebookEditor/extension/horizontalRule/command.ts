@@ -6,7 +6,7 @@ import { createHorizontalRuleNode, createParagraphNode, getBlockNodeRange, isHor
 // insert and select an HorizontalRule or toggle it if the current Selection is a
 // NodeSelection and it contains an HorizontalRule Node
 export const insertOrToggleHorizontalRuleCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new InsertOrToggleHorizontalRuleDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new InsertOrToggleHorizontalRuleDocumentUpdate(), state, dispatch);
 export class InsertOrToggleHorizontalRuleDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

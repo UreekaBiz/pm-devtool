@@ -39,7 +39,8 @@ export abstract class AbstractDocumentUpdate implements DocumentUpdate {
    * receive an updated {@link Transaction} and return whether it was
    * successfully executed
    */
-  public static execute(updatedTr: Transaction | false/*could not update Transaction*/, dispatch?: DispatchType) {
+  public static execute(documentUpdate: DocumentUpdate, state: EditorState, dispatch: DispatchType, view?: EditorView) {
+    const updatedTr = documentUpdate.update(state, state.tr, view);
     if(updatedTr && dispatch) {
       dispatch(updatedTr);
       return true/*Command executed*/;

@@ -11,7 +11,7 @@ import { isCursorAtEndOfCell } from './util';
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/input.js#L44
 /** handle arrow key behavior when inside a Table Node */
 const tableArrowHandlerCommand = (axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/down*/): Command => (state, dispatch, view) =>
-  AbstractDocumentUpdate.execute(new TableArrowHandlerDocumentUpdate(axis, direction).update(state, state.tr, view), dispatch);
+  AbstractDocumentUpdate.execute(new TableArrowHandlerDocumentUpdate(axis, direction), state, dispatch, view);
 class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly axis: 'horizontal' | 'vertical', private readonly direction: -1/*left/up*/ | 1/*right/down*/) {/*nothing additional*/}
 
@@ -49,7 +49,7 @@ class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/input.js#L76
 /** handle shift arrow key behavior when inside of a  Table Node */
 const tableShiftArrowHandlerCommand = (axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/down*/): Command => (state, dispatch, view) =>
-  AbstractDocumentUpdate.execute(new TableShiftArrowHandlerDocumentUpdate(axis, direction).update(state, state.tr, view), dispatch);
+  AbstractDocumentUpdate.execute(new TableShiftArrowHandlerDocumentUpdate(axis, direction), state, dispatch, view);
 class TableShiftArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly axis: 'horizontal' | 'vertical', private readonly direction: -1/*left/up*/ | 1/*right/down*/) {/*nothing additional*/}
 

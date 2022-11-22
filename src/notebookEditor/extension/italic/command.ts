@@ -7,7 +7,7 @@ import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 // ********************************************************************************
 /** toggle the Italic Mark */
 export const toggleItalicCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleItalicDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleItalicDocumentUpdate(), state, dispatch);
 export class ToggleItalicDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

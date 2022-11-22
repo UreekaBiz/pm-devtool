@@ -9,7 +9,7 @@ import { focusChipToolInput } from 'notebookEditor/extension/shared/component/ch
 export const insertAndSelectCodeBlockReferenceCommand: Command = (state, dispatch) => {
   const id = generateNodeId();
 
-  const result = AbstractDocumentUpdate.execute(new InsertAndSelectCodeBlockReferenceDocumentUpdate({ id }).update(state, state.tr), dispatch);
+  const result = AbstractDocumentUpdate.execute(new InsertAndSelectCodeBlockReferenceDocumentUpdate({ id }), state, dispatch);
   if(result) {
     focusChipToolInput(id);
     return result;

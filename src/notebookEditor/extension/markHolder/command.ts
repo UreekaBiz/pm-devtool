@@ -10,7 +10,7 @@ import { getMarkHolder, parseStoredMarks } from './util';
  * Checks whether the given Mark is active in a MarkHolder, and toggling or set it
  */
 export const toggleOrSetMarkCommand = (markType: MarkType): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleOrSetMarkDocumentUpdate(markType).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleOrSetMarkDocumentUpdate(markType), state, dispatch);
 export class ToggleOrSetMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markType: MarkType) {/*nothing additional*/}
 
@@ -35,7 +35,7 @@ export class ToggleOrSetMarkDocumentUpdate implements AbstractDocumentUpdate {
  *  an empty Node.
  */
 export const toggleMarkInMarkHolderCommand = (markHolder: MarkHolderNodeType, appliedMarkType: MarkType): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleMarkInMarkHolderDocumentUpdate(markHolder, appliedMarkType).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleMarkInMarkHolderDocumentUpdate(markHolder, appliedMarkType), state, dispatch);
 export class ToggleMarkInMarkHolderDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markHolder: MarkHolderNodeType, private readonly appliedMarkType: MarkType) {/*nothing additional*/}
 

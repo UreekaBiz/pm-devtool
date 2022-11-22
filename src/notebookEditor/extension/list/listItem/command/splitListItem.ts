@@ -9,7 +9,7 @@ import { fromOrToInListItem } from './util';
 // split the ListItem at the current Selection while maintaining active Marks
 // in the new ListItem
 export const splitListItemKeepMarksCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SplitListItemKeepMarksDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SplitListItemKeepMarksDocumentUpdate(), state, dispatch);
 export class SplitListItemKeepMarksDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

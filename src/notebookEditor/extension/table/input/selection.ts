@@ -7,7 +7,7 @@ import { getTableNodeTypes, isCellSelection, DispatchType, NodeName, AbstractDoc
 // == Delete ======================================================================
 /** delete a CellSelection if it exists */
 export const deleteCellSelectionCommand = (state: EditorState, dispatch: DispatchType) =>
-  AbstractDocumentUpdate.execute(new DeleteCellSelectionDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new DeleteCellSelectionDocumentUpdate(), state, dispatch);
 class DeleteCellSelectionDocumentUpdate implements AbstractDocumentUpdate {
   constructor() {/*nothing additional*/}
 

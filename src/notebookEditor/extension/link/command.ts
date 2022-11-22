@@ -11,7 +11,7 @@ import { createLinkMark, AbstractDocumentUpdate, LinkAttributes, MarkName, SetMa
 // == Implementation ==============================================================
 /** set the Link Mark across the current Selection */
 export const setLinkCommand = (attributes: Partial<LinkAttributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SetLinkDocumentUpdate(attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SetLinkDocumentUpdate(attributes), state, dispatch);
 export class SetLinkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly attributes: Partial<LinkAttributes>) {/*nothing additional*/ }
 
@@ -29,7 +29,7 @@ export class SetLinkDocumentUpdate implements AbstractDocumentUpdate {
 // --------------------------------------------------------------------------------
 /** unset the Link Mark across the current Selection */
 export const unsetLinkCommand = (): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new UnsetLinkDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new UnsetLinkDocumentUpdate(), state, dispatch);
 export class UnsetLinkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -49,7 +49,7 @@ export class UnsetLinkDocumentUpdate implements AbstractDocumentUpdate {
  * insert Text content into the Editor and apply the Link Mark to it
  */
 export const insertLinkCommand = (textContent: string, attributes: Partial<LinkAttributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new InsertLinkDocumentUpdate(textContent, attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new InsertLinkDocumentUpdate(textContent, attributes), state, dispatch);
 export class InsertLinkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly textContent: string, private readonly attributes: Partial<LinkAttributes>) {/*nothing additional*/ }
 

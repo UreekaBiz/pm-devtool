@@ -7,7 +7,7 @@ import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 // ********************************************************************************
 /** toggle the Superscript Mark */
 export const toggleSuperScriptCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleSuperScriptDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleSuperScriptDocumentUpdate(), state, dispatch);
 export class ToggleSuperScriptDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

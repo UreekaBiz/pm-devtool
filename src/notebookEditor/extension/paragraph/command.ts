@@ -3,7 +3,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { getBlockNodeRange, getParagraphNodeType, isMarkHolderNode, AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
-export const setParagraphCommand: Command = (state, dispatch) => AbstractDocumentUpdate.execute(new SetParagraphDocumentUpdate().update(state, state.tr), dispatch);
+export const setParagraphCommand: Command = (state, dispatch) => AbstractDocumentUpdate.execute(new SetParagraphDocumentUpdate(), state, dispatch);
 // NOTE: this DocumentUpdate has to take into account the following constraints:
 //       1. Paragraphs set through this DocumentUpdate should not inherit any marks
 //       2. Paragraphs set through this DocumentUpdate should not have MarkHolders,

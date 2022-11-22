@@ -9,7 +9,7 @@ import { isNodeSelection, isNestedViewNode, isTextSelection, Attributes, Abstrac
 // == Insertion ===================================================================
 /** set a NestedViewNode  */
 export const insertNestedViewNodeCommand = (nodeType: NodeType, attributes: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new InsertNestedViewNodeDocumentUpdate(nodeType, attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new InsertNestedViewNodeDocumentUpdate(nodeType, attributes), state, dispatch);
 export class InsertNestedViewNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeType: NodeType, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
@@ -167,7 +167,7 @@ export class NestedViewNodeBehaviorDocumentUpdate {
 // == Backspace ===================================================================
 /** ensure that backspacing when there is a NestedViewNode selects that Node */
 export const nestedViewNodeBackspaceCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new nestedViewNodeBackspaceDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new nestedViewNodeBackspaceDocumentUpdate(), state, dispatch);
 export class nestedViewNodeBackspaceDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

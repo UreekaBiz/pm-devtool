@@ -7,7 +7,7 @@ import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 // ********************************************************************************
 /** toggle the Code Mark */
 export const toggleCodeCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleCodeDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleCodeDocumentUpdate(), state, dispatch);
 export class ToggleCodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

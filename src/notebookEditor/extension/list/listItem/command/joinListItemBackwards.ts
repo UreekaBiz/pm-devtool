@@ -4,7 +4,7 @@ import { AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
 export const joinListItemBackwardCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new JoinListItemBackwardsDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new JoinListItemBackwardsDocumentUpdate(), state, dispatch);
 export class JoinListItemBackwardsDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 

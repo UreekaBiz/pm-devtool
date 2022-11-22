@@ -9,7 +9,7 @@ import { AbstractDocumentUpdate } from '../type';
 // == Setter ======================================================================
 /** set a Mark across the current Selection */
 export const setMarkCommand = (markName: MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SetMarkDocumentUpdate(markName, attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SetMarkDocumentUpdate(markName, attributes), state, dispatch);
 export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
@@ -58,7 +58,7 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
  * is true, they will be removed even across (i.e. past) it
  */
 export const unsetMarkCommand = (markName: MarkName, extendEmptyMarkRange: boolean): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new UnsetMarkDocumentUpdate(markName, extendEmptyMarkRange).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new UnsetMarkDocumentUpdate(markName, extendEmptyMarkRange), state, dispatch);
 export class UnsetMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly extendEmptyMarkRange: boolean) {/*nothing additional*/}
 
@@ -96,7 +96,7 @@ export class UnsetMarkDocumentUpdate implements AbstractDocumentUpdate {
 // --------------------------------------------------------------------------------
 /** Toggle the given Mark with the given name */
 export const toggleMarkCommand = (markType: MarkType, attributes: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleMarkDocumentUpdate(markType, attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleMarkDocumentUpdate(markType, attributes), state, dispatch);
 export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markType: MarkType, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 
@@ -165,7 +165,7 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
  * it completely
  */
 export const extendMarkRangeCommand = (markName: MarkName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ExtendMarkRangeDocumentUpdate(markName, attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ExtendMarkRangeDocumentUpdate(markName, attributes), state, dispatch);
 export class ExtendMarkRangeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly markName: MarkName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/}
 

@@ -13,7 +13,7 @@ import { createReplacedTextMarkMark, AbstractDocumentUpdate, HISTORY_META } from
  * @returns
  */
 export const asyncReplaceDemoAsyncNode2ContentCommand = (dan2Pos: number, textContent: string, textToReplace: string, result: string): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new AsyncReplaceDemoAsyncNode2ContentDocumentUpdate(dan2Pos, textContent, textToReplace, result).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new AsyncReplaceDemoAsyncNode2ContentDocumentUpdate(dan2Pos, textContent, textToReplace, result), state, dispatch);
 export class AsyncReplaceDemoAsyncNode2ContentDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly d2ANPos: number, private readonly textContent: string, private readonly textToReplace: string, private readonly result: string) {/*nothing additional*/}
 

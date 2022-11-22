@@ -16,7 +16,7 @@ import { defaultBlockAt, deleteBarrier, findCutAfter, findCutBefore, textblockAt
 // -- Create ----------------------------------------------------------------------
 /** Creates a Block Node below the current Selection */
 export const createBlockNodeCommand = (blockNodeName: NodeName, attributes: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new CreateBlockNodeDocumentUpdate(blockNodeName, attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new CreateBlockNodeDocumentUpdate(blockNodeName, attributes), state, dispatch);
 export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName, private readonly attributes: Partial<Attributes>) {/*nothing additional*/ }
 
@@ -78,7 +78,7 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 // -- Clear -----------------------------------------------------------------------
 /** clear the Nodes in the current Block */
 export const clearNodesCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ClearNodesDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ClearNodesDocumentUpdate(), state, dispatch);
 export class ClearNodesDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -128,7 +128,7 @@ export class ClearNodesDocumentUpdate implements AbstractDocumentUpdate {
 // NodeSpec, without the need of declaring it, thus getting rid of the ProseMirror
 // induced constraints that come with it (e.g. not being able to paste Marks)
 export const insertNewlineCommand = (nodeName: NodeName): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new InsertNewlineDocumentUpdate(nodeName).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new InsertNewlineDocumentUpdate(nodeName), state, dispatch);
 export class InsertNewlineDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeName: NodeName) {/*nothing additional*/}
 
@@ -151,7 +151,7 @@ export class InsertNewlineDocumentUpdate implements AbstractDocumentUpdate {
 // create a default Block Node after the one at the current Selection and
 // move the cursor there
 export const leaveBlockNodeCommand = (nodeName: NodeName): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LeaveBlockNodeDocumentUpdate(nodeName).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new LeaveBlockNodeDocumentUpdate(nodeName), state, dispatch);
 export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeName: NodeName) {/*nothing additional*/ }
 
@@ -186,7 +186,7 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 // -- Split -----------------------------------------------------------------------
 // split the Block at the Selection
 export const splitBlockCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SplitBlockDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SplitBlockDocumentUpdate(), state, dispatch);
 export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -270,7 +270,7 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
 
 /** split the Block at the Selection keeping active Marks */
 export const splitBlockKeepMarksCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SplitBlockKeepMarksDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SplitBlockKeepMarksDocumentUpdate(), state, dispatch);
 export class SplitBlockKeepMarksDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -295,7 +295,7 @@ export class SplitBlockKeepMarksDocumentUpdate implements AbstractDocumentUpdate
 
 // -- Wrap ------------------------------------------------------------------------
 export const toggleWrapCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleWrapDocumentUpdate(nodeType, attrs).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleWrapDocumentUpdate(nodeType, attrs), state, dispatch);
 export class ToggleWrapDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeType: NodeType, private readonly attrs: Partial<Attributes>) {/*nothing additional*/}
   /*
@@ -315,7 +315,7 @@ export class ToggleWrapDocumentUpdate implements AbstractDocumentUpdate {
 
 /** wrap the Selection in a Node of the given type with the given Attributes */
 export const wrapInCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new WrapInDocumentUpdate(nodeType, attrs).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new WrapInDocumentUpdate(nodeType, attrs), state, dispatch);
 export class WrapInDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeType: NodeType, private readonly attrs: Partial<Attributes>) {/*nothing additional*/}
   /*
@@ -341,7 +341,7 @@ export class WrapInDocumentUpdate implements AbstractDocumentUpdate {
  * selection that can be lifted, out of its parent Node
  */
 export const liftCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new LiftDocumentUpdate(), state, dispatch);
 export class LiftDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -365,7 +365,7 @@ export class LiftDocumentUpdate implements AbstractDocumentUpdate {
 
 /** lift the selected Block if it is of the given type and has the given attributes */
 export const liftBlockNodeCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftBlockDocumentUpdate(nodeType, attrs).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new LiftBlockDocumentUpdate(nodeType, attrs), state, dispatch);
 export class LiftBlockDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly nodeType: NodeType, attrs: Partial<Attributes>) {/*nothing additional*/}
   /*
@@ -383,7 +383,7 @@ export class LiftBlockDocumentUpdate implements AbstractDocumentUpdate {
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L277
 // If the cursor is in an empty Text Block that can be lifted, lift it.
 export const liftEmptyBlockNodeCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftEmptyBlockNodeDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new LiftEmptyBlockNodeDocumentUpdate(), state, dispatch);
 export class LiftEmptyBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -418,7 +418,7 @@ export class LiftEmptyBlockNodeDocumentUpdate implements AbstractDocumentUpdate 
 // selected Block closer to the next one in the Document structure by lifting
 // it out of its parent or moving it into a parent of the previous Block
 export const joinBackwardCommand: Command = (state, dispatch, view) =>
-  AbstractDocumentUpdate.execute(new JoinBackwardDocumentUpdate().update(state, state.tr, view), dispatch);
+  AbstractDocumentUpdate.execute(new JoinBackwardDocumentUpdate(), state, dispatch, view);
 export class JoinBackwardDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -479,7 +479,7 @@ export class JoinBackwardDocumentUpdate implements AbstractDocumentUpdate {
 
 // When the Selection is empty and at the end of a TextBlock, select
 // the node coming after that textblock, if possible
-export const joinForwardCommand: Command = (state, dispatch, view) => AbstractDocumentUpdate.execute(new JoinForwardDocumentUpdate().update(state, state.tr, view), dispatch);
+export const joinForwardCommand: Command = (state, dispatch, view) => AbstractDocumentUpdate.execute(new JoinForwardDocumentUpdate(), state, dispatch, view);
 export class JoinForwardDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 

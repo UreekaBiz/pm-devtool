@@ -9,7 +9,7 @@ import { fromOrToInListItem, getListItemPositions } from './util';
 // == Lift ========================================================================
 // lift a ListItem
 export const liftListItemCommand = (from: 'Enter' | 'Shift-Tab' | 'Backspace'): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate(from).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate(from), state, dispatch);
 export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly from: 'Enter' | 'Shift-Tab' | 'Backspace') {/*nothing additional*/}
 

@@ -13,7 +13,7 @@ import { AbstractDocumentUpdate } from '../../type';
 
 /** toggles between row/column Header and normal Cells (only applies to first row/column) */
 export const toggleHeaderCommand = (type: 'row' | 'column' | 'cell'): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleHeaderDocumentUpdate(type).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleHeaderDocumentUpdate(type), state, dispatch);
 export class ToggleHeaderDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly type: 'row' | 'column' | 'cell') {/*nothing additional*/ }
 

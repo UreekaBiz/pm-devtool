@@ -8,7 +8,7 @@ import { focusChipToolInput } from '../shared/component/chipTool/util';
 /** insert and select a DemoAsyncNode */
 export const insertAndSelectDemoAsyncNodeCommand: Command = (state, dispatch) => {
   const id = generateNodeId();
-  const result = AbstractDocumentUpdate.execute(new InsertAndSelectDemoAsyncNodeDocumentUpdate({ id }).update(state, state.tr), dispatch);
+  const result = AbstractDocumentUpdate.execute(new InsertAndSelectDemoAsyncNodeDocumentUpdate({ id }), state, dispatch);
   if(result) {
     focusChipToolInput(id);
     return result;

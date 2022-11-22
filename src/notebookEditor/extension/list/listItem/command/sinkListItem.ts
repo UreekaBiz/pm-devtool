@@ -8,7 +8,7 @@ import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from
 // == Sink ========================================================================
 // sink a ListItem
 export const sinkListItemCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SinkListItemDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SinkListItemDocumentUpdate(), state, dispatch);
 export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

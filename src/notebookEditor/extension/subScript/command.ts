@@ -7,7 +7,7 @@ import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 // ********************************************************************************
 /** toggle the SubScript Mark */
 export const toggleSubScriptCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleSubScriptDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleSubScriptDocumentUpdate(), state, dispatch);
 export class ToggleSubScriptDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

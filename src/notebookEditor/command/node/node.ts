@@ -23,7 +23,7 @@ type InsertContentAtOptions = {
 //       might be a string that gets parsed and converted into an HTMLElement
 /** Insert the given content at the specified SelectionRange */
 export const insertContentAtCommand = (selectionRange: SelectionRange, value: string | JSONNode | JSONNode[], options?: InsertContentAtOptions): Command =>
-  (state, dispatch) => AbstractDocumentUpdate.execute(new InsertContentAtDocumentUpdate(selectionRange, value, options).update(state, state.tr), dispatch);
+  (state, dispatch) => AbstractDocumentUpdate.execute(new InsertContentAtDocumentUpdate(selectionRange, value, options), state, dispatch);
 
 export class InsertContentAtDocumentUpdate implements AbstractDocumentUpdate  {
   public constructor(private readonly selectionRange: SelectionRange, private readonly value: string | JSONNode | JSONNode[], private readonly options?: InsertContentAtOptions) {/*nothing additional*/}
@@ -130,7 +130,7 @@ export const toggleBlock = (editor: Editor, blockNodeName: NodeName, blockAttrs:
 //       the GapCursor Selection or the state getting stuck
 /** ensure the Block at the Selection is deleted on Backspace if its empty */
 export const blockBackspaceCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new BlockBackspaceDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new BlockBackspaceDocumentUpdate(blockNodeName), state, dispatch);
 export class BlockBackspaceDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 
@@ -157,7 +157,7 @@ export class BlockBackspaceDocumentUpdate implements AbstractDocumentUpdate {
  * Block Nodes by removing a '\n' if required
  * */
  export const blockModBackspaceCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new BlockModBackspaceDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new BlockModBackspaceDocumentUpdate(blockNodeName), state, dispatch);
 export class BlockModBackspaceDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 
@@ -191,7 +191,7 @@ export class BlockModBackspaceDocumentUpdate implements AbstractDocumentUpdate {
  * is at the start of it
  */
  export const blockArrowUpCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new BlockArrowUpDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new BlockArrowUpDocumentUpdate(blockNodeName), state, dispatch);
 export class BlockArrowUpDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 
@@ -218,7 +218,7 @@ export class BlockArrowUpDocumentUpdate implements AbstractDocumentUpdate {
  * is at the end of it
  */
 export const blockArrowDownCommand = (blockNodeName: NodeName): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new BlockArrowDownDocumentUpdate(blockNodeName).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new BlockArrowDownDocumentUpdate(blockNodeName), state, dispatch);
 export class BlockArrowDownDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly blockNodeName: NodeName) {/*nothing additional*/ }
 

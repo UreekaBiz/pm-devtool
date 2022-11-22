@@ -25,7 +25,7 @@ type OptionalRectProps = { table: ProseMirrorNode | null | undefined; tableMap: 
 // == Table =======================================================================
 /** create and insert a Table Node */
 export const createAndInsertTableCommand = (rows=TABLE_DEFAULT_ROWS, columns=TABLE_DEFAULT_COLUMNS, withHeaderRow=TABLE_DEFAULT_WITH_HEDER_ROW): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new CreateAndInsertTableDocumentUpdate(rows, columns, withHeaderRow).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new CreateAndInsertTableDocumentUpdate(rows, columns, withHeaderRow), state, dispatch);
 export class CreateAndInsertTableDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly rows: number, private readonly columns: number, private readonly withHeaderRow: boolean) {/*nothing additional*/ }
 
@@ -46,7 +46,7 @@ export class CreateAndInsertTableDocumentUpdate implements AbstractDocumentUpdat
 }
 /** deletes the Table around the Selection, if any */
 export const deleteTableCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new DeleteTableDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new DeleteTableDocumentUpdate(), state, dispatch);
 export class DeleteTableDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -66,7 +66,7 @@ export class DeleteTableDocumentUpdate implements AbstractDocumentUpdate {
 
 /** delete a Table if all its Cells are currently selected */
 export const deleteTableWhenAllCellsSelectedCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new DeleteTableWhenAllCellsSelectedDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new DeleteTableWhenAllCellsSelectedDocumentUpdate(), state, dispatch);
 export class DeleteTableWhenAllCellsSelectedDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
@@ -99,7 +99,7 @@ export class DeleteTableWhenAllCellsSelectedDocumentUpdate implements AbstractDo
 // == Row =========================================================================
 /** add a Table Row before the Selection */
 export const addRowBeforeCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new AddRowBeforeDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new AddRowBeforeDocumentUpdate(), state, dispatch);
 export class AddRowBeforeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -120,7 +120,7 @@ export class AddRowBeforeDocumentUpdate implements AbstractDocumentUpdate {
 
 /** add a Table Row after the Selection */
 export const addRowAfterCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new AddRowAfterDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new AddRowAfterDocumentUpdate(), state, dispatch);
 export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -141,7 +141,7 @@ export class AddRowAfterDocumentUpdate implements AbstractDocumentUpdate {
 
 /** remove the selected Rows from a Table */
 export const deleteRowCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new DeleteRowDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new DeleteRowDocumentUpdate(), state, dispatch);
 export class DeleteRowDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -274,7 +274,7 @@ const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRec
 // == Column ======================================================================
 /** add a column before the column with the current Selection */
 export const addColumnBeforeCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new AddColumnBeforeDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new AddColumnBeforeDocumentUpdate(), state, dispatch);
 export class AddColumnBeforeDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -295,7 +295,7 @@ export class AddColumnBeforeDocumentUpdate implements AbstractDocumentUpdate {
 
 /** add a column after the column with the current Selection */
 export const addColumnAfterCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new AddColumnAfterDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new AddColumnAfterDocumentUpdate(), state, dispatch);
 export class AddColumnAfterDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
@@ -317,7 +317,7 @@ export class AddColumnAfterDocumentUpdate implements AbstractDocumentUpdate {
 
 /** remove the selected columns from a Table */
 export const deleteColumnCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new DeleteColumnDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new DeleteColumnDocumentUpdate(), state, dispatch);
 export class DeleteColumnDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 

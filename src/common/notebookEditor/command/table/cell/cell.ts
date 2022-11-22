@@ -17,7 +17,7 @@ import { AbstractDocumentUpdate } from '../../type';
  * its outline forms a Rectangle
  */
 export const mergeCellsCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new MergeCellsDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new MergeCellsDocumentUpdate(), state, dispatch);
 export class MergeCellsDocumentUpdate implements AbstractDocumentUpdate {
   constructor() {/*nothing additional*/ }
 
@@ -91,7 +91,7 @@ const defaultGetCellTypeFunction: GetCellTypeFunctionType = (state, row, col, no
  * into smaller Cells, using the type returned by the getCellTypeFunction
  */
 export const splitCellCommand = (getCellTypeFunction?: GetCellTypeFunctionType): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SplitCellDocumentUpdate(getCellTypeFunction).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SplitCellDocumentUpdate(getCellTypeFunction), state, dispatch);
 
 export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly getCellTypeFunction: GetCellTypeFunctionType = defaultGetCellTypeFunction) {/*nothing additional*/ }
@@ -176,7 +176,7 @@ export class SplitCellDocumentUpdate implements AbstractDocumentUpdate {
 
 /** select the previous or the next Cell in a Table */
 export const goToCellCommand = (direction: 'previous' | 'next'): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new GoToCellDocumentUpdate(direction).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new GoToCellDocumentUpdate(direction), state, dispatch);
 export class GoToCellDocumentUpdate implements AbstractDocumentUpdate {
   constructor(private readonly direction: 'previous' | 'next') {/*nothing additional*/ }
 

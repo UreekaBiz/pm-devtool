@@ -7,7 +7,7 @@ import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 // ********************************************************************************
 /** toggle the Underline Mark */
 export const toggleUnderlineCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleUnderlineDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleUnderlineDocumentUpdate(), state, dispatch);
 export class ToggleUnderlineDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

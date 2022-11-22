@@ -6,7 +6,7 @@ import { SetParagraphDocumentUpdate } from '../paragraph/command';
 
 // ********************************************************************************
 export const setHeadingCommand = (attributes: Partial<HeadingAttributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SetHeadingDocumentUpdate(attributes).update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new SetHeadingDocumentUpdate(attributes), state, dispatch);
 export class SetHeadingDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly attributes: Partial<HeadingAttributes>) {/*nothing additional*/ }
 
