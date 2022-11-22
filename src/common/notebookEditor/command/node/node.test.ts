@@ -231,18 +231,17 @@ describe('liftEmptyBlockNodeCommand', () => {
     wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
   });
 
-  // TODO: redefine and handle once Lists are added
-  // it('does not violate schema constraints', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
-  //   const expectedEndState = null/*same state*/;
-  //   wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
-  // });
+  it('does not violate schema constraints', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
+    const expectedEndState = null/*same state*/;
+    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
+  });
 
-  // it('lifts out of a list', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder(`<${A}>`))));
-  //   const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder());
-  //   wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
-  // });
+  it('lifts out of a list', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder(`<${A}>`))));
+    const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder());
+    wrapTest(startState, liftEmptyBlockNodeCommand, expectedEndState);
+  });
 });
 
 // -- Join ------------------------------------------------------------------------
