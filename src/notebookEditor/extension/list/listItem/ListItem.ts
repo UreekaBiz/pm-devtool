@@ -7,7 +7,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
-import { liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
+import { joinBackwardToEndOfClosestListItem, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
@@ -46,7 +46,12 @@ export const ListItem = new NodeExtension({
       'Enter': splitListItemKeepMarksCommand,
       'Shift-Tab': liftListItemCommand('Shift-Tab'),
       'Tab': sinkListItemCommand,
-      'Backspace': liftListItemCommand('Backspace'),
+      'Backspace': () => {
+        const liftResult = liftListItemCommand('Backspace')(editor.view.state, editor.view.dispatch);
+        if(liftResult) return liftResult/* else -- could not Lift */;
+
+        return joinBackwardToEndOfClosestListItem(editor);
+      },
     }),
   ],
 });
