@@ -3,7 +3,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
-export const joinListItemBackwardsCommand: Command = (state, dispatch) =>
+export const joinListItemBackwardCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new JoinListItemBackwardsDocumentUpdate().update(state, state.tr), dispatch);
 export class JoinListItemBackwardsDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
