@@ -12,7 +12,6 @@ import { useIsMounted } from 'notebookEditor/shared/hook/useIsMounted';
 
 // ********************************************************************************
 // == Schema ======================================================================
-// TODO: Move to a better place.
 const LinkDialog_Create_Schema = Validate.object({
   /*the href of the link*/
   href: urlSchema

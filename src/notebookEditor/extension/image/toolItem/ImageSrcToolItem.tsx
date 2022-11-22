@@ -11,7 +11,6 @@ import { EditorToolComponentProps, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/to
 
 // ********************************************************************************
 // == Schema ======================================================================
-// TODO: move to a better place
 const ImageDialog_Create_Schema = Validate.object({
   /*the src of the image*/
   src: urlSchema

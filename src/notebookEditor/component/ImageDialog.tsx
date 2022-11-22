@@ -12,7 +12,6 @@ import { useIsMounted } from 'notebookEditor/shared/hook/useIsMounted';
 
 // ********************************************************************************
 // == Constant ====================================================================
-// TODO: Move to a better place.
 const ImageDialog_Create_Schema = Validate.object({
   /*the src of the image*/
   src: urlSchema

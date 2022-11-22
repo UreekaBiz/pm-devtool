@@ -13,7 +13,6 @@ import { SetLinkDocumentUpdate } from '../../command';
 
 // ********************************************************************************
 // == Schema ======================================================================
-// TODO: move to a better place
 const LinkDialog_Create_Schema = Validate.object({
   /*the src of the Link*/
   href: urlSchema

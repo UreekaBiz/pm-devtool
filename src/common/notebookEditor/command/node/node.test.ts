@@ -23,9 +23,11 @@ const {
   [NodeName.DOC]: docBuilder,
   [NodeName.HEADING]: headingBuilder,
   [NodeName.IMAGE]: imageBuilder,
+  [NodeName.LIST_ITEM]: listItemBuilder,
   [NodeName.HORIZONTAL_RULE]: horizontalRuleBuilder,
+  [NodeName.ORDERED_LIST]: orderedListBuilder,
   [NodeName.PARAGRAPH]: paragraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.CODEBLOCK, NodeName.DOC, NodeName.HEADING, NodeName.HORIZONTAL_RULE, NodeName.IMAGE, NodeName.PARAGRAPH]);
+} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.CODEBLOCK, NodeName.DOC, NodeName.HEADING, NodeName.LIST_ITEM, NodeName.HORIZONTAL_RULE, NodeName.IMAGE, NodeName.ORDERED_LIST, NodeName.PARAGRAPH]);
 
 const { [MarkName.BOLD]: boldBuilder, [MarkName.ITALIC]: italicBuilder } = getNotebookSchemaMarkBuilders([MarkName.BOLD, MarkName.ITALIC]);
 
@@ -63,17 +65,17 @@ describe('splitBlockCommand', () => {
   });
 
   // TODO: redefine and handle once Lists are added
-  // it('splits a parent Block when a Node is selected', () => {
-  //   const startState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('a')), `<${A}>`, listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
-  //   const expectedEndState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('a'))), orderedListBuilder(listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
-  //   wrapTest(startState, splitBlockCommand, expectedEndState);
-  // });
+  it('splits a parent Block when a Node is selected', () => {
+    const startState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('a')), `<${A}>`, listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
+    const expectedEndState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('a'))), orderedListBuilder(listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
 
-  // it('does not split the parent Block when at the start', () => {
-  //   const startState = docBuilder(orderedListBuilder(`<${A}>`, listItemBuilder(paragraphBuilder('a')), listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
-  //   const expectedEndState = null/*same state*/;
-  //   wrapTest(startState, splitBlockCommand, expectedEndState);
-  // });
+  it('does not split the parent Block when at the start', () => {
+    const startState = docBuilder(orderedListBuilder(`<${A}>`, listItemBuilder(paragraphBuilder('a')), listItemBuilder(paragraphBuilder('b')), listItemBuilder(paragraphBuilder('c'))));
+    const expectedEndState = null/*same state*/;
+    wrapTest(startState, splitBlockCommand, expectedEndState);
+  });
 
   it('splits off a normal Paragraph when splitting at the start of a Text Block', () => {
     const startState = docBuilder(headingBuilder(`<${A}>foo`));
