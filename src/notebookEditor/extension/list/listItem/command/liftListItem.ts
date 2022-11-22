@@ -8,16 +8,18 @@ import { fromOrToInListItem, getListItemPositions } from './util';
 // ********************************************************************************
 // == Lift ========================================================================
 // lift a ListItem
-export const liftListItemCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate().update(state, state.tr), dispatch);
+export const liftListItemCommand = (from: 'Enter' | 'Shift-Tab' | 'Backspace'): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate(from).update(state, state.tr), dispatch);
 export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
+  public constructor(private readonly from: 'Enter' | 'Shift-Tab' | 'Backspace') {/*nothing additional*/}
 
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction) {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
-    const { from, to } = editorState.selection;
+    const { empty, from, to } = editorState.selection;
+    if(this.from === 'Backspace' && !empty) return false/*do not allow if Selection not empty when Backspacing*/;
+
     const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
 
     for(let i=0; i<listItemPositions.length; i++) {

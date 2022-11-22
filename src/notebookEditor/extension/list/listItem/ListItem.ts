@@ -44,9 +44,9 @@ export const ListItem = new NodeExtension({
     listItemPlugin(),
     keymap({
       'Enter':  splitListItemKeepMarksCommand,
-      'Shift-Tab':  liftListItemCommand,
+      'Shift-Tab':  liftListItemCommand('Shift-Tab'),
       'Tab':  sinkListItemCommand,
-      'Backspace':  liftListItemCommand,
+      'Backspace':  liftListItemCommand('Backspace'),
     }),
   ],
 });

@@ -25,7 +25,7 @@ export class SplitListItemKeepMarksDocumentUpdate implements AbstractDocumentUpd
     // check if lifting must be done
     const { $from, $to } = selection;
     if($from.parent.content.size < 1/*empty*/) {
-      const updatedTr = new LiftListItemDocumentUpdate().update(editorState, tr);
+      const updatedTr = new LiftListItemDocumentUpdate('Enter').update(editorState, tr);
       return updatedTr/*updated*/;
     } /* else -- parent of from is has content, split */
 
