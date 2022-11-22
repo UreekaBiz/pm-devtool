@@ -276,7 +276,6 @@ describe('joinBackwardCommand', () => {
     wrapTest(startState, joinBackwardCommand, expectedEndState);
   });
 
-  // TODO: redefine and handle once Lists are added
   it('moves a block into a ListItem', () => {
     const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi'))), paragraphBuilder(`<${A}>there`));
     const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('hi')), listItemBuilder(paragraphBuilder('there'))));
@@ -377,7 +376,6 @@ describe('joinForwardCommand', () => {
     wrapTest(startState, joinForwardCommand, expectedEndState);
   });
 
-  // TODO: redefine and handle once Lists are added
   it('pulls the next Block into the current ListItem', () => {
     const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`)), listItemBuilder(paragraphBuilder('b'))));
     const expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('a'), paragraphBuilder('b'))));
