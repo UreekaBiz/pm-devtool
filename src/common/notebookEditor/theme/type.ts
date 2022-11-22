@@ -126,7 +126,7 @@ export const DefaultTheme: Theme = {
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
     [NodeName.ROW]: {/*no defined value*/},
-    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
+    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '2em' },
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#000000',
@@ -255,7 +255,7 @@ export const GoogleDocsTheme: Theme = {
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
     [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
     [NodeName.ROW]: {/*no defined value*/},
-    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
+    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '2em' },
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#353744',

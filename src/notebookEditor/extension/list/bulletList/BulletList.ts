@@ -5,14 +5,15 @@ import { getNodeOutputSpec, BulletListNodeSpec, NodeName, DATA_NODE_TYPE } from 
 import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 
 // ********************************************************************************
 // == RegEx =======================================================================
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-bullet-list/src/bullet-list.ts
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-example-setup/blob/master/src/inputrules.ts
 // (SEE: addInputRules below)
-// const bulletListRegEx = /^\s*([-+*])\s$/;
+const bulletListRegEx = /^\s*([-+*])\s$/;
 
 // == Node ========================================================================
 export const BulletList = new NodeExtension({
@@ -33,7 +34,7 @@ export const BulletList = new NodeExtension({
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [/*none*/],
+  inputRules: (editor) => [createWrappingInputRule(bulletListRegEx, editor.view.state.schema.nodes[NodeName.BULLET_LIST])],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],

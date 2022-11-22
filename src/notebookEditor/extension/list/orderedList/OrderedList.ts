@@ -1,19 +1,20 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getNodeOutputSpec, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE } from 'common';
+import { getNodeOutputSpec, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE, AttributeType } from 'common';
 
 import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 import { OrderedListAttrs } from './attribute';
 
 // ********************************************************************************
 // == RegEx =======================================================================
-// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-ordered-list/src/ordered-list.ts
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-example-setup/blob/master/src/inputrules.ts
 // (SEE: addInputRules below)
-// const orderedListRegex = /^(\d+)\.\s$/;
+const orderedListRegex = /^(\d+)\.\s$/;
 
 // == Node ========================================================================
 export const OrderedList = new NodeExtension({
@@ -34,7 +35,16 @@ export const OrderedList = new NodeExtension({
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [/*none*/],
+  inputRules: (editor) => [
+    createWrappingInputRule(orderedListRegex,
+    editor.view.state.schema.nodes[NodeName.ORDERED_LIST],
+
+    // getAttrs function
+    (match) => ({ [AttributeType.StartValue]: Number(match[1/*the typed number*/]) }),
+
+    // join predicate function
+    (match, node) => node.childCount + node.attrs[AttributeType.StartValue] === Number(match[1/*the typed number*/])),
+  ],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],
