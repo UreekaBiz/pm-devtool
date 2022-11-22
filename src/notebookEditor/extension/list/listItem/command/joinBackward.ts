@@ -1,4 +1,4 @@
-import { isBlank, isBulletListNode, isOrderedListNode, JoinBackwardDocumentUpdate } from 'common';
+import { isBulletListNode, isOrderedListNode, JoinBackwardDocumentUpdate } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { Editor } from 'notebookEditor/editor/Editor';
@@ -21,17 +21,11 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor): boolean => {
   const previousChild = doc.child(previousChildIndex);
   if(!isBulletListNode(previousChild) || isOrderedListNode(previousChild)) return false/*no List to join into*/;
 
-  let lastChildOfList = doc/*default*/,
-      lastChildOfListPos = 0/*default*/;
-  previousChild.descendants((node, pos) => {
-    lastChildOfList = node;
-    lastChildOfListPos = pos;
-  });
+  let lastChildOfListPos = 0/*default*/;
+  previousChild.descendants((node, pos) => { lastChildOfListPos = pos; });
 
   let { depth: lastChildOfListDepth } = doc.resolve(lastChildOfListPos);
-  if(isBlank(lastChildOfList.textContent)/*no Text Nodes*/) {
-    lastChildOfListDepth += 1/*ensure result is firstChild of the last ListItem*/;
-  } /* else -- has Text content */
+  lastChildOfListDepth += 1/*ensure result is firstChild of the last ListItem*/;
 
   const updates = [/*default empty*/];
   for(let i=0; i<=lastChildOfListDepth; i++) { updates.push(new JoinBackwardDocumentUpdate()); }
