@@ -40,5 +40,5 @@ export const OrderedList = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-7': toggleListCommand(NodeName.ORDERED_LIST) })],
+  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-7': toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}) })],
 });
