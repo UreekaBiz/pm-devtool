@@ -1,8 +1,12 @@
+import { keymap } from 'prosemirror-keymap';
+
 import { getNodeOutputSpec, BulletListNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+
+import { toggleListCommand } from '../command/toggleListCommand';
 
 // ********************************************************************************
 // == RegEx =======================================================================
@@ -35,5 +39,5 @@ export const BulletList = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [/*none*/],
+  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-8': toggleListCommand(NodeName.BULLET_LIST) })],
 });
