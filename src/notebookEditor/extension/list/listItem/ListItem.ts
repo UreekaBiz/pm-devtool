@@ -1,13 +1,13 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
+import { chainCommands, getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
-import { liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
+import { joinListItemBackwardsCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
@@ -46,7 +46,7 @@ export const ListItem = new NodeExtension({
       'Enter':  splitListItemKeepMarksCommand,
       'Shift-Tab':  liftListItemCommand('Shift-Tab'),
       'Tab':  sinkListItemCommand,
-      'Backspace':  liftListItemCommand('Backspace'),
+      'Backspace':  chainCommands(joinListItemBackwardsCommand, liftListItemCommand('Backspace')),
     }),
   ],
 });

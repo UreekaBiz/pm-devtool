@@ -1,3 +1,4 @@
+export * from './joinListItemBackwards';
 export * from './liftListItem';
 export * from './sinkListItem';
 export * from './splitListItem';
