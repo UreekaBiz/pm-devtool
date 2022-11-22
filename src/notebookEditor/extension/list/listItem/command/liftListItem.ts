@@ -3,7 +3,7 @@ import { liftTarget } from 'prosemirror-transform';
 
 import { AbstractDocumentUpdate, NodeGroup } from 'common';
 
-import { getListItemPositions } from './util';
+import { fromOrToInListItem, getListItemPositions } from './util';
 
 // ********************************************************************************
 // == Lift ========================================================================
@@ -15,9 +15,17 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction) {
+    if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
+
     const { from, to } = editorState.selection;
     const listItemPositions = getListItemPositions(editorState, { from, to }).reverse();
-    listItemPositions.forEach(listItemPos => liftListItem(tr, listItemPos));
+
+    for(let i=0; i<listItemPositions.length; i++) {
+      const updatedTr = liftListItem(tr, listItemPositions[i]);
+      if(updatedTr) { tr = updatedTr; }
+      else { return false/*could not lift*/; }
+    }
+
     return tr/*updated*/;
   }
 }
@@ -26,12 +34,12 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 // the Item at the given position is lifted
 const liftListItem = (tr: Transaction, listItemPos: number) => {
   const listItemBlockRange = tr.doc.resolve(listItemPos).blockRange();
-  if(!listItemBlockRange) return tr/*cannot lift item, do not modify Transaction*/;
+  if(!listItemBlockRange) return false/*cannot lift item, do not modify Transaction*/;
 
   // try lift the contents of the ListItem
   if(listItemBlockRange.depth) {
     const targetDepth = liftTarget(listItemBlockRange);
-    if(targetDepth === null || targetDepth === undefined) return tr/*cannot perform lift operation*/;
+    if(targetDepth === null || targetDepth === undefined) return false/*cannot perform lift operation*/;
 
     tr.lift(listItemBlockRange, targetDepth ? targetDepth : listItemBlockRange.depth - 1/*lift to parent*/);
   } /* else -- range has depth 0 */
@@ -40,12 +48,12 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   // leaving only the content outside
   const listItemBlockStart = tr.doc.resolve(tr.mapping.map(listItemBlockRange.start));
   if(!listItemBlockStart.depth || !listItemBlockStart.parent.type.spec.group?.includes(NodeGroup.LIST)) {
-    if(!listItemBlockStart.nodeAfter) return tr/*no node after the range's start*/;
-    if(!tr.doc.type.contentMatch.defaultType) return tr/*cannot insert a default NodeType at this position*/;
+    if(!listItemBlockStart.nodeAfter) return false/*no node after the range's start*/;
+    if(!tr.doc.type.contentMatch.defaultType) return false/*cannot insert a default NodeType at this position*/;
 
     const firstChildOfList = listItemBlockStart.nodeAfter/*the listItem*/.firstChild;
     const liftedContent = firstChildOfList?.copy(firstChildOfList.content);
-    if(!liftedContent) return tr/*no child to lift*/;
+    if(!liftedContent) return false/*no child to lift*/;
 
     tr.replaceWith(listItemBlockStart.pos, listItemBlockStart.pos + listItemBlockStart.nodeAfter/*the listItem*/.nodeSize, liftedContent)
       .setSelection(Selection.near(tr.doc.resolve(listItemBlockStart.pos)));
