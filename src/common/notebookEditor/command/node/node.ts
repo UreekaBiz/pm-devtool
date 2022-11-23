@@ -232,6 +232,9 @@ export class SplitBlockKeepMarksDocumentUpdate implements AbstractDocumentUpdate
    * the current Selection is split and the Marks are kept
    */
   public update(editorState: EditorState, tr: Transaction) {
+    const { selection } = editorState;
+    if(isGapCursorSelection(selection)) return false/*do not allow, enforce typing to create new block of default type*/;
+
     const startingMarks = editorState.storedMarks || (editorState.selection.$to.parentOffset && editorState.selection.$from.marks());
     const updatedTr = new SplitBlockDocumentUpdate().update(editorState, tr);
 
