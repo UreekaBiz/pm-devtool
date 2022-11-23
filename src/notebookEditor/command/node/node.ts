@@ -228,14 +228,18 @@ export class BlockArrowDownDocumentUpdate implements AbstractDocumentUpdate {
    * is at the start of it and return it
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { selection } = editorState;
-    if(selection.$anchor.parent.type.name !== this.blockNodeName) return false/*node does not allow GapCursor*/;
-    if(isGapCursorSelection(selection) && (selection.anchor !== 0)) return false/*selection already a GapCursor*/;
+    const { selection } = editorState,
+          { $anchor, anchor } = selection;
 
-    const isAtEnd = selection.anchor === editorState.doc.nodeSize - 3/*past the Node, including the doc tag*/;
-    if(!isAtEnd) return false/*no need to set GapCursor*/;
+    if($anchor.parent.type.name !== this.blockNodeName) return false/*call should not be handled by this Node*/;
+    if(isGapCursorSelection(selection) && (anchor !== 0/*not the Doc*/)) return false/*selection already a GapCursor*/;
 
-    tr.setSelection(new GapCursor(tr.doc.resolve(editorState.doc.nodeSize - 2/*past the Node*/)));
-    return tr/*updated*/;
+    if(anchor === editorState.doc.nodeSize - 3/*past the Node, including the doc tag*/) {
+      return tr.setSelection(new GapCursor(tr.doc.resolve(editorState.doc.nodeSize - 2/*past the Node*/)));
+    } else if(anchor === $anchor.after()-1/*inside the Block*/) {
+      return tr.setSelection(new GapCursor(tr.doc.resolve($anchor.after())));
+    } /* else -- no need to set gapCursor */
+
+    return false/*default*/;
   }
 }
