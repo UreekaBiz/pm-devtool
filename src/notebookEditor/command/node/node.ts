@@ -236,8 +236,12 @@ export class BlockArrowDownDocumentUpdate implements AbstractDocumentUpdate {
 
     if(anchor === editorState.doc.nodeSize - 3/*past the Node, including the doc tag*/) {
       return tr.setSelection(new GapCursor(tr.doc.resolve(editorState.doc.nodeSize - 2/*past the Node*/)));
-    } else if(anchor === $anchor.after()-1/*inside the Block*/) {
-      return tr.setSelection(new GapCursor(tr.doc.resolve($anchor.after())));
+    } else if(anchor === $anchor.after()-1/*inside the Block, at its end*/) {
+      if(!tr.doc.resolve($anchor.after()).nodeAfter/*there is no Node after the end of the Block*/) {
+        return tr.setSelection(new GapCursor(tr.doc.resolve($anchor.after())));
+      } else {
+        return tr.setSelection(Selection.near(tr.doc.resolve($anchor.after()), 1/*bias to the right*/));
+      }
     } /* else -- no need to set gapCursor */
 
     return false/*default*/;
