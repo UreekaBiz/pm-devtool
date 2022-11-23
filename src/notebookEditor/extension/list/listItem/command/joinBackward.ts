@@ -7,7 +7,7 @@ import { applyDocumentUpdates } from 'notebookEditor/command/update';
 
 // ********************************************************************************
 // NOTE: this is a regular function since it calls applyDocumentUpdates
-export const joinBackwardToEndOfClosestListItemCommand = (editor: Editor) => {
+export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
   const { doc, selection } = editor.view.state;
   const { empty, $from, from } = selection;
 
@@ -39,6 +39,6 @@ export const joinBackwardToEndOfClosestListItemCommand = (editor: Editor) => {
   }
 
   const updates: DocumentUpdate[] = [];
-  for(let i=0; i<updateAmount; i++) { updates.push(new JoinBackwardDocumentUpdate()) }
+  for(let i=0; i<updateAmount; i++) { updates.push(new JoinBackwardDocumentUpdate()); }
   return applyDocumentUpdates(editor, updates);
 };
