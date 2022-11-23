@@ -75,50 +75,6 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
-// -- Clear -----------------------------------------------------------------------
-/** clear the Nodes in the current Block */
-export const clearNodesCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ClearNodesDocumentUpdate(), state, dispatch);
-export class ClearNodesDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
-
-  // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/commands/clearNodes.ts
-  /**
-   * update the given Transaction such that the Nodes in
-   * the current Block are cleared
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    const { selection } = tr;
-    const { ranges } = selection;
-
-    ranges.forEach(({ $from, $to }) => {
-      editorState.doc.nodesBetween($from.pos, $to.pos, (node, pos) => {
-        if(node.type.isText) {
-          return/*nothing to do, keep descending*/;
-        } /* else -- not a Text Node */
-
-        const { doc, mapping } = tr;
-        const $mappedFrom = doc.resolve(mapping.map(pos)),
-              $mappedTo = doc.resolve(mapping.map(pos + node.nodeSize)),
-              nodeRange = $mappedFrom.blockRange($mappedTo);
-        if(!nodeRange) return/*valid Block Range not found*/;
-
-        const targetLiftDepth = liftTarget(nodeRange);
-        if(node.type.isTextblock) {
-          const { defaultType } = $mappedFrom.parent.contentMatchAt($mappedFrom.index());
-          tr.setNodeMarkup(nodeRange.start, defaultType);
-        } /* else -- default Block is not a TextBlock, just try to lift */
-
-        if(targetLiftDepth || targetLiftDepth === 0/*top level of the Document*/) {
-          tr.lift(nodeRange, targetLiftDepth);
-        } /* else -- do not lift */
-      });
-    });
-
-    return tr/*updated*/;
-  }
-}
-
 // -- Insert ----------------------------------------------------------------------
 // replace the Selection with a newline character. Must be set for Block Nodes
 // whose behavior should match the one provided by specifying 'code' in the

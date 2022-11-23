@@ -3,7 +3,7 @@ import { ParseOptions } from 'prosemirror-model';
 import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 
-import { isGapCursorSelection, AbstractDocumentUpdate, Attributes, ClearNodesDocumentUpdate, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, SelectionRange } from 'common';
+import { isGapCursorSelection, AbstractDocumentUpdate, Attributes, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, SelectionRange } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { SetParagraphDocumentUpdate } from 'notebookEditor/extension/paragraph/command';
@@ -139,13 +139,13 @@ export class BlockBackspaceDocumentUpdate implements AbstractDocumentUpdate {
    * is deleted on Backspace if it is empty and return it
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { empty, $anchor, anchor } = editorState.selection,
-    isAtStartOfDoc = anchor === 1/*first position inside the node, at start of Doc*/;
+    const { empty, $from, from } = editorState.selection;
+    if(!empty) return false/*let event be handled elsewhere*/;
+    if($from.parent.type.name !== this.blockNodeName) return false/*call should not be handled by this Node*/;
 
-    if(!empty || $anchor.parent.type.name !== this.blockNodeName) return false/*let event be handled elsewhere*/;
-    if(isAtStartOfDoc || !$anchor.parent.textContent.length) {
-      const clearedNodesUpdatedTr = new ClearNodesDocumentUpdate().update(editorState, tr);
-      return clearedNodesUpdatedTr/*updated*/;
+    const isAtStartOfDoc = from === 1/*at the start of the Doc*/;
+    if(isAtStartOfDoc || !$from.parent.textContent.length/*empty*/) {
+      return tr.delete($from.before(), $from.after())/*delete Block*/;
     } /* else -- no need to delete blockNode */
 
     return false/*let Backspace event be handled elsewhere*/;
