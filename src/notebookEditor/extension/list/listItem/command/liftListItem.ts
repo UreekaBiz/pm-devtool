@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { AbstractDocumentUpdate, NodeGroup } from 'common';
+import { isDocumentNode, AbstractDocumentUpdate, NodeGroup } from 'common';
 
 import { fromOrToInListItem, getListItemPositions } from './util';
 
@@ -32,7 +32,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       else { return false/*could not lift*/; }
     }
 
-    const liftedToDoc = tr.selection.$from.depth === 1/*child of Doc*/;
+    const liftedToDoc = isDocumentNode(tr.selection.$from.node(-1/*grandParent*/));
     tr.setSelection(
       Selection.near(
         tr.doc.resolve(from -
