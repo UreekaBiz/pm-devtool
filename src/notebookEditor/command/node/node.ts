@@ -206,11 +206,18 @@ export class BlockArrowUpDocumentUpdate implements AbstractDocumentUpdate {
     if($from.parent.type.name !== this.blockNodeName) return false/*call should not be handled by this Node*/;
     if(isGapCursorSelection(selection) && (from !== 0/*not the Doc*/)) return false/*selection already a GapCursor*/;
 
-    const isAtStart = selection.from === 1/*at the start of the doc*/;
-    if(!isAtStart) return false/*no need to set GapCursor*/;
+    const isAtStartOfDoc = selection.from === 1/*at the start of the doc*/,
+          isAtStartOfBlock = from === $from.before()+1/*inside the Block, at its start*/;
 
-    tr.setSelection(new GapCursor(tr.doc.resolve(0/*at the start of the doc*/)));
-    return tr/*updated*/;
+    if(isAtStartOfDoc) {
+      return tr.setSelection(new GapCursor(tr.doc.resolve(0/*at the start of the doc*/)));
+    } else if(isAtStartOfBlock) {
+      const nodeBeforeBlock = tr.doc.resolve($from.before()).nodeBefore;
+      if(!nodeBeforeBlock) { return tr.setSelection(new GapCursor(tr.doc.resolve($from.before()))); }
+      else { return tr.setSelection(Selection.near(tr.doc.resolve($from.before()), -1/*bias to the left*/)); }
+    } /* else -- no need to set gapCursor */
+
+    return false/*default*/;
   }
 }
 
