@@ -201,10 +201,12 @@ export class BlockArrowUpDocumentUpdate implements AbstractDocumentUpdate {
    * is at the start of it and return it
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { selection } = editorState;
-    if(selection.$anchor.parent.type.name !== this.blockNodeName) return false/*let event be handled elsewhere*/;
+    const { selection } = editorState,
+          { $from, from } = selection;
+    if($from.parent.type.name !== this.blockNodeName) return false/*call should not be handled by this Node*/;
+    if(isGapCursorSelection(selection) && (from !== 0/*not the Doc*/)) return false/*selection already a GapCursor*/;
 
-    const isAtStart = selection.anchor === 1/*at the start of the doc*/;
+    const isAtStart = selection.from === 1/*at the start of the doc*/;
     if(!isAtStart) return false/*no need to set GapCursor*/;
 
     tr.setSelection(new GapCursor(tr.doc.resolve(0/*at the start of the doc*/)));
@@ -229,19 +231,19 @@ export class BlockArrowDownDocumentUpdate implements AbstractDocumentUpdate {
    */
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = editorState,
-          { $anchor, anchor } = selection;
+          { $from, from } = selection;
 
-    if($anchor.parent.type.name !== this.blockNodeName) return false/*call should not be handled by this Node*/;
-    if(isGapCursorSelection(selection) && (anchor !== 0/*not the Doc*/)) return false/*selection already a GapCursor*/;
+    if($from.parent.type.name !== this.blockNodeName) return false/*call should not be handled by this Node*/;
+    if(isGapCursorSelection(selection) && (from !== 0/*not the Doc*/)) return false/*selection already a GapCursor*/;
 
-    if(anchor === editorState.doc.nodeSize - 3/*past the Node, including the doc tag*/) {
+    const isAtEndOfDoc = from === editorState.doc.nodeSize - 3/*past the Node, including the doc tag*/,
+          isAtEndOfBlock = from === $from.after()-1/*inside the Block, at its end*/;
+    if(isAtEndOfDoc) {
       return tr.setSelection(new GapCursor(tr.doc.resolve(editorState.doc.nodeSize - 2/*past the Node*/)));
-    } else if(anchor === $anchor.after()-1/*inside the Block, at its end*/) {
-      if(!tr.doc.resolve($anchor.after()).nodeAfter/*there is no Node after the end of the Block*/) {
-        return tr.setSelection(new GapCursor(tr.doc.resolve($anchor.after())));
-      } else {
-        return tr.setSelection(Selection.near(tr.doc.resolve($anchor.after()), 1/*bias to the right*/));
-      }
+    } else if(isAtEndOfBlock) {
+      const nodeAfterBlock = tr.doc.resolve($from.after()).nodeAfter;
+      if(!nodeAfterBlock) { return tr.setSelection(new GapCursor(tr.doc.resolve($from.after()))); }
+      else { return tr.setSelection(Selection.near(tr.doc.resolve($from.after()), 1/*bias to the right*/)); }
     } /* else -- no need to set gapCursor */
 
     return false/*default*/;
