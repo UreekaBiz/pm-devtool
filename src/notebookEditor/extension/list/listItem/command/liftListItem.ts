@@ -1,5 +1,5 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
-import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
 import { AbstractDocumentUpdate, NodeGroup } from 'common';
@@ -19,7 +19,6 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
     const { empty, $from, from, to } = editorState.selection;
-    const { parentOffset: initialParentOffset } = $from;
 
     if(this.from === 'Backspace') {
       if(!empty) return false/*do not allow if Selection not empty when Back*/;
@@ -33,8 +32,13 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       else { return false/*could not lift*/; }
     }
 
-    const startOfParent = tr.selection.$from.pos - tr.selection.$from.parentOffset;
-    tr.setSelection(TextSelection.create(tr.doc, startOfParent + initialParentOffset));
+    const liftedToDoc = tr.selection.$from.depth === 1/*child of Doc*/;
+    tr.setSelection(
+      Selection.near(
+        tr.doc.resolve(from -
+          (liftedToDoc
+            ? 2/*account for the removed nested List and the removed ListItem*/
+            : 1/*only account for the removed nested List*/))));
     return tr/*updated*/;
   }
 }
