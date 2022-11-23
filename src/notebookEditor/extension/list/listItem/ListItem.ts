@@ -7,7 +7,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
-import { joinBackwardToEndOfClosestListItem, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
+import { joinBackwardToEndOfClosestListItem, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
@@ -52,7 +52,7 @@ export const ListItem = new NodeExtension({
 
         return joinBackwardToEndOfClosestListItem(editor);
       },
-      // 'Delete': () => joinListItemForward,
+      'Delete': joinForwardToStartOfClosestListItemCommand,
     }),
   ],
 });

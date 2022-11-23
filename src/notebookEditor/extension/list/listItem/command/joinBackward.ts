@@ -16,7 +16,7 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
   if($from.before()+1/*inside the TextBlock*/ !== from) return false/*Selection is not at the start of the parent TextBlock*/;
 
   const parentIndex =  $from.index(0/*direct Doc depth*/),
-        previousChildIndex = parentIndex -1/*by definition*/;
+        previousChildIndex = parentIndex-1/*by definition*/;
   if(parentIndex === 0/*first direct child of Doc*/) return false/*no previous child by definition*/;
 
   const previousChild = doc.child(previousChildIndex);
