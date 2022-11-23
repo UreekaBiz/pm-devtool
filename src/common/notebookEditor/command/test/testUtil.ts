@@ -3,6 +3,7 @@ import { Attrs, Node, Schema } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 import { eq, builders } from 'prosemirror-test-builder';
 
+import { isNotNullOrUndefined } from '../../../util';
 import { MarkName } from '../../mark';
 import { NodeName } from '../../node';
 import { SchemaV1 } from '../../schema';
@@ -91,7 +92,7 @@ export const applyTestCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Com
   ist(state.doc, result || doc/*default to comparing with the given Node*/, eq);
 
   // assert that the selection is the same
-  if(result && (getNodeTag(result)[A] !== null && getNodeTag(result)[A] !== undefined)) {
+  if(result && isNotNullOrUndefined<number>(getNodeTag(result)[A])) {
     ist(state.selection,  selectionForTest(result), eq);
   } /* else -- result is invalid, or the result's  */
 };
