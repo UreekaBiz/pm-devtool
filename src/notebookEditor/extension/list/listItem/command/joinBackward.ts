@@ -8,8 +8,8 @@ import { applyDocumentUpdates } from 'notebookEditor/command/update';
 // ********************************************************************************
 // NOTE: this is a regular function since it calls applyDocumentUpdates
 export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
-  const { doc, selection } = editor.view.state;
-  const { empty, $from, from } = selection;
+  const { doc, selection } = editor.view.state,
+        { empty, $from, from } = selection;
 
   if(!empty) return false/*do not allow if Selection is not empty*/;
   if(!$from.parent.isTextblock) return false/*parent is not a TextBlock, nothing to do*/;
