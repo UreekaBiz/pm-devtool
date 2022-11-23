@@ -19,20 +19,20 @@ describe('toggleMarkCommand', () => {
   const toggleBold = toggleMarkCommand(boldType, {/*no attrs*/});
 
   it('can add a mark', () => {
-    const startState = docBuilder(paragraphBuilder(`one <${A}>two<${B}>`));
-    const expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two')));
+    const startState = docBuilder(paragraphBuilder(`one <${A}>two<${B}>`)),
+          expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two')));
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
   it('can stack marks', () => {
-    const startState = docBuilder(paragraphBuilder(`one <${A}>tw`, boldBuilder(`o<${B}>`)));
-    const expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('tw', boldBuilder('o'))));
+    const startState = docBuilder(paragraphBuilder(`one <${A}>tw`, boldBuilder(`o<${B}>`))),
+          expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('tw', boldBuilder('o'))));
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
   it('can remove marks', () => {
-    const startState = docBuilder(paragraphBuilder(italicBuilder(`one <${A}>two<${B}>`)));
-    const expectedEndState = docBuilder(paragraphBuilder(italicBuilder('one '), 'two'));
+    const startState = docBuilder(paragraphBuilder(italicBuilder(`one <${A}>two<${B}>`))),
+          expectedEndState = docBuilder(paragraphBuilder(italicBuilder('one '), 'two'));
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
@@ -50,14 +50,14 @@ describe('toggleMarkCommand', () => {
   });
 
   it('skips whitespace at selection ends when adding marks', () => {
-    const startState = docBuilder(paragraphBuilder(`one<${A}> two  <${B}>three`));
-    const expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two'), '  three'));
+    const startState = docBuilder(paragraphBuilder(`one<${A}> two  <${B}>three`)),
+          expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two'), '  three'));
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
   it('does not skip whitespace-only selections', () => {
-    const startState = docBuilder(paragraphBuilder(`one<${A}> <${B}>two`));
-    const expectedEndState = docBuilder(paragraphBuilder('one', italicBuilder(' '), 'two'));
+    const startState = docBuilder(paragraphBuilder(`one<${A}> <${B}>two`)),
+          expectedEndState = docBuilder(paragraphBuilder('one', italicBuilder(' '), 'two'));
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 });
