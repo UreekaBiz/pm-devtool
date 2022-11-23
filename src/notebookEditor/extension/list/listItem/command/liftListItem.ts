@@ -18,7 +18,8 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
-    const { empty, $from, from, to } = editorState.selection;
+    const { empty, $from, from, to } = editorState.selection,
+          originalFrom = from;
 
     if(this.from === 'Backspace') {
       if(!empty) return false/*do not allow if Selection not empty when Back*/;
@@ -33,13 +34,9 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     }
 
     const liftedToDoc = isDocumentNode(tr.selection.$from.node(-1/*grandParent*/));
-    tr.setSelection(
-      Selection.near(
-        tr.doc.resolve(from -
-          (liftedToDoc
-            ? 2/*account for the removed nested List and the removed ListItem*/
-            : 1/*only account for the removed nested List*/))));
-    return tr/*updated*/;
+    return liftedToDoc
+      ? tr.setSelection(Selection.near(tr.doc.resolve(originalFrom - 2/*account for removed List and ListItem*/)))
+      : tr/*no Selection changes*/;
   }
 }
 
