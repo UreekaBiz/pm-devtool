@@ -1,7 +1,7 @@
 import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isBulletListNode, isListItemNode, isOrderedListNode, AbstractDocumentUpdate } from 'common';
+import { isBulletListNode, isListItemNode, isHeadingNode, isOrderedListNode, isParagraphNode, AbstractDocumentUpdate } from 'common';
 
 // ********************************************************** **********************
 export const joinForwardToStartOfClosestListItemCommand: Command = (state, dispatch) =>
@@ -42,8 +42,9 @@ export class JoinForwardToStartOfClosestListItemDocumentUpdate implements Abstra
 
       // do the equivalent of a final join forward to ensure the content
       // of the first child of the nest ListItem is appended to the end
-      // of the current one. This is only needed if there is a List below
-      if(nextNodeIsList) {
+      // of the current one. This is only needed if there is a List where
+      // the firstChild of its first ListItem is a Paragraph or Heading
+      if(nextNodeIsList && listItem.firstChild && (isParagraphNode(listItem.firstChild) || isHeadingNode(listItem.firstChild))) {
         const nextPosToRight = Selection.near(tr.doc.resolve(tr.selection.$from.end()+1/*past end of the current Block*/), 1/*bias to the right*/);
         tr.delete(tr.selection.from, nextPosToRight.from);
       } /* else -- no need to delete */
