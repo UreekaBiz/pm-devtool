@@ -38,7 +38,7 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
     } else { break/*could not join backward*/; }
   }
 
-  const updates: DocumentUpdate[] = [];
+  const updates: DocumentUpdate[] = [/*default empty*/];
   for(let i=0; i<updateAmount; i++) { updates.push(new JoinBackwardDocumentUpdate()); }
   return applyDocumentUpdates(editor, updates);
 };
