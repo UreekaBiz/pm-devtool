@@ -54,10 +54,13 @@ const stringifyDocWithPositions = (editor: Editor) => {
 
   doc.descendants((node, pos) => {
     // NOTE: since this is only used for debugging purposes and is not actually
-    //       in the real Document, add the startPos of each Node to its stringified
-    //       representation
+    //       in the real Document, add the startPos and index of each Node
+    //       to its stringified representation, for debugging purposes
     // @ts-ignore
     node.attrs['startPos'] = pos;
+
+    // @ts-ignore
+    node.attrs['index()'] = doc.resolve(pos).index();
   });
   return JSON.stringify(doc, null/*no replacer*/, 2/*T&E indentation*/);
 };
