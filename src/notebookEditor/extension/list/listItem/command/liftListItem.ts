@@ -25,8 +25,22 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
     } /* else -- backspace checks done */
 
-    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
+    // const posBefore = $from.before(/*expected to be parent of $from*/),
+    //       $posBefore = editorState.doc.resolve(posBefore);
+    // const $fromParentIndex = $from.index($posBefore.depth);
 
+    // // if not the first child, lift the content of the ListItem at this index
+    // if($fromParentIndex !== 0/*not the first Child*/) {
+    //   const posBeforeRange  = $posBefore.blockRange(),
+    //         targetDepth = posBeforeRange && liftTarget(posBeforeRange);
+
+    //   if(posBeforeRange && isNotNullOrUndefined<number>(targetDepth)) {
+    //     tr.lift(posBeforeRange, targetDepth);
+    //     return tr/*updated*/;
+    //   } /* else -- could not find blockRange */
+    // } /* else -- do not change default */
+
+    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
     for(let i=0; i<listItemPositions.length; i++) {
       const updatedTr = liftListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
@@ -60,8 +74,8 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
     if(!listItemBlockStart.nodeAfter) return false/*no node after the range's start*/;
     if(!tr.doc.type.contentMatch.defaultType) return false/*cannot insert a default NodeType at this position*/;
 
-    const firstChildOfList = listItemBlockStart.nodeAfter/*the listItem*/.firstChild;
-    const liftedContent = firstChildOfList?.copy(firstChildOfList.content);
+    const firstChildOfList = listItemBlockStart.nodeAfter/*the listItem*/.firstChild,
+          liftedContent = firstChildOfList?.copy(firstChildOfList.content);
     if(!liftedContent) return false/*no child to lift*/;
 
     tr.replaceWith(listItemBlockStart.pos, listItemBlockStart.pos + listItemBlockStart.nodeAfter/*the listItem*/.nodeSize, liftedContent)
