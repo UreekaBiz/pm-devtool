@@ -44,7 +44,7 @@ export class JoinForwardToStartOfClosestListItemDocumentUpdate implements Abstra
       // of the first child of the nest ListItem is appended to the end
       // of the current one. This is only needed if there is a List where
       // the firstChild of its first ListItem is a Paragraph or Heading
-      if(nextNodeIsList && listItem.firstChild && (isParagraphNode(listItem.firstChild) || isHeadingNode(listItem.firstChild))) {
+      if(nextNodeIsList && listItem.firstChild && (isHeadingNode(listItem.firstChild) || isParagraphNode(listItem.firstChild))) {
         const nextPosToRight = Selection.near(tr.doc.resolve(tr.selection.$from.end()+1/*past end of the current Block*/), 1/*bias to the right*/);
         tr.delete(tr.selection.from, nextPosToRight.from);
       } /* else -- no need to delete */
