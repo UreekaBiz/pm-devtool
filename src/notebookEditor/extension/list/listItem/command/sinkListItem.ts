@@ -16,7 +16,9 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
-    const { from, to } = editorState.selection;
+    const { $from, from, to } = editorState.selection;
+    if(from !== $from.before()+1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
+
     let parentListType = editorState.schema.nodes[NodeName.BULLET_LIST]/*default*/;
 
     const listItemPositions = getListItemPositions(editorState, { from, to });
