@@ -53,7 +53,6 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
 
       const listWrapping = findWrapping(outerRange, listType, this.attrs, blockRange);
       if(!listWrapping) return false/*no valid wrapping was found*/;
-
       tr = applyListWrapping(tr, blockRange, listWrapping, performJoin, listType).scrollIntoView();
     }
 
@@ -90,5 +89,6 @@ const applyListWrapping = (tr: Transaction, nodeRange: NodeRange, wrapperDefinit
 
     splitPosition += nodeRangeParent.child(nodeRangeIndex).nodeSize;
   }
-  return tr;
+
+  return tr/*modified*/;
 };
