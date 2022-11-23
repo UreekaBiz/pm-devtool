@@ -98,13 +98,10 @@ export class ClearNodesDocumentUpdate implements AbstractDocumentUpdate {
         } /* else -- not a Text Node */
 
         const { doc, mapping } = tr;
-        const $mappedFrom = doc.resolve(mapping.map(pos));
-        const $mappedTo = doc.resolve(mapping.map(pos + node.nodeSize));
-        const nodeRange = $mappedFrom.blockRange($mappedTo);
-
-        if(!nodeRange) {
-          return/*valid Block Range not found*/;
-        } /* else -- clear Nodes to default Block type by Lifting */
+        const $mappedFrom = doc.resolve(mapping.map(pos)),
+              $mappedTo = doc.resolve(mapping.map(pos + node.nodeSize)),
+              nodeRange = $mappedFrom.blockRange($mappedTo);
+        if(!nodeRange) return/*valid Block Range not found*/;
 
         const targetLiftDepth = liftTarget(nodeRange);
         if(node.type.isTextblock) {
