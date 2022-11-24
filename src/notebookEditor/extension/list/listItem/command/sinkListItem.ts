@@ -1,6 +1,5 @@
 import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
-import { findWrapping } from 'prosemirror-transform';
 
 import { isListItemNode, isListNode, AbstractDocumentUpdate } from 'common';
 
@@ -27,7 +26,7 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
             $listItemPos = tr.doc.resolve(listItemPos),
             listItem = tr.doc.nodeAt(listItemPos-1/*the ListItem itself*/),
             list = $listItemPos.node(-1/*ancestor*/);
-      if(!listItem || !isListItemNode(listItem) || !isListNode(list)) continue/*cannot sink ListItem, do not modify Transaction*/;
+      if(!listItem || !isListItemNode(listItem) || !isListNode(list)) continue/*invalid conditions to sink, do not modify Transaction*/;
 
       const { $from: $trFrom } = tr.selection;
       let sinkBlockRange: NodeRange | null = null/*default*/;
@@ -35,23 +34,32 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
       let sinkListItemChild = false/*default*/;
       if($trFrom.parent === listItem.firstChild) {
         sinkBlockRange = $listItemPos.blockRange();
+        sinkBlockRange && tr.wrap(sinkBlockRange, [{ type: list.type }]);
       } else {
         /**
          * make the range go from the start of $from's parent to the end of the ListItem
          * to ensure this behavior (| is the cursor):
          * 1. hello                    1. hello
          *    |world  ==============>     1. world
-         *    foo                            foo
+         *    foo                         foo
          * 2. bar                      2. bar
          */
-        sinkBlockRange = new NodeRange(tr.doc.resolve($trFrom.before()), tr.doc.resolve($listItemPos.end()), $listItemPos.depth);
+        sinkBlockRange = new NodeRange(tr.doc.resolve($trFrom.before()), tr.doc.resolve($trFrom.end()), $listItemPos.depth);
         sinkListItemChild = true/*by definition*/;
-      }
-      if(!sinkBlockRange) continue/*no suitable sink range exists*/;
 
-      const wrappers = findWrapping(sinkBlockRange, list.type);
-      if(!wrappers) continue/*no suitable wrapper exists*/;
-      tr.wrap(sinkBlockRange, wrappers);
+        // replace the range with a new list that has as many nested lists as needed
+        tr.lift(sinkBlockRange, 0/*lift to the top*/);
+        let newRange: NodeRange | null = null/*default*/;
+        for(let i=0; i<$listItemPos.depth/*sink*/; i++) {
+          newRange = tr.selection.$from.blockRange();
+          if(!newRange) break/*invalid range, do not modify Transaction*/;
+          tr.wrap(newRange, [{ type: list.type }]);
+        }
+        newRange = tr.selection.$from.blockRange();
+        tr.wrap(newRange!, [{ type: listItem.type }]);
+
+      }
+      if(!sinkBlockRange) continue/*invalid range, do not modify Transaction*/;
 
       if(!sinkListItemChild) {
         checkAndMergeListAtPos(tr, listItemPos);
