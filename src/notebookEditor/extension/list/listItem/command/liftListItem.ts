@@ -57,7 +57,7 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   } else {
     /**
      * make the lifted range go from the start of $from's parent to the end of the ListItem
-     * to produce this behavior (| is the cursor):
+     * to ensure this behavior (| is the cursor):
      * 1. hello                    1. hello
      *    |world  ==============>  2. world
      *    foo                         foo
