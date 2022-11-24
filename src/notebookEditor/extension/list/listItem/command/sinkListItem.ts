@@ -44,7 +44,7 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
          *    foo                            foo
          * 2. bar                      2. bar
          */
-        sinkBlockRange = new NodeRange(tr.doc.resolve($trFrom.before()), tr.doc.resolve($trFrom.end()), $listItemPos.depth);
+        sinkBlockRange = new NodeRange(tr.doc.resolve($trFrom.before()), tr.doc.resolve($listItemPos.end()), $listItemPos.depth);
         sinkListItemChild = true/*by definition*/;
       }
       if(!sinkBlockRange) continue/*no suitable sink range exists*/;
