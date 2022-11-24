@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isDocumentNode, AbstractDocumentUpdate, NodeGroup } from 'common';
+import { isDocumentNode, isNotNullOrUndefined, AbstractDocumentUpdate, NodeGroup } from 'common';
 
 import { fromOrToInListItem, getListItemPositions } from './util';
 
@@ -49,7 +49,7 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   // try lift the contents of the ListItem
   if(listItemBlockRange.depth) {
     const targetDepth = liftTarget(listItemBlockRange);
-    if(targetDepth === null || targetDepth === undefined) return false/*cannot perform lift operation*/;
+    if(!isNotNullOrUndefined<number>(targetDepth)) return false/*cannot perform lift operation*/;
 
     tr.lift(listItemBlockRange, targetDepth ? targetDepth : listItemBlockRange.depth - 1/*lift to parent*/);
   } /* else -- range has depth 0 */
