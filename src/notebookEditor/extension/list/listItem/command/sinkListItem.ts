@@ -1,6 +1,6 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { AbstractDocumentUpdate, NodeName } from 'common';
+import { isListItemNode, isListNode, AbstractDocumentUpdate } from 'common';
 
 import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from './util';
 
@@ -19,20 +19,17 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
     const { $from, from, to } = editorState.selection;
     if(from !== $from.before()+1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
 
-    let parentListType = editorState.schema.nodes[NodeName.BULLET_LIST]/*default*/;
-
     const listItemPositions = getListItemPositions(editorState, { from, to });
     listItemPositions.reverse(/*start from deepest depth*/).forEach((listItemPos) => {
-      const $listItemPos = tr.doc.resolve(listItemPos);
-      if($listItemPos.depth > 1/*nested*/) {
-        parentListType = $listItemPos.node(-1/*grandParent*/).type;
-      } /* else -- not nested */
-      if(!parentListType) return/*reached the Doc Node*/;
+      const listItem = tr.doc.nodeAt(listItemPos-1/*the ListItem itself*/),
+            $listItemPos = tr.doc.resolve(listItemPos),
+            list = $listItemPos.node(-1/*ancestor*/);
+      if(!listItem || !isListItemNode(listItem) || !isListNode(list)) return/*cannot sink ListItem, do not modify Transaction*/;
 
       const listItemBlockRange = $listItemPos.blockRange();
       if(!listItemBlockRange) return/*no suitable wrap range exists*/;
 
-      tr.wrap(listItemBlockRange, [{ type: parentListType }]);
+      tr.wrap(listItemBlockRange, [{ type: list.type }]);
       checkAndMergeListAtPos(tr, listItemPos);
     });
 
