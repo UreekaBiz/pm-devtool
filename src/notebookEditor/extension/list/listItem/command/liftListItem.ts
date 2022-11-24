@@ -51,17 +51,25 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   const { $from } = tr.selection;
   let liftedBlockRange: NodeRange | null = null/*default*/;
 
-  let liftedListItemChild = false/*default*/;
+  let liftListItemChild = false/*default*/;
   if($from.parent === listItem.firstChild) {
     liftedBlockRange = $listItemPos.blockRange(/*lift the whole ListItem*/);
   } else {
-    liftedBlockRange = $from.blockRange(/*lift the current child of the ListItem*/);
-    liftedListItemChild = true/*by definition*/;
+    /**
+     * make the lifted range go from the start of $from's parent to the end of the ListItem
+     * to produce this behavior (| is the cursor):
+     * 1. hello                    1. hello
+     *    |world  ==============>  2. world
+     *    foo                         foo
+     * 2. bar                      3. bar
+     */
+    liftedBlockRange = new NodeRange(tr.doc.resolve($from.before()), tr.doc.resolve($listItemPos.end()), $listItemPos.depth);
+    liftListItemChild = true/*by definition*/;
   }
   if(!liftedBlockRange) return false/*no valid range to lift*/;
 
   let targetDepth = liftTarget(liftedBlockRange);
-  if(liftedListItemChild) {
+  if(liftListItemChild) {
     const wrappers = findWrapping(liftedBlockRange, list.type);
     if(!wrappers) return false/*could not find valid wrapping when it was needed*/;
 
@@ -76,7 +84,7 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   if(targetDepth) {
     tr.lift(liftedBlockRange, targetDepth);
   } else {
-    let liftDepth = liftedBlockRange.depth - (liftedListItemChild ? 2/*account for the wrapping*/ : 1 /*default just decrease depth by 1*/);
+    let liftDepth = liftedBlockRange.depth - (liftListItemChild ? 2/*account for the wrapping*/ : 1 /*default just decrease depth by 1*/);
     tr.lift(liftedBlockRange, liftDepth);
   }
 
