@@ -1,8 +1,8 @@
 import { NodeType } from 'prosemirror-model';
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
-import { canJoin, liftTarget } from 'prosemirror-transform';
+import { canJoin } from 'prosemirror-transform';
 
-import { combineTransactionSteps, getTransformChangedRanges, isListItemNode, isListNode, SelectionRange } from 'common';
+import { isListItemNode, SelectionRange } from 'common';
 
 // == Util ========================================================================
 /** get the positions of the start of the ListItems in the given Range */
@@ -88,43 +88,3 @@ export const checkAndMergeListAtPos = (listItemType: NodeType, tr: Transaction, 
   return checkedAndMergedList;
 };
 
-/**
- * prevent any ListItems that were changed by a set of Transactions
- * from being directly nested without a single List wrapping them
- * (e.g. 1. hello
- *       2. 1. goodbye
- *       3. world) by lifting the nested ones to their closest depth
- */
-export const checkAndLiftChangedLists = (transactions: readonly Transaction[], oldState: EditorState, tr: Transaction) => {
-  let wereListsLifted = false/*default*/;
-  const transform = combineTransactionSteps(oldState.doc, [...transactions]),
-        changes = getTransformChangedRanges(transform);
-  const singleRange = changes.reduce<{ from: number; to: number; }>((singleRange, nextChange) => {
-    const { newRange } = nextChange;
-    return { from: Math.min(singleRange.from, newRange.from), to: Math.max(singleRange.to, newRange.to) };
-  }, { from: tr.doc.nodeSize/*doc end*/, to: 0/*doc start*/ });
-
-  tr.doc.nodesBetween(singleRange.from, singleRange.to, (node, nodePos) => {
-    if(!node.isTextblock) return/*continue looking*/;
-
-    const $nodePos = tr.doc.resolve(nodePos + 2/*inside the textBlock*/);
-    const grandParent = $nodePos.node(-1/*grandParent depth*/),
-          grandGrandParent = $nodePos.node(-2/*grandGrandParent depth*/),
-          greatGrandParent = $nodePos.node(-3/*greatGrandParent depth*/);
-    if(!(grandParent && grandGrandParent && greatGrandParent)) return/*continue looking*/;
-
-    if(isListItemNode(grandParent)
-      && (isListNode(grandGrandParent))
-      && isListItemNode(greatGrandParent)
-    ) {
-      const blockRange = $nodePos.blockRange(),
-            liftTargetDepth = blockRange && liftTarget(blockRange);
-      if(blockRange && liftTargetDepth) {
-        tr.lift(blockRange, liftTargetDepth);
-        wereListsLifted = true/*lifted*/;
-      } /* else -- no blockRange available or lift depth found */
-    } /* else -- the ListItem is valid */
-  });
-
-  return wereListsLifted;
-};

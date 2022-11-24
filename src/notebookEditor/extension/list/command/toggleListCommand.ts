@@ -15,11 +15,11 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
 
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction): Transaction | false {
-    const { selection } = editorState;
-    const { $from, $to } = selection;
+    const { selection } = editorState,
+          { $from, $to } = selection;
 
-    const listItemType = editorState.schema.nodes[NodeName.LIST_ITEM];
-    const listType = editorState.schema.nodes[this.listTypeName];
+    const listItemType = editorState.schema.nodes[NodeName.LIST_ITEM],
+          listType = editorState.schema.nodes[this.listTypeName];
 
     let blockRange = $from.blockRange($to);
     if(!blockRange) return false/*no blockRange exists, nothing to do*/;
@@ -31,15 +31,17 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
       if(blockRange.depth >= 1/*is nested*/
         && closestParentList/*exists*/
         && blockRange.depth - closestParentList.depth <= 1/*can lift*/) {
-
         if(closestParentList.node.type === listType) { return new LiftListItemDocumentUpdate('Shift-Tab'/*dedent*/).update(editorState, tr); }
         else /*change type */ { tr.setNodeMarkup(closestParentList.pos, listType, this.attrs); }
       } /* else - not nested, list does not exist, or cannot lift*/
     } else /*wrap*/ {
-      let outerRange = blockRange/*default*/;
-      let performJoin = false/*default*/;
+      let outerRange = blockRange/*default*/,
+          performJoin = false/*default*/;
 
-      if(blockRange.depth >= 2/*nested*/ && $from.node(blockRange.depth-1/*depth of ancestor*/).type.compatibleContent(listItemType) && blockRange.startIndex === 0/*first child of parent*/) {
+      if(blockRange.depth >= 2/*nested range*/
+        && $from.node(blockRange.depth-1/*depth of ancestor*/).type.compatibleContent(listItemType)
+        && blockRange.startIndex === 0/*first direct child*/
+      ) {
         if($from.index(blockRange.depth - 1/*depth of ancestor*/) === 0) return false/*at the top of the List*/;
 
         let $insertionPos = editorState.doc.resolve(blockRange.start - 2/*account for start and end of range*/);
@@ -60,8 +62,7 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
-
-const applyListWrapping = (tr: Transaction, nodeRange: NodeRange, wrapperDefinitions: {type: NodeType; attrs?: Attrs | null; }[], performJoinBefore: boolean, listType: NodeType) => {
+const applyListWrapping = (tr: Transaction, nodeRange: NodeRange, wrapperDefinitions: { type: NodeType; attrs?: Attrs | null; }[], performJoinBefore: boolean, listType: NodeType) => {
   let newContent = Fragment.empty/*default*/;
   for(let i = wrapperDefinitions.length - 1; i >= 0; i--) {
     newContent = Fragment.from(wrapperDefinitions[i].type.create(wrapperDefinitions[i].attrs, newContent));
