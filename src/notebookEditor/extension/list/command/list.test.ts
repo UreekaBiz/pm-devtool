@@ -45,9 +45,9 @@ describe('toggleListCommand', () => {
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
-  it('lifts the whole contents of the ListItem whenever there are loose blocks in a single ListItem', () => {
+  it('wraps the loose child of a ListItem whenever there are loose children in a single ListItem', () => {
     const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>bar`)))),
-          expectedEndState = docBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>bar`));
+          expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo'))), bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>bar`))));
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
