@@ -24,8 +24,8 @@ export type ListItemAttributes = AttributesTypeFromNodeSpecAttributes<typeof Lis
 export const ListItemNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `${NodeGroup.BLOCK}*`,
-  defining: true,
-  draggable: false,
+  defining: true/*important parent during replace operations, preserve content if possible*/,
+  draggable: false/*do not allow dragging*/,
   group: `${NodeGroup.BLOCK}`,
 
   // .. Attribute .................................................................

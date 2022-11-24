@@ -4,23 +4,23 @@ import { getListItemNodeType } from 'common';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
-import { checkAndMergeListAtPos } from './command';
+import { checkAndLiftChangedLists, checkAndMergeListAtPos } from './command';
 
 // ********************************************************************************
 // == Plugin ======================================================================
-export const listItemPlugin = () => {
-  return new Plugin<NoPluginState>({
-    // -- Transaction -------------------------------------------------------------
-    // ensure that Lists are joined if possible (SEE: checkAndMergeList)
-    appendTransaction(transactions, oldState, newState) {
-      const { tr } = newState;
-      const wasListMerged = checkAndMergeListAtPos(getListItemNodeType(newState.schema), tr, tr.selection.$from.after(1/*direct child of Doc depth*/));
+export const listItemPlugin = () => new Plugin<NoPluginState>({
+  // -- Transaction -------------------------------------------------------------
+  // ensure that Lists are joined if possible (SEE: checkAndMergeList)
+  appendTransaction(transactions, oldState, newState) {
+    const { tr } = newState;
 
-      if(wasListMerged) {
-        return tr/*modified*/;
-      } /* else -- no Lists were merged */
+    const wereListsMerged = checkAndMergeListAtPos(getListItemNodeType(newState.schema), tr, tr.selection.$from.after(1/*direct child of Doc depth*/)),
+          wereListsLifted = checkAndLiftChangedLists(transactions, oldState, tr);
 
-      return/*nothing to do*/;
-    },
-  });
-};
+    if(wereListsMerged || wereListsLifted) {
+      return tr/*modified*/;
+    } /* else -- no Lists were merged */
+
+    return/*nothing to do*/;
+  },
+});
