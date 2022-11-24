@@ -10,7 +10,9 @@ import { checkAndLiftChangedLists, checkAndMergeListAtPos } from './command';
 // == Plugin ======================================================================
 export const listItemPlugin = () => new Plugin<NoPluginState>({
   // -- Transaction -------------------------------------------------------------
-  // ensure that Lists are joined if possible (SEE: checkAndMergeList)
+  // ensure that Lists are merged and joined if possible
+  // (SEE: checkAndMergeList), and that there are no invalid ListItems
+  // (SEE: checkAndLiftChangedLists)
   appendTransaction(transactions, oldState, newState) {
     const { tr } = newState;
 

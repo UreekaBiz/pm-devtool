@@ -108,16 +108,22 @@ export const checkAndLiftChangedLists = (transactions: readonly Transaction[], o
     if(!node.isTextblock) return/*continue looking*/;
 
     const $nodePos = tr.doc.resolve(nodePos + 2/*inside the textBlock*/);
-    const grandParent = $nodePos.node(-1),
-          grandGrandParent = $nodePos.node(-2),
-          greatGrandParent = $nodePos.node(-3);
+    const grandParent = $nodePos.node(-1/*grandParent depth*/),
+          grandGrandParent = $nodePos.node(-2/*grandGrandParent depth*/),
+          greatGrandParent = $nodePos.node(-3/*greatGrandParent depth*/);
     if(!(grandParent && grandGrandParent && greatGrandParent)) return/*continue looking*/;
 
-    if(isListItemNode(grandParent) && (isListNode(grandGrandParent)) && isListItemNode(greatGrandParent)) {
-      const liftTargetDepth = liftTarget($nodePos.blockRange()!);
-      tr.lift($nodePos.blockRange()!, liftTargetDepth!);
-      wereListsLifted = true/*lifted*/;
-    }
+    if(isListItemNode(grandParent)
+      && (isListNode(grandGrandParent))
+      && isListItemNode(greatGrandParent)
+    ) {
+      const blockRange = $nodePos.blockRange(),
+            liftTargetDepth = blockRange && liftTarget(blockRange);
+      if(blockRange && liftTargetDepth) {
+        tr.lift(blockRange, liftTargetDepth);
+        wereListsLifted = true/*lifted*/;
+      } /* else -- no blockRange available or lift depth found */
+    } /* else -- the ListItem is valid */
   });
 
   return wereListsLifted;
