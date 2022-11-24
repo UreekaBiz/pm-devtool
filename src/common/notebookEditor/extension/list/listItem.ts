@@ -26,7 +26,7 @@ export const ListItemNodeSpec: Readonly<NodeSpec> = {
   content: `${NodeGroup.BLOCK}*`,
   defining: true/*important parent during replace operations, preserve content if possible*/,
   draggable: false/*do not allow dragging*/,
-  group: `${NodeGroup.BLOCK}`,
+  group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
 
   // .. Attribute .................................................................
   attrs: ListItemAttributeSpec,

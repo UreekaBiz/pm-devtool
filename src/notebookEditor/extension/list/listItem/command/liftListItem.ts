@@ -48,13 +48,15 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
         list = $listItemPos.node(-1/*ancestor*/);
   if(!listItem || !isListItemNode(listItem) || !list) return false/*cannot lift item, do not modify Transaction*/;
 
-  const { $from } = tr.selection;
+  const { $from: $trFrom } = tr.selection;
   let liftedBlockRange: NodeRange | null = null/*default*/;
 
   let liftListItemChild = false/*default*/;
-  if($from.parent === listItem.firstChild) {
+  if($trFrom.parent === listItem.firstChild) {
     liftedBlockRange = $listItemPos.blockRange(/*lift the whole ListItem*/);
   } else {
+    liftListItemChild = true/*by definition*/;
+
     /**
      * make the lifted range go from the start of $from's parent to the end of the ListItem
      * to ensure this behavior (| is the cursor):
@@ -63,8 +65,7 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
      *    foo                         foo
      * 2. bar                      3. bar
      */
-    liftedBlockRange = new NodeRange(tr.doc.resolve($from.before()), tr.doc.resolve($listItemPos.end()), $listItemPos.depth);
-    liftListItemChild = true/*by definition*/;
+    liftedBlockRange = new NodeRange(tr.doc.resolve($trFrom.before()), tr.doc.resolve($listItemPos.end()), $listItemPos.depth);
   }
   if(!liftedBlockRange) return false/*no valid range to lift*/;
 
@@ -76,9 +77,9 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
     tr.wrap(liftedBlockRange, wrappers);
 
     // update the lifted Range's end by creating a new one that includes the wrapping
-    const $from = tr.doc.resolve(liftedBlockRange.$from.pos),
-          $to = tr.doc.resolve(liftedBlockRange.$to.pos);
-    liftedBlockRange = new NodeRange($from, $to, liftedBlockRange.depth);
+    const $newFrom = tr.doc.resolve(liftedBlockRange.$from.pos),
+          $newTo = tr.doc.resolve(liftedBlockRange.$to.pos);
+    liftedBlockRange = new NodeRange($newFrom, $newTo, liftedBlockRange.depth);
   } /* else -- no need to wrap */
 
   if(targetDepth) {
