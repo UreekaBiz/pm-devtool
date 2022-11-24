@@ -145,7 +145,10 @@ export class BlockBackspaceDocumentUpdate implements AbstractDocumentUpdate {
 
     const isAtStartOfDoc = from === 1/*at the start of the Doc*/;
     if(isAtStartOfDoc || !$from.parent.textContent.length/*empty*/) {
-      return tr.delete($from.before(), $from.after())/*delete Block*/;
+      const { defaultType: defaultBlockType  } = $from.node(-1/*ancestor*/).contentMatchAt($from.index(/*current index*/));
+      if(!defaultBlockType) return false/*cannot replace with default block at this position*/;
+
+      return tr.setBlockType($from.before(), $from.after(), defaultBlockType/*default Block*/);
     } /* else -- no need to delete blockNode */
 
     return false/*let Backspace event be handled elsewhere*/;
