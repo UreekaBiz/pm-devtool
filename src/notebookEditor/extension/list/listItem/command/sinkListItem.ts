@@ -1,5 +1,6 @@
-import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { NodeRange } from 'prosemirror-model';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
+import { findWrapping } from 'prosemirror-transform';
 
 import { isListItemNode, isListNode, AbstractDocumentUpdate } from 'common';
 
@@ -17,10 +18,10 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
-    const { $from, from, to } = editorState.selection;
-    if(from !== $from.before()+1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
+    const { $from: $stateFrom, from: stateFrom, to: stateTo } = editorState.selection;
+    if(stateFrom !== $stateFrom.before()+1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
 
-    const listItemPositions = getListItemPositions(editorState, { from, to });
+    const listItemPositions = getListItemPositions(editorState, { from: stateFrom, to: stateTo });
     for(let i=0; i<listItemPositions.length; i++) {
       const listItemPos = listItemPositions[i],
             $listItemPos = tr.doc.resolve(listItemPos),
@@ -28,11 +29,11 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
             list = $listItemPos.node(-1/*ancestor*/);
       if(!listItem || !isListItemNode(listItem) || !isListNode(list)) continue/*cannot sink ListItem, do not modify Transaction*/;
 
-      const { $from } = tr.selection;
+      const { $from: $trFrom } = tr.selection;
       let sinkBlockRange: NodeRange | null = null/*default*/;
 
       let sinkListItemChild = false/*default*/;
-      if($from.parent === listItem.firstChild) {
+      if($trFrom.parent === listItem.firstChild) {
         sinkBlockRange = $listItemPos.blockRange();
       } else {
         /**
@@ -43,13 +44,14 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
          *    foo                            foo
          * 2. bar                      2. bar
          */
-        sinkBlockRange = new NodeRange(tr.doc.resolve($from.before()), tr.doc.resolve($from.end()), $listItemPos.depth);
+        sinkBlockRange = new NodeRange(tr.doc.resolve($trFrom.before()), tr.doc.resolve($trFrom.end()), $listItemPos.depth);
         sinkListItemChild = true/*by definition*/;
       }
-      if(!sinkBlockRange) continue/*no suitable wrap range exists*/;
+      if(!sinkBlockRange) continue/*no suitable sink range exists*/;
 
-      const wrapTypes = [ { type: list.type }, ...(sinkListItemChild ? [{ type: listItem.type }] : [/*do not add listItem wrapper*/])];
-      tr.wrap(sinkBlockRange, wrapTypes);
+      const wrappers = findWrapping(sinkBlockRange, list.type);
+      if(!wrappers) continue/*no suitable wrapper exists*/;
+      tr.wrap(sinkBlockRange, wrappers);
 
       if(!sinkListItemChild) {
         checkAndMergeListAtPos(tr, listItemPos);
