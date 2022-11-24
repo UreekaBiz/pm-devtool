@@ -141,21 +141,21 @@ export class NestedViewNodeBehaviorDocumentUpdate {
 
     if(this.closeNodeCursorPos === 'before') {
       const nodeBefore = outerViewTr.selection.$anchor.nodeBefore;
-      if(!nodeBefore || nodeBefore.isBlock) {
+      if(!nodeBefore || !nodeBefore.isTextblock) {
         outerViewTr.setSelection(new GapCursor(outerState.tr.doc.resolve(targetPos)));
       } /* else -- nodeBefore exists or it is not a LatexBlock */
 
-      if(nodeBefore && !nodeBefore.isBlock) {
+      if(nodeBefore && nodeBefore.isTextblock) {
         outerViewTr.setSelection(TextSelection.create(outerState.doc, Math.max(0/*do not go behind the Doc*/, targetPos-1/*inside the nodeBefore*/)));
       } /* else -- GapCursor will work as expected */
 
     } else {
       const nodeAfter = outerViewTr.selection.$anchor.nodeAfter;
-      if(!nodeAfter || nodeAfter.isBlock) {
+      if(!nodeAfter || !nodeAfter.isTextblock) {
         outerViewTr.setSelection(new GapCursor(outerState.tr.doc.resolve(targetPos)));
       } /* else -- nodeAfter exists or it is not a LatexBlock */
 
-      if(nodeAfter && !nodeAfter.isBlock) {
+      if(nodeAfter && nodeAfter.isTextblock) {
         outerViewTr.setSelection(TextSelection.create(outerState.doc, Math.min(targetPos+1/*inside the nodeAfter*/, outerState.doc.nodeSize-2/*account for start and end of Doc*/)));
       } /* else -- GapCursor will work as expected */
     }
