@@ -13,7 +13,10 @@ export const listItemPlugin = () => new Plugin<NoPluginState>({
   appendTransaction(transactions, oldState, newState) {
     const { tr } = newState;
 
-    const wereListsMerged = checkAndMergeListAtPos(tr, tr.selection.$from.after(1/*direct child of Doc depth*/));
+    let wereListsMerged = checkAndMergeListAtPos(tr, tr.selection.$from.before(1/*direct child of Doc depth*/));
+    if(!wereListsMerged) {
+      wereListsMerged = checkAndMergeListAtPos(tr, tr.selection.$from.after(1/*direct child of Doc depth*/));
+    } /* else -- already merged */
 
     if(wereListsMerged) {
       return tr/*modified*/;
