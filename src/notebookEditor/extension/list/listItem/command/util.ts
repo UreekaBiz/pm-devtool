@@ -1,4 +1,3 @@
-import { NodeType } from 'prosemirror-model';
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
 import { canJoin } from 'prosemirror-transform';
 
@@ -38,7 +37,7 @@ export const fromOrToInListItem = (selection: Selection) => {
  * can be merged together at the given position (i.e. turn two
  * separate Lists into a single one)
  */
-export const checkAndMergeListAtPos = (listItemType: NodeType, tr: Transaction, posToCheck: number) => {
+export const checkAndMergeListAtPos = (tr: Transaction, posToCheck: number) => {
   let checkedAndMergedList = false/*default*/;
   if(!fromOrToInListItem(tr.selection)) return checkedAndMergedList/*Selection not inside a ListItem*/;
 

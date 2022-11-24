@@ -1,7 +1,5 @@
 import { Plugin } from 'prosemirror-state';
 
-import { getListItemNodeType } from 'common';
-
 import { NoPluginState } from 'notebookEditor/model/type';
 
 import { checkAndMergeListAtPos } from './command';
@@ -15,7 +13,7 @@ export const listItemPlugin = () => new Plugin<NoPluginState>({
   appendTransaction(transactions, oldState, newState) {
     const { tr } = newState;
 
-    const wereListsMerged = checkAndMergeListAtPos(getListItemNodeType(newState.schema), tr, tr.selection.$from.after(1/*direct child of Doc depth*/));
+    const wereListsMerged = checkAndMergeListAtPos(tr, tr.selection.$from.after(1/*direct child of Doc depth*/));
 
     if(wereListsMerged) {
       return tr/*modified*/;

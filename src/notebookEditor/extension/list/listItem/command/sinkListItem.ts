@@ -1,6 +1,6 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { getListItemNodeType, AbstractDocumentUpdate, NodeName } from 'common';
+import { AbstractDocumentUpdate, NodeName } from 'common';
 
 import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from './util';
 
@@ -33,7 +33,7 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
       if(!listItemBlockRange) return/*no suitable wrap range exists*/;
 
       tr.wrap(listItemBlockRange, [{ type: parentListType }]);
-      checkAndMergeListAtPos(getListItemNodeType(editorState.schema), tr, listItemPos);
+      checkAndMergeListAtPos(tr, listItemPos);
     });
 
     return tr/*updated*/;
