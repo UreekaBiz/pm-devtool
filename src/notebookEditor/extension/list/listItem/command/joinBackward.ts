@@ -1,6 +1,6 @@
 import { Transaction } from 'prosemirror-state';
 
-import { isBulletListNode, isOrderedListNode, DocumentUpdate, JoinBackwardDocumentUpdate } from 'common';
+import { isListNode, DocumentUpdate, JoinBackwardDocumentUpdate } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
@@ -20,7 +20,7 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
   if(parentIndex === 0/*first direct child of Doc*/) return false/*no previous child by definition*/;
 
   const previousChild = doc.child(previousChildIndex);
-  if(!isBulletListNode(previousChild) || isOrderedListNode(previousChild)) return false/*no List to join into*/;
+  if(!isListNode(previousChild)) return false/*no List to join into*/;
 
   let lastChildOfListPos = 0/*default*/;
   previousChild.descendants((node, pos) => { lastChildOfListPos = (pos+1/*inside the Node*/) + node.nodeSize; });

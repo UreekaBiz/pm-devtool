@@ -2,7 +2,7 @@ import { NodeType } from 'prosemirror-model';
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
 import { canJoin, liftTarget } from 'prosemirror-transform';
 
-import { combineTransactionSteps, getTransformChangedRanges, isBulletListNode, isListItemNode, isOrderedListNode, SelectionRange } from 'common';
+import { combineTransactionSteps, getTransformChangedRanges, isListItemNode, isListNode, SelectionRange } from 'common';
 
 // == Util ========================================================================
 /** get the positions of the start of the ListItems in the given Range */
@@ -105,15 +105,15 @@ export const checkAndLiftChangedLists = (transactions: readonly Transaction[], o
   }, { from: tr.doc.nodeSize/*doc end*/, to: 0/*doc start*/ });
 
   tr.doc.nodesBetween(singleRange.from, singleRange.to, (node, nodePos) => {
-    if(!node.isTextblock) return/*ignore*/;
+    if(!node.isTextblock) return/*continue looking*/;
 
     const $nodePos = tr.doc.resolve(nodePos + 2/*inside the textBlock*/);
     const grandParent = $nodePos.node(-1),
           grandGrandParent = $nodePos.node(-2),
           greatGrandParent = $nodePos.node(-3);
-    if(!(grandParent && grandGrandParent && greatGrandParent)) return/*nothing to do*/;
+    if(!(grandParent && grandGrandParent && greatGrandParent)) return/*continue looking*/;
 
-    if(isListItemNode(grandParent) && (isBulletListNode(grandGrandParent) || isOrderedListNode(grandGrandParent)) && isListItemNode(greatGrandParent)) {
+    if(isListItemNode(grandParent) && (isListNode(grandGrandParent)) && isListItemNode(greatGrandParent)) {
       const liftTargetDepth = liftTarget($nodePos.blockRange()!);
       tr.lift($nodePos.blockRange()!, liftTargetDepth!);
       wereListsLifted = true/*lifted*/;

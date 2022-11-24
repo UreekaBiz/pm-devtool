@@ -1,7 +1,7 @@
 import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isBulletListNode, isListItemNode, isHeadingNode, isOrderedListNode, isParagraphNode, AbstractDocumentUpdate } from 'common';
+import { isListNode, isListItemNode, isHeadingNode, isParagraphNode, AbstractDocumentUpdate } from 'common';
 
 // ********************************************************** **********************
 export const joinForwardToStartOfClosestListItemCommand: Command = (state, dispatch) =>
@@ -23,7 +23,7 @@ export class JoinForwardToStartOfClosestListItemDocumentUpdate implements Abstra
           nodeAfterEnd = doc.nodeAt(nodeAfterEndPos);
     if(!nodeAfterEnd) return false/*do not handle*/;
 
-    const nextNodeIsList = isBulletListNode(nodeAfterEnd) || isOrderedListNode(nodeAfterEnd),
+    const nextNodeIsList = isListNode(nodeAfterEnd),
           nextNodeIsListItem = isListItemNode(nodeAfterEnd);
     if(!nextNodeIsList && !nextNodeIsListItem) return false/*do not handle*/;
 
