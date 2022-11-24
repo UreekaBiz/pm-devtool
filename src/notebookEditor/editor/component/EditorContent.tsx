@@ -56,7 +56,6 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
     editor.contentComponent = null;
     if(!editor.htmlViewElement.firstChild) return;
 
-
     const newElement = document.createElement('div');
     newElement.append(...editor.htmlViewElement.childNodes);
 
