@@ -122,10 +122,10 @@ const listItemSet = new Set([NodeName.LIST_ITEM]);
                   $childPos = tr.doc.resolve(childPos);
 
             const blockRange = $childPos.blockRange(),
-                  wrappers = blockRange && findWrapping(blockRange, affectedListItem.type);
-            if(!wrappers) return/*no wrapping possible, do nothing*/;
+                  wrapping = blockRange && findWrapping(blockRange, affectedListItem.type);
+            if(!wrapping) return/*no wrapping possible, do nothing*/;
 
-            tr.wrap(blockRange, wrappers);
+            tr.wrap(blockRange, wrapping);
             const updatedRange = new NodeRange(tr.doc.resolve(blockRange.$from.pos), tr.doc.resolve(blockRange.$to.pos), blockRange.depth),
                   liftTargetDepth = liftTarget(updatedRange);
 
