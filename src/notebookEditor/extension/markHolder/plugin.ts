@@ -1,5 +1,5 @@
 import { Slice } from 'prosemirror-model';
-import { NodeSelection, Plugin, Selection, TextSelection } from 'prosemirror-state';
+import { NodeSelection, Plugin, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isMarkHolderNode, markFromJSONMark, parseStringifiedMarksArray, stringifyMarksArray, AttributeType, NodeName } from 'common';
@@ -111,7 +111,8 @@ export const markHolderPlugin = () => new Plugin({
 
       const markHolder = view.state.doc.nodeAt(posBeforeAnchorPos);
       if(!markHolder || !isMarkHolderNode(markHolder)) return false/*let PM handle the event*/;
-      const parentPos = Math.max(0/*don't go outside limits*/, posBeforeAnchorPos - 1)/*by contract --  MarkHolder gets inserted at start of parent Node*/;
+      const markHolderPos = posBeforeAnchorPos,
+            markHolderParentPos = Math.max(0/*don't go outside limits*/, posBeforeAnchorPos - 1)/*by contract --  MarkHolder gets inserted at start of parent Node*/;
 
       // NOTE: since the selection is not allowed to be behind a MarkHolder but
       //       expected behavior must be maintained on an Enter keypress, manually
@@ -120,7 +121,7 @@ export const markHolderPlugin = () => new Plugin({
       //       resulting Selection has the wrong Cursor (in the new Paragraph instead
       //       of the Block Node where Enter was pressed)
       if(event.key === 'Enter') {
-        const parentEndPos = parentPos + view.state.selection.$anchor.parent.nodeSize;
+        const parentEndPos = markHolderParentPos + view.state.selection.$anchor.parent.nodeSize;
 
         // insert Paragraph below and set the Selection to the start of the inserted
         // Paragraph (-2 = -1 to account for the end of the new Paragraph,
@@ -147,9 +148,8 @@ export const markHolderPlugin = () => new Plugin({
       // if Backspace is pressed and a MarkHolder is present, delete it, and
       // set the Selection accordingly
       if(event.key === 'Backspace') {
-        tr.setSelection(NodeSelection.create(tr.doc, parentPos))
-          .deleteSelection()
-          .setSelection(Selection.near(tr.doc.resolve(tr.selection.anchor)));
+        tr.setSelection(NodeSelection.create(tr.doc, markHolderPos))
+          .deleteSelection();
         dispatch(tr);
         return true/*event handled*/;
       } /* else -- not handling Backspace */

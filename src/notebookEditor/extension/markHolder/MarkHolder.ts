@@ -1,6 +1,7 @@
 import { getNodeOutputSpec, MarkHolderNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { ExtensionPriority } from 'notebookEditor/model';
+
 import { createExtensionParseRules } from '../type/Extension/util';
 import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { MarkHolderAttrs } from './attribute';
@@ -11,7 +12,7 @@ import { markHolderPlugin } from './plugin';
 export const MarkHolder = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.MARK_HOLDER,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.MARK_HOLDER,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => MarkHolderAttrs,

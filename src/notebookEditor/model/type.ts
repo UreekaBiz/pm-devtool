@@ -29,6 +29,14 @@ export enum ExtensionName {
 // NOTE: if Extension priority is left unspecified, it defaults to 100
 // NOTE: names match Extension, Node or Mark names for sanity
 export enum ExtensionPriority {
+
+  /**
+   * since MarkHolder handles removal of MarkHolder Nodes, on keydown
+   * and paste, it should have a higher priority than other Extensions that are
+   * not blocks
+   */
+  MARK_HOLDER = 120,
+
   // NOTE: Paragraph must have a higher priority than other block Nodes since it
   //       is the 'default' block Node (by convention). If its priority is left
   //       unspecified, the default block Node on document creation will be the
