@@ -4,7 +4,7 @@ import { liftTarget } from 'prosemirror-transform';
 
 import { isListItemNode, AbstractDocumentUpdate, NodeGroup } from 'common';
 
-import { fromOrToInListItem, getListItemPositions } from './util';
+import { fromOrToInListItem, getInsideListItemPositions } from './util';
 
 // ********************************************************************************
 // == Lift ========================================================================
@@ -25,7 +25,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
     } /* else -- backspace / enter checks done */
 
-    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
+    const listItemPositions = getInsideListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
     for(let i=0; i<listItemPositions.length; i++) {
       const updatedTr = liftListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }

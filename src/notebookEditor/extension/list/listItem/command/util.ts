@@ -5,8 +5,8 @@ import { canJoin, findWrapping, liftTarget } from 'prosemirror-transform';
 import { getNodesAffectedByStepMap, isListItemNode, NodeName, SelectionRange } from 'common';
 
 // == Util ========================================================================
-/** get the positions of the start of the ListItems in the given Range */
-export const getListItemPositions = (editorState: EditorState, range: SelectionRange) => {
+/** get the position inside each ListItem present in the given Range */
+export const getInsideListItemPositions = (editorState: EditorState, range: SelectionRange) => {
   const { from, to } = range;
   const listItemPositions: number[] = [/*default empty*/];
 
