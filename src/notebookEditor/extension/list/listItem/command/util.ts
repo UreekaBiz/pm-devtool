@@ -12,7 +12,7 @@ export const getInsideListItemPositions = (editorState: EditorState, range: Sele
 
   editorState.doc.nodesBetween(from, to, (node, pos) => {
     if(isListItemNode(node)) {
-      listItemPositions.push(pos+1/*inside the ListItem*/);
+      listItemPositions.push(pos);
     } /* else -- not an item of the specified type, ignore */
 
     return !node.isLeaf/*keep descending if node is not a Leaf*/;
