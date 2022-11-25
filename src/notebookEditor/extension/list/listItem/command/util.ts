@@ -24,8 +24,8 @@ export const getListItemPositions = (editorState: EditorState, range: SelectionR
 /** check the given Selection to see if its from or its to are inside a ListItem */
 export const fromOrToInListItem = (selection: Selection) => {
   const { $from, $to } = selection,
-        fromGrandParent = $from.node(-1/*grandParent listItem*/),
-        toGrandParent = $to.node(-1/*grandParent listItem*/);
+        fromGrandParent = $from.node(-1/*grandParent ListItem*/),
+        toGrandParent = $to.node(-1/*grandParent ListItem*/);
   if(!fromGrandParent || !toGrandParent) return false/*Selection not inside a ListItem*/;
 
   if(!isListItemNode(fromGrandParent) || !isListItemNode(toGrandParent)) return false/*no part of the given Selection is inside a ListItem*/;
