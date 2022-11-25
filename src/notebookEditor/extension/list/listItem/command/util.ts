@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
 import { canJoin, findWrapping, liftTarget } from 'prosemirror-transform';
 
-import { combineTransactionSteps, getTransformChangedRanges, isListItemNode, isListNode, SelectionRange } from 'common';
+import { getNodesAffectedByStepMap, isListItemNode, NodeName, SelectionRange } from 'common';
 
 // == Util ========================================================================
 /** get the positions of the start of the ListItems in the given Range */
@@ -88,45 +88,51 @@ export const checkAndMergeListAtPos = (tr: Transaction, posToCheck: number) => {
   return checkedAndMergedList;
 };
 
+const listItemSet = new Set([NodeName.LIST_ITEM]);
 /**
  * prevent any ListItems that were changed by a set of Transactions
  * from being loose (i.e. not inside a List)
  */
  export const checkAndLiftChangedLists = (transactions: readonly Transaction[], oldState: EditorState, tr: Transaction) => {
   let wereListsLifted = false/*default*/;
-  const transform = combineTransactionSteps(oldState.doc, [...transactions]),
-        changes = getTransformChangedRanges(transform);
-  const singleRange = changes.reduce<{ from: number; to: number; }>((singleRange, nextChange) => {
-    const { newRange } = nextChange;
-    return { from: Math.min(singleRange.from, newRange.from), to: Math.max(singleRange.to, newRange.to) };
-  }, { from: tr.doc.nodeSize/*doc end*/, to: 0/*doc start*/ });
 
-  tr.doc.nodesBetween(singleRange.from, singleRange.to, (affectedNode, nodePos) => {
-    if(!isListNode(affectedNode)) return/*ignore*/;
-    else {
-      const affectedList = affectedNode;
-      affectedList.descendants((childNode, childPos) => {
-        const $childPos = tr.doc.resolve(childPos + 1/*inside the Node*/),
-              listItem = $childPos.node(-1/*grandParent depth*/);
-        // if the content at the nodePosition is 'loose' (i.e. not wrapped in)
-        // a List, wrap it, and lift it to the nearest List
-        if(listItem
-          && isListItemNode(listItem)
-          && !(affectedList === listItem.firstChild)
-          ) {
-          const blockRange = $childPos.blockRange(),
-                wrappers = blockRange && findWrapping(blockRange, listItem.type);
-          if(!wrappers) return/*no wrapping possible, do nothing*/;
+  // NOTE: this Transaction has to step through all stepMaps without leaving
+  //       early since any of them can leave a Block Node loose within a List
+  //       Set empty, and none should be missed
+  for(let i = 0; i < transactions.length; i++) {
+    const { maps } = transactions[i].mapping;
 
-          tr.wrap(blockRange, wrappers);
-          const updatedRange = new NodeRange(tr.doc.resolve(blockRange.$from.pos), tr.doc.resolve(blockRange.$to.pos), blockRange.depth),
-                liftTargetDepth = liftTarget(updatedRange);
-          liftTargetDepth && tr.lift(updatedRange, liftTargetDepth);
-          wereListsLifted = true/*lifted*/;
+    // iterate over all maps in the Transaction
+    for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
+      // (SEE: NOTE above)
+      maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
+        const { newNodePositions } = getNodesAffectedByStepMap(transactions[i], stepMapIndex, unmappedOldStart, unmappedOldEnd, listItemSet);
+
+        for(let newNPIndex = 0; newNPIndex < newNodePositions.length; newNPIndex++) {
+          const { node: affectedListItem } = newNodePositions[newNPIndex],
+                $affectedListItemPos = tr.doc.resolve(newNodePositions[newNPIndex].position);
+
+          affectedListItem.descendants((descendant, descendantPos, parent) => {
+            if(affectedListItem !== parent) return/*ignore Node*/;
+            if(descendant === parent.firstChild) return/*ignore Node*/;
+
+            const childPos = $affectedListItemPos.pos+1/*inside the ListItem*/ + descendantPos+1/*inside the descendant*/,
+                  $childPos = tr.doc.resolve(childPos);
+
+            const blockRange = $childPos.blockRange(),
+                  wrappers = blockRange && findWrapping(blockRange, affectedListItem.type);
+            if(!wrappers) return/*no wrapping possible, do nothing*/;
+
+            tr.wrap(blockRange, wrappers);
+            const updatedRange = new NodeRange(tr.doc.resolve(blockRange.$from.pos), tr.doc.resolve(blockRange.$to.pos), blockRange.depth),
+                  liftTargetDepth = liftTarget(updatedRange);
+
+            liftTargetDepth && tr.lift(updatedRange, liftTargetDepth);
+            wereListsLifted = true/*lifted*/;
+          });
         }
       });
     }
-  });
-
+  }
   return wereListsLifted;
 };
