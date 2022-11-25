@@ -1,8 +1,9 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { isListItemNode, isListNode, AbstractDocumentUpdate } from 'common';
+import { findParentNodeClosestToPos, isListNode, AbstractDocumentUpdate, isListItemNode } from 'common';
 
 import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from './util';
+import { NodeRange } from 'prosemirror-model';
 
 // ********************************************************************************
 // == Sink ========================================================================
@@ -16,20 +17,26 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
-    const { from, to } = editorState.selection,
-          listItemPositions = getListItemPositions(editorState, { from, to });
+    const { empty, $from, from, to } = editorState.selection;
+    if(empty && from !== $from.before()+1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
 
+    const listItemPositions = getListItemPositions(editorState, { from, to });
     for(let i=0; i<listItemPositions.length; i++) {
-      const listItemPos = listItemPositions[i],
+      const originalPosition = listItemPositions[i],
+            mappedPosition = tr.mapping.map(originalPosition);
+      const listItemPos = mappedPosition,
             $listItemPos = tr.doc.resolve(listItemPos),
-            listItem = tr.doc.nodeAt(listItemPos-1/*the ListItem itself*/),
-            list = $listItemPos.node(-1/*ancestor*/);
-      if(!listItem || !isListItemNode(listItem) || !isListNode(list)) continue/*invalid conditions to sink, do not modify Transaction*/;
+            listItem = tr.doc.nodeAt(listItemPos);
+      if(!listItem || !isListItemNode(listItem)) continue/*not a ListItem at the expected position */;
 
-      const sinkBlockRange = $listItemPos.blockRange();
-      if(!sinkBlockRange) continue/*no range to sink*/;
+      const listItemEndPos = listItemPos + listItem.nodeSize,
+            $listItemEndPos = tr.doc.resolve(listItemEndPos);
+      const sinkBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
 
-      tr.wrap(sinkBlockRange, [{ type: list.type }]);
+      const closestListObj = findParentNodeClosestToPos($listItemPos, isListNode);
+      if(!closestListObj) continue/*no list to take type from*/;
+
+      tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
       checkAndMergeListAtPos(tr, listItemPos);
     }
 

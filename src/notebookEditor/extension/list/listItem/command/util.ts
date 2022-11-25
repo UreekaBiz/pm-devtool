@@ -6,13 +6,13 @@ import { getNodesAffectedByStepMap, isListItemNode, NodeName, SelectionRange } f
 
 // == Util ========================================================================
 /** get the position inside each ListItem present in the given Range */
-export const getInsideListItemPositions = (editorState: EditorState, range: SelectionRange) => {
+export const getListItemPositions = (editorState: EditorState, range: SelectionRange) => {
   const { from, to } = range;
   const listItemPositions: number[] = [/*default empty*/];
 
   editorState.doc.nodesBetween(from, to, (node, pos) => {
     if(isListItemNode(node)) {
-      listItemPositions.push(pos+1/*inside the ListItem*/);
+      listItemPositions.push(pos);
     } /* else -- not an item of the specified type, ignore */
 
     return !node.isLeaf/*keep descending if node is not a Leaf*/;
