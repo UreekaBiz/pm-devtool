@@ -44,8 +44,9 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 // perform the required modifications to a Transaction such that
 // the ListItem at the given position is lifted
 const liftListItem = (tr: Transaction, listItemPos: number) => {
-  const listItem = tr.doc.nodeAt(tr.mapping.map(listItemPos)),
-        $listItemPos = tr.doc.resolve(listItemPos),
+  const mappedListItemPos = tr.mapping.map(listItemPos),
+        listItem = tr.doc.nodeAt(mappedListItemPos),
+        $listItemPos = tr.doc.resolve(mappedListItemPos),
         list = $listItemPos.node(-1/*ancestor*/);
   if(!listItem || !isListItemNode(listItem) || !list) return false/*cannot lift item, do not modify Transaction*/;
 

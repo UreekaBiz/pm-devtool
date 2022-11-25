@@ -35,8 +35,9 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
 // perform the required modifications to a Transaction such that
 // the ListItem at the given position increases its depth
 const sinkListItem = (tr: Transaction, listItemPos: number) => {
-  const $listItemPos = tr.doc.resolve(tr.mapping.map(listItemPos)),
-        listItem = tr.doc.nodeAt(listItemPos);
+  const mappedListItemPos = tr.mapping.map(listItemPos),
+        $listItemPos = tr.doc.resolve(mappedListItemPos),
+        listItem = tr.doc.nodeAt(mappedListItemPos);
   if(!listItem || !isListItemNode(listItem)) return false/*not a ListItem at the expected position */;
 
   const listItemEndPos = listItemPos + listItem.nodeSize,
