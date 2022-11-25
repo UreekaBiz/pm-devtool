@@ -6,7 +6,7 @@ import { getNodesAffectedByStepMap, isListItemNode, NodeName, SelectionRange } f
 
 // == Util ========================================================================
 /** get the position inside each ListItem present in the given Range */
-export const getInsideListItemPositions = (editorState: EditorState, range: SelectionRange) => {
+export const getListItemPositions = (editorState: EditorState, range: SelectionRange) => {
   const { from, to } = range;
   const listItemPositions: number[] = [/*default empty*/];
 

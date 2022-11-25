@@ -4,7 +4,7 @@ import { liftTarget } from 'prosemirror-transform';
 
 import { isListItemNode, AbstractDocumentUpdate, NodeGroup } from 'common';
 
-import { fromOrToInListItem, getInsideListItemPositions } from './util';
+import { fromOrToInListItem, getListItemPositions } from './util';
 
 // ********************************************************************************
 // == Lift ========================================================================
@@ -30,9 +30,9 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 
     } /* else -- backspace / enter checks done */
 
-    const insideListItemPositions = getInsideListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
-    for(let i=0; i<insideListItemPositions.length; i++) {
-      const updatedTr = liftListItem(tr, insideListItemPositions[i]);
+    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
+    for(let i=0; i<listItemPositions.length; i++) {
+      const updatedTr = liftListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
       else { return false/*could not lift*/; }
     }
