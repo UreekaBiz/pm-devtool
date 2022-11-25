@@ -40,7 +40,7 @@ const sinkListItem = (tr: Transaction, listItemPos: number) => {
         listItem = tr.doc.nodeAt(mappedListItemPos);
   if(!listItem || !isListItemNode(listItem)) return false/*not a ListItem at the expected position */;
 
-  const listItemEndPos = listItemPos + listItem.nodeSize,
+  const listItemEndPos = mappedListItemPos + listItem.nodeSize,
         $listItemEndPos = tr.doc.resolve(listItemEndPos);
   const sinkBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
 
@@ -48,7 +48,7 @@ const sinkListItem = (tr: Transaction, listItemPos: number) => {
   if(!closestListObj) return false/*no list to take type from*/;
 
   tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
-  checkAndMergeListAtPos(tr, listItemPos);
+  checkAndMergeListAtPos(tr, mappedListItemPos);
 
   return tr/*modified*/;
 };

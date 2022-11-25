@@ -1,4 +1,4 @@
-import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { Node as ProseMirrorNode, NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
@@ -50,15 +50,16 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
         list = $listItemPos.node(-1/*ancestor*/);
   if(!listItem || !isListItemNode(listItem) || !list) return false/*cannot lift item, do not modify Transaction*/;
 
-  const liftedBlockRange = $listItemPos.blockRange(/*lift the whole ListItem*/);
-  if(!liftedBlockRange) return false/*no range to lift*/;
+  const listItemEndPos = mappedListItemPos + listItem.nodeSize,
+        $listItemEndPos = tr.doc.resolve(listItemEndPos);
+  const liftBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
 
-  const targetDepth = liftTarget(liftedBlockRange);
-  tr.lift(liftedBlockRange, targetDepth ? targetDepth : liftedBlockRange.depth - 1/*decrease depth*/);
+  const targetDepth = liftTarget(liftBlockRange);
+  tr.lift(liftBlockRange, targetDepth ? targetDepth : liftBlockRange.depth - 1/*decrease depth*/);
 
   // if the ListItem has depth 0 or its parent after lifting is not a List, delete the ListItem Range,
   // leaving only the content outside
-  const $liftedBlockRangeStart = tr.doc.resolve(tr.mapping.map(liftedBlockRange.start));
+  const $liftedBlockRangeStart = tr.doc.resolve(tr.mapping.map(liftBlockRange.start));
   if(!$liftedBlockRangeStart.depth || !$liftedBlockRangeStart.parent.type.spec.group?.includes(NodeGroup.LIST)) {
     const listItem = $liftedBlockRangeStart.nodeAfter;
     if(!listItem) return false/*ListItem does not exist anymore*/;
