@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode, NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isListItemNode, AbstractDocumentUpdate, NodeGroup } from 'common';
+import { isDocumentNode, isListItemNode, AbstractDocumentUpdate } from 'common';
 
 import { fromOrToInListItem, getListItemPositions } from './util';
 
@@ -57,10 +57,10 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   const targetDepth = liftTarget(liftBlockRange);
   tr.lift(liftBlockRange, targetDepth ? targetDepth : liftBlockRange.depth - 1/*decrease depth*/);
 
-  // if the ListItem has depth 0 or its parent after lifting is not a List, delete the ListItem Range,
+  // if the ListItem gets lifted to the Document level, delete the ListItem Range,
   // leaving only the content outside
   const $liftedBlockRangeStart = tr.doc.resolve(tr.mapping.map(liftBlockRange.start));
-  if(!$liftedBlockRangeStart.depth || !$liftedBlockRangeStart.parent.type.spec.group?.includes(NodeGroup.LIST)) {
+  if(isDocumentNode($liftedBlockRangeStart.parent)) {
     const listItem = $liftedBlockRangeStart.nodeAfter;
     if(!listItem) return false/*ListItem does not exist anymore*/;
     if(!tr.doc.type.contentMatch.defaultType) return false/*cannot insert a default NodeType at this position*/;
