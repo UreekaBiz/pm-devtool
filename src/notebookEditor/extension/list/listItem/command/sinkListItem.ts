@@ -22,9 +22,7 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
 
     const listItemPositions = getListItemPositions(editorState, { from, to });
     for(let i=0; i<listItemPositions.length; i++) {
-      const originalPosition = listItemPositions[i],
-            mappedPosition = tr.mapping.map(originalPosition);
-      const listItemPos = mappedPosition,
+      const listItemPos = tr.mapping.map(listItemPositions[i]),
             $listItemPos = tr.doc.resolve(listItemPos),
             listItem = tr.doc.nodeAt(listItemPos);
       if(!listItem || !isListItemNode(listItem)) continue/*not a ListItem at the expected position */;
