@@ -116,7 +116,7 @@ const listItemSet = new Set([NodeName.LIST_ITEM]);
 
           affectedListItem.descendants((descendant, descendantPos, parent) => {
             if(affectedListItem !== parent) return/*ignore Node*/;
-            if(descendant === parent.firstChild) return/*ignore Node*/;
+            if(parent !== affectedListItem || !descendant.isBlock || descendant === parent.firstChild) return/*ignore Node*/;
 
             const childPos = $affectedListItemPos.pos+1/*inside the ListItem*/ + descendantPos+1/*inside the descendant*/,
                   $childPos = tr.doc.resolve(childPos);
