@@ -53,7 +53,7 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   if(!liftedBlockRange) return false/*no range to lift*/;
 
   const targetDepth = liftTarget(liftedBlockRange);
-  tr.lift(liftedBlockRange, targetDepth ? targetDepth : liftedBlockRange.depth - 1);
+  tr.lift(liftedBlockRange, targetDepth ? targetDepth : liftedBlockRange.depth - 1/*decrease depth*/);
 
   // if the ListItem has depth 0 or its parent after lifting is not a List, delete the ListItem Range,
   // leaving only the content outside
