@@ -21,10 +21,10 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     const { empty, $from, from, to } = editorState.selection,
           originalFrom = from;
 
-    if(this.from === 'Backspace') {
+    if(this.from === 'Backspace' || this.from === 'Enter') {
       if(!empty) return false/*do not allow if Selection not empty when Back*/;
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
-    } /* else -- backspace checks done */
+    } /* else -- backspace / enter checks done */
 
     const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
     for(let i=0; i<listItemPositions.length; i++) {
