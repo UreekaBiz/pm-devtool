@@ -18,17 +18,17 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
-    const { empty, $from, from, to } = editorState.selection,
+    const { empty: initialStateSelectionEmpty, $from, from, to } = editorState.selection,
           originalFrom = from;
 
     if(this.from === 'Backspace' || this.from === 'Enter') {
-      if(!empty) return false/*do not allow if Selection not empty when Back*/;
+      if(!initialStateSelectionEmpty) return false/*do not allow if Selection not empty when Back*/;
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
     } /* else -- backspace / enter checks done */
 
     const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
     for(let i=0; i<listItemPositions.length; i++) {
-      const updatedTr = liftListItem(tr, listItemPositions[i]);
+      const updatedTr = liftListItem(tr, listItemPositions[i], initialStateSelectionEmpty);
       if(updatedTr) { tr = updatedTr; }
       else { return false/*could not lift*/; }
     }
@@ -42,7 +42,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 
 // perform the required modifications to a Transaction such that
 // the Item at the given position is lifted
-const liftListItem = (tr: Transaction, listItemPos: number) => {
+const liftListItem = (tr: Transaction, listItemPos: number, initialStateSelectionEmpty: boolean) => {
   const listItem = tr.doc.nodeAt(listItemPos-1/*the ListItem itself*/),
         $listItemPos = tr.doc.resolve(listItemPos),
         list = $listItemPos.node(-1/*ancestor*/);
@@ -52,7 +52,7 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   let liftedBlockRange: NodeRange | null = null/*default*/;
 
   let liftListItemChild = false/*default*/;
-  if($trFrom.parent === listItem.firstChild) {
+  if(($trFrom.parent === listItem.firstChild) || !initialStateSelectionEmpty) {
     liftedBlockRange = $listItemPos.blockRange(/*lift the whole ListItem*/);
   } else {
     liftListItemChild = true/*by definition*/;
