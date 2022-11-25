@@ -16,8 +16,8 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction) {
+    // -- Checks ------------------------------------------------------------------
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
-
     const { empty, $from, from, to } = editorState.selection;
 
     if(this.from === 'Backspace' || this.from === 'Enter') {
@@ -27,12 +27,12 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       if(this.from === 'Enter') {
         if($from.parent.textContent.length > 0/*not empty*/) return false/*only allow lift on Enter if parent is empty*/;
       } /* else -- do not check enter-specific case */
-
     } /* else -- backspace / enter checks done */
 
-    const insideListItemPositions = getListItemPositions(editorState, { from, to });
-    for(let i=0; i<insideListItemPositions.length; i++) {
-      const updatedTr = liftListItem(tr, insideListItemPositions[i]);
+    // -- Lift --------------------------------------------------------------------
+    const listItemPositions = getListItemPositions(editorState, { from, to });
+    for(let i=0; i<listItemPositions.length; i++) {
+      const updatedTr = liftListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
       else { return false/*could not lift*/; }
     }
@@ -42,7 +42,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // perform the required modifications to a Transaction such that
-// the Item at the given position is lifted
+// the ListItem at the given position is lifted
 const liftListItem = (tr: Transaction, listItemPos: number) => {
   const listItem = tr.doc.nodeAt(tr.mapping.map(listItemPos)),
         $listItemPos = tr.doc.resolve(listItemPos),

@@ -11,33 +11,43 @@ import { NodeRange } from 'prosemirror-model';
 export const sinkListItemCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SinkListItemDocumentUpdate(), state, dispatch);
 export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
+  public constructor() {/*nothing additional*/ }
 
   /** modify the given Transaction such that a ListItem augments its depth */
   public update(editorState: EditorState, tr: Transaction) {
+    // -- Checks ------------------------------------------------------------------
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
     const { empty, $from, from, to } = editorState.selection;
-    if(empty && from !== $from.before()+1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
+    if(empty && from !== $from.before() + 1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
 
+    // -- Sink --------------------------------------------------------------------
     const listItemPositions = getListItemPositions(editorState, { from, to });
-    for(let i=0; i<listItemPositions.length; i++) {
-      const listItemPos = tr.mapping.map(listItemPositions[i]),
-            $listItemPos = tr.doc.resolve(listItemPos),
-            listItem = tr.doc.nodeAt(listItemPos);
-      if(!listItem || !isListItemNode(listItem)) continue/*not a ListItem at the expected position */;
-
-      const listItemEndPos = listItemPos + listItem.nodeSize,
-            $listItemEndPos = tr.doc.resolve(listItemEndPos);
-      const sinkBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
-
-      const closestListObj = findParentNodeClosestToPos($listItemPos, isListNode);
-      if(!closestListObj) continue/*no list to take type from*/;
-
-      tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
-      checkAndMergeListAtPos(tr, listItemPos);
+    for(let i = 0; i < listItemPositions.length; i++) {
+      const updatedTr = sinkListItem(tr, listItemPositions[i]);
+      if(updatedTr) { tr = updatedTr; }
+      else { return false/*could not sink*/; }
     }
-
     return tr/*updated*/;
   }
 }
+
+// perform the required modifications to a Transaction such that
+// the ListItem at the given position increases its depth
+const sinkListItem = (tr: Transaction, listItemPos: number) => {
+  const $listItemPos = tr.doc.resolve(tr.mapping.map(listItemPos)),
+        listItem = tr.doc.nodeAt(listItemPos);
+  if(!listItem || !isListItemNode(listItem)) return false/*not a ListItem at the expected position */;
+
+  const listItemEndPos = listItemPos + listItem.nodeSize,
+        $listItemEndPos = tr.doc.resolve(listItemEndPos);
+  const sinkBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
+
+  const closestListObj = findParentNodeClosestToPos($listItemPos, isListNode);
+  if(!closestListObj) return false/*no list to take type from*/;
+
+  tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
+  checkAndMergeListAtPos(tr, listItemPos);
+
+  return tr/*modified*/;
+};
