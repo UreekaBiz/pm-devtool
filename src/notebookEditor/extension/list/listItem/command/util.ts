@@ -1,8 +1,7 @@
-import { NodeRange } from 'prosemirror-model';
 import { EditorState, Selection, Transaction } from 'prosemirror-state';
-import { canJoin, findWrapping, liftTarget } from 'prosemirror-transform';
+import { canJoin } from 'prosemirror-transform';
 
-import { combineTransactionSteps, getTransformChangedRanges, isListItemNode, NodePosition, SelectionRange } from 'common';
+import { isListItemNode, SelectionRange } from 'common';
 
 // == Util ========================================================================
 /** get the position inside each ListItem present in the given Range */
@@ -86,51 +85,4 @@ export const checkAndMergeListAtPos = (tr: Transaction, posToCheck: number) => {
   } /* else -- no nodeBeforeResolvedPosAfter, no nodeAfterResolvedPosAfter, different types or cannot join */
 
   return checkedAndMergedList;
-};
-
-/**
- * prevent any ListItems that were changed by a set of Transactions
- * from being loose (i.e. not inside a List)
- */
- export const checkAndLiftChangedLists = (transactions: readonly Transaction[], oldState: EditorState, tr: Transaction) => {
-  let wereListsLifted = false/*default*/;
-
-  const transform = combineTransactionSteps(oldState.doc, [...transactions]),
-        changes = getTransformChangedRanges(transform);
-  const finalRange = changes.reduce<{ from: number; to: number; }>((finalRange, changedRange) => {
-    const { newRange } = changedRange;
-    return { from: Math.max(finalRange.from, newRange.from), to: Math.min(finalRange.to, newRange.to) };
-  }, { from: 0/*start of doc*/, to: tr.doc.nodeSize });
-
-  const listItemNodePositions: NodePosition[] = [/*default empty*/];
-  tr.doc.nodesBetween(finalRange.from, finalRange.to, (node, pos) => {
-    if(!isListItemNode(node)) return/*ignore*/;
-    listItemNodePositions.push({ node, position: pos });
-  });
-
-  for(let i=0; i<listItemNodePositions.length; i++) {
-    const { position } = listItemNodePositions[i],
-          listItemMappedPosition = tr.mapping.map(position),
-          listItem = tr.doc.nodeAt(listItemMappedPosition);
-    if(!listItem || isListItemNode(listItem)) continue/*ignore*/;
-
-    listItem.descendants((descendant, descendantPos, parent) => {
-      if(parent !== listItem || !descendant.isBlock || descendant === parent.firstChild) return/*ignore Node*/;
-      const childPos = tr.mapping.map(listItemMappedPosition+1/*inside the ListItem*/) + tr.mapping.map(descendantPos)+1/*inside the descendant*/,
-            $childPos = tr.doc.resolve(childPos);
-
-      const blockRange = $childPos.blockRange(),
-            wrapping = blockRange && findWrapping(blockRange, listItem.type);
-      if(!wrapping) return/*no wrapping possible, do nothing*/;
-
-      tr.wrap(blockRange, wrapping);
-      const updatedRange = new NodeRange(tr.doc.resolve(blockRange.$from.pos), tr.doc.resolve(blockRange.$to.pos), blockRange.depth),
-            liftTargetDepth = liftTarget(updatedRange);
-
-      liftTargetDepth && tr.lift(updatedRange, liftTargetDepth);
-      wereListsLifted = true/*lifted*/;
-    });
-  }
-
-  return wereListsLifted;
 };

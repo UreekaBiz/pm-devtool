@@ -2,7 +2,7 @@ import { Plugin } from 'prosemirror-state';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
-import { checkAndLiftChangedLists, checkAndMergeListAtPos } from './command';
+import { checkAndMergeListAtPos } from './command';
 
 // ********************************************************************************
 // == Plugin ======================================================================
@@ -19,9 +19,7 @@ export const listItemPlugin = () => new Plugin<NoPluginState>({
     if(!wereListsMerged) {
       wereListsMerged = checkAndMergeListAtPos(tr, tr.selection.$from.after(1/*direct child of Doc depth*/));
     } /* else -- already merged */
-    const wereListsLifted = checkAndLiftChangedLists(transactions, oldState, tr);
-
-    if(wereListsMerged || wereListsLifted) {
+    if(wereListsMerged) {
       return tr/*modified*/;
     } /* else -- no Lists were merged */
 
