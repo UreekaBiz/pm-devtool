@@ -22,7 +22,7 @@ export const OrderedListNodeSpec: Readonly<NodeSpec> = {
   name: NodeName.ORDERED_LIST/*expected and guaranteed to be unique*/,
 
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
-  content: `(${NodeName.ORDERED_LIST} | ${NodeName.BULLET_LIST} | ${NodeName.LIST_ITEM}|)+`,
+  content: `(${NodeName.ORDERED_LIST} | ${NodeName.BULLET_LIST} | ${NodeName.LIST_ITEM})+`,
 
   attrs: OrderedListAttributeSpec,
 };
