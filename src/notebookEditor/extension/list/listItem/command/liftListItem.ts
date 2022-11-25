@@ -4,7 +4,7 @@ import { liftTarget } from 'prosemirror-transform';
 
 import { isListItemNode, AbstractDocumentUpdate, NodeGroup } from 'common';
 
-import { fromOrToInListItem, getListItemPositions } from './util';
+import { fromOrToInListItem, getInsideListItemPositions } from './util';
 
 // ********************************************************************************
 // == Lift ========================================================================
@@ -30,9 +30,9 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 
     } /* else -- backspace / enter checks done */
 
-    const listItemPositions = getListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
-    for(let i=0; i<listItemPositions.length; i++) {
-      const updatedTr = liftListItem(tr, listItemPositions[i]);
+    const insideListItemPositions = getInsideListItemPositions(editorState, { from, to }).reverse(/*from deepest to most shallow*/);
+    for(let i=0; i<insideListItemPositions.length; i++) {
+      const updatedTr = liftListItem(tr, insideListItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
       else { return false/*could not lift*/; }
     }
@@ -44,7 +44,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 // perform the required modifications to a Transaction such that
 // the Item at the given position is lifted
 const liftListItem = (tr: Transaction, listItemPos: number) => {
-  const listItem = tr.doc.nodeAt(listItemPos),
+  const listItem = tr.doc.nodeAt(listItemPos-1/*the ListItem itself*/),
         $listItemPos = tr.doc.resolve(listItemPos),
         list = $listItemPos.node(-1/*ancestor*/);
   if(!listItem || !isListItemNode(listItem) || !list) return false/*cannot lift item, do not modify Transaction*/;
