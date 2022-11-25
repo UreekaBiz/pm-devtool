@@ -88,7 +88,9 @@ export const checkAndMergeListAtPos = (tr: Transaction, posToCheck: number) => {
   return checkedAndMergedList;
 };
 
+/** a set containing the ListItem type name, used by the function below*/
 const listItemSet = new Set([NodeName.LIST_ITEM]);
+
 /**
  * prevent any ListItems that were changed by a set of Transactions
  * from being loose (i.e. not inside a List)
