@@ -26,7 +26,7 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
     for(let i = 0; i < listItemPositions.length; i++) {
       const updatedTr = sinkListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
-      else { return false/*could not sink*/; }
+      else { return false/*could not sink at least one of the listItems*/; }
     }
     return tr/*updated*/;
   }
