@@ -30,7 +30,7 @@ export class SplitListItemKeepMarksDocumentUpdate implements AbstractDocumentUpd
     } /* else -- parent of from is has content, split */
 
     tr.delete($from.pos, $to.pos);
-    const { attrs: listItemAttrs } = $from.node(-1/*grandParent listItem*/);
+    const { attrs: listItemAttrs } = $from.node(-1/*grandParent ListItem*/);
     tr.split($from.pos, 2/*maintain current child of ListItem (e.g. a Paragraph), and the ListItem type after split*/, [ { type: listItemType, attrs: listItemAttrs } ]).scrollIntoView();
 
     const marks = editorState.storedMarks || (editorState.selection.$to.parentOffset && editorState.selection.$from.marks());
