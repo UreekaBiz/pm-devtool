@@ -98,15 +98,14 @@ const listItemSet = new Set([NodeName.LIST_ITEM]);
  export const checkAndLiftChangedLists = (transactions: readonly Transaction[], oldState: EditorState, tr: Transaction) => {
   let wereListsLifted = false/*default*/;
 
-  // NOTE: this Transaction has to step through all stepMaps without leaving
-  //       early since any of them can leave a Block Node loose within a List
-  //       Set empty, and none should be missed
   for(let i = 0; i < transactions.length; i++) {
-    const { maps } = transactions[i].mapping;
+    if(wereListsLifted) return wereListsLifted/*no need to keep checking*/;
 
     // iterate over all maps in the Transaction
+    const { maps } = transactions[i].mapping;
     for(let stepMapIndex = 0; stepMapIndex < maps.length; stepMapIndex++) {
-      // (SEE: NOTE above)
+      if(wereListsLifted) return wereListsLifted/*no need to keep checking*/;
+
       maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
         const { newNodePositions } = getNodesAffectedByStepMap(transactions[i], stepMapIndex, unmappedOldStart, unmappedOldEnd, listItemSet);
 
@@ -115,7 +114,6 @@ const listItemSet = new Set([NodeName.LIST_ITEM]);
                 $affectedListItemPos = tr.doc.resolve(newNodePositions[newNPIndex].position);
 
           affectedListItem.descendants((descendant, descendantPos, parent) => {
-            if(affectedListItem !== parent) return/*ignore Node*/;
             if(parent !== affectedListItem || !descendant.isBlock || descendant === parent.firstChild) return/*ignore Node*/;
 
             const childPos = $affectedListItemPos.pos+1/*inside the ListItem*/ + descendantPos+1/*inside the descendant*/,
