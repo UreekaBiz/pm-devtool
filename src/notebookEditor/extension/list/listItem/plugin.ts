@@ -12,6 +12,7 @@ export const listItemPlugin = () => new Plugin<NoPluginState>({
   // (SEE: checkAndMergeList), prevent any ListItems from
   // being loose within a List (SEE: checkAndLiftChangedLists)
   appendTransaction(transactions, oldState, newState) {
+    if(oldState.doc === newState.doc) return/*no changes*/;
     const { tr } = newState;
 
     let wereListsMerged = checkAndMergeListAtPos(tr, tr.selection.$from.before(1/*direct child of Doc depth*/));
