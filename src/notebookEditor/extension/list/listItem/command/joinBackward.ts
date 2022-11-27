@@ -9,10 +9,11 @@ import { applyDocumentUpdates } from 'notebookEditor/command/update';
 // NOTE: this is a regular function since it calls applyDocumentUpdates
 export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
   const { doc, selection } = editor.view.state,
-        { empty, $from, from } = selection;
+        { empty, $from, from } = selection,
+        { parent } = $from;
 
   if(!empty) return false/*do not allow if Selection is not empty*/;
-  if(!$from.parent.isTextblock) return false/*parent is not a TextBlock, nothing to do*/;
+  if(!parent.isTextblock) return false/*parent is not a TextBlock, nothing to do*/;
   if($from.before()+1/*inside the TextBlock*/ !== from) return false/*Selection is not at the start of the parent TextBlock*/;
 
   const parentIndex =  $from.index(0/*direct Doc depth*/),
@@ -22,8 +23,14 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
   const previousChild = doc.child(previousChildIndex);
   if(!isListNode(previousChild)) return false/*no List to join into*/;
 
-  let lastChildOfListPos = 0/*default*/;
-  previousChild.descendants((node, pos) => { lastChildOfListPos = (pos+1/*inside the Node*/) + node.nodeSize; });
+  let lastChildOfList = doc/*default*/,
+      lastChildOfListPos = 0/*default*/;
+  previousChild.descendants((node, pos) => {
+    lastChildOfList = node;
+    lastChildOfListPos = (pos+1/*inside the Node*/) + node.nodeSize;
+  });
+
+  if(!(parent.type === lastChildOfList.type)) return false/*Node cannot be joined*/;
 
   let updatedState = editor.view.state,
       updatedTr: Transaction | false = editor.view.state.tr;
