@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-import { setTextSelectionCommand } from 'common';
+import { getEndOfDocPosition, setTextSelectionCommand } from 'common';
 
 import { EditorContent } from 'notebookEditor/editor/component/EditorContent';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
@@ -56,8 +56,9 @@ export const Editor: React.FC<Props> = () => {
     if(!(event.target instanceof HTMLDivElement)) return/*(SEE: NOTE above)*/;
     if(editor.view.hasFocus()) return/*already focused*/;
 
-    editor.executeCommand(setTextSelectionCommand({ from: editor.endOfDocPos, to: editor.endOfDocPos }));
-    editor.focusView();
+    const endOfDocPos = getEndOfDocPosition(editor.view.state.doc);
+    setTextSelectionCommand({ from: endOfDocPos, to: endOfDocPos })(editor.view.state, editor.view.dispatch);
+    editor.view.focus();
   };
 
   // -- UI ------------------------------------------------------------------------

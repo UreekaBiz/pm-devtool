@@ -1,5 +1,5 @@
 import { Schema } from 'prosemirror-model';
-import { Command, EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, DirectEditorProps, NodeViewConstructor } from 'prosemirror-view';
 
 import { NodeName, MarkName } from 'common';
@@ -131,9 +131,8 @@ export class Editor {
     this.view = new EditorView(root, props);
     this.viewMounted = true/*by definition*/;
 
-    // FIXME: is this needed? It seems that be up to the caller to focus the view
-    //        after it's being mounted
-    setTimeout(() => this.focusView()/*after rendering*/);
+    // focus the View for the firs time
+    setTimeout(() => this.view.focus()/*after rendering*/);
   }
 
   /** called when there is a new Transaction to be dispatched on the view. It
@@ -210,35 +209,11 @@ export class Editor {
     return nodeViewsDefinition;
   }
 
-  // FIXME: remove. this won't be needed anymore
-  // -- Command -------------------------------------------------------------------
-  /**
-   * execute the given {@link Command} with the current View's state
-   * and dispatch functions
-   */
-  public executeCommand(command: Command) {
-    command(this.view.state, this.view.dispatch);
-  }
-
-  // FIXME: this seems to be more like an utility function for the Document rather
-  //       than a method of the Editor class. It should be moved somewhere else
-  // -- Selection -----------------------------------------------------------------
-  /** return the position at the end of the View's Document */
-  public get endOfDocPos() {
-    return this.view.state.doc.nodeSize - 2/*account for start and end of Doc*/;
-  }
-
   // -- Util ----------------------------------------------------------------------
   // .. View ......................................................................
   /** query whether the Editor's {@link EditorView} is mounted */
   public isViewMounted() {
     return this.viewMounted;
-  }
-
-  // FIXME: remove. this will be a command.
-  /** focus the View */
-  public focusView() {
-    this.view.focus();
   }
 
   /** query whether or not the Editor's {@link EditorView} can be edited */

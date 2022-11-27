@@ -3,7 +3,6 @@ import { isCodeBlockJSONNode } from '../extension/codeBlock';
 import { HeadingLevel, isHeadingJSONNode } from '../extension/heading';
 import { JSONNode, NodeIdentifier, NodeName } from '../node';
 
-// FIXME: Find a better approach to shared this with the notebookEditor itself.
 // ********************************************************************************
 // == Constants ===================================================================
 export const codeBlockLevel = Number.MAX_SAFE_INTEGER;
@@ -66,7 +65,6 @@ export const computeState = (doc: JSONNode): RendererState => {
   return rendererState;
 };
 
-// FIXME: Find a home for this function
 // ********************************************************************************
 // the visual identifier for a Code Block is based on the Headings that are before
 // it. Its goal is to provide a research paper-like numbering (e.g. 2.5.1) of

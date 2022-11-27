@@ -10,7 +10,7 @@ import { CustomSelector, DefaultTheme, Theme, ThemeElement } from './type';
 // == Class =======================================================================
 // A singleton that holds the Themes used on the Editor
 class NotebookEditorTheme {
-  /*FIXME: explicit*/ theme: Theme;
+  theme: Theme;
 
   // == Constructor ===============================================================
   constructor(theme: Theme) {

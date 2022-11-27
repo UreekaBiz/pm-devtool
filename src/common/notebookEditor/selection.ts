@@ -48,6 +48,9 @@ export const isGapCursorSelection = (selection: Selection) => selection.toJSON()
   return selectedNode;
 };
 
+export const getEndOfDocPosition = (doc: ProseMirrorNode) =>
+  doc.nodeSize - 2/*account for start and end of Doc*/;
+
 /** Gets all the ascendants of the current selected Node */
  export const getAllAscendantsFromSelection = (state: EditorState): (ProseMirrorNode | null | undefined)[] => {
   const { selection } = state;

@@ -1,13 +1,15 @@
+import { MarkName, NodeName } from 'common';
+
+import { ExtensionName, ExtensionPriority } from 'notebookEditor/model';
+
 import { ExtensionDefinition, ExtensionStorageType } from './type';
 
 // ********************************************************************************
 // == Class =======================================================================
 export class Extension {
   // -- Attribute -----------------------------------------------------------------
-  // FIXME: make it a MarkName | NodeName | ExtensionName?
-  public name: string;
-  // FIXME: make it an Enum?
-  public priority: number;
+  public name: ExtensionName | NodeName | MarkName;
+  public priority: ExtensionPriority;
   public storage: ExtensionStorageType;
   public definition: ExtensionDefinition;
 

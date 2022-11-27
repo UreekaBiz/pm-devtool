@@ -1,7 +1,9 @@
 import { Plugin as ProseMirrorPlugin, Transaction } from 'prosemirror-state';
 
+import { MarkName, NodeName } from 'common';
+
 import { Editor } from 'notebookEditor/editor/Editor';
-import { NodeViewStorage, DialogStorage } from 'notebookEditor/model';
+import { NodeViewStorage, DialogStorage, ExtensionPriority, ExtensionName } from 'notebookEditor/model';
 import { InputRule } from 'notebookEditor/plugin/inputRule/InputRule';
 import { PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
@@ -18,8 +20,8 @@ export type TransactionListenerType = (editor: Editor, tr: Transaction) => void;
 
 // == Interface ===================================================================
 export interface ExtensionDefinition {
-  name: string;
-  priority: number;
+  name: ExtensionName | NodeName | MarkName;
+  priority: ExtensionPriority;
 
   /** the Storage used by the Extension */
   addStorage?: () => ExtensionStorageType;
