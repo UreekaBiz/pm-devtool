@@ -1,6 +1,7 @@
 import { keymap } from 'prosemirror-keymap';
+import { chainCommands, deleteSelection, joinBackward, joinForward, liftEmptyBlock, selectNodeBackward, selectNodeForward } from 'prosemirror-commands';
 
-import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockKeepMarksCommand } from 'common';
+import { splitBlockKeepMarksCommand } from 'common';
 
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model';
 import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule/command';
@@ -27,11 +28,11 @@ export const BasicKeymap = new Extension({
   addProseMirrorPlugins: () => [
     basicKeymapPlugin(),
     keymap({
-      'Enter': chainCommands(liftEmptyBlockNodeCommand, splitBlockKeepMarksCommand),
-      'Backspace': chainCommands(undoInputRuleCommand, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),
-      'Mod-Backspace': chainCommands(deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),
-      'Delete': chainCommands(deleteSelectionCommand, joinForwardCommand, selectNodeForwardCommand),
-      'Mod-Delete': chainCommands(deleteSelectionCommand, joinForwardCommand, selectNodeForwardCommand),
+      'Enter': chainCommands(liftEmptyBlock, splitBlockKeepMarksCommand),
+      'Backspace': chainCommands(undoInputRuleCommand, deleteSelection, joinBackward, selectNodeBackward),
+      'Mod-Backspace': chainCommands(deleteSelection, joinBackward, selectNodeBackward),
+      'Delete': chainCommands(deleteSelection, joinForward, selectNodeForward),
+      'Mod-Delete': chainCommands(deleteSelection, joinForward, selectNodeForward),
     }),
   ],
 });

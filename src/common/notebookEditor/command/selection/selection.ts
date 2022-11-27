@@ -1,12 +1,10 @@
-import { Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
+import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
 
 import { minFromMax } from '../../../util';
 import { NodeName } from '../../node';
 import { getBlockNodeRange } from '../../selection';
 import { AbstractDocumentUpdate } from '../type';
-import { findCutAfter, findCutBefore } from '../util';
 
 // ********************************************************************************
 // == Type ========================================================================
@@ -124,102 +122,6 @@ export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpd
     if(tr.selection.from === from && tr.selection.to === to) return false/*already selected all inside this Block*/;
 
     tr.setSelection(TextSelection.create(tr.doc, from, to));
-    return tr/*updated*/;
-  }
-}
-
-// ................................................................................
-// delete the Selection, if there is one
-export const deleteSelectionCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new DeleteSelectionDocumentUpdate(), state, dispatch);
-export class DeleteSelectionDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/ }
-
-  /*
-   * modify the given Transaction such that the Selection
-   * is deleted if it is not empty and return it
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    if(editorState.selection.empty) return false;
-    tr.deleteSelection().scrollIntoView();
-    return tr;
-  }
-}
-
-// ................................................................................
-/**
- * When the Selection is empty and at the start of a Text Block, select
- * the Node before that Text Block if possible
- */
-export const selectNodeBackwardCommand: Command = (state, dispatch, view) =>
-  AbstractDocumentUpdate.execute(new SelectNodeBackwardDocumentUpdate(), state, dispatch, view);
-export class SelectNodeBackwardDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/ }
-
-  // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L155
-  /*
-   * modify the given Transaction such that when the Selection is at
-   * the start of a Text Block, the Node before it is selected
-   */
-  public update(editorState: EditorState, tr: Transaction, view?: EditorView) {
-    const { $head, empty } = editorState.selection;
-    let $cutPos: ResolvedPos | null = $head/*default*/;
-    if(!empty) return false;
-
-    if($head.parent.isTextblock) {
-      if(view) {
-        const wouldLeaveBlockIfBackward = view.endOfTextblock('backward', editorState);
-        if(!wouldLeaveBlockIfBackward || $head.parentOffset > 0/*inside the parent*/) {
-          return false;
-        } /* else -- would leave the parent Text Block if Cursor goes backward, or the Cursor is at the start of the parent TextBlock*/
-      } /* else -- View was not given */
-
-      $cutPos = findCutBefore($head);
-    } /* else -- parent of $head is not a Text Block*/
-
-    const nodeBeforeCut = $cutPos && $cutPos.nodeBefore;
-    if(!nodeBeforeCut || !NodeSelection.isSelectable(nodeBeforeCut) || !$cutPos) return false;
-
-    tr.setSelection(NodeSelection.create(editorState.doc, $cutPos.pos - nodeBeforeCut.nodeSize)).scrollIntoView();
-    return tr/*updated*/;
-  }
-}
-
-/**
- * When the Selection is empty and at the end of a TextBlock, select
- * the Node coming after that TextBlock, if possible
- */
-export const selectNodeForwardCommand: Command = (state, dispatch, view) =>
-  AbstractDocumentUpdate.execute(new SelectNodeForwardDocumentUpdate(), state, dispatch, view);
-export class SelectNodeForwardDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/ }
-
-  // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L155
-  /*
-   * modify the given Transaction such that when the Selection is at
-   * the end of a Text Block, the Node after it is selected
-   */
-  public update(editorState: EditorState, tr: Transaction, view?: EditorView) {
-    const { $head, empty } = editorState.selection;
-    if(!empty) return false/*do not allow*/;
-
-    let $cut: ResolvedPos | null = $head/*default*/;
-
-    if($head.parent.isTextblock) {
-      if(view) {
-        const wouldLeaveBlockIfForward = view.endOfTextblock('forward', editorState);
-        if(!wouldLeaveBlockIfForward || $head.parentOffset < $head.parent.content.size) {
-          return false;
-        } /* else -- would leave the parent Text Block if Cursor goes forward, or the Cursor is past the end of the parent TextBlock*/
-      } /* else -- View not given */
-
-      $cut = findCutAfter($head);
-    } /* else -- $head's parent is not a TextBlock */
-
-    const nodeAfterCut = $cut && $cut.nodeAfter;
-    if(!nodeAfterCut || !NodeSelection.isSelectable(nodeAfterCut)) return false;
-
-    tr.setSelection(NodeSelection.create(editorState.doc, $cut!.pos)).scrollIntoView();
     return tr/*updated*/;
   }
 }
