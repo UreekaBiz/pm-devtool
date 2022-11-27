@@ -8,7 +8,7 @@ import { objectIncludes, Attributes, MarkName, NodeName, MarkRange } from 'commo
  * get the {@link Attributes} of the {@link ProseMirrorNode} at the Selection
  * if it is present
  */
-export const getNodeAttributesFromView = (state: EditorState, nodeName: NodeName) => {
+export const getNodeAttributesFromState = (state: EditorState, nodeName: NodeName) => {
   const { from, to } = state.selection,
         nodes: ProseMirrorNode[] = [/*default empty*/];
   state.doc.nodesBetween(from, to, (node) => { nodes.push(node); });
@@ -53,7 +53,7 @@ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes:
  * get the {@link Attributes} of the {@link ProseMirrorMark} at the Selection
  * if it is present
  */
- export const getMarkAttributesFromView = (state: EditorState, markName: MarkName) => {
+ export const getMarkAttributesFromState = (state: EditorState, markName: MarkName) => {
   const { from, to, empty } = state.selection,
         marks: ProseMirrorMark[] = [/*default empty*/];
 

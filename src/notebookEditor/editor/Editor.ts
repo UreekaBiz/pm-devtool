@@ -14,7 +14,7 @@ import { InputRule, inputRulesPlugin } from 'notebookEditor/plugin/inputRule/Inp
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
 import { EditorContentProps, EditorContentState } from './component/EditorContent';
-import { getMarkAttributesFromView, getNodeAttributesFromView, isMarkActive, isNodeActive } from './util';
+import { getMarkAttributesFromState, getNodeAttributesFromState, isMarkActive, isNodeActive } from './util';
 
 // ********************************************************************************
 // == Class =======================================================================
@@ -231,11 +231,11 @@ export class Editor {
    */
   public getAttributes(name: string) {
     if(Object.values(NodeName).includes(name as NodeName/*check*/)) {
-      return getNodeAttributesFromView(this.view.state, name as NodeName/*guaranteed by check*/);
+      return getNodeAttributesFromState(this.view.state, name as NodeName/*guaranteed by check*/);
     } /* else -- not a Node */
 
     if(Object.values(MarkName).includes(name as MarkName/*check*/)) {
-      getMarkAttributesFromView(this.view.state, name as MarkName/*guaranteed by check*/);
+      getMarkAttributesFromState(this.view.state, name as MarkName/*guaranteed by check*/);
     } /* else -- not a Node or a Mark*/
 
     return {/*default no attributes*/};
