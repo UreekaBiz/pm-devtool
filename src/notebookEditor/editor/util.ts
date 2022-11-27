@@ -120,10 +120,10 @@ export const isMarkActive = (state: EditorState, markName: MarkName, attributes:
     .reduce((sum, markRange) => sum + markRange.to - markRange.from, 0/*initial*/);
 
   // only include excludedRange if there was a match
-  let range = matchedMarkRange/*default*/;
+  let finalRange = matchedMarkRange/*default*/;
   if(matchedMarkRange > 0) {
-    range += excludedRange;
+    finalRange += excludedRange;
   } /* else -- there was no match */
 
-  return range >= selectionRange;
+  return finalRange >= selectionRange;
 };
