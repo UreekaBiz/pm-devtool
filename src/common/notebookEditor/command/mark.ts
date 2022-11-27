@@ -2,7 +2,7 @@ import { MarkType } from 'prosemirror-model';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { Attributes } from '../attribute';
-import { getMarkAttributes, getMarkRange, markApplies, MarkName } from '../mark';
+import { getMarkAttributes, getRangeCoveredByMark, doesMarkApplyToRanges, MarkName } from '../mark';
 import { AbstractDocumentUpdate } from './type';
 
 // ********************************************************************************
@@ -69,18 +69,18 @@ export class UnsetMarkDocumentUpdate implements AbstractDocumentUpdate {
    * is true, they will be removed even across (i.e. past) it
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { selection } = editorState;
+    const { selection } = editorState,
+          { $from, empty, ranges } = selection;
     const markType = editorState.schema.marks[this.markName];
-    const { $from, empty, ranges } = selection;
 
     if(empty && this.extendEmptyMarkRange) {
       let { from, to } = selection;
-      const attrs = $from.marks().find(mark => mark.type === markType)?.attrs;
-      const range = getMarkRange($from, markType, attrs);
+      const markAttrs = $from.marks().find(mark => mark.type === markType)?.attrs,
+            markRange = getRangeCoveredByMark($from, markType, markAttrs);
 
-      if(range) {
-        from = range.from;
-        to = range.to;
+      if(markRange) {
+        from = markRange.from;
+        to = markRange.to;
       } /* else -- use Selection from and to */
 
       tr.removeMark(from, to, markType);
@@ -107,7 +107,7 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
    */
   public update(editorState: EditorState, tr: Transaction) {
     const { empty, $cursor, ranges } = editorState.selection as TextSelection;
-    if((empty && !$cursor) || !markApplies(editorState.doc, ranges, this.markType)) return false/*invalid state to toggle Mark*/;
+    if((empty && !$cursor) || !doesMarkApplyToRanges(editorState.doc, ranges, this.markType)) return false/*invalid state to toggle Mark*/;
 
     if($cursor) {
       if(this.markType.isInSet(editorState.storedMarks || $cursor.marks())) { tr.removeStoredMark(this.markType); }
@@ -182,9 +182,9 @@ export class ExtendMarkRangeDocumentUpdate implements AbstractDocumentUpdate {
     const { $from, from, to } = selection;
 
     // expand the current Selection if need be
-    const range = getMarkRange($from, markType, this.attributes);
-    if(range && range.from <= from && range.to >= to) {
-      const newSelection = TextSelection.create(doc, range.from, range.to);
+    const markRange = getRangeCoveredByMark($from, markType, this.attributes);
+    if(markRange && markRange.from <= from && markRange.to >= to) {
+      const newSelection = TextSelection.create(doc, markRange.from, markRange.to);
       tr.setSelection(newSelection);
     } /* else -- no need to expand the Selection */
 

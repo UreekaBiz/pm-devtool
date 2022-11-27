@@ -1,6 +1,6 @@
 import { MarkType } from 'prosemirror-model';
 
-import { getMarksBetween } from 'common';
+import { getMarksInRange } from 'common';
 
 import { PasteRule, PasteRuleMatcher } from './PasteRule';
 
@@ -18,15 +18,15 @@ export const createMarkPasteRule = (matcher: PasteRuleMatcher, markType: MarkTyp
     const attributes = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
 
     const { tr } = state;
-    const captureGroup = match[match.length - 1];
-    const fullMatch = match[0/*matched Text*/];
+    const captureGroup = match[match.length - 1],
+          fullMatch = match[0/*matched Text*/];
 
     if(captureGroup) {
-      const startSpaces = fullMatch.search(/\S/);
-      const textStart = start + fullMatch.indexOf(captureGroup);
-      const textEnd = textStart + captureGroup.length;
+      const startSpaces = fullMatch.search(/\S/),
+            textStart = start + fullMatch.indexOf(captureGroup),
+            textEnd = textStart + captureGroup.length;
 
-      const excludedMarks = getMarksBetween(start, end, state.doc).filter(item => {
+      const excludedMarks = getMarksInRange(state.doc, { from: start, to: end }).filter(item => {
         // NOTE: this property does exist on the MarkType
         // @ts-ignore
         const excluded = item.mark.type.excluded as MarkType[];
