@@ -1,4 +1,4 @@
-import { Node as ProseMirrorNode, NodeRange } from 'prosemirror-model';
+import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
@@ -31,11 +31,27 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     } /* else -- backspace / enter checks done */
 
     // -- Lift --------------------------------------------------------------------
-    const listItemPositions = getListItemPositions(doc, { from, to });
+    let listItemPositions = getListItemPositions(doc, { from, to });
     for(let i=0; i<listItemPositions.length; i++) {
       const updatedTr = liftListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
       else { return false/*could not lift at least one of the listItems*/; }
+    }
+
+    // check if any ListItems are direct children of the Doc and if they are
+    // lift their contents again
+    const newListItemPositions = getListItemPositions(doc, { from, to });
+    for(let i=0; i<newListItemPositions.length; i++) {
+      const insidePos = newListItemPositions[i]+2/*inside the ListItem, inside its firstChild*/,
+            mappedInsidePos = tr.mapping.map(insidePos),
+            $mappedInsidePos = tr.doc.resolve(mappedInsidePos);
+      const greatGrandParent = $mappedInsidePos.node(-2/*greatGrandParent depth*/);
+      if(!greatGrandParent || !isDocumentNode(greatGrandParent)) continue/*Doc is not greatGrandParent*/;
+
+      const blockRange = $mappedInsidePos.blockRange();
+      if(!blockRange) continue/*no range to lift again*/;
+
+      tr.lift(blockRange, 0/*lift to be direct children of the Doc*/);
     }
 
     return tr/*updated*/;
@@ -57,22 +73,6 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
 
   const targetDepth = liftTarget(liftBlockRange);
   tr.lift(liftBlockRange, targetDepth ? targetDepth : liftBlockRange.depth - 1/*decrease depth*/);
-
-  // if the ListItem gets lifted to the Document level, delete the ListItem Range,
-  // leaving only the content outside
-  const $liftedBlockRangeStart = tr.doc.resolve(tr.mapping.map(liftBlockRange.start));
-  if(isDocumentNode($liftedBlockRangeStart.parent)) {
-    const listItem = $liftedBlockRangeStart.nodeAfter;
-    if(!listItem) return false/*ListItem does not exist anymore*/;
-    if(!tr.doc.type.contentMatch.defaultType) return false/*cannot insert a default NodeType at this position*/;
-
-    const listItemLiftedContent: ProseMirrorNode[] = [/*initially empty*/];
-    for(let i=0; i<listItem.childCount; i++) {
-      listItemLiftedContent.push(listItem.child(i));
-    }
-
-    tr.replaceWith($liftedBlockRangeStart.pos, $liftedBlockRangeStart.pos + listItem.nodeSize, listItemLiftedContent);
-  } /* else -- depth is defined or parent of range start is of type List */
 
   return tr;
 };
