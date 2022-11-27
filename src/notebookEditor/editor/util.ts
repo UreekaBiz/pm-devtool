@@ -9,12 +9,11 @@ import { objectIncludes, Attributes, MarkName, NodeName, MarkRange } from 'commo
  * if it is present
  */
 export const getNodeAttributesFromView = (state: EditorState, nodeName: NodeName) => {
-  const nodes: ProseMirrorNode[] = [/*default empty*/];
-
-  const { from, to } = state.selection;
+  const { from, to } = state.selection,
+        nodes: ProseMirrorNode[] = [/*default empty*/];
   state.doc.nodesBetween(from, to, (node) => { nodes.push(node); });
 
-  const node = nodes.reverse(/*from most nested to least nested*/).find(nodeItem => nodeItem.type.name === nodeName);
+  const node = nodes.reverse(/*from most nested to least nested*/).find(node => node.type.name === nodeName);
   if(!node) {
     return {/*no attrs*/};
   } /* else -- return the Node's attrs */
@@ -55,8 +54,8 @@ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes:
  * if it is present
  */
  export const getMarkAttributesFromView = (state: EditorState, markName: MarkName) => {
-  const { from, to, empty } = state.selection;
-  const marks: ProseMirrorMark[] = [/*default empty*/];
+  const { from, to, empty } = state.selection,
+        marks: ProseMirrorMark[] = [/*default empty*/];
 
   if(empty) {
     if(state.storedMarks) {
@@ -68,7 +67,7 @@ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes:
     state.doc.nodesBetween(from, to, node => { marks.push(...node.marks); });
   }
 
-  const mark = marks.find(markItem => markItem.type.name === markName);
+  const mark = marks.find(mark => mark.type.name === markName);
   if(!mark) {
     return {/*no attrs*/};
   } /* else -- return Mark's attrs */
