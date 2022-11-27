@@ -105,7 +105,7 @@ export const checkAndMergeListAtPos = (tr: Transaction, posToCheck: number) => {
     if(!listItem || !isListItemNode(listItem)) continue/*ignore*/;
 
     listItem.descendants((descendant, descendantPos, parent) => {
-      if(parent !== listItem || !descendant.isBlock || descendant === parent.firstChild) return/*ignore Node*/;
+      if(!parent || parent !== listItem || !descendant.isBlock || descendant === parent.firstChild) return/*ignore Node*/;
 
       const childPos = tr.mapping.map(listItemMappedPosition+1/*inside the ListItem*/) + tr.mapping.map(descendantPos)+1/*inside the descendant*/,
             $childPos = tr.doc.resolve(childPos);
