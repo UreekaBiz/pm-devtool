@@ -1,0 +1,6 @@
+/* == Heading ================================================================== */
+/* Headings should default to being bold */
+[data-node-type="heading"] { font-weight: bold; }
+
+/* bolded Headings should have regular font weight */
+[data-node-type="heading"] > [data-mark-type='bold'] { font-weight: normal; }

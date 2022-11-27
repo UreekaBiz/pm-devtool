@@ -1,6 +1,6 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { createBoldMark, createMarkHolderNode, getBlockNodeRange, getHeadingNodeType, generateNodeId, getSelectedNode, isHeadingLevel, isHeadingNode, stringifyMarksArray, AbstractDocumentUpdate, AttributeType, HeadingAttributes, NodeName, MarkName, NodeIdentifier, UpdateAttributesDocumentUpdate } from 'common';
+import { getBlockNodeRange, getHeadingNodeType, generateNodeId, getSelectedNode, isHeadingLevel, isHeadingNode, AbstractDocumentUpdate, AttributeType, HeadingAttributes, NodeName, NodeIdentifier, UpdateAttributesDocumentUpdate } from 'common';
 
 import { SetParagraphDocumentUpdate } from '../paragraph/command';
 
@@ -21,13 +21,6 @@ export class SetHeadingDocumentUpdate implements AbstractDocumentUpdate {
     const { empty } = editorState.selection/*NOTE: empty implies that parent($anchor) === parent($head)*/;
     const { from, to } = getBlockNodeRange(editorState.selection);
 
-    // check if MarkHolder must be added
-    if(empty && parent.content.size < 1) {
-      tr.setBlockType(from, to, getHeadingNodeType(schema), { [AttributeType.Id]: generateNodeId(), [AttributeType.Level]: level })
-        .insert(editorState.selection.$anchor.pos, createMarkHolderNode(schema, { storedMarks: stringifyMarksArray([schema.marks[MarkName.BOLD].create()]) }));
-      return tr/*updated, nothing left to do*/;
-    } /* else -- no need to add MarkHolder */
-
     // check for toggle or level change
     if(empty && isHeadingNode(parent)) {
       // check for toggle
@@ -40,8 +33,7 @@ export class SetHeadingDocumentUpdate implements AbstractDocumentUpdate {
       return updatedTr/*updated, nothing left to do*/;
     } /* else -- not a toggle or level change, setHeading */
 
-    tr.setBlockType(from, to, getHeadingNodeType(schema), { [AttributeType.Id]: generateNodeId(), [AttributeType.Level]: level })
-      .addMark(from, to, createBoldMark(schema));
+    tr.setBlockType(from, to, getHeadingNodeType(schema), { [AttributeType.Id]: generateNodeId(), [AttributeType.Level]: level });
 
     const seenIds = new Set<NodeIdentifier>();
     tr.doc.nodesBetween(from, to, (node, nodePos) => {
