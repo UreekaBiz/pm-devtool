@@ -6,6 +6,7 @@ import { Editor } from 'notebookEditor/editor/Editor';
 import { isNodeViewStorage } from 'notebookEditor/model';
 
 import { ExtensionStorageType } from '../type/Extension/type';
+import { getMarkAttributesFromState } from 'notebookEditor/editor/util';
 
 // ********************************************************************************
 // == Type ========================================================================
@@ -111,7 +112,7 @@ export const getTextDOMRenderedValue = (editor: Editor, attributeType: Attribute
   // Get the initial value based on the active mark.
   // NOTE: This is needed in the case that a Node don't have a TextNode yet but the
   //       mark is active, when creating the TextNode it will this Mark active.
-  const currentMarkAttributes = markName ? editor.getAttributes(markName) : undefined/*no mark attributes*/;
+  const currentMarkAttributes = markName ? getMarkAttributesFromState(editor.view.state, markName) : undefined/*no mark attributes*/;
   let mergedValue: MergedAttributeValue = currentMarkAttributes ? currentMarkAttributes[attributeType] : undefined/*no value*/;
 
   // Merges the value of all different attributeType in the given range.

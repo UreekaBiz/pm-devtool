@@ -14,8 +14,6 @@ import { inputRulesPlugin, InputRule } from 'notebookEditor/plugin/inputRule/Inp
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
 import { EditorContentProps, EditorContentState } from './component/EditorContent';
-import { getMarkAttributesFromState, getNodeAttributesFromState } from './util';
-
 
 // ********************************************************************************
 // == Editor ======================================================================
@@ -219,24 +217,5 @@ export class Editor {
   /** query whether or not the Editor's {@link EditorView} can be edited */
   public get isEditable() {
     return this.view.editable;
-  }
-
-  // .. Attribute .................................................................
-  /**
-   * get the attributes of the given {@link NodeName} or {@link MarkName} at
-   * the Selection if a Node or Mark with said name currently exists there
-   */
-  public getAttributes(name: string) {
-    // FIXME: use a isMarkName utility function?
-    if(Object.values(MarkName).includes(name as MarkName/*check*/)) {
-      getMarkAttributesFromState(this.view.state, name as MarkName/*guaranteed by check*/);
-    } /* else -- not a Node or a Mark*/
-
-    // FIXME: use a isNodeName utility function?
-    if(Object.values(NodeName).includes(name as NodeName/*check*/)) {
-      return getNodeAttributesFromState(this.view.state, name as NodeName/*guaranteed by check*/);
-    } /* else -- not a Node */
-
-    return {/*default no attributes*/};
   }
 }
