@@ -41,8 +41,8 @@ export class InsertContentAtDocumentUpdate implements AbstractDocumentUpdate  {
       return false/*invalid Fragment*/;
     } /* else -- valid Fragment */
 
-    let isOnlyTextContent = false/*default*/;
-    let isOnlyBlockContent = false/*default*/;
+    let isOnlyTextContent = false/*default*/,
+        isOnlyBlockContent = false/*default*/;
     const nodes = isFragment(content) ? content : [content];
     nodes.forEach(node => {
       node.check()/*check content is valid*/;
@@ -83,7 +83,7 @@ export class InsertContentAtDocumentUpdate implements AbstractDocumentUpdate  {
     return tr/*updated*/;
   }
 }
-// REF: https://github.com/ProseMirror/prosemirror-state/blob/4faf6a1dcf45747e6d7cefd7e934759f3fa5b0d0/src/selection.ts
+// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-state/blob/4faf6a1dcf45747e6d7cefd7e934759f3fa5b0d0/src/selection.ts
 /**
  * Set the Selection of a Transaction to the end of its
  * inserted Content, if it inserted Content
