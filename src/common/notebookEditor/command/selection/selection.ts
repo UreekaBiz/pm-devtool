@@ -10,21 +10,6 @@ import { AbstractDocumentUpdate } from '../type';
 // == Type ========================================================================
 export type SelectionRange = { from: number; to: number; }
 
-// == Selection ===================================================================
-/** set a Selection regardless of its type */
-export const setSelectionCommand = (selection: Selection): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SetSelectionDocumentUpdate(selection), state, dispatch);
-export class SetSelectionDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly selection: Selection) {/*nothing additional*/}
-  /*
-   * modify the given Transaction such that the Selection is set and return it
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    tr.setSelection(this.selection);
-    return tr/*updated*/;
-  }
-}
-
 /** set a TextSelection given the Range */
 export const setTextSelectionCommand = (selectionRange: SelectionRange): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SetTextSelectionDocumentUpdate(selectionRange), state, dispatch);
@@ -37,19 +22,17 @@ export class SetTextSelectionDocumentUpdate implements AbstractDocumentUpdate {
    * is set across the given Range
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { doc } = editorState;
-    const { from, to } = this.selectionRange;
+    const { doc } = editorState,
+          { from, to } = this.selectionRange;
 
-    const minPos = TextSelection.atStart(doc).from;
-    const maxPos = TextSelection.atEnd(doc).to;
+    const minPos = TextSelection.atStart(doc).from,
+          maxPos = TextSelection.atEnd(doc).to;
 
-    const resolvedFrom = minFromMax(from, minPos, maxPos);
-    const resolvedEnd = minFromMax(to, minPos, maxPos);
+    const resolvedFrom = minFromMax(from, minPos, maxPos),
+          resolvedEnd = minFromMax(to, minPos, maxPos);
 
-    const selection = TextSelection.create(doc, resolvedFrom, resolvedEnd);
-
-    tr.setSelection(selection);
-    return tr/*updated*/;
+    const newTextSelection = TextSelection.create(doc, resolvedFrom, resolvedEnd);
+    return tr.setSelection(newTextSelection);
   }
 }
 
@@ -93,8 +76,7 @@ export class SetNodeSelectionDocumentUpdate implements AbstractDocumentUpdate {
    */
   public update(editorState: EditorState, tr: Transaction) {
     const { doc } = tr;
-    tr.setSelection(NodeSelection.create(doc, minFromMax(this.nodePos, 0/*Doc start*/, doc.content.size)));
-    return tr/*updated*/;
+    return tr.setSelection(NodeSelection.create(doc, minFromMax(this.nodePos, 0/*Doc start*/, doc.content.size)));
   }
 }
 
@@ -153,9 +135,7 @@ export class ReplaceAndSelectNodeDocumentUpdate implements AbstractDocumentUpdat
           nodeBeforeSize = nodeBefore?.nodeSize ?? 0/*no node before -- no size*/;
 
     const resolvedPos = tr.doc.resolve(tr.selection.anchor - nodeBeforeSize);
-    tr.setSelection(new NodeSelection(resolvedPos));
-
-    return tr/*updated*/;
+    return tr.setSelection(new NodeSelection(resolvedPos));
   }
 }
 
