@@ -8,6 +8,7 @@ import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
 import { joinBackwardToEndOfClosestListItem, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
+import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -52,5 +53,9 @@ export const ListItem = new NodeExtension({
       },
       'Delete': joinForwardToStartOfClosestListItemCommand,
     }),
+
+    // NOTE: this plugin should be below the keymap from above, since its Commands
+    //       may leave Lists in a state that allows them to be merged together
+    listItemPlugin(),
   ],
 });

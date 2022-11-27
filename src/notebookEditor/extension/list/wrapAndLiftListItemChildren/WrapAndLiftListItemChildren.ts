@@ -1,14 +1,14 @@
 import { Extension } from 'notebookEditor/extension/type/Extension/Extension';
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model';
 
-import { fixListsPlugin } from './plugin';
+import { wrapAndLiftListItemChildrenPlugin } from './plugin';
 
 // ********************************************************************************
 // == Extension ===================================================================
-export const FixLists = new Extension({
+export const WrapAndLiftListItemChildren = new Extension({
   // -- Definition ----------------------------------------------------------------
-  name: ExtensionName.FIX_LISTS,
-  priority: ExtensionPriority.FIX_LISTS,
+  name: ExtensionName.WRAP_AND_LIFT_LIST_ITEM_CHILDREN,
+  priority: ExtensionPriority.WRAP_AND_LIFT_LIST_ITEM_CHILDREN,
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
@@ -17,5 +17,5 @@ export const FixLists = new Extension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [fixListsPlugin()],
+  addProseMirrorPlugins: (editor) => [wrapAndLiftListItemChildrenPlugin()],
 });

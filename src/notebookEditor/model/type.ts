@@ -18,11 +18,11 @@ export enum ExtensionName {
   BASIC_KEYMAP = 'basicKeymap',
   DEFAULT_INPUT_RULES = 'defaultInputRules',
   EMOJI_SUGGESTION = 'emojiSuggestion',
-  FIX_LISTS = 'fixLists',
   GAP_CURSOR = 'gapCursor',
   HISTORY = 'history',
   NESTED_VIEW_NODE = 'nestedViewNode',
   SELECTION_HANDLING = 'selectionHandling',
+  WRAP_AND_LIFT_LIST_ITEM_CHILDREN = 'wrapAndLiftListItemChildren',
 }
 
 // == Priority ====================================================================
@@ -117,13 +117,12 @@ export enum ExtensionPriority {
   BASIC_KEYMAP = DEFAULT_EXTENSION_PRIORITY,
 
   /**
-   * since Lists may have to be merged, or their contents wrapped or
-   * lifted to be consistent, yet this should happen after all default
-   * behavior has been checked (which includes the basicKeymap, e.g.
-   * joining Nodes forward or backward), ensure that the Extension
-   * has a priority smaller than the basicKeymap one
+   * the checks added by this Extension should be done after the default
+   * behavior of other Commands has been performed (which includes the
+   * basicKeymap, e.g. joining Nodes forward or backward). Hence it should
+   * be below the BasicKeymap Extension
    */
-  FIX_LISTS = 99,
+  WRAP_AND_LIFT_LIST_ITEM_CHILDREN = 99,
 
   /**
    * since the Text Extension adds '\t' whenever Tab is pressed, but this
