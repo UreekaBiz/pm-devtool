@@ -2,7 +2,6 @@ import { EditorState, Plugin, Transaction, TextSelection } from 'prosemirror-sta
 import { EditorView } from 'prosemirror-view';
 
 // ********************************************************************************
-
 // == Constant ====================================================================
 // the maximum length for the match of an InputRule
 const MAX_MATCH = 500;
