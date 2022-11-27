@@ -22,32 +22,31 @@ export const getNodeAttributesFromView = (state: EditorState, nodeName: NodeName
   return { ...node.attrs };
 };
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/helpers/isNodeActive.ts
 /**
  * check if a Node of the given {@link NodeName} is
  * currently present in the given {@link EditorState}'s Selection
  */
 export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes: Attributes): boolean => {
-  const { from, to, empty } = state.selection;
-  const nodesWithRange: { node: ProseMirrorNode; from: number; to: number; }[] = [];
+  const { from, to, empty } = state.selection,
+        nodesWithRange: { node: ProseMirrorNode; from: number; to: number; }[] = [/*default empty*/];
 
   state.doc.nodesBetween(from, to, (node, pos) => {
     if(node.isText) return/*nothing to do*/;
+    const nodeRangeFrom = Math.max(from, pos),
+          nodeRangeTo = Math.min(to, pos + node.nodeSize);
 
-    const relativeFrom = Math.max(from, pos);
-    const relativeTo = Math.min(to, pos + node.nodeSize);
-
-    nodesWithRange.push({ node, from: relativeFrom, to: relativeTo });
+    nodesWithRange.push({ node, from: nodeRangeFrom, to: nodeRangeTo });
   });
 
   const selectionRange = to - from;
-  const matchedNodeRanges = nodesWithRange
+  const matchedNodesWithRange = nodesWithRange
     .filter(nodeWithRange => nodeName === nodeWithRange.node.type.name)
     .filter(nodeWithRange => objectIncludes(nodeWithRange.node.attrs, attributes));
+  if(empty) return !!matchedNodesWithRange.length/*no matched nodes*/;
 
-  if(empty) return !!matchedNodeRanges.length/*no matched nodes*/;
-
-  const range = matchedNodeRanges.reduce((sum, nodeRange) => sum + nodeRange.to - nodeRange.from, 0/*initial*/);
-  return range >= selectionRange;
+  const finalRange = matchedNodesWithRange.reduce((sum, nodeRange) => sum + nodeRange.to - nodeRange.from, 0/*initial*/);
+  return finalRange >= selectionRange;
 };
 
 // == Mark ========================================================================
@@ -77,6 +76,7 @@ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes:
   return { ...mark.attrs };
 };
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/helpers/isMarkActive.ts
 /**
  * check if a Node of the given {@link NodeName} is
  * currently present in the given {@link EditorState}'s Selection
@@ -91,21 +91,20 @@ export const isMarkActive = (state: EditorState, markName: MarkName, attributes:
   } /* else -- Selection is not empty */
 
   let selectionRange = 0/*default*/;
-  const markRanges: MarkRange[] = [/*default empty*/];
 
+  const markRanges: MarkRange[] = [/*default empty*/];
   ranges.forEach(({ $from, $to }) => {
-    const from = $from.pos;
-    const to = $to.pos;
+    const from = $from.pos,
+          to = $to.pos;
 
     state.doc.nodesBetween(from, to, (node, pos) => {
       if(!node.isText && !node.marks.length) return/*nothing to do*/;
 
-      const relativeFrom = Math.max(from, pos);
-      const relativeTo = Math.min(to, pos + node.nodeSize);
-      const range = relativeTo - relativeFrom;
-      selectionRange += range;
-
-      markRanges.push(...node.marks.map(mark => ({ mark, from: relativeFrom, to: relativeTo })));
+      const markRangeFrom = Math.max(from, pos),
+            markRangeTo = Math.min(to, pos + node.nodeSize),
+            markRange = markRangeTo - markRangeFrom;
+      selectionRange += markRange;
+      markRanges.push(...node.marks.map(mark => ({ mark, from: markRangeFrom, to: markRangeTo })));
     });
   });
   if(selectionRange === 0/*default*/) return false/*no selected Range*/;
