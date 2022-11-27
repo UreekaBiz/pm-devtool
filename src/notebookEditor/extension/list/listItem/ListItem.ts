@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE, chainCommands } from 'common';
+import { chainCommands, getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
@@ -56,6 +56,7 @@ export const ListItem = new NodeExtension({
 
     // NOTE: this plugin should be below the keymap from above, since its Commands
     //       may leave Lists in a state that allows them to be merged together
+    //       immediately afterwards
     listItemPlugin(),
   ],
 });
