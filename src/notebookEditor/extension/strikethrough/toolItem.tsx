@@ -3,6 +3,7 @@ import { BiStrikethrough } from 'react-icons/bi';
 import { isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
+import { isMarkActive } from 'notebookEditor/editor/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
@@ -25,6 +26,6 @@ export const markStrikethrough: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor,  MarkName.STRIKETHROUGH)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.STRIKETHROUGH);
+    return isMarkActive(editor, MarkName.STRIKETHROUGH);
   },
 };

@@ -1,10 +1,11 @@
 import { useToast, Center, Tooltip } from '@chakra-ui/react';
 import { useCallback } from 'react';
 
-import { SelectionDepth } from 'common';
+import { isMarkName, isNodeName, SelectionDepth } from 'common';
 
 import ErrorBoundary from 'core/component/ErrorBoundary';
 import { Editor } from 'notebookEditor/editor/Editor';
+import { isMarkActive, isNodeActive } from 'notebookEditor/editor/util';
 import { ACTIVE_BUTTON_COLOR, ICON_BUTTON_CLASS } from 'notebookEditor/theme/theme';
 import { ToolItem, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
@@ -90,6 +91,11 @@ const isToolActive = (editor: Editor, tool: ToolItem) => {
   // Use component implementation if defined
   if(tool.isActive) return tool.isActive(editor);
 
-  // Use editor implementation
-  return editor.isNodeOrMarkActive(tool.name);
+  if(isNodeName(tool.name)) {
+    return isNodeActive(editor, tool.name);
+  } else if(isMarkName(tool.name)) {
+    return isMarkActive(editor, tool.name);
+  } else {
+    return false/*default*/;
+  }
 };

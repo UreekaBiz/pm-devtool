@@ -2,7 +2,7 @@ import { Schema } from 'prosemirror-model';
 import { Command, EditorState, Plugin } from 'prosemirror-state';
 import { EditorView, NodeViewConstructor } from 'prosemirror-view';
 
-import { Attributes, MarkName, NodeName } from 'common';
+import { MarkName, NodeName } from 'common';
 
 import { AbstractNodeController, DialogStorage, NodeViewStorage } from 'notebookEditor/model';
 import { Extension } from 'notebookEditor/extension/type/Extension/Extension';
@@ -14,7 +14,7 @@ import { InputRule, inputRulesPlugin } from 'notebookEditor/plugin/inputRule/Inp
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
 import { EditorContentProps, EditorContentState } from './component/EditorContent';
-import { getMarkAttributesFromState, getNodeAttributesFromState, isMarkActive, isNodeActive } from './util';
+import { getMarkAttributesFromState, getNodeAttributesFromState } from './util';
 
 // ********************************************************************************
 // == Class =======================================================================
@@ -239,22 +239,5 @@ export class Editor {
     } /* else -- not a Node or a Mark*/
 
     return {/*default no attributes*/};
-  }
-
-  // .. Node or Mark ..............................................................
-  /**
-   * query whether the Node or Mark with the given name
-   * is active in the current Selection
-   */
-  public isNodeOrMarkActive(name: string, attributes: Attributes = {/*default no attrs*/}) {
-    if(Object.values(NodeName).includes(name as NodeName/*check*/)) {
-      return isNodeActive(this.view.state, name as NodeName/*guaranteed by check above*/, attributes);
-    } /* else -- not a Node */
-
-    if(Object.values(MarkName).includes(name as MarkName/*check*/)) {
-      return isMarkActive(this.view.state, name as MarkName/*guaranteed by check above*/, attributes);
-    } /* else -- not a Node or a Mark*/
-
-    return false/*default not active*/;
   }
 }

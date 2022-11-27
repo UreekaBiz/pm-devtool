@@ -3,6 +3,8 @@ import { EditorState } from 'prosemirror-state';
 
 import { objectIncludes, Attributes, MarkName, NodeName, MarkRange } from 'common';
 
+import { Editor } from './Editor';
+
 // == Node ========================================================================
 /**
  * get the {@link Attributes} of the {@link ProseMirrorNode} at the Selection
@@ -26,8 +28,9 @@ export const getNodeAttributesFromState = (state: EditorState, nodeName: NodeNam
  * check if a Node of the given {@link NodeName} is
  * currently present in the given {@link EditorState}'s Selection
  */
-export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes: Attributes): boolean => {
-  const { from, to, empty } = state.selection,
+export const isNodeActive = (editor: Editor, nodeName: NodeName, attributes: Attributes = {/*default no attrs*/}): boolean => {
+  const { state } = editor.view,
+        { from, to, empty } = state.selection,
         nodesWithRange: { node: ProseMirrorNode; from: number; to: number; }[] = [/*default empty*/];
 
   state.doc.nodesBetween(from, to, (node, pos) => {
@@ -80,7 +83,8 @@ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes:
  * check if a Node of the given {@link NodeName} is
  * currently present in the given {@link EditorState}'s Selection
  */
-export const isMarkActive = (state: EditorState, markName: MarkName, attributes: Attributes): boolean => {
+export const isMarkActive = (editor: Editor, markName: MarkName, attributes: Attributes = {/*default no attrs*/}): boolean => {
+  const { state } = editor.view;
   const { empty, ranges } = state.selection;
 
   if(empty) {

@@ -7,6 +7,7 @@ import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { toggleBoldCommand } from './command';
+import { isMarkActive } from 'notebookEditor/editor/util';
 
 // ********************************************************************************
 // == Tool Items ==================================================================
@@ -24,6 +25,6 @@ export const markBold: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor,  MarkName.BOLD)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.BOLD);
+    return isMarkActive(editor, MarkName.BOLD);
   },
 };
