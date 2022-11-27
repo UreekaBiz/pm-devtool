@@ -23,21 +23,23 @@ export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
   const previousChild = doc.child(previousChildIndex);
   if(!isListNode(previousChild)) return false/*no List to join into*/;
 
-  let lastChildOfList = doc/*default*/,
-      lastChildOfListPos = 0/*default*/;
+  let lastBlockChildOfList = doc/*default*/,
+      lastBlockChildOfListPos = 0/*default*/;
   previousChild.descendants((node, pos) => {
-    lastChildOfList = node;
-    lastChildOfListPos = (pos+1/*inside the Node*/) + node.nodeSize;
+    if(node.isBlock) {
+      lastBlockChildOfList = node;
+      lastBlockChildOfListPos = (pos+1/*inside the Node*/) + node.nodeSize;
+    }
   });
 
-  if(!(parent.type === lastChildOfList.type)) return false/*Node cannot be joined*/;
+  if(!(parent.type === lastBlockChildOfList.type)) return false/*Nodes cannot be joined*/;
 
   let updatedState = editor.view.state,
       updatedTr: Transaction | false = editor.view.state.tr;
   let updateAmount = 0/*default*/;
 
   // compute the required amount of times that Nodes must be JoinedBackward
-  while(updatedTr.selection.from !== lastChildOfListPos) {
+  while(updatedTr.selection.from !== lastBlockChildOfListPos) {
     updatedTr = new JoinBackwardDocumentUpdate().update(updatedState, updatedTr, editor.view);
     if(updatedTr) {
       updatedState = updatedState.apply(updatedTr);
