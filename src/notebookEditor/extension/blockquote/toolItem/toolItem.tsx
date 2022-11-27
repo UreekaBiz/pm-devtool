@@ -1,6 +1,6 @@
 import { MdFormatQuote } from 'react-icons/md';
 
-import { getBlockquoteNodeType, isNodeSelection, toggleWrapCommand, NodeName } from 'common';
+import { getBlockquoteNodeType, isNodeActive, isNodeSelection, toggleWrapCommand, NodeName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
@@ -21,7 +21,7 @@ export const blockquoteToolItem: ToolItem = {
 
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
   shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
-  isActive: (editor) => editor.isNodeOrMarkActive(NodeName.BLOCKQUOTE),
+  isActive: (editor) => isNodeActive(editor.view.state, NodeName.BLOCKQUOTE),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleWrapCommand(getBlockquoteNodeType(editor.view.state.schema), {/*no attrs*/})),
 };
 

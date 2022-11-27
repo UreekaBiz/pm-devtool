@@ -3,7 +3,7 @@ import { Slice } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { urlSchema, setMarkCommand, AttributeType, MarkName, LinkTarget } from 'common';
+import { isMarkActive, urlSchema, setMarkCommand, AttributeType, MarkName, LinkTarget } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { NoPluginState } from 'notebookEditor/model/type';
@@ -38,7 +38,7 @@ export const linkPaste = (editor: Editor): Plugin => {
         if(!textContent || !link) return false/*nothing else to do*/;
         const { href } = link;
 
-        if(editor.isNodeOrMarkActive(MarkName.LINK)) return false/*replace text*/;
+        if(isMarkActive(editor.view.state, MarkName.LINK)) return false/*replace text*/;
 
         return setMarkCommand(MarkName.LINK, { [AttributeType.Href]: href, [AttributeType.Target]: LinkTarget.BLANK })(view.state, view.dispatch);
       },

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { isNodeSelection, setNodeSelectionCommand, MarkName, NodeName } from 'common';
+import { isMarkActive, isNodeSelection, setNodeSelectionCommand, MarkName, NodeName } from 'common';
 
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { getDialogStorage } from 'notebookEditor/model/DialogStorage';
@@ -87,7 +87,7 @@ export const EditorUserInteractions = () => {
         //       want the mark to be active after having inserted a link,
         //       (SEE: common/link.ts), this check has to be done
         const { from } = editor.view.state.selection,
-              linkMarkActive = editor.isNodeOrMarkActive(MarkName.LINK) || editor.view.state.doc.rangeHasMark(from, from+1, editor.view.state.schema.marks[MarkName.LINK]);
+              linkMarkActive = isMarkActive(editor.view.state, MarkName.LINK) || editor.view.state.doc.rangeHasMark(from, from+1, editor.view.state.schema.marks[MarkName.LINK]);
         if(linkMarkActive) {
           unsetLinkCommand()(editor.view.state/*current state*/, editor.view.dispatch);
           editor.view.focus();

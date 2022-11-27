@@ -1,7 +1,7 @@
 import { find, test } from 'linkifyjs';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
-import { combineTransactionSteps, findChildrenInRange, getTransformChangedRanges, getLinkMarkType, getMarksBetween, isLinkMark, isNodeSelection, AttributeType, LinkTarget, PREVENT_LINK_META } from 'common';
+import { combineTransactionSteps, findChildrenInRange, getTransformChangedRanges, getLinkMarkType, isLinkMark, isNodeSelection, AttributeType, LinkTarget, PREVENT_LINK_META, getMarksInRange } from 'common';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
@@ -36,12 +36,12 @@ export const linkCreate = (validate?: (url: string) => boolean): Plugin => {
 
       changes.forEach(({ oldRange, newRange }) => {
         // check if Links need to be removed
-        getMarksBetween(oldRange.from, oldRange.to, oldState.doc)
+        getMarksInRange(oldState.doc, { from: oldRange.from, to: oldRange.to })
           .filter(item => isLinkMark(item.mark))
           .forEach(oldMark => {
             const newFrom = mapping.map(oldMark.from),
                   newTo = mapping.map(oldMark.to);
-            const newMarks = getMarksBetween(newFrom, newTo, newState.doc).filter(item => isLinkMark(item.mark));
+            const newMarks = getMarksInRange(newState.doc, { from: newFrom, to: newTo }).filter(item => isLinkMark(item.mark));
             if(!newMarks.length) return/*nothing to do*/;
 
             const newMark = newMarks[0]/*guaranteed to be link type by filter*/;

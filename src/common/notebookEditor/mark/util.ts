@@ -3,7 +3,7 @@ import { Mark as ProseMirrorMark, MarkType, Node as ProseMirrorNode, ResolvedPos
 import { EditorState, SelectionRange as ProseMirrorSelectionRange } from 'prosemirror-state';
 
 import { objectIncludes } from '../../util';
-import { AttributeType, AttributeValue } from '../attribute';
+import { Attributes, AttributeType, AttributeValue } from '../attribute';
 import { SelectionRange } from '../command';
 import { MarkName, MarkRange } from './type';
 
@@ -82,6 +82,58 @@ return { ...mark.attrs };
 };
 
 // == Validation ==================================================================
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/helpers/isMarkActive.ts
+/**
+ * check if a Node of the given {@link NodeName} is
+ * currently present in the given {@link EditorState}'s Selection
+ */
+ export const isMarkActive = (state: EditorState, markName: MarkName, attributes: Attributes = {/*default no attrs*/}): boolean => {
+  const { empty, ranges } = state.selection;
+
+  if(empty) {
+    return !!(state.storedMarks || state.selection.$from.marks())
+      .filter((mark) => mark.type.name === markName)
+      .find(mark => objectIncludes(mark.attrs, attributes));
+  } /* else -- Selection is not empty */
+
+  let selectionRange = 0/*default*/;
+
+  const markRanges: MarkRange[] = [/*default empty*/];
+  ranges.forEach(({ $from, $to }) => {
+    const from = $from.pos,
+          to = $to.pos;
+
+    state.doc.nodesBetween(from, to, (node, pos) => {
+      if(!node.isText && !node.marks.length) return/*nothing to do*/;
+
+      const markRangeFrom = Math.max(from, pos),
+            markRangeTo = Math.min(to, pos + node.nodeSize),
+            markRange = markRangeTo - markRangeFrom;
+      selectionRange += markRange;
+      markRanges.push(...node.marks.map(mark => ({ mark, from: markRangeFrom, to: markRangeTo })));
+    });
+  });
+  if(selectionRange === 0/*default*/) return false/*no selected Range*/;
+
+  const matchedMarkRange = markRanges
+    .filter(markRange => markRange.mark.type.name === markName)
+    .filter(markRange => objectIncludes(markRange.mark.attrs, attributes))
+    .reduce((sum, markRange) => sum + markRange.to - markRange.from, 0/*initial*/);
+
+  // compute Range of Marks that exclude the looked-for Mark
+  const excludedRange = markRanges
+    .filter(markRange => markRange.mark.type.name !== markName && markRange.mark.type.excludes(state.schema.marks[markName]))
+    .reduce((sum, markRange) => sum + markRange.to - markRange.from, 0/*initial*/);
+
+  // only include excludedRange if there was a match
+  let finalRange = matchedMarkRange/*default*/;
+  if(matchedMarkRange > 0) {
+    finalRange += excludedRange;
+  } /* else -- there was no match */
+
+  return finalRange >= selectionRange;
+};
+
 /**
  * check if the given MarkType can be applied through
  * the given {@link SelectionRange}s

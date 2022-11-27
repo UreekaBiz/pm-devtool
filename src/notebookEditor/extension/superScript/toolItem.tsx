@@ -1,6 +1,6 @@
 import { MdSuperscript } from 'react-icons/md';
 
-import { isNodeSelection, MarkName } from 'common';
+import { isMarkActive, isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
@@ -24,7 +24,7 @@ export const markSuperScript: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.SUPER_SCRIPT)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.SUPER_SCRIPT);
+    return isMarkActive(editor.view.state, MarkName.SUPER_SCRIPT);
   },
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleSuperScriptCommand),
 };

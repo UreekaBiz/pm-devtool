@@ -1,6 +1,6 @@
 import { AiOutlineItalic } from 'react-icons/ai';
 
-import { isNodeSelection, MarkName } from 'common';
+import { isMarkActive, isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
@@ -24,7 +24,7 @@ export const markItalic: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.ITALIC)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.ITALIC);
+    return isMarkActive(editor.view.state, MarkName.ITALIC);
   },
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleItalicCommand),
 };

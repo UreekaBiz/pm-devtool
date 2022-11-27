@@ -172,32 +172,31 @@ const getNodesBetween = (rootNode: ProseMirrorNode, from: number, to: number, no
   return nodesOfType;
 };
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/helpers/isNodeActive.ts
 /**
  * check if a Node of the given {@link NodeName} is
  * currently present in the given {@link EditorState}'s Selection
  */
- export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes: Attributes): boolean => {
-  const { from, to, empty } = state.selection;
-  const nodesWithRange: { node: ProseMirrorNode; from: number; to: number; }[] = [];
+ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes: Attributes = {/*default no attrs*/}): boolean => {
+  const { from, to, empty } = state.selection,
+        nodesWithRange: { node: ProseMirrorNode; from: number; to: number; }[] = [/*default empty*/];
 
   state.doc.nodesBetween(from, to, (node, pos) => {
     if(node.isText) return/*nothing to do*/;
+    const nodeRangeFrom = Math.max(from, pos),
+          nodeRangeTo = Math.min(to, pos + node.nodeSize);
 
-    const relativeFrom = Math.max(from, pos);
-    const relativeTo = Math.min(to, pos + node.nodeSize);
-
-    nodesWithRange.push({ node, from: relativeFrom, to: relativeTo });
+    nodesWithRange.push({ node, from: nodeRangeFrom, to: nodeRangeTo });
   });
 
   const selectionRange = to - from;
-  const matchedNodeRanges = nodesWithRange
+  const matchedNodesWithRange = nodesWithRange
     .filter(nodeWithRange => nodeName === nodeWithRange.node.type.name)
     .filter(nodeWithRange => objectIncludes(nodeWithRange.node.attrs, attributes));
+  if(empty) return !!matchedNodesWithRange.length/*no matched nodes*/;
 
-  if(empty) return !!matchedNodeRanges.length/*no matched nodes*/;
-
-  const range = matchedNodeRanges.reduce((sum, nodeRange) => sum + nodeRange.to - nodeRange.from, 0/*initial*/);
-  return range >= selectionRange;
+  const finalRange = matchedNodesWithRange.reduce((sum, nodeRange) => sum + nodeRange.to - nodeRange.from, 0/*initial*/);
+  return finalRange >= selectionRange;
 };
 
 // -- Creation --------------------------------------------------------------------

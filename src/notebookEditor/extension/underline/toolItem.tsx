@@ -1,6 +1,6 @@
 import { AiOutlineUnderline } from 'react-icons/ai';
 
-import { isNodeSelection, MarkName } from 'common';
+import { isMarkActive, isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
@@ -24,7 +24,7 @@ export const markUnderline: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.UNDERLINE)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.UNDERLINE);
+    return isMarkActive(editor.view.state, MarkName.UNDERLINE);
   },
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleUnderlineCommand),
 };

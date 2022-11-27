@@ -1,6 +1,6 @@
 import { AiOutlineLink } from 'react-icons/ai';
 
-import { getLinkMarkType, isNodeSelection, MarkName } from 'common';
+import { getLinkMarkType, isMarkActive, isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { toggleMarkInMarkHolderCommand } from 'notebookEditor/extension/markHolder/command';
@@ -30,7 +30,7 @@ export const linkToolItem: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.LINK)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.LINK);
+    return isMarkActive(editor.view.state, MarkName.LINK);
   },
   onClick: (editor, depth) => {
     // if MarkHolder is defined toggle the Mark inside it
@@ -42,7 +42,7 @@ export const linkToolItem: ToolItem = {
 
     // (SEE: EditorUserInteractions.tsx)
     const { from } = editor.view.state.selection,
-      linkMarkActive = editor.isNodeOrMarkActive(MarkName.LINK) || editor.view.state.doc.rangeHasMark(from, from + 1, editor.view.state.schema.marks[MarkName.LINK]);
+      linkMarkActive = isMarkActive(editor.view.state, MarkName.LINK) || editor.view.state.doc.rangeHasMark(from, from + 1, editor.view.state.schema.marks[MarkName.LINK]);
     if(linkMarkActive) {
       return unsetLinkCommand()(editor.view.state/*current state*/, editor.view.dispatch);
     } /* else -- Link Mark not active, add a new one */

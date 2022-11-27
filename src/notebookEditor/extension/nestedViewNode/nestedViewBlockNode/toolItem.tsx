@@ -1,6 +1,6 @@
 import { MdOutlineViewDay } from 'react-icons/md';
 
-import { generateNodeId, getNestedViewBlockNodeType, isNodeSelection, AttributeType, NodeName } from 'common';
+import { generateNodeId, getNestedViewBlockNodeType, isNodeActive, isNodeSelection, AttributeType, NodeName } from 'common';
 
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
@@ -24,6 +24,6 @@ export const nestedViewBlockNodeToolItem: ToolItem = {
     return true;
   },
   shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
-  isActive: (editor) => editor.isNodeOrMarkActive(NodeName.NESTED_VIEW_BLOCK_NODE),
+  isActive: (editor) => isNodeActive(editor.view.state, NodeName.NESTED_VIEW_BLOCK_NODE),
   onClick: (editor, depth) => insertAndSelectNestedViewNode(editor, depth, getNestedViewBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() }, 'toolItem'),
 };

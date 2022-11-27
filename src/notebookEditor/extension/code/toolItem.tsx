@@ -1,6 +1,6 @@
 import { BsCodeSlash } from 'react-icons/bs';
 
-import { isNodeSelection, MarkName } from 'common';
+import { isMarkActive, isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
@@ -29,7 +29,7 @@ export const markCode: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.CODE)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.CODE);
+    return isMarkActive(editor.view.state, MarkName.CODE);
   },
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleCodeCommand),
 };

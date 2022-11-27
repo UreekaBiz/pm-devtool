@@ -2,7 +2,7 @@ import { MdOutlineTableChart } from 'react-icons/md';
 import { TiDeleteOutline } from 'react-icons/ti';
 import { RiDeleteColumn, RiDeleteRow, RiInsertColumnLeft, RiInsertColumnRight, RiInsertRowBottom, RiInsertRowTop, RiMore2Line, RiMoreLine } from 'react-icons/ri';
 
-import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTableCommand, isCellSelection, isTableNode, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, SelectionDepth, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
+import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, createAndInsertTableCommand, deleteColumnCommand, deleteRowCommand, deleteTableCommand, isNodeActive, isCellSelection, isTableNode, toggleHeaderColumnCommand, toggleHeaderRowCommand, NodeName, SelectionDepth, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { Editor } from 'notebookEditor/editor/Editor';
@@ -34,7 +34,7 @@ export const deleteTableToolItem: ToolItem = {
   tooltip: 'Delete Table',
 
   shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return false;
+    if(isNodeActive(editor.view.state, NodeName.TABLE)) return false;
     /* else -- table not active */
 
     return true;
@@ -51,7 +51,7 @@ export const deleteRowToolItem: ToolItem = {
   icon: <RiDeleteRow size={16} />,
   tooltip: 'Delete Row',
   shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return false;
+    if(isNodeActive(editor.view.state, NodeName.TABLE)) return false;
     /* else -- table not active */
 
     return true;
@@ -67,7 +67,7 @@ export const addRowAboveToolItem: ToolItem = {
   icon: <RiInsertRowTop size={16} />,
   tooltip: 'Add Row Above',
   shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return false;
+    if(isNodeActive(editor.view.state, NodeName.TABLE)) return false;
     /* else -- table not active */
 
     return true;
@@ -83,7 +83,7 @@ export const addRowBelowToolItem: ToolItem = {
   icon: <RiInsertRowBottom size={16} />,
   tooltip: 'Add Row Below',
   shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return false;
+    if(isNodeActive(editor.view.state, NodeName.TABLE)) return false;
     /* else -- table not active */
 
     return true;
@@ -100,7 +100,7 @@ export const deleteColumnToolItem: ToolItem = {
   icon: <RiDeleteColumn size={16} />,
   tooltip: 'Delete Column',
   shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return false;
+    if(isNodeActive(editor.view.state, NodeName.TABLE)) return false;
     /* else -- table not active */
 
     return true;
@@ -116,7 +116,7 @@ export const addColumnBeforeToolItem: ToolItem = {
   icon: <RiInsertColumnLeft size={16} />,
   tooltip: 'Add Column Before',
   shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return false;
+    if(isNodeActive(editor.view.state, NodeName.TABLE)) return false;
     /* else -- table not active */
 
     return true;
@@ -132,7 +132,7 @@ export const addColumnAfterToolItem: ToolItem = {
   icon: <RiInsertColumnRight size={16} />,
   tooltip: 'Add Column After',
   shouldBeDisabled: (editor) => {
-    if(editor.isNodeOrMarkActive(NodeName.TABLE)) return false;
+    if(isNodeActive(editor.view.state, NodeName.TABLE)) return false;
     /* else -- table not active */
 
     return true;
@@ -149,7 +149,7 @@ export const toggleHeaderInFirstRowToolItem: ToolItem = {
   icon: <RiMoreLine size={16} />,
   tooltip: 'Toggle Header in First Row',
 
-  shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.TABLE),
+  shouldBeDisabled: (editor) => !isNodeActive(editor.view.state, NodeName.TABLE),
   shouldShow: (editor, depth) => shouldShowTableToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderRowCommand),
 };
@@ -161,7 +161,7 @@ export const toggleHeaderInFirstColumnToolItem: ToolItem = {
   icon: <RiMore2Line size={16} />,
   tooltip: 'Toggle Header in First Column',
 
-  shouldBeDisabled: (editor) => !editor.isNodeOrMarkActive(NodeName.TABLE),
+  shouldBeDisabled: (editor) => !isNodeActive(editor.view.state, NodeName.TABLE),
   shouldShow: (editor, depth) => shouldShowTableToolItem(editor, depth),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleHeaderColumnCommand),
 };

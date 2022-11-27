@@ -1,6 +1,6 @@
 import { MdSubscript } from 'react-icons/md';
 
-import { isNodeSelection, MarkName } from 'common';
+import { isMarkActive, isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
@@ -24,7 +24,7 @@ export const markSubScript: ToolItem = {
   isActive: (editor) => {
     if(inMarkHolder(editor, MarkName.SUB_SCRIPT)) return true/*is active in MarkHolder*/;
 
-    return editor.isNodeOrMarkActive(MarkName.SUB_SCRIPT);
+    return isMarkActive(editor.view.state, MarkName.SUB_SCRIPT);
   },
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleSubScriptCommand),
 };
