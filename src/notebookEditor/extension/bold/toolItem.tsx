@@ -3,11 +3,11 @@ import { BiBold } from 'react-icons/bi';
 import { isNodeSelection, MarkName } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
+import { isMarkActive } from 'notebookEditor/editor/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 
 import { toggleBoldCommand } from './command';
-import { isMarkActive } from 'notebookEditor/editor/util';
 
 // ********************************************************************************
 // == Tool Items ==================================================================
