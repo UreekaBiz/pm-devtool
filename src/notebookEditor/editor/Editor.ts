@@ -222,8 +222,6 @@ export class Editor {
   }
 
   // .. Attribute .................................................................
-  // FIXME: move to an utility function that works with the EditorState rather than
-  //        a method for the Editor.
   /**
    * get the attributes of the given {@link NodeName} or {@link MarkName} at
    * the Selection if a Node or Mark with said name currently exists there

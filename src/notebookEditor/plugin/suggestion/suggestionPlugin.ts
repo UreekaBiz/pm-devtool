@@ -46,10 +46,10 @@ class SuggestionState {
       thisPluginState.shouldShowSuggestion = false;
     } /* else -- maintain current state across Transactions */
 
-    const { isEditable } = editor;
-    const { composing } = editor.view;
-    const { selection } = tr;
-    const { empty, from } = selection;
+    const { isEditable } = editor,
+          { composing } = editor.view;
+    const { selection } = tr,
+          { empty, from } = selection;
 
     const nextPluginState = { ...thisPluginState };
     nextPluginState.composing = composing;
