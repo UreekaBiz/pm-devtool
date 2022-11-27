@@ -82,7 +82,7 @@ export const NODE = 'node';
  */
 export const applyTestCommand = (doc: ProseMirrorNodeWithTag, testedCommand: Command, result: ProseMirrorNodeWithTag | null) => {
   // create a state
-  let state = createState(doc);
+  let state = createTestState(doc);
 
   // apply the tested Command to the state
   testedCommand(state, (tr) => state = state.apply(tr));
@@ -126,7 +126,7 @@ const selectionForTest = (doc: ProseMirrorNodeWithTag) => {
  * create a {@link EditorState} using the
  * given {@link ProseMirrorNodeWithTag} as the document
  */
-export const createState = (doc: ProseMirrorNodeWithTag) => EditorState.create({ doc, selection: selectionForTest(doc) });
+export const createTestState = (doc: ProseMirrorNodeWithTag) => EditorState.create({ doc, selection: selectionForTest(doc) });
 
 // -- Tag -------------------------------------------------------------------------
 // REF: https://github.com/prosemirror/prosemirror-test-builder

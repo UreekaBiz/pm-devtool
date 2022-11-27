@@ -2,7 +2,7 @@ import ist from 'ist';
 
 import { MarkName } from '../../../notebookEditor/mark';
 import { NodeName } from '../../../notebookEditor/node';
-import { createState, getNotebookSchemaWithBuildersObj, getNotebookSchemaNodeBuilders, getNotebookSchemaMarkBuilders, validateNodeWithTag, wrapTest, A, B } from '../test/testUtil';
+import { createTestState, getNotebookSchemaWithBuildersObj, getNotebookSchemaNodeBuilders, getNotebookSchemaMarkBuilders, validateNodeWithTag, wrapTest, A, B } from '../test/testUtil';
 import { toggleMarkCommand } from './mark';
 
 // ********************************************************************************
@@ -40,7 +40,7 @@ describe('toggleMarkCommand', () => {
     const startState = docBuilder(paragraphBuilder(`hell<${A}>o`));
     if(!validateNodeWithTag(startState)) throw new Error('startState is not a ProseMirrorNodeWithTag');
 
-    let state = createState(startState);
+    let state = createTestState(startState);
     toggleItalic(state, tr => state = state.apply(tr));
     ist(state.storedMarks?.length, 1);
     toggleBold(state, tr => state = state.apply(tr));

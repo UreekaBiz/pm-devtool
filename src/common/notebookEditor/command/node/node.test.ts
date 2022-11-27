@@ -5,7 +5,7 @@ import { Schema } from 'prosemirror-model';
 import { AttributeType } from '../../attribute';
 import { NodeGroup, NodeName } from '../../node/type';
 import { toggleMarkCommand } from '../mark';
-import { createState, getNotebookSchemaMarkBuilders, getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../test/testUtil';
+import { createTestState, getNotebookSchemaMarkBuilders, getNotebookSchemaNodeBuilders, getNotebookSchemaWithBuildersObj, wrapTest, A, B, ProseMirrorNodeWithTag } from '../test/testUtil';
 import { liftCommand, splitBlockCommand, splitBlockKeepMarksCommand, wrapInCommand } from './node';
 
 // ********************************************************************************
@@ -118,7 +118,7 @@ describe('splitBlockCommand', () => {
 describe('splitBlockKeepMarksCommand', () => {
   it('keeps marks when used after marked text', () => {
     const startStateDoc = docBuilder(paragraphBuilder(boldBuilder(`foo<${A}>`), 'bar'));
-    let state = createState(startStateDoc as ProseMirrorNodeWithTag);
+    let state = createTestState(startStateDoc as ProseMirrorNodeWithTag);
 
     splitBlockKeepMarksCommand(state, tr => state = state.apply(tr));
     ist(state.storedMarks!.length, 1/*stored Bold*/);
@@ -126,7 +126,7 @@ describe('splitBlockKeepMarksCommand', () => {
 
   it('preserves the stored marks', () => {
     const startStateDoc = docBuilder(paragraphBuilder(italicBuilder(`foo<${A}>`)));
-    let state = createState(startStateDoc as ProseMirrorNodeWithTag);
+    let state = createTestState(startStateDoc as ProseMirrorNodeWithTag);
     toggleMarkCommand(boldType, {/*no attrs*/})(state, tr => state = state.apply(tr));
     splitBlockKeepMarksCommand(state, tr => state = state.apply(tr));
     ist(state.storedMarks!.length, 2/*stored Bold and Italic*/);
