@@ -1,5 +1,7 @@
 import { EditorState, Transaction } from 'prosemirror-state';
 
+import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
+
 // ********************************************************************************
 // == Option & Storage ============================================================
 export type NoStorage = unknown/*alias*/;
@@ -16,6 +18,7 @@ export enum ExtensionName {
   BASIC_KEYMAP = 'basicKeymap',
   DEFAULT_INPUT_RULES = 'defaultInputRules',
   EMOJI_SUGGESTION = 'emojiSuggestion',
+  FIX_LISTS = 'fixLists',
   GAP_CURSOR = 'gapCursor',
   HISTORY = 'history',
   NESTED_VIEW_NODE = 'nestedViewNode',
@@ -107,13 +110,29 @@ export enum ExtensionPriority {
   LIST_ITEM = 108,
 
   /**
+   * the BasicKeymap contains Commands that represent
+   * default behavior, and hence it should have the default
+   * extension priority
+   */
+  BASIC_KEYMAP = DEFAULT_EXTENSION_PRIORITY,
+
+  /**
+   * since Lists may have to be merged, or their contents wrapped or
+   * lifted to be consistent, yet this should happen after all default
+   * behavior has been checked (which includes the basicKeymap, e.g.
+   * joining Nodes forward or backward), ensure that the Extension
+   * has a priority smaller than the basicKeymap one
+   */
+  FIX_LISTS = 99,
+
+  /**
    * since the Text Extension adds '\t' whenever Tab is pressed, but this
    * behavior is not always guaranteed to be the desired one (e.g. when
    * going through a list Node), the Text Extension runs last. This ensures
    * that the shortcuts defined in the Text Extension run only if their
    * trigger was not handled by another Extension previously
    */
-  TEXT = 99,
+  TEXT = 98,
 
   // -- Mark ----------------------------------------------------------------------
   // Currently nothing

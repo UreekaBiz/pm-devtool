@@ -2,11 +2,11 @@ import { Plugin } from 'prosemirror-state';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
-import { checkAndLiftChangedLists, checkAndMergeListAtPos } from './command';
+import { checkAndLiftChangedLists, checkAndMergeListAtPos } from './util';
 
 // ********************************************************************************
 // == Plugin ======================================================================
-export const listItemPlugin = () => new Plugin<NoPluginState>({
+export const fixListsPlugin = () => new Plugin<NoPluginState>({
   // -- Transaction -------------------------------------------------------------
   // ensure that Lists are merged and joined if possible
   // (SEE: checkAndMergeList), prevent any ListItems from

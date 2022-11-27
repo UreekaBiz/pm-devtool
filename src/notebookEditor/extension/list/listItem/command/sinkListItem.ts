@@ -1,9 +1,10 @@
+import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { findParentNodeClosestToPos, isListNode, AbstractDocumentUpdate, isListItemNode } from 'common';
 
-import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from './util';
-import { NodeRange } from 'prosemirror-model';
+import { checkAndMergeListAtPos } from '../../fixLists/util';
+import { fromOrToInListItem, getListItemPositions } from './util';
 
 // ********************************************************************************
 // == Sink ========================================================================

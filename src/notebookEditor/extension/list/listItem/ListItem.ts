@@ -8,7 +8,6 @@ import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
 import { joinBackwardToEndOfClosestListItem, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
-import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -41,7 +40,6 @@ export const ListItem = new NodeExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
-    listItemPlugin(),
     keymap({
       'Enter': chainCommands(liftListItemCommand('Enter'), splitListItemKeepMarksCommand),
       'Shift-Tab': liftListItemCommand('Shift-Tab'),

@@ -2,10 +2,9 @@ import { keymap } from 'prosemirror-keymap';
 
 import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockKeepMarksCommand } from 'common';
 
-import { ExtensionName } from 'notebookEditor/model';
+import { ExtensionName, ExtensionPriority } from 'notebookEditor/model';
 import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule/command';
 
-import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 import { Extension } from '../type/Extension/Extension';
 import { basicKeymapPlugin } from './plugin';
 
@@ -16,7 +15,7 @@ import { basicKeymapPlugin } from './plugin';
 export const BasicKeymap = new Extension({
   // -- Definition ----------------------------------------------------------------
   name: ExtensionName.BASIC_KEYMAP,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.BASIC_KEYMAP,
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
