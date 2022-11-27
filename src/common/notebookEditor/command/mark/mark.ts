@@ -19,8 +19,8 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
    * is set across the current Selection, and return it
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { empty, ranges } = tr.selection;
-    const markType = editorState.schema.marks[this.markName];
+    const { empty, ranges } = tr.selection,
+          markType = editorState.schema.marks[this.markName];
     if(empty) {
       const oldAttributes = getMarkAttributes(editorState, this.markName);
       tr.addStoredMark(markType.create({ ...oldAttributes, ...this.attributes }));
