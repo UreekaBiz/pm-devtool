@@ -1,53 +1,43 @@
-import { Transaction } from 'prosemirror-state';
+import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { isListNode, DocumentUpdate, JoinBackwardDocumentUpdate } from 'common';
-
-import { Editor } from 'notebookEditor/editor/Editor';
-import { applyDocumentUpdates } from 'notebookEditor/command/update';
+import { isListNode, AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
-// NOTE: this is a regular function since it calls applyDocumentUpdates
-export const joinBackwardToEndOfClosestListItem = (editor: Editor) => {
-  const { doc, selection } = editor.view.state,
-        { empty, $from, from } = selection,
-        { parent } = $from;
+/**
+ * join the parent of the current Selection to the end of the
+ * closest ListItem above
+ */
+export const joinBackwardToEndOfClosestListItemCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new JoinBackwardToEndOfClosestListItemDocumentUpdate(), state, dispatch);
 
-  if(!empty) return false/*do not allow if Selection is not empty*/;
-  if(!parent.isTextblock) return false/*parent is not a TextBlock, nothing to do*/;
-  if($from.before()+1/*inside the TextBlock*/ !== from) return false/*Selection is not at the start of the parent TextBlock*/;
+export class JoinBackwardToEndOfClosestListItemDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
 
-  const parentIndex =  $from.index(0/*direct Doc depth*/),
-        previousChildIndex = parentIndex-1/*by definition*/;
-  if(parentIndex === 0/*first direct child of Doc*/) return false/*no previous child by definition*/;
+  /**
+   * modify the given Transaction such that the parent of the current
+   * Selection gets lifted to the closest ListItem above
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const { doc, selection } = editorState,
+          { empty, $from, from } = selection,
+          { parent } = $from;
+    if(!empty) return false/*do not allow if Selection is not empty*/;
+    if(!parent.isTextblock) return false/*parent is not a TextBlock, nothing to do*/;
+    if($from.before() + 1/*inside the TextBlock*/ !== from) return false/*Selection is not at the start of the parent TextBlock*/;
 
-  const previousChild = doc.child(previousChildIndex);
-  if(!isListNode(previousChild)) return false/*no List to join into*/;
+    const parentIndex = $from.index(0/*direct Doc depth*/),
+          previousChildIndex = parentIndex - 1/*by definition*/;
+    if(parentIndex === 0/*first direct child of Doc*/) return false/*no previous child by definition*/;
 
-  let lastBlockChildOfList = doc/*default*/,
-      lastBlockChildOfListPos = 0/*default*/;
-  previousChild.descendants((node, pos) => {
-    if(node.isBlock) {
-      lastBlockChildOfList = node;
-      lastBlockChildOfListPos = (pos+1/*inside the Node*/) + node.nodeSize;
-    }
-  });
+    const previousList = doc.child(previousChildIndex);
+    if(!isListNode(previousList)) return false/*no List to join into*/;
 
-  if(!(parent.type === lastBlockChildOfList.type)) return false/*Nodes cannot be joined*/;
+    let lastChildOfListPos = 0/*default*/;
+    previousList.descendants((node, pos) => { lastChildOfListPos = (pos + 1/*inside the Node*/) + node.nodeSize; });
 
-  let updatedState = editor.view.state,
-      updatedTr: Transaction | false = editor.view.state.tr;
-  let updateAmount = 0/*default*/;
+    const $lastChildOfListPos = doc.resolve(lastChildOfListPos);
+    if(!(parent.type === $lastChildOfListPos.parent.type)) return false/*cannot be merged*/;
 
-  // compute the required amount of times that Nodes must be JoinedBackward
-  while(updatedTr.selection.from !== lastBlockChildOfListPos) {
-    updatedTr = new JoinBackwardDocumentUpdate().update(updatedState, updatedTr, editor.view);
-    if(updatedTr) {
-      updatedState = updatedState.apply(updatedTr);
-      updateAmount++;
-    } else { break/*could not join backward*/; }
+    return tr.delete(lastChildOfListPos, from);
   }
-
-  const updates: DocumentUpdate[] = [/*default empty*/];
-  for(let i=0; i<updateAmount; i++) { updates.push(new JoinBackwardDocumentUpdate()); }
-  return applyDocumentUpdates(editor, updates);
-};
+}

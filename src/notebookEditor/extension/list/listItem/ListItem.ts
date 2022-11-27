@@ -7,7 +7,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
-import { joinBackwardToEndOfClosestListItem, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
+import { joinBackwardToEndOfClosestListItemCommand, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
@@ -49,7 +49,7 @@ export const ListItem = new NodeExtension({
         const liftResult = liftListItemCommand('Backspace')(editor.view.state, editor.view.dispatch);
         if(liftResult) return liftResult/* else -- could not Lift */;
 
-        return joinBackwardToEndOfClosestListItem(editor);
+        return joinBackwardToEndOfClosestListItemCommand(editor.view.state, editor.view.dispatch);
       },
       'Delete': joinForwardToStartOfClosestListItemCommand,
     }),
