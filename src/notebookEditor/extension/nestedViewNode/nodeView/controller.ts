@@ -1,10 +1,11 @@
+import { chainCommands } from 'prosemirror-commands';
 import { redo, undo } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { StepMap } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 
-import { chainCommands, getPosType, insertNewlineCommand, NestedViewNodeType, NodeName, PM_SELECTED_CLASS } from 'common';
+import { getPosType, insertNewlineCommand, NestedViewNodeType, NodeName, PM_SELECTED_CLASS } from 'common';
 
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';

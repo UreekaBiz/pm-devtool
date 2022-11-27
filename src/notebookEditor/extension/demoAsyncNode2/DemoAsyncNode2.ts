@@ -1,6 +1,7 @@
+import { chainCommands } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
 
-import { chainCommands, generateNodeId, getNodeOutputSpec, isDemoAsyncNode2, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, DemoAsyncNode2Spec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
+import { generateNodeId, getNodeOutputSpec, isDemoAsyncNode2, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, DemoAsyncNode2Spec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/command/node';
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
