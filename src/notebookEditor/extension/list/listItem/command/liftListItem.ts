@@ -9,28 +9,29 @@ import { fromOrToInListItem, getListItemPositions } from './util';
 // ********************************************************************************
 // == Lift ========================================================================
 // lift a ListItem
-export const liftListItemCommand = (from: 'Enter' | 'Shift-Tab' | 'Backspace'): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate(from), state, dispatch);
+export const liftListItemCommand = (triggerKey: 'Enter' | 'Shift-Tab' | 'Backspace'): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate(triggerKey), state, dispatch);
 export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly from: 'Enter' | 'Shift-Tab' | 'Backspace') {/*nothing additional*/}
+  public constructor(private readonly triggerKey: 'Enter' | 'Shift-Tab' | 'Backspace') {/*nothing additional*/}
 
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction) {
     // -- Checks ------------------------------------------------------------------
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
-    const { empty, $from, from, to } = editorState.selection;
+    const { doc, selection } = editorState,
+          { empty, $from, from, to } = selection;
 
-    if(this.from === 'Backspace' || this.from === 'Enter') {
+    if(this.triggerKey === 'Backspace' || this.triggerKey === 'Enter') {
       if(!empty) return false/*do not allow if Selection not empty when Back*/;
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
 
-      if(this.from === 'Enter') {
+      if(this.triggerKey === 'Enter') {
         if($from.parent.textContent.length > 0/*not empty*/) return false/*only allow lift on Enter if parent is empty*/;
       } /* else -- do not check enter-specific case */
     } /* else -- backspace / enter checks done */
 
     // -- Lift --------------------------------------------------------------------
-    const listItemPositions = getListItemPositions(editorState, { from, to });
+    const listItemPositions = getListItemPositions(doc, { from, to });
     for(let i=0; i<listItemPositions.length; i++) {
       const updatedTr = liftListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
