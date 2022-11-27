@@ -1,7 +1,7 @@
 import { canJoin, findWrapping } from 'prosemirror-transform';
 import { NodeType, Node, Attrs, MarkType } from 'prosemirror-model';
 
-import { getMarksBetween } from 'common';
+import { getMarksInRange } from 'common';
 
 import { InputRule } from './InputRule';
 
@@ -106,7 +106,7 @@ new InputRule(regexp, (state, match, start, end) => {
   const textStart = start + fullMatch.indexOf(captureGroup);
   const textEnd = textStart + captureGroup.length;
 
-  const excludedMarks = getMarksBetween(start, end, state.doc).filter(item => {
+  const excludedMarks = getMarksInRange(state.doc, { from: start, to: end }).filter(item => {
     // NOTE: this property does exist on the MarkType
     // @ts-ignore
     const excluded = item.mark.type.excluded as MarkType[];
