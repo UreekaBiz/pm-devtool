@@ -9,7 +9,7 @@ import { TransactionListenerType } from 'notebookEditor/extension/type/Extension
 import { sortExtensionsByPriority } from 'notebookEditor/extension/type/Extension/util';
 import { getMarkSpecs } from 'notebookEditor/extension/type/MarkExtension/util';
 import { getNodeSpecs, getTopNode, isNodeExtension } from 'notebookEditor/extension/type/NodeExtension/util';
-import { NodeViewStorage, AbstractNodeController, DialogStorage } from 'notebookEditor/model';
+import { AbstractNodeController, DialogStorage, ExtensionName, NodeViewStorage } from 'notebookEditor/model';
 import { inputRulesPlugin, InputRule } from 'notebookEditor/plugin/inputRule/InputRule';
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
@@ -47,7 +47,7 @@ export class Editor {
    * map containing NodeNames and mapping them to their storage, which
    * holds references to their {@link AbstractNodeController}s
    */
-  public storage: Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>;
+  public storage: Map<ExtensionName | NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>;
 
   // ------------------------------------------------------------------------------
   /**
@@ -149,13 +149,12 @@ export class Editor {
   // -- Storage -------------------------------------------------------------------
   /** set the Storages defined by the {@link Extensions} in the Storage map */
   private initializeStorage() {
-    const editorStorage = new Map<NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>();
+    const editorStorage = new Map<ExtensionName | NodeName | MarkName, NodeViewStorage<AbstractNodeController<any, any>> | DialogStorage>();
     this.extensions.forEach(extension => {
       const { name, storage } = extension;
       if(!storage) return/*nothing else to do*/;
 
-      // FIXME: no need to cast! (SEE: Extension.ts)
-      editorStorage.set(name as (NodeName | MarkName)/*by definition*/, storage);
+      editorStorage.set(name, storage);
     });
 
     return editorStorage;
