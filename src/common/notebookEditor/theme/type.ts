@@ -1,4 +1,4 @@
-import { Attributes, AttributeType } from '../attribute';
+import { Attributes, AttributeType, TextAlign, VerticalAlign } from '../attribute';
 import { HeadingLevel } from '../extension/heading';
 import { DATA_NODE_TYPE } from '../htmlRenderer/type';
 import { MarkName } from '../mark';
@@ -59,14 +59,74 @@ export const DefaultTheme: Theme = {
   displayName: 'Default',
 
   nodes:{
+    [NodeName.BLOCKQUOTE]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '16px',
+
+      // NOTE: order is not arbitrary
+      [AttributeType.BorderLeft]: '3px',
+      [AttributeType.BorderColor]: '#CCCCCC',
+      [AttributeType.MarginLeft]: '4px',
+    },
+    [NodeName.BULLET_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
+    [NodeName.CELL]: {/*no defined value*/},
+    [NodeName.CODEBLOCK]: {
+      [AttributeType.PaddingLeft]: '4px',
+      [AttributeType.PaddingRight]: '4px',
+      [AttributeType.PaddingTop]: '4px',
+      [AttributeType.PaddingBottom]: '4px',
+
+      [AttributeType.MarginLeft]: '4px',
+      [AttributeType.MarginRight]: '0px',
+      [AttributeType.MarginTop]: '0.5rem',
+      [AttributeType.MarginBottom]: '0.5rem',
+    },
+    [NodeName.CODEBLOCK_REFERENCE]: {
+      [AttributeType.LeftDelimiter]: '(',
+      [AttributeType.RightDelimiter]: ')',
+    },
+    [NodeName.DEMO_ASYNC_NODE]: {/*no defined value*/},
+    [NodeName.DEMO_ASYNC_NODE_2]: {
+      [AttributeType.PaddingLeft]: '4px',
+      [AttributeType.PaddingRight]: '4px',
+      [AttributeType.PaddingTop]: '4px',
+      [AttributeType.PaddingBottom]: '4px',
+
+      [AttributeType.MarginLeft]: '4px',
+      [AttributeType.MarginRight]: '4px',
+      [AttributeType.MarginTop]: '0.5rem',
+      [AttributeType.MarginBottom]: '0.5rem',
+    },
     [NodeName.DOC]: {/*no defined value*/},
+    [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
+    [NodeName.HEADER_CELL]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#F3F3F3',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginRight]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },
+    [NodeName.HORIZONTAL_RULE]: {
+      [AttributeType.BackgroundColor]: '#000',
+      [AttributeType.Height]: '2px',
+    },
+    [NodeName.IMAGE]: {
+      [AttributeType.Color]: '#000',
+      [AttributeType.BorderWidth]: '1px',
+      [AttributeType.BorderStyle]: 'solid',
+      [AttributeType.TextAlign]: TextAlign.left,
+      [AttributeType.VerticalAlign]: VerticalAlign.bottom,
+    },
+    [NodeName.LIST_ITEM]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '16px',
+    },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
+    [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
+    [NodeName.ROW]: {/*no defined value*/},
+    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '2em' },
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#000000',
@@ -76,13 +136,24 @@ export const DefaultTheme: Theme = {
       [AttributeType.MarginTop]: '0.5rem',
       [AttributeType.MarginBottom]: '0.5rem',
     },
+    [NodeName.TABLE]: {/*no defined value*/},
     [NodeName.TEXT]:{/*no defined value*/},
   },
 
   marks: {
     [MarkName.BOLD]:  {/*no defined value*/},
+    [MarkName.CODE]:  {/*no defined value*/},
+    [MarkName.ITALIC]:  {/*no defined value*/},
+    [MarkName.LINK]:  {
+      [AttributeType.Color]: '#1A73E8',
+      [AttributeType.TextDecoration]: 'underline',
+    },
+    [MarkName.REPLACED_TEXT_MARK]:  {/*no defined value*/},
+    [MarkName.SUB_SCRIPT]:  {/*no defined value*/},
+    [MarkName.SUPER_SCRIPT]:  {/*no defined value*/},
     [MarkName.STRIKETHROUGH]:  {/*no defined value*/},
     [MarkName.TEXT_STYLE]:  {/*no defined value*/},
+    [MarkName.UNDERLINE]:  {/*no defined value*/},
   },
 
   customSelectors: {
@@ -118,13 +189,73 @@ export const GoogleDocsTheme: Theme = {
   displayName: 'Default',
 
   nodes:{
+    [NodeName.BLOCKQUOTE]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '11pt',
+
+      // NOTE: order of borders is not arbitrary
+      [AttributeType.BorderLeft]: '3px',
+      [AttributeType.BorderColor]: '#CCCCCC',
+      [AttributeType.MarginLeft]: '4px',
+    },
+    [NodeName.BULLET_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
+    [NodeName.CELL]: {/*no defined value*/},
+    [NodeName.CODEBLOCK]: {
+      [AttributeType.PaddingLeft]: '4px',
+      [AttributeType.PaddingRight]: '4px',
+      [AttributeType.PaddingTop]: '4px',
+      [AttributeType.PaddingBottom]: '4px',
+
+      [AttributeType.MarginLeft]: '4px',
+      [AttributeType.MarginRight]: '0px',
+      [AttributeType.MarginTop]: '0.5rem',
+      [AttributeType.MarginBottom]: '0.5rem',
+    },
+    [NodeName.CODEBLOCK_REFERENCE]: {
+      [AttributeType.LeftDelimiter]: '[',
+      [AttributeType.RightDelimiter]: ']',
+    },
+    [NodeName.DEMO_ASYNC_NODE]: {/*no defined value*/},
+    [NodeName.DEMO_ASYNC_NODE_2]: {
+      [AttributeType.PaddingLeft]: '4px',
+      [AttributeType.PaddingRight]: '4px',
+      [AttributeType.PaddingTop]: '4px',
+      [AttributeType.PaddingBottom]: '4px',
+
+      [AttributeType.MarginLeft]: '4px',
+      [AttributeType.MarginRight]: '4px',
+      [AttributeType.MarginTop]: '0.5rem',
+      [AttributeType.MarginBottom]: '0.5rem',
+    },
     [NodeName.DOC]: {/*no defined value*/},
+    [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: {/*no defined value*/},
+    [NodeName.HEADER_CELL]: {/*no defined value*/},
     [NodeName.HEADING]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.MarginLeft]: '4px',
       [AttributeType.MarginBottom]: '0.25rem',
     },
+    [NodeName.HORIZONTAL_RULE]: {
+      [AttributeType.BackgroundColor]: '#000',
+      [AttributeType.Height]: '2px',
+    },
+    [NodeName.IMAGE]: {
+      [AttributeType.Color]: '#353744',
+      [AttributeType.BorderWidth]: '1px',
+      [AttributeType.BorderStyle]: 'solid',
+      [AttributeType.TextAlign]: TextAlign.left,
+      [AttributeType.VerticalAlign]: VerticalAlign.bottom,
+    },
+    [NodeName.LIST_ITEM]: {
+      [AttributeType.BackgroundColor]: '#FFFFFF',
+      [AttributeType.Color]: '#000000',
+      [AttributeType.FontSize]: '16px',
+    },
     [NodeName.MARK_HOLDER]: {/*no defined value*/},
+    [NodeName.NESTED_VIEW_BLOCK_NODE]: {/*no defined value*/},
+    [NodeName.ROW]: {/*no defined value*/},
+    [NodeName.ORDERED_LIST]: { [AttributeType.MarginLeft]: '2em' },
     [NodeName.PARAGRAPH]: {
       [AttributeType.BackgroundColor]: '#FFFFFF',
       [AttributeType.Color]: '#353744',
@@ -134,13 +265,24 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.MarginTop]: '0.5rem',
       [AttributeType.MarginBottom]: '0.5rem',
     },
+    [NodeName.TABLE]: {/*no defined value*/},
     [NodeName.TEXT]:{/*no defined value*/},
   },
 
   marks: {
     [MarkName.BOLD]:  {/*no defined value*/},
+    [MarkName.CODE]:  {/*no defined value*/},
+    [MarkName.ITALIC]:  {/*no defined value*/},
+    [MarkName.LINK]:  {
+      [AttributeType.Color]: '#1A73E8',
+      [AttributeType.TextDecoration]: 'underline',
+    },
+    [MarkName.REPLACED_TEXT_MARK]:  {/*no defined value*/},
+    [MarkName.SUB_SCRIPT]:  {/*no defined value*/},
+    [MarkName.SUPER_SCRIPT]:  {/*no defined value*/},
     [MarkName.STRIKETHROUGH]:  {/*no defined value*/},
     [MarkName.TEXT_STYLE]:  {/*no defined value*/},
+    [MarkName.UNDERLINE]:  {/*no defined value*/},
   },
 
   customSelectors: {

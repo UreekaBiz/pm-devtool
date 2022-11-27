@@ -11,10 +11,26 @@ export type NodeIdentifier = string/*alias*/;
 // --------------------------------------------------------------------------------
 /** Unique identifier for each Node on the schema */
 export enum NodeName {
+  BLOCKQUOTE = 'blockquote',
+  BULLET_LIST = 'bulletList',
+  CELL = 'cell',
+  CODEBLOCK = 'codeBlock',
+  CODEBLOCK_REFERENCE = 'codeBlockReference',
+  DEMO_ASYNC_NODE = 'demoAsyncNode',
+  DEMO_ASYNC_NODE_2 = 'demoAsyncNode2',
   DOC = 'document',
+  EDITABLE_INLINE_NODE_WITH_CONTENT = 'editableInlineNodeWithContent',
+  HEADER_CELL = 'headerCell',
   HEADING = 'heading',
+  HORIZONTAL_RULE = 'horizontalRule',
+  IMAGE = 'image',
+  LIST_ITEM = 'listItem',
   MARK_HOLDER = 'markHolder',
+  NESTED_VIEW_BLOCK_NODE = 'nestedViewBlockNode',
+  ROW = 'row',
+  ORDERED_LIST = 'orderedList',
   PARAGRAPH = 'paragraph',
+  TABLE = 'table',
   TEXT = 'text',
 }
 export const getNodeName = (node: ProseMirrorNode) => node.type.name as NodeName;
@@ -30,6 +46,7 @@ export const isNodeType = (node: ProseMirrorNode, nodeName: NodeName) => node.ty
 export enum NodeGroup {
   BLOCK = 'block',
   INLINE = 'inline',
+  LIST = 'list',
 }
 
 /** the HTML tag used when rendering the node to the DOM */

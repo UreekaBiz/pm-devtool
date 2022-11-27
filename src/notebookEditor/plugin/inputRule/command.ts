@@ -10,7 +10,7 @@ import { InputRulePluginState, IS_INPUT_RULE_PLUGIN } from './InputRule';
  * such a rule was the last thing the User did
  */
 export const undoInputRuleCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new UndoInputRuleDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new UndoInputRuleDocumentUpdate(), state, dispatch);
 export class UndoInputRuleDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 

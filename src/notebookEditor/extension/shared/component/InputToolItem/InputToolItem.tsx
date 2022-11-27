@@ -4,10 +4,11 @@ import { getSelectedNode, isBlank, isNodeSelection, isNodeType, AttributeType, N
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { InputToolItemContainer } from '../../InputToolItemContainer';
+import { InputToolItemContainer } from '../InputToolItemContainer';
 import { InputTool } from './InputTool';
 
 // ********************************************************************************
+// == Interface ===================================================================
 interface Props extends EditorToolComponentProps, Omit<InputProps, 'onChange'> {
   /** the NodeName of the Node */
   nodeName: NodeName;
@@ -17,6 +18,8 @@ interface Props extends EditorToolComponentProps, Omit<InputProps, 'onChange'> {
   /** the name of the ToolItem */
   name: string;
 }
+
+// == Component ===================================================================
 export const InputToolItem: React.FC<Props> = ({ editor, depth, nodeName, attributeType, name, type, ...props }) => {
   const { state } = editor.view;
   const { selection } = state;
@@ -26,7 +29,7 @@ export const InputToolItem: React.FC<Props> = ({ editor, depth, nodeName, attrib
 
   const value = node.attrs[attributeType] ?? '' /*default*/;
 
-  // == Handler ===================================================================
+  // -- Handler -------------------------------------------------------------------
   const handleChange = (value: string) => {
     let parsedValue: string | undefined | number;
 
@@ -48,7 +51,7 @@ export const InputToolItem: React.FC<Props> = ({ editor, depth, nodeName, attrib
     editor.view.focus();
   };
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   return (
     <InputToolItemContainer name={name}>
       <InputTool value={value} placeholder={name} onChange={handleChange} type={type} {...props}/>

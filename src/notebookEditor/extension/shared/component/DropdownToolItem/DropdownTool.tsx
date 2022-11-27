@@ -4,6 +4,7 @@ import { ChangeEventHandler } from 'react';
 import { TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
+// == Interface ===================================================================
 export type DropdownToolItemType = { value: string; label: string; };
 type Props = {
   value: string;
@@ -13,12 +14,14 @@ type Props = {
 
   onChange: (value: string) => void;
 }
+
+// == Component ===================================================================
 export const DropdownTool: React.FC<Props> = ({ value, options, placeholder, onChange }) => {
-
-  const handleChange: ChangeEventHandler<HTMLSelectElement> = (event) => {
+  // -- Handler -------------------------------------------------------------------
+  const handleChange: ChangeEventHandler<HTMLSelectElement> = (event) =>
     onChange(event.target.value);
-  };
 
+  // -- UI ------------------------------------------------------------------------
   return (
     <Select size='sm' value={value} marginY={1} datatype={TOOL_ITEM_DATA_TYPE/*(SEE: notebookEditor/sidebar/toolbar/type )*/} onChange={handleChange}>
       <option value='' disabled>{placeholder}</option>

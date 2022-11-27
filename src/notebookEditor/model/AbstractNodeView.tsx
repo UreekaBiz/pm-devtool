@@ -59,15 +59,16 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
     this.ReactRoot = ReactDOM.createRoot(this.dom);
   }
 
-  // Sync getPos and node when prosemirror updates it.
-  public updateProps(getPos: getPosType){
+  // sync getPos and Node when ProseMirror updates it
+  public updateProps(getPos: getPosType) {
     this.getPos = getPos;
   }
+
   // called by the Controller when the NodeView's Node is removed. This method is
   // meant to be used to perform view-specific functionality on Node removal (e.g.
   // removing EventListeners). The destruction of the View elements themselves is
   // handled by default by ProseMirror
-  public destroy() {/*currently nothing*/}
+  public destroy() {/*currently nothing*/ }
 
   // == View ======================================================================
   // creates the outer DOM node that represents the Document Node
@@ -80,14 +81,18 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
   //       an external state (e.g. the visualId of the CodeBlockView) and thus
   //       needs to be called from outside the class.
   public updateView() {
-    if(this.reactNodeView){
+    if(this.reactNodeView) {
       const props: ReactNodeViewProps<any/*cannot know attributes at this level*/, NodeType, NodeModel, typeof this> = {
         attrs: this.node.attrs,
         editor: this.editor,
         node: this.node,
         nodeModel: this.model,
         nodeView: this,
+        isSelected: this.model.getSelected(),
       };
+      // set data-node-view attribute
+      // SEE: index.css
+      this.dom.setAttribute('data-node-view', 'true');
 
       // Update React View
       // NOTE: A react component is meant to be rendered using JSX instead of
@@ -97,6 +102,6 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
       //       function.
       const ReactNodeViewComponent = this.reactNodeView;
       this.ReactRoot.render(<ReactNodeViewComponent {...props} />);
-    }
+    } /* else -- no ReactNodeView to update */
   }
 }

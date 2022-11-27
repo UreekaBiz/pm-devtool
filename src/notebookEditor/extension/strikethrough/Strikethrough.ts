@@ -56,8 +56,8 @@ export const Strikethrough = new MarkExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-      'Mod-x': () => shortcutCommandWrapper(editor, toggleStrikethroughCommand),
-      'Mod-X': () => shortcutCommandWrapper(editor, toggleStrikethroughCommand),
+      'Shift-Mod-x': () => shortcutCommandWrapper(editor, toggleStrikethroughCommand),
+      'Shift-Mod-X': () => shortcutCommandWrapper(editor, toggleStrikethroughCommand),
     }),
   ],
 });

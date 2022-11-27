@@ -19,14 +19,6 @@ export const CLICKABLE_CLASS = 'clickable';
 // .. Button ......................................................................
 export const ICON_BUTTON_CLASS = 'iconButton';
 
-// .. Node ........................................................................
-// added to the selected Node by default by ProseMirror
-export const PM_CLASS = 'ProseMirror';
-export const PM_SELECTED_CLASS = `${PM_CLASS}-selectednode`;
-
-export const INLINE_NODE_CONTAINER_CLASS = 'inlineNodeContainer';
-export const SELECTED_TEXT_CLASS = 'selected_text';
-
 // .. Chip ........................................................................
 export const CHIP_CLASS = 'chip';
 export const CHIP_CLOSE_BUTTON_CLASS = 'chipCloseButton';

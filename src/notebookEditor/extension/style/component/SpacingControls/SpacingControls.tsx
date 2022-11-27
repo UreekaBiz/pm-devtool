@@ -116,7 +116,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         margin-top:
         <DragControl
-          valueWithUnit={getValue('margin', AttributeType.MarginTop)}
+          valueWithUnit={String(getValue('margin', AttributeType.MarginTop))}
           direction='vertical'
           onChange={value => handleChange(AttributeType.MarginTop, value)} onEnd={handleEnd}
         />
@@ -124,7 +124,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         margin-bottom:
         <DragControl
-          valueWithUnit={getValue('margin', AttributeType.MarginBottom)}
+          valueWithUnit={String(getValue('margin', AttributeType.MarginBottom))}
           direction='vertical'
           onChange={value => handleChange(AttributeType.MarginBottom, value)} onEnd={handleEnd}
         />
@@ -132,7 +132,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         margin-left:
         <DragControl
-          valueWithUnit={getValue('margin', AttributeType.MarginLeft)}
+          valueWithUnit={String(getValue('margin', AttributeType.MarginLeft))}
           direction='horizontal'
           onChange={value => handleChange(AttributeType.MarginLeft, value)} onEnd={handleEnd}
         />
@@ -140,7 +140,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         margin-right:
         <DragControl
-          valueWithUnit={getValue('margin', AttributeType.MarginRight)}
+          valueWithUnit={String(getValue('margin', AttributeType.MarginRight))}
           direction='horizontal'
           onChange={value => handleChange(AttributeType.MarginRight, value)} onEnd={handleEnd}
         />
@@ -151,7 +151,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         padding-top:
         <DragControl
-          valueWithUnit={getValue('padding', AttributeType.PaddingTop)}
+          valueWithUnit={String(getValue('padding', AttributeType.PaddingTop))}
           direction='vertical'
           onChange={value => handleChange(AttributeType.PaddingTop, value)} onEnd={handleEnd}
         />
@@ -159,7 +159,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         padding-bottom:
         <DragControl
-          valueWithUnit={getValue('padding', AttributeType.PaddingBottom)}
+          valueWithUnit={String(getValue('padding', AttributeType.PaddingBottom))}
           direction='vertical'
           onChange={value => handleChange(AttributeType.PaddingBottom, value)} onEnd={handleEnd}
         />
@@ -167,7 +167,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         padding-left:
         <DragControl
-          valueWithUnit={getValue('padding', AttributeType.PaddingLeft)}
+          valueWithUnit={String(getValue('padding', AttributeType.PaddingLeft))}
           direction='horizontal'
           onChange={value => handleChange(AttributeType.PaddingLeft, value)} onEnd={handleEnd}
         />
@@ -175,7 +175,7 @@ export const SpacingControls: React.FC<Props> = ({ margin, padding, name, onChan
       <Flex>
         padding-right:
         <DragControl
-          valueWithUnit={getValue('padding', AttributeType.PaddingRight)}
+          valueWithUnit={String(getValue('padding', AttributeType.PaddingRight))}
           direction='horizontal'
           onChange={value => handleChange(AttributeType.PaddingRight, value)} onEnd={handleEnd}
         />

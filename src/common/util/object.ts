@@ -1,4 +1,5 @@
-import { cloneDeep, set } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import set from 'lodash/set';
 
 import { isBlank } from './string';
 
@@ -29,6 +30,9 @@ export const pick = <T, K extends keyof T>(o: T, ...keys: K[]): Pick<T, K> => {
 };
 
 // ................................................................................
+
+// == Check =======================================================================
+export const isNotNullOrUndefined = <T>(obj: any): obj is T  => obj !== null && obj !== undefined;
 
 // == Conversion ==================================================================
 export const convertNull = <T extends Record<string, any>>(o: T, convert: any): T => {

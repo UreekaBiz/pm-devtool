@@ -29,19 +29,19 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
   }
   init() {
     const { editor } = this.props;
-    if(!editor || !editor.element) return/*not ready*/;
+    if(!editor || !editor.htmlViewElement) return/*not ready to mount*/;
     if(editor.contentComponent) return/*already setup*/;
 
-    const element = this.editorContentRef.current;
-    if(!element) return/*does not exist yet*/;
+    const htmlViewElement = this.editorContentRef.current;
+    if(!htmlViewElement) return/*does not exist yet*/;
 
-    element.append(...editor.element.childNodes);
-    editor.element = element;
+    htmlViewElement.append(...editor.htmlViewElement.childNodes);
+    editor.htmlViewElement = htmlViewElement;
     editor.contentComponent = this;
 
     if(editor.isViewMounted()) return/*already mounted*/;
 
-    editor.mountView(editor.element);
+    editor.mountView(editor.htmlViewElement);
   }
 
   // -- Update --------------------------------------------------------------------
@@ -54,19 +54,23 @@ export class PureEditorContent extends React.Component<EditorContentProps, Edito
     if(!editor) return/*nothing to do*/;
 
     editor.contentComponent = null;
-    if(!editor.element.firstChild) return;
-
+    if(!editor.htmlViewElement.firstChild) return;
 
     const newElement = document.createElement('div');
-    newElement.append(...editor.element.childNodes);
+    newElement.append(...editor.htmlViewElement.childNodes);
 
-    editor.element = newElement;
+    editor.htmlViewElement = newElement;
   }
 
   // -- UI ------------------------------------------------------------------------
   render() {
     const { editor, ...rest } = this.props;
-    return (<><div ref={this.editorContentRef} {...rest} /><Portals renderers={this.state.renderers} /></>);
+    return (
+      <>
+        <div ref={this.editorContentRef} {...rest} />
+        <Portals renderers={this.state.renderers} />
+      </>
+    );
   }
 }
 

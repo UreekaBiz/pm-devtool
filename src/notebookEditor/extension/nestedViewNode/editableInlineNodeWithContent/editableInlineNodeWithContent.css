@@ -1,0 +1,34 @@
+/* == Editable Inline Node with Content ======================================== */
+/* .. General View ............................................................. */
+[data-node-type="editableInlineNodeWithContent"] {
+  min-width: 1em;
+	min-height: 1em;
+  display: inline;
+  word-break: break-word;
+
+}
+/* .. PM Selection ............................................................. */
+[data-node-type="editableInlineNodeWithContent"].ProseMirror-selectednode .innerViewDisplay,
+[data-node-type="editableInlineNodeWithContent"] .innerViewDisplay .ProseMirror {
+  display: inline;
+}
+
+/* .. Inner View ............................................................... */
+[data-node-type="editableInlineNodeWithContent"] .innerViewDisplay {
+	display: none/*do not show*/;
+	color: rgb(161, 28, 201);
+	tab-size: 4;
+}
+[data-node-type="editableInlineNodeWithContent"] .innerViewDisplay::after,
+[data-node-type="editableInlineNodeWithContent"] .innerViewDisplay::before {
+  content: '~'/*T&E*/;
+  color: #B0B0B0;
+}
+
+/* .. Rendered View ............................................................ */
+[data-node-type="editableInlineNodeWithContent"] .renderedViewDisplay {
+  /* show the rendered Node Content correctly */
+	display: inline-block;
+	font-size: 0.85em;
+	cursor: pointer;
+}

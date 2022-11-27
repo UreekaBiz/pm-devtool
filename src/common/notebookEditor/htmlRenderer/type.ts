@@ -1,13 +1,32 @@
-
 import { Attributes, AttributeType, HTMLAttributes } from '../attribute';
 import { MarkName } from '../mark';
 import { NodeName } from '../node';
 import { RendererState } from './state';
 
 // ********************************************************************************
+// == Constant ====================================================================
 export type HTMLTag = string/*alias*/;
 export type HTMLString = string/*alias*/;
 export const DEFAULT_RENDER_TAG = 'div';
+
+// -- CSS -------------------------------------------------------------------------
+// NOTE: these classes are located in common since the renderer behavior
+//       for a given NodeView might need them
+/**
+ * class added by PM to PM-created < br/> tags that are inserted when
+ * TextBlock Nodes are empty
+ */
+export const PROSEMIRROR_TRAILING_BREAK_CLASS = 'ProseMirror-trailingbreak';
+
+// added to the selected Node by default by ProseMirror
+export const PM_CLASS = 'ProseMirror';
+export const PM_SELECTED_CLASS = `${PM_CLASS}-selectednode`;
+
+/** used by NodeViews */
+export const INLINE_NODE_CONTAINER_CLASS = 'inlineNodeContainer';
+
+/** used by the SelectionHandling Plugin */
+export const SELECTED_TEXT_CLASS = 'selected_text';
 
 // == Node ========================================================================
 export type TagRenderer<A extends Attributes> = HTMLTag | ((attributes: A) => HTMLTag);
@@ -79,14 +98,16 @@ export const getRenderTag = (attributes: Partial<Attributes> = {}, rendererSpec:
 };
 
 // --------------------------------------------------------------------------------
-// Returns the string that gets added to the rendered tag, both for the Renderer
-// and for the output Spec of a Node. This function or its constant must be used
-// for the getNodeOutputSpec, the Renderer and AbstractNodeViews
-export const DATA_NODE_TYPE = 'data-node-type';
-export const createNodeDataTypeAttribute = (nodeName: NodeName) => `${DATA_NODE_TYPE}="${nodeName}"`;
+/**
+ * returns the string that gets added to the rendered tag, both for the Renderer
+ * and for the output Spec of a Node. This function or its constant must be used
+ * for the getNodeOutputSpec, the Renderer and AbstractNodeViews
+ */
+ export const DATA_NODE_TYPE = 'data-node-type';
+ export const createNodeDataTypeAttribute = (nodeName: NodeName) => `${DATA_NODE_TYPE}="${nodeName}"`;
 
-export const DATA_MARK_TYPE = 'data-mark-type';
-export const createMarkDataTypeAttribute = (markName: MarkName) => `${DATA_MARK_TYPE}="${markName}"`;
+ export const DATA_MARK_TYPE = 'data-mark-type';
+ export const createMarkDataTypeAttribute = (markName: MarkName) => `${DATA_MARK_TYPE}="${markName}"`;
 
-export const DATA_ATTRIBUTE = 'data-attribute';
-export const createNodeDataAttribute = (attributeType: AttributeType) => `${DATA_ATTRIBUTE}-${attributeType}`;
+ export const DATA_ATTRIBUTE = 'data-attribute';
+ export const createNodeDataAttribute = (attributeType: AttributeType) => `${DATA_ATTRIBUTE}-${attributeType}`;

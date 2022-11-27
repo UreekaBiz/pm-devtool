@@ -7,7 +7,7 @@ import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 // ********************************************************************************
 /** toggle the Strikethrough Mark */
 export const toggleStrikethroughCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleStrikethroughDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleStrikethroughDocumentUpdate(), state, dispatch);
 export class ToggleStrikethroughDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

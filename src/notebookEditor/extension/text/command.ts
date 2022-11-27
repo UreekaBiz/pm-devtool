@@ -3,7 +3,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
-export const insertTabCommand: Command = (state, dispatch) => AbstractDocumentUpdate.execute(new InsertTabDocumentUpdate().update(state, state.tr), dispatch);
+export const insertTabCommand: Command = (state, dispatch) => AbstractDocumentUpdate.execute(new InsertTabDocumentUpdate(), state, dispatch);
 export class InsertTabDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

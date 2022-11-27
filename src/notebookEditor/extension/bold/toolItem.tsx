@@ -6,6 +6,7 @@ import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { isMarkActive } from 'notebookEditor/editor/util';
 import { inMarkHolder } from 'notebookEditor/extension/markHolder/util';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { toggleBoldCommand } from './command';
 
@@ -20,11 +21,11 @@ export const markBold: ToolItem = {
   tooltip: 'Bold (⌘ + B)',
 
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
-  shouldShow: (editor, depth) => depth === undefined || editor.view.state.selection.$anchor.depth === depth/*direct parent*/,
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleBoldCommand),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => {
     if(inMarkHolder(editor,  MarkName.BOLD)) return true/*is active in MarkHolder*/;
 
     return isMarkActive(editor, MarkName.BOLD);
   },
+  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleBoldCommand),
 };

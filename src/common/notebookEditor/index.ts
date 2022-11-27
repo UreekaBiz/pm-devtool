@@ -4,6 +4,7 @@ export * from './htmlRenderer';
 export * from './mark';
 export * from './node';
 export * from './schema';
+export * from './step';
 export * from './attribute';
 export * from './notebookDocument';
 export * from './schema';

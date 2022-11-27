@@ -1,12 +1,12 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockCommand } from 'common';
+import { chainCommands, deleteSelectionCommand, joinBackwardCommand, joinForwardCommand, liftEmptyBlockNodeCommand, selectNodeBackwardCommand, selectNodeForwardCommand, splitBlockKeepMarksCommand } from 'common';
 
-import { ExtensionName } from 'notebookEditor/model';
+import { ExtensionName, ExtensionPriority } from 'notebookEditor/model';
 import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule/command';
 
 import { Extension } from '../type/Extension/Extension';
-import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
+import { basicKeymapPlugin } from './plugin';
 
 // ********************************************************************************
 // REF: https://github.com/ProseMirror/prosemirror-example-setup/blob/master/src/keymap.ts
@@ -15,7 +15,7 @@ import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 export const BasicKeymap = new Extension({
   // -- Definition ----------------------------------------------------------------
   name: ExtensionName.BASIC_KEYMAP,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.BASIC_KEYMAP,
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
@@ -25,8 +25,9 @@ export const BasicKeymap = new Extension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: () => [
+    basicKeymapPlugin(),
     keymap({
-      'Enter': chainCommands(liftEmptyBlockNodeCommand, splitBlockCommand),
+      'Enter': chainCommands(liftEmptyBlockNodeCommand, splitBlockKeepMarksCommand),
       'Backspace': chainCommands(undoInputRuleCommand, deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),
       'Mod-Backspace': chainCommands(deleteSelectionCommand, joinBackwardCommand, selectNodeBackwardCommand),
       'Delete': chainCommands(deleteSelectionCommand, joinForwardCommand, selectNodeForwardCommand),

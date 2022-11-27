@@ -1,7 +1,8 @@
 import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 
+import { PM_CLASS } from 'common';
+
 import { isValidHTMLElement, isValidRegExp } from 'notebookEditor/extension/util';
-import { PM_CLASS } from 'notebookEditor/theme';
 
 // ********************************************************************************
 // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/2b69f344c713befecd4ec606df5e9ba680aa2ce8/packages/core/src/PasteRule.ts

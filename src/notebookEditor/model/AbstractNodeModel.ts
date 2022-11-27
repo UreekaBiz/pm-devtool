@@ -29,7 +29,6 @@ export abstract class AbstractNodeModel<NodeType extends ProseMirrorNode, Storag
     this.node = node;
     this.getPos = getPos;
 
-    // FIXME: Is this true?
     this.selected = false/*by contract*/;
   }
 

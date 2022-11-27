@@ -64,6 +64,32 @@ export const createTextblockTypeInputRule = (regexp: RegExp, nodeType: NodeType,
   });
 
 
+// == Node ========================================================================
+export const createNodeInputRule = (regexp: RegExp, nodeType: NodeType, getAttrs: Attrs | null | ((matches: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/) =>
+  new InputRule(regexp, (state, match, start, end) => {
+    const attributes = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
+    const { tr } = state;
+
+    if(match[1/*index*/]) {
+      const offset = match[0/*text*/].lastIndexOf(match[1/*index*/]);
+      let matchStart = start + offset;
+
+      if(matchStart > end) { matchStart = end; }
+      else { end = matchStart + match[1/*index*/].length; }
+
+      // insert last typed character
+      const lastChar = match[0][match[0].length - 1];
+      tr.insertText(lastChar, start + match[0].length - 1);
+
+      // insert Node
+      tr.replaceWith(matchStart, end, nodeType.create(attributes));
+    } else if(match[0/*matched text*/]) {
+      tr.replaceWith(start, end, nodeType.create(attributes));
+    }
+
+    return tr;
+  });
+
 // == Mark ========================================================================
 /** build an Input Rule that adds a Mark when the matched text is typed into it */
 export const createMarkInputRule = (regexp: RegExp, markType: MarkType, getAttrs: Attrs | null | ((matches: RegExpMatchArray) => Attrs | null) = null/*default no attrs*/) =>

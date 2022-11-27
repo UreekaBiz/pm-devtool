@@ -4,7 +4,9 @@ import { getAllAscendantsFromSelection, getMarkName, getNodeName, isTextNode, Se
 
 import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
-import { getMarkToolbar, getNodeToolbar } from 'notebookEditor/toolbar/toolbar';
+import { buildMarkToolbar } from 'notebookEditor/toolbar/toolbar/buildMarkToolbar';
+import { buildNodeToolbar } from 'notebookEditor/toolbar/toolbar/buildNodeToolbar';
+import { shouldShowToolbarOrBreadcrumb } from 'notebookEditor/toolbar/util';
 
 import { ToolbarBreadcrumbItem } from './ToolbarBreadcrumbItem';
 
@@ -26,7 +28,7 @@ export const ToolbarBreadcrumbs: React.FC<Props> = ({ onSelection, selectedDepth
     if(!mark) return /*nothing to do*/;
     const markName = getMarkName(mark);
     const depth = undefined;/*leaf node by definition*/
-    const toolbar = getMarkToolbar(mark);
+    const toolbar = buildMarkToolbar(mark);
 
     if(!toolbar) return/*no corresponding toolbar for this mark*/;
 
@@ -42,14 +44,17 @@ export const ToolbarBreadcrumbs: React.FC<Props> = ({ onSelection, selectedDepth
     return/*nothing else to do*/;
   });
 
-  const ascendantsNodes = getAllAscendantsFromSelection(editor.view.state);
+  const { state } = editor.view;
+  const ascendantsNodes = getAllAscendantsFromSelection(state);
   ascendantsNodes.forEach((node, i) => {
     if(!node || isTextNode(node)/*don't display text nodes*/) return/*nothing to do*/;
     const nodeName = getNodeName(node);
     const depth = i === 0 ? undefined/*leaf node*/ : ascendantsNodes.length - i - 1;
-    const toolbar = getNodeToolbar(node);
+    const toolbar = buildNodeToolbar(node, depth, state.selection);
 
     if(!toolbar) return/*no corresponding toolbar for this node*/;
+
+    if(!shouldShowToolbarOrBreadcrumb(editor, toolbar, depth)) return/*continue*/;
 
     breadCrumbItems.push(
       <ToolbarBreadcrumbItem

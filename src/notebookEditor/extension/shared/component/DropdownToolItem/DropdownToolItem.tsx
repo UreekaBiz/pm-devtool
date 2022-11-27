@@ -3,10 +3,11 @@ import { getSelectedNode, isNodeType, isNodeSelection, AttributeType, NodeName, 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
-import { InputToolItemContainer } from '../../InputToolItemContainer';
+import { InputToolItemContainer } from '../InputToolItemContainer';
 import { DropdownTool, DropdownToolItemType } from './DropdownTool';
 
 // ********************************************************************************
+// == Interface ===================================================================
 interface Props extends EditorToolComponentProps {
   /** the NodeName of the Node */
   nodeName: NodeName;
@@ -18,6 +19,8 @@ interface Props extends EditorToolComponentProps {
 
   options: DropdownToolItemType[];
 }
+
+// == Component ===================================================================
 export const DropdownToolItem: React.FC<Props> = ({ editor, depth, nodeName, attributeType, name, options }) => {
   const { state } = editor.view;
   const { selection } = state;
@@ -25,7 +28,7 @@ export const DropdownToolItem: React.FC<Props> = ({ editor, depth, nodeName, att
   const node = getSelectedNode(state, depth);
   if(!node || !isNodeType(node, nodeName)) return null/*nothing to render - invalid node render*/;
 
-  // == Handler ===================================================================
+  // -- Handler -------------------------------------------------------------------
   const handleChange = (value: string) => {
     const nodeSelection = isNodeSelection(selection);
     const updatePos = nodeSelection
@@ -41,7 +44,7 @@ export const DropdownToolItem: React.FC<Props> = ({ editor, depth, nodeName, att
     editor.view.focus();
   };
 
-  // == UI ========================================================================
+  // -- UI ------------------------------------------------------------------------
   const value = node.attrs[attributeType] ?? '' /*default*/;
   return (
     <InputToolItemContainer name={name}>

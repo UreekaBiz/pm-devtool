@@ -1,10 +1,12 @@
-import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
-import { Selection, Transaction } from 'prosemirror-state';
+import { Fragment, Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
+import { EditorState, Selection, Transaction } from 'prosemirror-state';
 
-import { AttributeType } from '../attribute';
-import { DocumentNodeType } from '../extension';
+import { objectIncludes } from '../../util';
+import { Attributes, AttributeType } from '../attribute';
+import { DocumentNodeType } from '../extension/document';
 import { mapOldStartAndOldEndThroughHistory } from '../step';
 import { getNodeName, NodeIdentifier, NodeName } from './type';
+import { SelectionRange } from '../command/selection';
 
 // ********************************************************************************
 // == Manipulation ================================================================
@@ -27,6 +29,41 @@ export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier)
   return nodeFound;
 };
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/helpers/findParentNodeClosestToPos.ts
+/**
+ * look for the closest parent Node that matches the given {@link Predicate}
+ * and return a {@link FindParentNodeClosestToPosReturnType} object
+ * with information about the found Node
+ */
+type NodePredicate = (node: ProseMirrorNode) => boolean;
+type FindParentNodeClosestToPosReturnObjType = { pos: number; start: number; depth: number; node: ProseMirrorNode; } | undefined
+export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePredicate): FindParentNodeClosestToPosReturnObjType => {
+  for(let depth = $pos.depth; depth > 0; depth--) {
+    const nodeAtDepth = $pos.node(depth);
+    if(predicate(nodeAtDepth)) {
+      return { pos: depth > 0 ? $pos.before(depth) : 0/*doc depth*/, start: $pos.start(depth), depth, node: nodeAtDepth };
+    } /* else -- ignore Node */
+  }
+
+  return/*default undefined*/;
+};
+
+/**
+ * return an array of {@link ProseMirrorNode}s that match the given predicate
+ * and are present in the given {@link SelectionRange}
+ */
+export const findChildrenInRange = (node: ProseMirrorNode, range: SelectionRange, predicate: (node: ProseMirrorNode) => boolean): NodePosition[] => {
+  const nodesWithPos: NodePosition[] = [/*default empty*/];
+
+  node.nodesBetween(range.from, range.to, (child, position) => {
+    if(predicate(child)) {
+      nodesWithPos.push({ node: child, position });
+    } /* else -- predicate does not match, do not include */
+  });
+
+  return nodesWithPos;
+};
+
 // ................................................................................
 /**
  * @param node1 The first {@link ProseMirrorNode} whose content will be compared
@@ -47,7 +84,6 @@ export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier)
 
   return { docsDifferenceStart, docDifferenceEnds };
 };
-
 
 export const getNodesAffectedByTransaction = (transaction: Transaction, nodeNames?: Set<NodeName>): NodePosition[] => {
   const { maps } = transaction.mapping;
@@ -93,6 +129,10 @@ export const getNodesAffectedByTransaction = (transaction: Transaction, nodeName
   return nodePositions;
 };
 
+/** Get Node-Positions that are no longer present in the newArray */
+export const computeRemovedNodePositions = (oldArray: NodePosition[], newArray: NodePosition[]) =>
+  oldArray.filter(oldNodeObj => !newArray.some(newNodeObj => newNodeObj.node.attrs[AttributeType.Id] === oldNodeObj.node.attrs[AttributeType.Id]));
+
 /**
  * @param transaction The transaction whose affected ranges are being computed
  * @param stepMapIndex The stepMapIndex of the corresponding stepMap of the Transaction
@@ -130,6 +170,34 @@ const getNodesBetween = (rootNode: ProseMirrorNode, from: number, to: number, no
   });
 
   return nodesOfType;
+};
+
+/**
+ * check if a Node of the given {@link NodeName} is
+ * currently present in the given {@link EditorState}'s Selection
+ */
+ export const isNodeActive = (state: EditorState, nodeName: NodeName, attributes: Attributes): boolean => {
+  const { from, to, empty } = state.selection;
+  const nodesWithRange: { node: ProseMirrorNode; from: number; to: number; }[] = [];
+
+  state.doc.nodesBetween(from, to, (node, pos) => {
+    if(node.isText) return/*nothing to do*/;
+
+    const relativeFrom = Math.max(from, pos);
+    const relativeTo = Math.min(to, pos + node.nodeSize);
+
+    nodesWithRange.push({ node, from: relativeFrom, to: relativeTo });
+  });
+
+  const selectionRange = to - from;
+  const matchedNodeRanges = nodesWithRange
+    .filter(nodeWithRange => nodeName === nodeWithRange.node.type.name)
+    .filter(nodeWithRange => objectIncludes(nodeWithRange.node.attrs, attributes));
+
+  if(empty) return !!matchedNodeRanges.length/*no matched nodes*/;
+
+  const range = matchedNodeRanges.reduce((sum, nodeRange) => sum + nodeRange.to - nodeRange.from, 0/*initial*/);
+  return range >= selectionRange;
 };
 
 // -- Creation --------------------------------------------------------------------
@@ -172,37 +240,3 @@ export const wereNodesAffectedByTransaction = (transaction: Transaction, nodeNam
 };
 const nodeFoundArrayContainsNodesOfType = (nodeObjs: NodePosition[], nodeNameSet: Set<NodeName>) =>
   nodeObjs.some(({ node }) => nodeNameSet.has(node.type.name as NodeName/*by definition*/));
-
-/**
- * @param transaction The transaction whose stepMaps will be looked through
- * @param nodeNameSet The set of nodeNames that will be looked for deletions in
- *        the Transaction's stepMaps
- * @returns an array of {@link NodePosition} with the Nodes of the specified types
- *          that were deleted by the Transaction if any
- */
-export const getRemovedNodesByTransaction = (transaction: Transaction, nodeNameSet: Set<NodeName>) => {
-  const { maps } = transaction.mapping;
-  let removedNodeObjs: NodePosition[] = [/*empty by default*/];
-  // NOTE: since certain operations (e.g. dragging and dropping a Node) occur
-  //       throughout more than one stepMapIndex, returning as soon as possible
-  //       from this method can lead to incorrect behavior (e.g. the dragged Node's
-  //       nodeView being deleted before the next stepMap adds it back). For this
-  //       reason the removed Nodes are computed on each stepMap and the final
-  //       removedNodeObjs array is what is returned
-  // NOTE: this is true for this method specifically given its intent (checking to
-  //       see if Nodes of a specific type got deleted), and does not mean that
-  //       other extensions or plugins that use similar functionality to see if
-  //       Nodes got deleted or added cannot return early, as this will depend on
-  //       their specific intent
-  for(let stepMapIndex=0; stepMapIndex < maps.length; stepMapIndex++) {
-    maps[stepMapIndex].forEach((unmappedOldStart, unmappedOldEnd) => {
-      const { oldNodePositions, newNodePositions } = getNodesAffectedByStepMap(transaction, stepMapIndex, unmappedOldStart, unmappedOldEnd, nodeNameSet);
-      removedNodeObjs = computeRemovedNodePositions(oldNodePositions, newNodePositions);
-    });
-  }
-  return removedNodeObjs;
-};
-
-/** Get Node-Positions that are no longer present in the newArray */
-export const computeRemovedNodePositions = (oldArray: NodePosition[], newArray: NodePosition[]) =>
-  oldArray.filter(oldNodeObj => !newArray.some(newNodeObj => newNodeObj.node.attrs[AttributeType.Id] === oldNodeObj.node.attrs[AttributeType.Id]));

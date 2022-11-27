@@ -2,7 +2,7 @@ import { Slice } from 'prosemirror-model';
 import { NodeSelection, Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { createMarkHolderNode, createParagraphNode, getNodesAffectedByStepMap, isMarkHolderNode, markFromJSONMark, parseStringifiedMarksArray, stringifyMarksArray, AttributeType, NodeName } from 'common';
+import { createMarkHolderNode, getNodesAffectedByStepMap, isMarkHolderNode, markFromJSONMark, parseStringifiedMarksArray, stringifyMarksArray, AttributeType, NodeName } from 'common';
 
 import { parseStoredMarks } from './util';
 
@@ -111,26 +111,7 @@ export const markHolderPlugin = () => new Plugin({
 
       const markHolder = view.state.doc.nodeAt(posBeforeAnchorPos);
       if(!markHolder || !isMarkHolderNode(markHolder)) return false/*let PM handle the event*/;
-      const parentPos = Math.max(0/*don't go outside limits*/, posBeforeAnchorPos - 1)/*by contract --  MarkHolder gets inserted at start of parent Node*/;
-
-      // NOTE: since the selection is not allowed to be behind a MarkHolder but
-      //       expected behavior must be maintained on an Enter keypress, manually
-      //       insert a Paragraph before the current node. If not done this way
-      //       (i.e. letting PM insert the Paragraph by returning false), the
-      //       resulting Selection has the wrong Cursor (in the new Paragraph instead
-      //       of the Block Node where Enter was pressed)
-      if(event.key === 'Enter') {
-        const parentEndPos = parentPos + view.state.selection.$anchor.parent.nodeSize;
-
-        // insert Paragraph below and set the Selection to the start of the inserted
-        // Paragraph (-2 = -1 to account for the end of the new Paragraph,
-        // another -1 since its inside of it)
-        tr.setSelection(new TextSelection(tr.doc.resolve(parentEndPos), tr.doc.resolve(parentEndPos)))
-          .insert(tr.selection.anchor, createParagraphNode(view.state.schema))
-          .setSelection(new TextSelection(tr.doc.resolve(Math.max(0/*don't go outside limits*/, tr.selection.anchor - 2/*start of inserted Paragraph*/))));
-        dispatch(tr);
-        return true/*event handled*/;
-      } /* else -- not handling Enter */
+        const markHolderParentPos = Math.max(0/*don't go outside limits*/, posBeforeAnchorPos - 1)/*by contract --  MarkHolder gets inserted at start of parent Node*/;
 
       // when pressing ArrowLeft, ensure expected behavior by setting the selection
       // behind the MarkHolder (manually) and then letting PM handle the event.
@@ -144,10 +125,10 @@ export const markHolderPlugin = () => new Plugin({
         return false/*PM handles default selection*/;
       } /* else -- not handling ArrowLeft */
 
-      // if Backspace is pressed and a MarkHolder is present, delete it, and
-      // set the Selection accordingly
+      // if Backspace is pressed and a MarkHolder is present, delete it along
+      // with its parent, and set the Selection accordingly
       if(event.key === 'Backspace') {
-        tr.setSelection(NodeSelection.create(tr.doc, parentPos))
+        tr.setSelection(NodeSelection.create(tr.doc, markHolderParentPos))
           .deleteSelection()
           .setSelection(Selection.near(tr.doc.resolve(tr.selection.anchor)));
         dispatch(tr);

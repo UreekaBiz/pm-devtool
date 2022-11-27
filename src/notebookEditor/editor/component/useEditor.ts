@@ -35,11 +35,13 @@ export const useEditor = (extensions: Extension[], deps: DependencyList = [/*non
 };
 
 // == Hook ========================================================================
+// NOTE: this is required to ensure the Editor
+//       changes correctly once it is initialized.
 const useForceUpdate = () =>  {
   // -- State ---------------------------------------------------------------------
   const [, setValue] = useState(0/*default*/);
 
-  return () => setValue(value => value + 1/*T&E*/);
+  return () => setValue((value) => value + 1/*force a re-render*/);
 };
 
 

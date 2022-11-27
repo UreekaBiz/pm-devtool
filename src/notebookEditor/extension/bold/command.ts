@@ -7,7 +7,7 @@ import { ToggleOrSetMarkDocumentUpdate } from '../markHolder/command';
 // ********************************************************************************
 /** toggle the Bold Mark */
 export const toggleBoldCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new ToggleBoldDocumentUpdate().update(state, state.tr), dispatch);
+  AbstractDocumentUpdate.execute(new ToggleBoldDocumentUpdate(), state, dispatch);
 export class ToggleBoldDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 

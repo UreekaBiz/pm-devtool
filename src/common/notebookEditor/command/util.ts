@@ -86,8 +86,8 @@ export const findCutAfter = ($pos: ResolvedPos): ResolvedPos | null => {
 // If this is not possible, try to Join or Delete forwards by performing an
 // adequate replacement
 export const deleteBarrier = (state: EditorState, $cut: ResolvedPos) => {
-  const nodeBefore = $cut.nodeBefore!;
-  const nodeAfter = $cut.nodeAfter!;
+  const nodeBefore = $cut.nodeBefore!,
+        nodeAfter = $cut.nodeAfter!;
   if(nodeBefore.type.spec.isolating || nodeAfter.type.spec.isolating) return false/*do not check*/;
 
   const joinMaybeClearUpdatedTr = joinMaybeClear(state, $cut);
@@ -106,8 +106,8 @@ export const deleteBarrier = (state: EditorState, $cut: ResolvedPos) => {
     }
     wrapping = Fragment.from(nodeBefore.copy(wrapping));
 
-    const tr = state.tr.step(new ReplaceAroundStep($cut.pos - 1, end, $cut.pos, end, new Slice(wrapping, 1, 0), connectorNodeTypes.length, true));
-    let joinAtPos = end + 2 * connectorNodeTypes.length;
+    const tr = state.tr.step(new ReplaceAroundStep($cut.pos - 1/*inside*/, end, $cut.pos, end, new Slice(wrapping, 1/*openStart*/, 0/*use full rest of Slice*/), connectorNodeTypes.length, true));
+    let joinAtPos = end + (2 * connectorNodeTypes.length);
 
     if(canJoin(tr.doc, joinAtPos)) {
       tr.join(joinAtPos);
@@ -125,9 +125,9 @@ export const deleteBarrier = (state: EditorState, $cut: ResolvedPos) => {
 
   if(canDeleteAfter && textblockAt(nodeAfter, 'start', true) && textblockAt(nodeBefore, 'end')) {
     let joinAtNode = nodeBefore;
-    const wrap = [];
+    const wrappers = [/*default empty*/];
     for(;;) {
-      wrap.push(joinAtNode);
+      wrappers.push(joinAtNode);
       if(joinAtNode.isTextblock) break/*stop wrapping*/;
       joinAtNode = joinAtNode.lastChild!;
     }
@@ -140,13 +140,13 @@ export const deleteBarrier = (state: EditorState, $cut: ResolvedPos) => {
 
     if(joinAtNode.canReplace(joinAtNode.childCount, joinAtNode.childCount, nodeAfterText.content)) {
       let wrapEnd = Fragment.empty;
-      for(let i = wrap.length - 1; i >= 0; i--) {
-        wrapEnd = Fragment.from(wrap[i].copy(wrapEnd));
+      for(let i = wrappers.length - 1; i >= 0; i--) {
+        wrapEnd = Fragment.from(wrappers[i].copy(wrapEnd));
       }
 
-      const tr = state.tr.step(new ReplaceAroundStep($cut.pos - wrap.length, $cut.pos + nodeAfter.nodeSize,
+      const tr = state.tr.step(new ReplaceAroundStep($cut.pos - wrappers.length, $cut.pos + nodeAfter.nodeSize,
                                                     $cut.pos + afterDepth, $cut.pos + nodeAfter.nodeSize - afterDepth,
-                                                    new Slice(wrapEnd, wrap.length, 0/*use full Slice at End*/), 0/*move content to slice Start*/, true/*enforce right structure*/));
+                                                    new Slice(wrapEnd, wrappers.length, 0/*use full Slice at End*/), 0/*move content to slice Start*/, true/*enforce right structure*/));
           tr.scrollIntoView();
       return tr/*updated*/;
     }

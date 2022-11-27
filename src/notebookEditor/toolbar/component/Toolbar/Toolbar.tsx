@@ -5,6 +5,7 @@ import { getParentNode, MarkName, NodeName, SelectionDepth } from 'common';
 
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { Toolbar as ToolbarType } from 'notebookEditor/toolbar/type';
+import { shouldShowToolbarOrBreadcrumb } from 'notebookEditor/toolbar/util';
 
 import { ToolItemComponent } from './ToolItem';
 
@@ -36,6 +37,8 @@ export const Toolbar: React.FC<Props> = ({ depth, nodeOrMarkName, toolbar, selec
     // NOTE: The check must be done by the caller, this is just a safety check in in
     //       case that the caller does not check it.
     if(toolbar.shouldShow && !toolbar.shouldShow(editor, depth)) return null/*nothing to render*/;
+
+    if(!shouldShowToolbarOrBreadcrumb(editor, toolbar, depth)) return null/*nothing to render*/;
 
     return (
       <Box>

@@ -1,0 +1,26 @@
+/* == Nested View Block Node =================================================== */
+/* .. PM Selection ............................................................. */
+[data-node-type="nestedViewBlockNode"].ProseMirror-selectednode {
+  background-color: #eee;
+}
+
+/* .. Inner View ............................................................... */
+[data-node-type="nestedViewBlockNode"].ProseMirror-selectednode .innerViewDisplay::before,
+[data-node-type="nestedViewBlockNode"].ProseMirror-selectednode .innerViewDisplay::after {
+  background-color: #eee;
+  content: '~'/*T&E*/;
+  color: #B0B0B0;
+}
+[data-node-type="nestedViewBlockNode"] .innerViewDisplay {
+  display: block;
+  width: 100%;
+  color: rgb(161, 28, 201);
+	tab-size: 4;
+  text-align: left;
+}
+
+/* .. Rendered View ............................................................ */
+[data-node-type="nestedViewBlockNode"] .renderedViewDisplay {
+  display: block;
+  text-align: center;
+}

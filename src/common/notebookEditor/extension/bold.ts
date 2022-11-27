@@ -25,10 +25,10 @@ export const BoldMarkRendererSpec: MarkRendererSpec<BoldAttributes> = {
   //       the TextNode instead
   // SEE: ./renderer.ts
   // NOTE: renderer tag must match toDOM tag
-  tag: 'strong',
-  render: { style: 'font-weight: bold;' },
+  tag: 'span',
+  render: {/*no attributes*/},
 
-  attributes: {/*no Attributes*/},
+  attributes: {/*no attributes*/},
 };
 
 // == Type ========================================================================

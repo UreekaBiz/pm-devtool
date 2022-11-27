@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getBoldMarkType, getMarkOutputSpec, BoldMarkSpec, MarkName } from 'common';
+import { getBoldMarkType, getMarkOutputSpec, BoldMarkSpec, MarkName, DATA_MARK_TYPE } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { createMarkInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
@@ -10,6 +10,7 @@ import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 import { MarkExtension } from '../type/MarkExtension/MarkExtension';
 import { safeParseTag, wrapGetStyleAttrs, wrapGetTagAttrs } from '../util/parse';
 import { toggleBoldCommand } from './command';
+import './bold.css';
 
 // ********************************************************************************
 // == RegEx =======================================================================
@@ -17,14 +18,12 @@ import { toggleBoldCommand } from './command';
 const cssFontWeightRegex = /^(bold(er)?|[5-9]\d{2}|1000)$/;
 
 // --------------------------------------------------------------------------------
-// FIXME: incorrect / inconsistent RegEx (negated '__')
-
 // NOTE: these are Markdown equivalents
 export const starInputRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))$/;
-export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^(__)]+))(?:__))$/;
+export const underscoreInputRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))$/;
 
 export const starPasteRegex = /(?:^|\s)((?:\*\*)((?:[^*]+))(?:\*\*))/g;
-export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^(__)]+))(?:__))/g;
+export const underscorePasteRegex = /(?:^|\s)((?:__)((?:[^__]+))(?:__))/g;
 
 // == Mark ========================================================================
 export const Bold = new MarkExtension({
@@ -44,6 +43,7 @@ export const Bold = new MarkExtension({
     //       be specified in the ParseRules, but Bold does not have any attributes
     parseDOM: [
       safeParseTag('strong'),
+      { tag: `span[${DATA_MARK_TYPE}="${MarkName.BOLD}"]` },
       { ...safeParseTag('b'), getAttrs: wrapGetTagAttrs((node) => node.style.fontWeight !== 'normal') },
       { style: 'font-weight', getAttrs: wrapGetStyleAttrs((value) => cssFontWeightRegex.test(value)) },
     ],

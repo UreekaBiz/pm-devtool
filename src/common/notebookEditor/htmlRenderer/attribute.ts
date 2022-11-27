@@ -1,6 +1,6 @@
 import { MarkSpec, NodeSpec } from 'prosemirror-model';
 
-import { AttributeValue, HTMLAttributes, isStyleAttribute, snakeCaseToKebabCase } from '../attribute';
+import { isStyleAttribute, snakeCaseToKebabCase, AttributeValue, HTMLAttributes } from '../attribute';
 import { MarkName } from '../mark';
 import { NodeName } from '../node';
 import { AttributeRenderer, MarkRendererSpec, NodeRendererSpec } from './type';
@@ -98,4 +98,14 @@ const mergeAttribute = (attribute: string, a: AttributeValue, b: AttributeValue 
   // else -- cannot be merged
 
   return b;
+};
+
+// convert a record of attributes into HTMLAttributes
+export const getSerializableAttributes = (attributes: Record<string, any>): HTMLAttributes => {
+  const serializableAttributes: HTMLAttributes= {};
+  Object.entries(attributes).forEach(([key, value]) => {
+    if(typeof value === 'string' || typeof value === 'number' ) serializableAttributes[key] = value;
+    else serializableAttributes[key] = String(value);
+  });
+  return serializableAttributes;
 };

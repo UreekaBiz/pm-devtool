@@ -1,0 +1,67 @@
+/* == Table ==================================================================== */
+/* -- Wrapper ------------------------------------------------------------------ */
+.tableWrapper {
+  padding: 0.5rem;
+  overflow-x: auto;
+}
+
+/* -- Table -------------------------------------------------------------------- */
+[data-node-type="table"] {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+[data-node-type="table"] div[data-node-type="paragraph"] {
+  margin: 0;
+}
+
+/* -- Cells -------------------------------------------------------------------- */
+/* .. Cell and HeaderCell ...................................................... */
+[data-node-type="cell"],
+[data-node-type="headerCell"] {
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 1em;
+  padding: 3px 5px;
+  border: 2px solid #CED4DA;
+}
+[data-node-type="table"] [data-node-type="cell"] > *,
+[data-node-type="table"] [data-node-type="headerCell"] > * {
+  margin-bottom: 0;
+}
+
+/* .. HeaderCell ............................................................... */
+[data-node-type="table"] [data-node-type="headerCell"] {
+  background-color: #F1F3F5;
+  text-align: left;
+  font-weight: normal;
+}
+
+/* -- CellSelection ------------------------------------------------------------ */
+[data-node-type="table"] .selectedCell:after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: '';
+  pointer-events: none;
+  background: rgba(200, 200, 255, 0.4);
+}
+
+/* -- Resize ------------------------------------------------------------------- */
+[data-node-type="table"] .resize-cursor {
+  position: absolute;
+  width: 4px;
+  top: 0;
+  right: -2px;
+  bottom: -2px;
+  background-color: #adf;
+  pointer-events: none;
+}
+
+.resize-cursor {
+  cursor: col-resize;
+}

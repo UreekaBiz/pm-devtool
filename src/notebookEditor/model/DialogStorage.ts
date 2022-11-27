@@ -1,4 +1,3 @@
-
 import { MarkName, NodeName } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
@@ -15,8 +14,14 @@ import { Editor } from 'notebookEditor/editor/Editor';
 //       storage and must also show dialogs then it is recommended to add said
 //       state to create a custom storage for the extension, node or mark
 // ********************************************************************************
+// == Interface ===================================================================
+export interface DialogStorageInterface {
+  getShouldInsertNodeOrMark: () => boolean;
+  setShouldInsertNodeOrMark: (value: boolean) => void;
+}
+
 // == Class =======================================================================
-export class DialogStorage {
+export class DialogStorage implements DialogStorageInterface {
   // -- Attribute -----------------------------------------------------------------
   // When set to true, a dialog prompting the user for the image URL appears
   // SEE: EditorUserInteractions.tsx
@@ -33,10 +38,9 @@ export class DialogStorage {
 export const getDialogStorage = (editor: Editor | null/*not created yet*/, name: NodeName | MarkName) => {
   if(!editor) return undefined;
 
-  const storage = editor.storage.get(name);
+  const storage = editor.storage.get(name as (NodeName | MarkName));
   if(!isDialogStorage(storage)) throw new Error(`Wrong kind of storage for ${name} storage`);
 
   return storage;
 };
-
 const isDialogStorage = (storage: any): storage is DialogStorage => 'shouldInsertNodeOrMark' in storage;

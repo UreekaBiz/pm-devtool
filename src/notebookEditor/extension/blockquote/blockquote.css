@@ -1,0 +1,10 @@
+/* == Blockquote =============================================================== */
+/* -- DOM ---------------------------------------------------------------------- */
+[data-node-type="blockquote"] {
+  /*
+    ensure customizable border-left property does not override
+    default border-style
+  */
+  border-style: solid !important;
+  padding-left: 0.25rem;
+}

@@ -1,5 +1,7 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
-import { EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
+import { AllSelection, EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
+
+import { CellSelection } from './extension/table/class';
 
 // ********************************************************************************
 // == Type ========================================================================
@@ -18,7 +20,13 @@ export type getPosType = boolean | (() => number);
 /** Checks to see whether an object is a getPos function */
 export const isGetPos = (object: any): object is (() => number) => typeof object === 'function';
 
-/** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */
+/** Type guard that defines if a {@link Selection} is a {@link AllSelection} */
+export const isAllSelection = (selection: Selection): selection is AllSelection  => selection instanceof AllSelection;
+
+/** Type guard that defines if a {@link Selection} is a {@link CellSelection} */
+export const isCellSelection = (selection: Selection): selection is CellSelection => selection.toJSON().type === 'cell';
+
+/** Type guard that defines if a {@link Selection} is a {@link TextSelection} */
 export const isTextSelection = (selection: Selection): selection is TextSelection  => selection.toJSON().type === 'text';
 
 /** Type guard that defines if a {@link Selection} is a {@link NodeSelection} */

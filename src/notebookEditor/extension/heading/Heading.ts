@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { createBoldMark, createMarkHolderNode, getBlockNodeRange, getHeadingNodeType, generateNodeId, getNodeOutputSpec, stringifyMarksArray, AttributeType, HeadingLevel, HeadingNodeSpec, NodeName } from 'common';
+import { getHeadingNodeType, generateNodeId, getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, NodeName } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { InputRule } from 'notebookEditor/plugin/inputRule/InputRule';
@@ -10,6 +10,7 @@ import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { HeadingAttrs } from './attribute';
 import { setHeadingCommand } from './command';
+import './heading.css';
 import { headingPlugin } from './plugin';
 
 // ********************************************************************************
@@ -47,21 +48,8 @@ export const Heading = new NodeExtension({
         } /* else -- the resulting Node Content is valid, set Heading Block Type */
 
         const { tr } = state;
-        const boldMark = createBoldMark(state.schema);
-        const storedMarks = stringifyMarksArray([boldMark]);
-
         tr.delete(start, end)
           .setBlockType(start, start, headingType, { [AttributeType.Id]: generateNodeId(), [AttributeType.Level]: level });
-
-          if(tr.selection.$from.parent.content.childCount === 0/*empty parent*/) {
-            // add MarkHolder
-            tr.insert(tr.selection.anchor, createMarkHolderNode(state.schema, { storedMarks } ));
-          } else {
-            // apply default Bold Mark
-            const { from, to } = getBlockNodeRange(tr.selection);
-            tr.addMark(from, to, boldMark);
-        }
-
         return tr/*modified*/;
       });
     }),

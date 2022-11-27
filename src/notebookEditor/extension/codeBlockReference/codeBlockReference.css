@@ -1,0 +1,6 @@
+/* == CodeBlockReference ======================================================= */
+[data-node-type="codeBlockReference"] {
+  color: black;
+  position: relative;
+  font-weight: bold
+}
