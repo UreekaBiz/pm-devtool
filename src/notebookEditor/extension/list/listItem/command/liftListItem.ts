@@ -56,7 +56,8 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       tr.lift(rangeToLift, rangeToLift.depth - 1/*just decrease depth*/);
     }
 
-    return tr/*updated*/;
+    if(tr.docChanged) { return tr/*updated*/; }
+    else { return false/*no changes were made to the doc*/; }
   }
 }
 
