@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isDocumentNode, isListItemNode, AbstractDocumentUpdate } from 'common';
+import { isListNode, isListItemNode, AbstractDocumentUpdate } from 'common';
 
 import { fromOrToInListItem, getListItemPositions } from './util';
 
@@ -38,22 +38,26 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       else { return false/*could not lift at least one of the listItems*/; }
     }
 
-    // check if any ListItems are direct children of the Doc and if they are
-    // lift their contents again
+    // check if any ListItems must be lifted again
     const newListItemPositions = getListItemPositions(tr.doc, { from, to });
     for(let i=0; i<newListItemPositions.length; i++) {
-      const insidePos = newListItemPositions[i]+2/*inside the ListItem, inside its firstChild*/,
-            mappedInsidePos = tr.mapping.map(insidePos),
-            $mappedInsidePos = tr.doc.resolve(mappedInsidePos);
-      const greatGrandParent = $mappedInsidePos.node(-2/*greatGrandParent depth*/);
-      if(!greatGrandParent) continue/*Doc is not greatGrandParent*/;
+      const listItemPos = newListItemPositions[i],
+            mappedListItemPos = tr.mapping.map(listItemPos);
+      let $realListItemPos = tr.doc.resolve(mappedListItemPos);
 
-      if((greatGrandParent.isBlock && !greatGrandParent.isTextblock) || isDocumentNode(greatGrandParent)) {
-        const blockRange = $mappedInsidePos.blockRange();
-        if(!blockRange) continue/*no range to lift again*/;
+      let listItem = tr.doc.nodeAt(mappedListItemPos);
+      if(!listItem || !isListItemNode(listItem)) {
+        listItem = tr.doc.nodeAt(mappedListItemPos-1/*behind the listItem child*/);
+        $realListItemPos = tr.doc.resolve(mappedListItemPos-1/*behind the listItem child*/);
+      } /* else -- already the ListItem */
+      if(!listItem || !isListItemNode(listItem)) continue/*no listItem found even after decrease*/;
+      if(isListNode($realListItemPos.parent)) continue/*valid parent, nothing to do*/;
 
-        tr.lift(blockRange, blockRange.depth-1/*decrease depth*/);
-      } /* else -- no need to lift */
+      const $firstChildInsideListItemPos = tr.doc.resolve($realListItemPos.pos + 2/*inside the ListItem, inside the firstChild*/),
+            rangeToLift = $firstChildInsideListItemPos.blockRange();
+      if(!rangeToLift) continue/*no range to lift*/;
+
+      tr.lift(rangeToLift, rangeToLift.depth - 1/*just decrease depth*/);
     }
 
     return tr/*updated*/;
