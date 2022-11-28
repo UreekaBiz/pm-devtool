@@ -4,7 +4,7 @@ import { Command, EditorState } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand } from '../../../../notebookEditor/command/table';
-import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, selectionForTableTest, tableDocBuilder, tableParagraphBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
+import { defaultCell, cellWAnchor, cellWDimension, cellWHead, cell, row, table, emptyCell, selectionForTableTest, tableDoc, tableP } from '../../../../notebookEditor/command/test/tableTestUtil';
 import { A } from '../../../../notebookEditor/command/test/testUtil';
 import { isCellSelection } from '../../../../notebookEditor/selection';
 
@@ -17,34 +17,33 @@ import { CellSelection } from './CellSelection';
 describe('CellSelection', () => {
   // NOTE: the inline comments below are the positions of the
   //       start of the Cell Nodes
-  const tableDoc = tableDocBuilder(
-    defaultTableBuilder(
-        defaultRowBuilder(/* 2*/ emptyCellBuilder, /* 6*/ emptyCellBuilder, /*10*/ emptyCellBuilder),
-        defaultRowBuilder(/*16*/ emptyCellBuilder, /*20*/ emptyCellBuilder, /*24*/ emptyCellBuilder),
-        defaultRowBuilder(/*30*/ emptyCellBuilder, /*34*/ emptyCellBuilder, /*36*/ emptyCellBuilder)
+  const tDoc = tableDoc(
+    table(row(/* 2*/ emptyCell, /* 6*/ emptyCell, /*10*/ emptyCell),
+          row(/*16*/ emptyCell, /*20*/ emptyCell, /*24*/ emptyCell),
+          row(/*30*/ emptyCell, /*34*/ emptyCell, /*36*/ emptyCell)
     )
   );
 
   const executeCellSelectionTestCommand = (anchor: number, head: number, testedCommand: Command) => {
-    let state = EditorState.create({ doc: tableDoc, selection: CellSelection.create(tableDoc, anchor, head) });
+    let state = EditorState.create({ doc: tDoc, selection: CellSelection.create(tDoc, anchor, head) });
     testedCommand(state, (tr) => state = state.apply(tr));
     return state;
   };
 
   it('will put its head/anchor around the head cell', () => {
-    let selection = CellSelection.create(tableDoc, 2, 24);
+    let selection = CellSelection.create(tDoc, 2, 24);
     ist(selection.anchor, 25);
     ist(selection.head, 27);
 
-    selection = CellSelection.create(tableDoc, 24, 2);
+    selection = CellSelection.create(tDoc, 24, 2);
     ist(selection.anchor, 3);
     ist(selection.head, 5);
 
-    selection = CellSelection.create(tableDoc, 10, 30);
+    selection = CellSelection.create(tDoc, 10, 30);
     ist(selection.anchor, 31);
     ist(selection.head, 33);
 
-    selection = CellSelection.create(tableDoc, 30, 10);
+    selection = CellSelection.create(tDoc, 30, 10);
     ist(selection.anchor, 11);
     ist(selection.head, 13);
   });
@@ -81,83 +80,75 @@ describe('CellSelection.content', () => {
   it('contains only the selected cells', () => {
     const selectionContent =
       selectionForTableTest(
-          defaultTableBuilder(
-            defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, emptyCellBuilder),
-            defaultRowBuilder(cellBuilder, emptyCellBuilder, cellWithHeadBuilder),
-            defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)
+          table(row(defaultCell, cellWAnchor, emptyCell),
+                row(defaultCell, emptyCell, cellWHead),
+                row(defaultCell, defaultCell, defaultCell)
        )
       )?.content();
 
     ist(selectionContent, sliceStartAndEnd(
-      defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellBuilder, emptyCellBuilder),
-                                    defaultRowBuilder(emptyCellBuilder, cellBuilder))),
+      table(`<${A}>`, row(defaultCell, emptyCell),
+                      row(emptyCell, defaultCell))),
       compareStringifiedSlice);
   });
 
   it('understands spanning cells', () => {
     const selectionContent =
       selectionForTableTest(
-          defaultTableBuilder(
-            defaultRowBuilder(cellWithAnchorBuilder, cellWithDimensionBuilder(2, 2), cellBuilder, cellBuilder),
-            defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder, cellBuilder))
+          table(row(cellWAnchor, cellWDimension(2, 2), defaultCell, defaultCell),
+                row(defaultCell, cellWHead, defaultCell, defaultCell))
       )?.content();
 
     ist(selectionContent, sliceStartAndEnd(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 2), cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))),
+      table(row(defaultCell, cellWDimension(2, 2), defaultCell),
+            row(defaultCell, defaultCell))),
       compareStringifiedSlice);
   });
 
   it('cuts off cells sticking out horizontally', () => {
     const selectionContent =
       selectionForTableTest(
-          defaultTableBuilder(
-            defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder(2, 1)),
-            defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
-            defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellWithHeadBuilder, cellBuilder))
+          table(row(defaultCell, cellWAnchor, cellWDimension(2, 1)),
+                row(cellWDimension(4, 1)),
+                row(cellWDimension(2, 1), cellWHead, defaultCell))
       )?.content();
 
     ist(selectionContent, sliceStartAndEnd(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder())),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder))),
+      table(row(defaultCell, defaultCell),
+            row(cell({ [AttributeType.ColSpan]: 2 }, tableP())),
+            row(emptyCell, defaultCell))),
       compareStringifiedSlice);
   });
 
   it('cuts off cells sticking out vertically', () => {
     const selectionContent =
       selectionForTableTest(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 4), cellWithDimensionBuilder(1, 2)),
-          defaultRowBuilder(cellWithAnchorBuilder),
-          defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithHeadBuilder),
-          defaultRowBuilder(cellBuilder)
+        table(row(defaultCell, cellWDimension(1, 4), cellWDimension(1, 2)),
+              row(cellWAnchor),
+              row(cellWDimension(1, 2), cellWHead),
+              row(defaultCell)
         )
       )?.content();
 
     ist(selectionContent,
-      sliceStartAndEnd(defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder()), emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))),
+      sliceStartAndEnd(table(row(defaultCell, cell({ [AttributeType.RowSpan]: 2 }, tableP()), emptyCell),
+                             row(defaultCell, defaultCell))),
       compareStringifiedSlice);
   });
 
   it('preserves column widths', () => {
     const selectionContent =
       selectionForTableTest(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-          defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableParagraphBuilder('x'))),
-          defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder)
+        table(row(defaultCell, cellWAnchor, defaultCell),
+              row(cell({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableP('x'))),
+              row(defaultCell, cellWHead, defaultCell)
         )
       )?.content();
 
     ist(selectionContent,
-      sliceStartAndEnd(defaultTableBuilder(defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder())),
-        defaultRowBuilder(cellBuilder))),
+      sliceStartAndEnd(table(row(defaultCell),
+                             row(cell({ [AttributeType.ColWidth]: [200] }, tableP())),
+                             row(defaultCell))),
       compareStringifiedSlice);
   });
 

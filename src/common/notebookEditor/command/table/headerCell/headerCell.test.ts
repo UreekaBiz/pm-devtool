@@ -1,4 +1,4 @@
-import { cellBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, defaultRowBuilder, defaultTableBuilder, executeTableTestCommand, headerCellBuilder, headerCellWithCursorBuilder, headerCellWithDimensionBuilder, tableDocBuilder, tableParagraphBuilder } from '../../test/tableTestUtil';
+import { defaultCell, cellWCursor, cellWDimension, row, table, executeTableTestCommand, headerCell, headerCellWCursor, headerCellWDimension, tableDoc as doc, tableP as p } from '../../test/tableTestUtil';
 import { toggleHeaderColumnCommand, toggleHeaderCommand, toggleHeaderRowCommand } from './headerCell';
 
 // ********************************************************************************
@@ -8,188 +8,145 @@ import { toggleHeaderColumnCommand, toggleHeaderCommand, toggleHeaderRowCommand 
 describe('toggleHeaderRowCommand', () => {
   it('turns a non-header row into header', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder))),
+      doc(table(row(cellWCursor, defaultCell),
+                row(defaultCell, defaultCell))),
 
       toggleHeaderRowCommand,
 
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder)))
+      doc(table(row(headerCell, headerCell),
+                row(defaultCell, defaultCell)))
     ));
 
   it('turns a header row into regular Cells', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellWithCursorBuilder, headerCellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder))),
+      doc(table(row(headerCellWCursor, headerCell),
+                row(defaultCell, defaultCell))),
 
       toggleHeaderRowCommand,
 
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder)))
+      doc(table(row(defaultCell, defaultCell),
+                row(defaultCell, defaultCell)))
     ));
 
   it('turns a partial header row into a header Row', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(cellWithCursorBuilder, headerCellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder))),
+      doc(table(row(cellWCursor, headerCell),
+                row(defaultCell, defaultCell))),
 
       toggleHeaderRowCommand,
 
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder)))
+      doc(table(row(headerCell, headerCell),
+                row(defaultCell, defaultCell)))
     ));
 
   it('leaves cell spans intact', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)),
-          defaultRowBuilder(cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))),
+      doc(table(row(cellWCursor, cellWDimension(2, 2)),
+                row(defaultCell),
+                row(defaultCell, defaultCell, defaultCell))),
 
       toggleHeaderRowCommand,
 
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder, headerCellWithDimensionBuilder(2, 2)),
-          defaultRowBuilder(cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)))
+      doc(table(row(headerCell, headerCellWDimension(2, 2)),
+                row(defaultCell),
+                row(defaultCell, defaultCell, defaultCell)))
     ));
 });
 
 describe('toggleHeaderColumnCommand', () => {
   it('turns a non-header column into header', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder))),
+      doc(table(row(cellWCursor, defaultCell),
+                row(defaultCell, defaultCell))),
 
       toggleHeaderColumnCommand,
 
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder, cellBuilder),
-          defaultRowBuilder(headerCellBuilder, cellBuilder)))
+      doc(table(row(headerCell, defaultCell),
+                row(headerCell, defaultCell)))
     ));
 
   it('turns a header column into regular Cells', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellWithCursorBuilder, headerCellBuilder),
-          defaultRowBuilder(headerCellBuilder, cellBuilder))),
+      doc(table(row(headerCellWCursor, headerCell),
+                row(headerCell, defaultCell))),
 
       toggleHeaderColumnCommand,
 
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder)))
+      doc(table(row(headerCell, headerCell),
+                row(defaultCell, defaultCell)))
     ));
 
   it('turns a partial header column into a header Column', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder))),
+      doc(table(row(headerCellWCursor, defaultCell),
+                row(defaultCell, defaultCell))),
 
       toggleHeaderColumnCommand,
 
-      tableDocBuilder(
-        defaultTableBuilder(defaultRowBuilder(headerCellBuilder, cellBuilder),
-          defaultRowBuilder(headerCellBuilder, cellBuilder)))
+      doc(table(row(headerCell, defaultCell),
+                row(headerCell, defaultCell)))
     ));
 });
 
 describe('toggleHeaderCommand', () => {
   it('turns a header row with colspan and rowspan into a regular cell', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        tableParagraphBuilder('x'),
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellWithDimensionBuilder(2, 1), headerCellWithDimensionBuilder(1, 2)),
-          defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))
+      doc(p('x'),
+          table(row(headerCellWDimension(2, 1), headerCellWDimension(1, 2)),
+                row(cellWCursor, defaultCell),
+                row(defaultCell, defaultCell, defaultCell))
       ),
 
       toggleHeaderCommand('row'),
 
-      tableDocBuilder(
-        tableParagraphBuilder('x'),
-        defaultTableBuilder(
-          defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellWithDimensionBuilder(1, 2)),
-          defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))
+      doc(p('x'),
+          table(row(cellWDimension(2, 1), cellWDimension(1, 2)),
+                row(cellWCursor, defaultCell),
+                row(defaultCell, defaultCell, defaultCell))
       )
     ));
 
   it('turns a header column with colspan and rowspan into a regular cell', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        tableParagraphBuilder('x'),
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellWithDimensionBuilder(2, 1), headerCellWithDimensionBuilder(1, 2)),
-          defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder))
+      doc(p('x'),
+          table(row(headerCellWDimension(2, 1), headerCellWDimension(1, 2)),
+                row(cellWCursor, defaultCell),
+                row(defaultCell, defaultCell, defaultCell))
       ),
 
       toggleHeaderCommand('column'),
 
-      tableDocBuilder(
-        tableParagraphBuilder('x'),
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellWithDimensionBuilder(2, 1), headerCellWithDimensionBuilder(1, 2)),
-          defaultRowBuilder(headerCellBuilder, cellBuilder),
-          defaultRowBuilder(headerCellBuilder, cellBuilder, cellBuilder)))
+      doc(p('x'),
+          table(row(headerCellWDimension(2, 1), headerCellWDimension(1, 2)),
+                row(headerCell, defaultCell),
+                row(headerCell, defaultCell, defaultCell)))
     ));
 
   it('should keep first cell as header when the column header is enabled', () =>
     executeTableTestCommand(
-      tableDocBuilder(
-        tableParagraphBuilder('x'),
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder, cellBuilder),
-          defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder),
-          defaultRowBuilder(headerCellBuilder, cellBuilder))),
+      doc(p('x'),
+          table(row(headerCell, defaultCell),
+                row(headerCellWCursor, defaultCell),
+                row(headerCell, defaultCell))),
 
       toggleHeaderCommand('row'),
 
-      tableDocBuilder(
-        tableParagraphBuilder('x'),
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-          defaultRowBuilder(headerCellBuilder, cellBuilder),
-          defaultRowBuilder(headerCellBuilder, cellBuilder)))
+      doc(p('x'),
+          table(row(headerCell, headerCell),
+                row(headerCell, defaultCell),
+                row(headerCell, defaultCell)))
     ));
 
   describe('new behavior', () => {
     it('turns a header column into regular Cells without override header row', () =>
       executeTableTestCommand(
-        tableDocBuilder(
-          defaultTableBuilder(
-            defaultRowBuilder(headerCellWithCursorBuilder, headerCellBuilder),
-            defaultRowBuilder(headerCellBuilder, cellBuilder))),
+        doc(table(row(headerCellWCursor, headerCell),
+                  row(headerCell, defaultCell))),
 
         toggleHeaderCommand('column'),
 
-        tableDocBuilder(
-          defaultTableBuilder(
-            defaultRowBuilder(headerCellWithCursorBuilder, headerCellBuilder),
-            defaultRowBuilder(cellBuilder, cellBuilder)))
+        doc(table(row(headerCellWCursor, headerCell),
+                  row(defaultCell, defaultCell)))
       ));
   });
 });

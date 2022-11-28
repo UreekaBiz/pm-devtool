@@ -3,7 +3,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { eq } from 'prosemirror-test-builder';
 
-import { cellBuilder, cellWithDimensionBuilder, colWidth100CellBuilder, colWidth200CellBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, tableDocBuilder, tableParagraphBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
+import { defaultCell, cellWDimension, colWidth100Cell, colWidth200Cell, cell, row, table, emptyCell, emptyHeaderCell, headerCell, tableDoc, tableP } from '../../../../notebookEditor/command/test/tableTestUtil';
 import { AttributeType } from '../../../attribute';
 import { fixTables } from './fixTables';
 
@@ -12,7 +12,7 @@ import { fixTables } from './fixTables';
 // NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/test/test-fixtable.js
 
 const applyTableFix = (table: ProseMirrorNode) => {
-  const state = EditorState.create({ doc: tableDocBuilder(table) });
+  const state = EditorState.create({ doc: tableDoc(table) });
   const tr = fixTables(undefined/*no oldState, inspect given state*/, state);
   return tr && tr.doc.firstChild;
 };
@@ -20,9 +20,8 @@ const applyTableFix = (table: ProseMirrorNode) => {
 describe('fixTable', () => {
   it('does not touch correct tables', () => {
     const startingState =
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(cellBuilder, cellBuilder));
+      table(row(defaultCell, defaultCell, cellWDimension(1, 2)),
+            row(defaultCell, defaultCell));
 
     const expectedEndState = startingState/*same*/;
 
@@ -32,13 +31,11 @@ describe('fixTable', () => {
   it('adds trivially missing Cells', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder, cellWithDimensionBuilder(1, 2)),
-          defaultRowBuilder(cellBuilder))),
+        table(row(defaultCell, defaultCell, cellWDimension(1, 2)),
+              row(defaultCell))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+      table(row(defaultCell, defaultCell, cellWDimension(1, 2)),
+            row(defaultCell, emptyCell)),
 
       eq
     );
@@ -47,15 +44,13 @@ describe('fixTable', () => {
   it('can add to multiple rows', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder),
-          defaultRowBuilder(cellWithDimensionBuilder(3, 1)))),
+        table(row(defaultCell),
+              row(defaultCell, defaultCell),
+              row(cellWDimension(3, 1)))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(3, 1))),
+      table(row(defaultCell, emptyCell, emptyCell),
+            row(emptyCell, defaultCell, defaultCell),
+            row(cellWDimension(3, 1))),
 
       eq
     );
@@ -64,13 +59,11 @@ describe('fixTable', () => {
   it('will default to adding at the start of the first row', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder))),
+        table(row(defaultCell),
+              row(defaultCell, defaultCell))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(emptyCell, defaultCell),
+            row(defaultCell, defaultCell)),
 
       eq
     );
@@ -79,13 +72,11 @@ describe('fixTable', () => {
   it('will default to adding at the end of the non-first row', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder))),
+        table(row(defaultCell, defaultCell),
+              row(defaultCell))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+      table(row(defaultCell, defaultCell),
+            row(defaultCell, emptyCell)),
 
       eq
     );
@@ -94,13 +85,11 @@ describe('fixTable', () => {
   it('will fix overlapping Cells', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 2), cellBuilder),
-          defaultRowBuilder(cellWithDimensionBuilder(2, 1)))),
+        table(row(defaultCell, cellWDimension(1, 2), defaultCell),
+              row(cellWDimension(2, 1)))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 2), cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder)),
+      table(row(defaultCell, cellWDimension(1, 2), defaultCell),
+            row(defaultCell, emptyCell, emptyCell)),
 
       eq
     );
@@ -109,13 +98,11 @@ describe('fixTable', () => {
   it('will fix a rowSpan that sticks out of the Table', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder),
-          defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellBuilder))),
+        table(row(defaultCell, defaultCell),
+              row(cellWDimension(1, 2), defaultCell))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(defaultCell, defaultCell),
+            row(defaultCell, defaultCell)),
 
       eq
     );
@@ -124,13 +111,11 @@ describe('fixTable', () => {
   it('makes sure column widths are coherent', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder, colWidth200CellBuilder),
-          defaultRowBuilder(colWidth100CellBuilder, cellBuilder, cellBuilder))),
+        table(row(defaultCell, defaultCell, colWidth200Cell),
+              row(colWidth100Cell, defaultCell, defaultCell))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(colWidth100CellBuilder, cellBuilder, colWidth200CellBuilder),
-        defaultRowBuilder(colWidth100CellBuilder, cellBuilder, colWidth200CellBuilder)),
+      table(row(colWidth100Cell, defaultCell, colWidth200Cell),
+            row(colWidth100Cell, defaultCell, colWidth200Cell)),
 
       eq
     );
@@ -139,15 +124,13 @@ describe('fixTable', () => {
   it('can update column widths on colSpan Cells', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder, colWidth200CellBuilder),
-          defaultRowBuilder(cellWithDimensionBuilder(3, 2)),
-          defaultRowBuilder())),
+        table(row(defaultCell, defaultCell, colWidth200Cell),
+              row(cellWDimension(3, 2)),
+              row())),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, colWidth200CellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.RowSpan]: 2, [AttributeType.ColWidth]: [0, 0, 200] }, tableParagraphBuilder('x'))),
-        defaultRowBuilder()
+      table(row(defaultCell, defaultCell, colWidth200Cell),
+            row(cell({ [AttributeType.ColSpan]: 3, [AttributeType.RowSpan]: 2, [AttributeType.ColWidth]: [0, 0, 200] }, tableP('x'))),
+            row()
       ),
 
       eq
@@ -157,16 +140,14 @@ describe('fixTable', () => {
   it('will update the odd one out when column widths disagree', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(colWidth100CellBuilder, colWidth100CellBuilder, colWidth100CellBuilder),
-          defaultRowBuilder(colWidth200CellBuilder, colWidth200CellBuilder, colWidth100CellBuilder),
-          defaultRowBuilder(colWidth100CellBuilder, colWidth200CellBuilder, colWidth200CellBuilder)
+        table(row(colWidth100Cell, colWidth100Cell, colWidth100Cell),
+              row(colWidth200Cell, colWidth200Cell, colWidth100Cell),
+              row(colWidth100Cell, colWidth200Cell, colWidth200Cell)
         )
       ),
-      defaultTableBuilder(
-        defaultRowBuilder(colWidth100CellBuilder, colWidth200CellBuilder, colWidth100CellBuilder),
-        defaultRowBuilder(colWidth100CellBuilder, colWidth200CellBuilder, colWidth100CellBuilder),
-        defaultRowBuilder(colWidth100CellBuilder, colWidth200CellBuilder, colWidth100CellBuilder)
+      table(row(colWidth100Cell, colWidth200Cell, colWidth100Cell),
+            row(colWidth100Cell, colWidth200Cell, colWidth100Cell),
+            row(colWidth100Cell, colWidth200Cell, colWidth100Cell)
       ),
       eq
     );
@@ -175,15 +156,13 @@ describe('fixTable', () => {
   it('respects table role when inserting a Cell', () => {
     ist(
       applyTableFix(
-        defaultTableBuilder(
-          defaultRowBuilder(headerCellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder),
-          defaultRowBuilder(cellWithDimensionBuilder(3, 1)))),
+        table(row(headerCell),
+              row(defaultCell, defaultCell),
+              row(cellWDimension(3, 1)))),
 
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, emptyHeaderCellBuilder, emptyHeaderCellBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(3, 1))),
+      table(row(headerCell, emptyHeaderCell, emptyHeaderCell),
+            row(emptyCell, defaultCell, defaultCell),
+            row(cellWDimension(3, 1))),
       eq
     );
   });

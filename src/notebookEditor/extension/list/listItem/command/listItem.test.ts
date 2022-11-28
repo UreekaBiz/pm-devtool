@@ -7,64 +7,60 @@ import { splitListItemKeepMarksCommand } from './splitListItem';
 // ********************************************************************************
 // == Constant ====================================================================
 const {
-  [NodeName.BLOCKQUOTE]: blockquoteBuilder,
-  [NodeName.BULLET_LIST]: bulletListBuilder,
-  [NodeName.DOC]: docBuilder,
-  [NodeName.LIST_ITEM]: listItemBuilder,
-  [NodeName.ORDERED_LIST]: orderedListBuilder,
-  [NodeName.PARAGRAPH]: paragraphBuilder,
+  [NodeName.BLOCKQUOTE]: blockquote,
+  [NodeName.BULLET_LIST]: bl,
+  [NodeName.DOC]: doc,
+  [NodeName.LIST_ITEM]: li,
+  [NodeName.ORDERED_LIST]: ol,
+  [NodeName.PARAGRAPH]: p,
 } = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.BULLET_LIST, NodeName.DOC, NodeName.LIST_ITEM, NodeName.ORDERED_LIST, NodeName.PARAGRAPH]);
 
 // == Test ====================================================================
 // -- Split -------------------------------------------------------------------
 describe('splitListItemKeepMarksCommand', () => {
   it('has no effect outside of a List', () => {
-    const startState = docBuilder(paragraphBuilder(`foo<${A}>bar`)),
+    const startState = doc(p(`foo<${A}>bar`)),
           expectedEndState = null/*same state*/;
+
     wrapTest(startState, splitListItemKeepMarksCommand, expectedEndState);
   });
 
   it('has no effect on the top level', () => {
-    const startState = docBuilder(`<${A}>`, paragraphBuilder('foobar')),
+    const startState = doc(`<${A}>`, p('foobar')),
           expectedEndState = null/*same state*/;
+
     wrapTest(startState, splitListItemKeepMarksCommand, expectedEndState);
   });
 
   it('can split a ListItem', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder(`foo<${A}>bar`)))),
+      doc(bl(li(p(`foo<${A}>bar`)))),
 
     expectedEndState =
-      docBuilder(
-          bulletListBuilder(listItemBuilder(paragraphBuilder('foo')),
-                            listItemBuilder(paragraphBuilder('bar'))));
+      doc(bl(li(p('foo')),
+             li(p('bar'))));
 
     wrapTest(startState, splitListItemKeepMarksCommand, expectedEndState);
   });
 
   it('can split a ListItem at the end', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder(`foobar<${A}>`)))),
+      doc(bl(li(p(`foobar<${A}>`)))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('foobar')),
-                          listItemBuilder(paragraphBuilder())));
+      doc(bl(li(p('foobar')),
+             li(p())));
 
     wrapTest(startState, splitListItemKeepMarksCommand, expectedEndState);
   });
 
   it('deletes selected content', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder(`foo<${A}>ba<${B}>r`)))),
+      doc(bl(li(p(`foo<${A}>ba<${B}>r`)))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('foo')),
-                          listItemBuilder(paragraphBuilder('r'))));
+      doc(bl(li(p('foo')),
+             li(p('r'))));
 
     wrapTest(startState, splitListItemKeepMarksCommand, expectedEndState);
   });
@@ -74,118 +70,106 @@ describe('splitListItemKeepMarksCommand', () => {
 describe('liftListItemCommand', () => {
   it('can lift from a nested List', () => {
     const startState =
-    docBuilder(
-      bulletListBuilder(listItemBuilder(paragraphBuilder('one')),
-                        bulletListBuilder(listItemBuilder(paragraphBuilder(`t<${A}>wo`))),
-                        listItemBuilder(paragraphBuilder('three')))),
+    doc(bl(li(p('one')),
+        bl(li(p(`t<${A}>wo`))),
+           li(p('three')))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('one')),
-                          listItemBuilder(paragraphBuilder('two')),
-                          listItemBuilder(paragraphBuilder('three'))));
+      doc(bl(li(p('one')),
+             li(p('two')),
+             li(p('three'))));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
 
   it('can lift two items from a nested List', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('hello')),
-                          bulletListBuilder(listItemBuilder(paragraphBuilder(`o<${A}>ne`)),
-                                            listItemBuilder(paragraphBuilder(`two<${B}>`))))),
+      doc(bl(li(p('hello')),
+          bl(li(p(`o<${A}>ne`)),
+             li(p(`two<${B}>`))))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('hello')),
-                          listItemBuilder(paragraphBuilder('one')),
-                          listItemBuilder(paragraphBuilder('two'))));
+      doc(bl(li(p('hello')),
+             li(p('one')),
+             li(p('two'))));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
 
   it('can lift two items from a nested three-item List', () => {
     const startState =
-    docBuilder(
-      bulletListBuilder(listItemBuilder(paragraphBuilder('hello')),
-                        bulletListBuilder(listItemBuilder(paragraphBuilder(`o<${A}>ne`)),
-                                          listItemBuilder(paragraphBuilder(`two<${B}>`)),
-                                          listItemBuilder(paragraphBuilder('three'))))),
+    doc(bl(li(p('hello')),
+        bl(li(p(`o<${A}>ne`)),
+           li(p(`two<${B}>`)),
+           li(p('three'))))),
+
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('hello')),
-                          listItemBuilder(paragraphBuilder('one')),
-                          listItemBuilder(paragraphBuilder('two')),
-                          bulletListBuilder(listItemBuilder(paragraphBuilder('three')))));
+      doc(bl(li(p('hello')),
+             li(p('one')),
+             li(p('two')),
+          bl(li(p('three')))));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
 
   it('can lift an item out of a list', () => {
     const startState =
-      docBuilder(
-        paragraphBuilder('a'),
-        bulletListBuilder(listItemBuilder(paragraphBuilder(`b<${A}>`))),
-        paragraphBuilder('c')),
+      doc(p('a'),
+          bl(li(p(`b<${A}>`))),
+          p('c')),
 
     expectedEndState =
-      docBuilder(
-        paragraphBuilder('a'),
-        paragraphBuilder('b'),
-        paragraphBuilder('c'));
+      doc(p('a'),
+          p('b'),
+          p('c'));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
 
   it('can lift two items out of a list', () => {
     const startState =
-      docBuilder(
-        paragraphBuilder('a'),
-        bulletListBuilder(listItemBuilder(paragraphBuilder(`b<${A}>`)),
-                          listItemBuilder(paragraphBuilder(`c<${B}>`))),
-        paragraphBuilder('d')),
+      doc(p('a'),
+          bl(li(p(`b<${A}>`)),
+             li(p(`c<${B}>`))),
+          p('d')),
 
     expectedEndState =
-      docBuilder(
-          paragraphBuilder('a'),
-          paragraphBuilder('b'),
-          paragraphBuilder('c'),
-          paragraphBuilder('d'));
+      doc(p('a'),
+          p('b'),
+          p('c'),
+          p('d'));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
 
   it('can lift three items from the middle of a List', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('a')),
-                          listItemBuilder(paragraphBuilder(`b<${A}>`)),
-                          listItemBuilder(paragraphBuilder('c')),
-                          listItemBuilder(paragraphBuilder(`d<${B}>`)),
-                          listItemBuilder(paragraphBuilder('e')))),
+      doc(bl(li(p('a')),
+             li(p(`b<${A}>`)),
+             li(p('c')),
+             li(p(`d<${B}>`)),
+             li(p('e')))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('a'))),
-        paragraphBuilder('b'),
-        paragraphBuilder('c'),
-        paragraphBuilder('d'),
-        bulletListBuilder(listItemBuilder(paragraphBuilder('e'))));
+      doc(bl(li(p('a'))),
+          p('b'),
+          p('c'),
+          p('d'),
+          bl(li(p('e'))));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
 
   it('can lift the first item from a list', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder(`a<${A}>`)),
-                          listItemBuilder(paragraphBuilder('b')),
-                          listItemBuilder(paragraphBuilder('c')))),
+      doc(bl(li(p(`a<${A}>`)),
+             li(p('b')),
+             li(p('c')))),
 
     expectedEndState =
-      docBuilder(paragraphBuilder('a'),
-                 bulletListBuilder(listItemBuilder(paragraphBuilder('b')),
-                                   listItemBuilder(paragraphBuilder('c'))));
+      doc(p('a'),
+          bl(li(p('b')),
+             li(p('c'))));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
@@ -193,32 +177,26 @@ describe('liftListItemCommand', () => {
 
   it('can lift the last item from a List', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('a')),
-                          listItemBuilder(paragraphBuilder('b')),
-                          listItemBuilder(paragraphBuilder(`c<${A}>`)))),
+      doc(bl(li(p('a')),
+             li(p('b')),
+             li(p(`c<${A}>`)))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('a')),
-                          listItemBuilder(paragraphBuilder('b'))),
-        paragraphBuilder('c'));
+      doc(bl(li(p('a')),
+             li(p('b'))),
+          p('c'));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
 
   it('handles lifting correctly inside Blocks that are not TextBlocks', () => {
     const startState =
-      docBuilder(
-        blockquoteBuilder(
-          orderedListBuilder(listItemBuilder(paragraphBuilder(`hello<${A}>`))),
-                             listItemBuilder(paragraphBuilder(`world<${B}>`)))),
+      doc(blockquote(ol(li(p(`hello<${A}>`))),
+                        li(p(`world<${B}>`)))),
 
     expectedEndState =
-      docBuilder(
-        blockquoteBuilder(
-          paragraphBuilder('hello')),
-          paragraphBuilder('world'));
+      doc(blockquote(p('hello')),
+                     p('world'));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
@@ -228,51 +206,47 @@ describe('liftListItemCommand', () => {
 describe('sinkListItem', () => {
   it('can wrap a simple item in a List', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('one')),
-                          listItemBuilder(paragraphBuilder(`<${A}>two`)),
-                          listItemBuilder(paragraphBuilder('three')))),
+      doc(bl(li(p('one')),
+             li(p(`<${A}>two`)),
+             li(p('three')))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder('one')),
-                          bulletListBuilder(listItemBuilder(paragraphBuilder('two'))),
-                          listItemBuilder(paragraphBuilder('three'))));
+      doc(bl(li(p('one')),
+          bl(li(p('two'))),
+             li(p('three'))));
 
     wrapTest(startState, sinkListItemCommand, expectedEndState);
   });
 
   it('will wrap the first ListItem in a sub-List', () => {
     const startState =
-      docBuilder(
-        bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>one`)),
-                          listItemBuilder(paragraphBuilder('two')),
-                          listItemBuilder(paragraphBuilder('three')))),
+      doc(bl(li(p(`<${A}>one`)),
+             li(p('two')),
+             li(p('three')))),
 
     expectedEndState =
-      docBuilder(
-        bulletListBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>one`))),
-                          listItemBuilder(paragraphBuilder('two')),
-                          listItemBuilder(paragraphBuilder('three'))));
+      doc(
+        bl(bl(li(p(`<${A}>one`))),
+              li(p('two')),
+              li(p('three'))));
 
     wrapTest(startState, sinkListItemCommand, expectedEndState);
   });
 
   it('correctly wraps nested ListItems', () => {
     const startState =
-      docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('one')),
-                                   listItemBuilder(paragraphBuilder('...'),
-                                   bulletListBuilder(listItemBuilder(paragraphBuilder('two')))),
-                                                     listItemBuilder(paragraphBuilder(`<${A}>three`)))),
+      doc(bl(li(p('one')),
+             li(p('...'),
+          bl(li(p('two')))),
+             li(p(`<${A}>three`)))),
 
     expectedEndState =
-      docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('one')),
-                                   listItemBuilder(paragraphBuilder('...'),
-                                   bulletListBuilder(listItemBuilder(paragraphBuilder('two')))),
-                                                     bulletListBuilder(listItemBuilder(paragraphBuilder('three')))));
+      doc(bl(li(p('one')),
+             li(p('...'),
+          bl(li(p('two')))),
+          bl(li(p('three')))));
 
     wrapTest(startState, sinkListItemCommand, expectedEndState);
-
   });
 });
 

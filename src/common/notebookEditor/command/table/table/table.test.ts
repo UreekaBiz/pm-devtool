@@ -1,5 +1,5 @@
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder,  emptyCellBuilder, emptyHeaderCellBuilder, executeTableTestCommand, headerCellBuilder, headerCellWithCursorBuilder, tableDocBuilder, tableParagraphBuilder } from '../../test/tableTestUtil';
+import { defaultCell, cellWAnchor, cellWCursor, cellWDimension, cellWHead, cell, row, table,  emptyCell, emptyHeaderCell, executeTableTestCommand, headerCell, headerCellWCursor, tableDoc as doc, tableP as p } from '../../test/tableTestUtil';
 import { CURSOR, NODE } from '../../test/testUtil';
 import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addRowBeforeCommand, deleteColumnCommand, deleteRowCommand } from './table';
 
@@ -11,193 +11,168 @@ import { addColumnAfterCommand, addColumnBeforeCommand, addRowAfterCommand, addR
 describe('addColumnAfterCommand', () => {
   it('can add a plain column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
+      table(row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, cellWCursor, defaultCell),
+            row(defaultCell, defaultCell, defaultCell)),
 
         addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder, cellBuilder)
+      table(row(defaultCell, defaultCell, emptyCell, defaultCell),
+            row(defaultCell, defaultCell, emptyCell, defaultCell),
+            row(defaultCell, defaultCell, emptyCell, defaultCell)
       )
     ));
 
   it('can add a column at the right of the Table', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellWithCursorBuilder)),
+      table(row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, cellWCursor)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder, emptyCellBuilder)
+      table(row(defaultCell, defaultCell, defaultCell, emptyCell),
+            row(defaultCell, defaultCell, defaultCell, emptyCell),
+            row(defaultCell, defaultCell, defaultCell, emptyCell)
       )
     ));
 
   it('can add a second Cell', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder)),
+      table(row(cellWCursor)),
 
-        addColumnAfterCommand,
+      addColumnAfterCommand,
 
-        defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder))
+      table(row(defaultCell, emptyCell))
     ));
 
   it('can grow a ColSpan Cell', () =>
     executeTableTestCommand(
-      defaultTableBuilder(defaultRowBuilder(cellWithCursorBuilder, cellBuilder), defaultRowBuilder(cellWithDimensionBuilder(2, 1))),
+      table(row(cellWCursor, defaultCell), row(cellWDimension(2, 1))),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder), defaultRowBuilder(cellWithDimensionBuilder(3, 1)))
+      table(row(defaultCell, emptyCell, defaultCell), row(cellWDimension(3, 1)))
     ));
 
   it('places new Cells in the right spot when there are rowSpans', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder, cellBuilder)),
+      table(row(defaultCell, cellWDimension(1, 2), cellWDimension(1, 2)),
+            row(defaultCell),
+            row(defaultCell, cellWCursor, defaultCell)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 2), emptyCellBuilder, cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder, cellBuilder))
+      table(row(defaultCell, cellWDimension(1, 2), emptyCell, cellWDimension(1, 2)),
+            row(defaultCell, emptyCell),
+            row(defaultCell, defaultCell, emptyCell, defaultCell))
     ));
 
   it('can place new Cells into an empty row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(),
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
+      table(row(cellWDimension(1, 2), cellWDimension(1, 2)),
+            row(),
+            row(cellWCursor, defaultCell)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(1, 2), emptyCellBuilder, cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+      table(row(cellWDimension(1, 2), emptyCell, cellWDimension(1, 2)),
+            row(emptyCell),
+            row(defaultCell, emptyCell, defaultCell))
     ));
 
   it('will skip ahead when growing a rowSpan Cell', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder),
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder, cellBuilder)),
+      table(row(cellWDimension(2, 2), defaultCell),
+            row(defaultCell),
+            row(cellWCursor, defaultCell, defaultCell)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(3, 2), cellBuilder),
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellWithCursorBuilder, emptyCellBuilder, cellBuilder, cellBuilder))
+      table(row(cellWDimension(3, 2), defaultCell),
+            row(defaultCell),
+            row(cellWCursor, emptyCell, defaultCell, defaultCell))
     ));
 
   it('will use the right side of a single CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(cellWAnchor, defaultCell),
+            row(defaultCell, defaultCell)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+      table(row(defaultCell, emptyCell, defaultCell),
+            row(defaultCell, emptyCell, defaultCell))
     ));
 
   it('will use the right side of a bigger CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithHeadBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder)),
+      table(row(cellWHead, defaultCell, defaultCell),
+            row(defaultCell, cellWAnchor, defaultCell)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder, cellBuilder))
+      table(row(defaultCell, defaultCell, emptyCell, defaultCell),
+            row(defaultCell, defaultCell, emptyCell, defaultCell))
     ));
 
   it('properly handles a Cell NodeSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(`<${NODE}>`, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(`<${NODE}>`, defaultCell, defaultCell),
+            row(defaultCell, defaultCell)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+      table(row(defaultCell, emptyCell, defaultCell),
+            row(defaultCell, emptyCell, defaultCell))
     ));
 
   it('preserves HeaderCell rows', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
+      table(row(headerCell, headerCell),
+            row(defaultCell, cellWCursor)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellBuilder, emptyHeaderCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder))
+      table(row(headerCell, headerCell, emptyHeaderCell),
+            row(defaultCell, defaultCell, emptyCell))
     ));
 
   it('uses column after as reference when header column before is present', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-        defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder)),
+      table(row(headerCell, headerCell),
+            row(headerCellWCursor, defaultCell)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, emptyHeaderCellBuilder, headerCellBuilder),
-        defaultRowBuilder(headerCellBuilder, emptyCellBuilder, cellBuilder))
+      table(row(headerCell, emptyHeaderCell, headerCell),
+            row(headerCell, emptyCell, defaultCell))
     ));
 
   it('creates regular cells when only next to a header column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, headerCellBuilder),
-        defaultRowBuilder(cellBuilder, headerCellWithCursorBuilder)),
+      table(row(defaultCell, headerCell),
+            row(defaultCell, headerCellWCursor)),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, headerCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, headerCellBuilder, emptyCellBuilder))
+      table(row(defaultCell, headerCell, emptyCell),
+            row(defaultCell, headerCell, emptyCell))
     ));
 
   it('does nothing outside of a Table', () =>
-    executeTableTestCommand(tableDocBuilder(tableParagraphBuilder(`foo<${CURSOR}>`)), addColumnAfterCommand, null/*expect to return false*/));
+    executeTableTestCommand(doc(p(`foo<${CURSOR}>`)), addColumnAfterCommand, null/*expect to return false*/));
 
   it('preserves column widths', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 200] }, tableParagraphBuilder('a')))
+      table(row(cellWAnchor, defaultCell),
+            row(cell({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 200] }, p('a')))
       ),
 
       addColumnAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, tableParagraphBuilder('a')))
+      table(row(cellWAnchor, emptyCell, defaultCell),
+            row(cell({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, p('a')))
       )
     ));
 });
@@ -205,213 +180,184 @@ describe('addColumnAfterCommand', () => {
 describe('addColumnBeforeCommand', () => {
   it('can add a plain column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
+      table(row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, cellWCursor, defaultCell),
+            row(defaultCell, defaultCell, defaultCell)),
 
       addColumnBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder, cellBuilder)
+      table(row(defaultCell, emptyCell, defaultCell, defaultCell),
+            row(defaultCell, emptyCell, defaultCell, defaultCell),
+            row(defaultCell, emptyCell, defaultCell, defaultCell)
       )
     ));
 
   it('can add a column at the left of the Table', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
+      table(row(cellWCursor, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell)),
 
       addColumnBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder, cellBuilder)
+      table(row(emptyCell, defaultCell, defaultCell, defaultCell),
+            row(emptyCell, defaultCell, defaultCell, defaultCell),
+            row(emptyCell, defaultCell, defaultCell, defaultCell)
       )
     ));
 
   it('will use the left side of a single CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(cellWAnchor, defaultCell),
+            row(defaultCell, defaultCell)),
 
       addColumnBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder))
+      table(row(emptyCell, defaultCell, defaultCell),
+            row(emptyCell, defaultCell, defaultCell))
     ));
 
   it('will use the left side of a bigger CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellWithAnchorBuilder)),
+      table(row(defaultCell, cellWHead, defaultCell),
+            row(defaultCell, defaultCell, cellWAnchor)),
 
       addColumnBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder, cellBuilder))
+      table(row(defaultCell, emptyCell, defaultCell, defaultCell),
+            row(defaultCell, emptyCell, defaultCell, defaultCell))
     ));
 
   it('preserves header rows', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
+      table(row(headerCell, headerCell),
+            row(cellWCursor, defaultCell)),
 
       addColumnBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyHeaderCellBuilder, headerCellBuilder, headerCellBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder))
+      table(row(emptyHeaderCell, headerCell, headerCell),
+            row(emptyCell, defaultCell, defaultCell))
     ));
 });
 
 describe('deleteColumnCommand', () => {
   it('can delete a plain column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, emptyCellBuilder)),
+      table(row(emptyCell, defaultCell, defaultCell),
+            row(defaultCell, cellWCursor, defaultCell),
+            row(defaultCell, defaultCell, emptyCell)),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+      table(row(emptyCell, defaultCell),
+            row(defaultCell, defaultCell),
+            row(defaultCell, emptyCell))
     ));
 
   it('can delete the first column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
+      table(row(cellWCursor, emptyCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell)),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(emptyCell, defaultCell),
+            row(defaultCell, defaultCell),
+            row(defaultCell, defaultCell))
     ));
 
   it('can delete the last column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellWithCursorBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)),
+      table(row(defaultCell, emptyCell, cellWCursor),
+            row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell)),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(defaultCell, emptyCell),
+            row(defaultCell, defaultCell),
+            row(defaultCell, defaultCell))
     ));
 
   it('can reduce a Cell ColSpan', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(2, 1))),
+      table(row(defaultCell, cellWCursor),
+            row(cellWDimension(2, 1))),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellBuilder))
+      table(row(defaultCell),
+            row(defaultCell))
     ));
 
   it('will skip rows after a rowSpan', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder),
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(cellBuilder)),
+      table(row(defaultCell, cellWCursor),
+            row(defaultCell, cellWDimension(1, 2)),
+            row(defaultCell)),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellBuilder))
+      table(row(defaultCell),
+            row(defaultCell),
+            row(defaultCell))
     ));
 
   it('will delete all columns under a colSpan Cell', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`<${CURSOR}>`))),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder, cellBuilder)),
+      table(row(defaultCell, cell({ [AttributeType.ColSpan]: 2 }, p(`<${CURSOR}>`))),
+            row(emptyCell, defaultCell, defaultCell)),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(emptyCellBuilder))
+      table(row(defaultCell),
+            row(emptyCell))
     ));
 
   it('deletes a Cell selected column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellWithAnchorBuilder),
-        defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
+      table(row(emptyCell, cellWAnchor),
+            row(defaultCell, cellWHead)),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder),
-        defaultRowBuilder(cellBuilder))
+      table(row(emptyCell),
+            row(defaultCell))
     ));
 
   it('deletes multiple Cell selected columns', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellWithHeadBuilder, cellBuilder, cellBuilder)),
+      table(row(cellWDimension(1, 2), cellWAnchor, defaultCell),
+            row(defaultCell, emptyCell),
+            row(cellWHead, defaultCell, defaultCell)),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(emptyCellBuilder),
-        defaultRowBuilder(cellBuilder))
+      table(row(defaultCell),
+            row(emptyCell),
+            row(defaultCell))
     ));
 
   it('leaves column widths intact', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableParagraphBuilder('y')))),
+      table(row(defaultCell, cellWAnchor, defaultCell),
+            row(cell({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, p('y')))),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder), defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 300] }, tableParagraphBuilder('y'))))
+      table(row(defaultCell, defaultCell), row(cell({ [AttributeType.ColSpan]: 2, [AttributeType.ColWidth]: [100, 300] }, p('y'))))
     ));
 
   it('resets column width when all zeroes', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [0, 200, 0] }, tableParagraphBuilder('y')))),
+      table(row(defaultCell, cellWAnchor, defaultCell),
+            row(cell({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [0, 200, 0] }, p('y')))),
 
       deleteColumnCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('y'))))
+      table(row(defaultCell, defaultCell),
+            row(cell({ [AttributeType.ColSpan]: 2 }, p('y'))))
     ));
 });
 
@@ -419,298 +365,257 @@ describe('deleteColumnCommand', () => {
 describe('addRowAfterCommand', () => {
   it('can add a simple row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(cellWCursor, defaultCell),
+            row(defaultCell, defaultCell)),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(defaultCell, defaultCell),
+            row(emptyCell, emptyCell),
+            row(defaultCell, defaultCell))
     ));
 
   it('can add a row at the end', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
+      table(row(defaultCell, defaultCell),
+            row(defaultCell, cellWCursor)),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder))
+      table(row(defaultCell, defaultCell),
+            row(defaultCell, defaultCell),
+            row(emptyCell, emptyCell))
     ));
 
   it('increases rowspan when needed', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(cellBuilder)),
+      table(row(cellWCursor, cellWDimension(1, 2)),
+            row(defaultCell)),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 3)),
-        defaultRowBuilder(emptyCellBuilder),
-        defaultRowBuilder(cellBuilder))
+      table(row(defaultCell, cellWDimension(1, 3)),
+            row(emptyCell),
+            row(defaultCell))
     ));
 
   it('skips columns for colSpan Cells', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)),
-        defaultRowBuilder(cellBuilder)),
+      table(row(cellWCursor, cellWDimension(2, 2)),
+            row(defaultCell)),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 3)),
-        defaultRowBuilder(emptyCellBuilder), defaultRowBuilder(cellBuilder))
+      table(row(defaultCell, cellWDimension(2, 3)),
+            row(emptyCell), row(defaultCell))
     ));
 
   it('picks the row after a CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithHeadBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(3, 1))),
+      table(row(cellWHead, defaultCell, defaultCell),
+            row(defaultCell, cellWAnchor, defaultCell),
+            row(cellWDimension(3, 1))),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(3, 1))
+      table(row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell),
+            row(emptyCell, emptyCell, emptyCell),
+            row(cellWDimension(3, 1))
       )
     ));
 
   it('preserves header columns', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, headerCellWithCursorBuilder),
-        defaultRowBuilder(cellBuilder, headerCellBuilder)),
+      table(row(defaultCell, headerCellWCursor),
+            row(defaultCell, headerCell)),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, headerCellBuilder),
-        defaultRowBuilder(emptyCellBuilder, emptyHeaderCellBuilder),
-        defaultRowBuilder(cellBuilder, headerCellBuilder))
+      table(row(defaultCell, headerCell),
+            row(emptyCell, emptyHeaderCell),
+            row(defaultCell, headerCell))
     ));
 
   it('uses next row as reference when row before is a header', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellWithCursorBuilder),
-        defaultRowBuilder(cellBuilder, headerCellBuilder)),
+      table(row(headerCell, headerCellWCursor),
+            row(defaultCell, headerCell)),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-        defaultRowBuilder(emptyCellBuilder, emptyHeaderCellBuilder),
-        defaultRowBuilder(cellBuilder, headerCellBuilder))
+      table(row(headerCell, headerCell),
+            row(emptyCell, emptyHeaderCell),
+            row(defaultCell, headerCell))
     ));
 
   it('creates regular Cells when no reference row is available', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellWithCursorBuilder)),
+      table(row(headerCell, headerCellWCursor)),
 
       addRowAfterCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellBuilder, headerCellBuilder),
-        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder))
+      table(row(headerCell, headerCell),
+            row(emptyCell, emptyCell))
     ));
 });
 
 describe('addRowBeforeCommand', () => {
   it('can add a simple row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
+      table(row(defaultCell, defaultCell),
+            row(cellWCursor, defaultCell)),
 
       addRowBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(defaultCell, defaultCell),
+            row(emptyCell, emptyCell),
+            row(defaultCell, defaultCell))
     ));
 
   it('can add a row at the start', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(cellWCursor, defaultCell),
+            row(defaultCell, defaultCell)),
 
       addRowBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(emptyCell, emptyCell),
+            row(defaultCell, defaultCell),
+            row(defaultCell, defaultCell))
     ));
 
   it('picks the row before a CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)),
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder)),
+      table(row(defaultCell, cellWDimension(2, 1)),
+            row(cellWAnchor, defaultCell, defaultCell),
+            row(defaultCell, cellWHead, defaultCell)),
 
       addRowBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)),
-        defaultRowBuilder(emptyCellBuilder, emptyCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)
+      table(row(defaultCell, cellWDimension(2, 1)),
+            row(emptyCell, emptyCell, emptyCell),
+            row(defaultCell, defaultCell, defaultCell),
+            row(defaultCell, defaultCell, defaultCell)
       )
     ));
 
   it('preserves header columns', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(headerCellWithCursorBuilder, cellBuilder),
-        defaultRowBuilder(headerCellBuilder, cellBuilder)),
+      table(row(headerCellWCursor, defaultCell),
+            row(headerCell, defaultCell)),
 
       addRowBeforeCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyHeaderCellBuilder, emptyCellBuilder),
-        defaultRowBuilder(headerCellBuilder, cellBuilder),
-        defaultRowBuilder(headerCellBuilder, cellBuilder))
+      table(row(emptyHeaderCell, emptyCell),
+            row(headerCell, defaultCell),
+            row(headerCell, defaultCell))
     ));
 });
 
 describe('deleteRowCommand', () => {
   it('can delete a simple row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+      table(row(defaultCell, emptyCell),
+            row(cellWCursor, defaultCell),
+            row(defaultCell, emptyCell)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+      table(row(defaultCell, emptyCell),
+            row(defaultCell, emptyCell))
     ));
 
   it('can delete the first row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+      table(row(defaultCell, cellWCursor),
+            row(emptyCell, defaultCell),
+            row(defaultCell, emptyCell)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+      table(row(emptyCell, defaultCell),
+            row(defaultCell, emptyCell))
     ));
 
   it('can delete the last row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithCursorBuilder)),
+      table(row(emptyCell, defaultCell),
+            row(defaultCell, emptyCell),
+            row(defaultCell, cellWCursor)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+      table(row(emptyCell, defaultCell),
+            row(defaultCell, emptyCell))
     ));
 
   it('can shrink rowspan cells', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellBuilder, cellWithDimensionBuilder(1, 3)),
-        defaultRowBuilder(cellWithCursorBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(cellWDimension(1, 2), defaultCell, cellWDimension(1, 3)),
+            row(cellWCursor),
+            row(defaultCell, defaultCell)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellBuilder, cellWithDimensionBuilder(1, 2)),
-        defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(defaultCell, defaultCell, cellWDimension(1, 2)),
+            row(defaultCell, defaultCell))
     ));
 
   it('can move cells that start in the deleted row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithCursorBuilder),
-        defaultRowBuilder(emptyCellBuilder)),
+      table(row(cellWDimension(1, 2), cellWCursor),
+            row(emptyCell)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+      table(row(defaultCell, emptyCell))
     ));
 
   it('deletes multiple rows when the start cell has a rowSpan', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.RowSpan]: 3 }, tableParagraphBuilder(`<${CURSOR}>`)), cellBuilder),
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)
+      table(row(cell({ [AttributeType.RowSpan]: 3 }, p(`<${CURSOR}>`)), defaultCell),
+            row(defaultCell),
+            row(defaultCell),
+            row(defaultCell, defaultCell)
       ),
 
       deleteRowCommand,
 
-      defaultTableBuilder(defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(defaultCell, defaultCell))
     ));
 
   it('skips columns when adjusting rowSpan', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, cellWithDimensionBuilder(2, 2)),
-        defaultRowBuilder(cellBuilder)),
+      table(row(cellWCursor, cellWDimension(2, 2)),
+            row(defaultCell)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)))
+      table(row(defaultCell, cellWDimension(2, 1)))
     ));
 
   it('can delete a CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder)),
+      table(row(cellWAnchor, defaultCell),
+            row(defaultCell, emptyCell)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder))
+      table(row(defaultCell, emptyCell))
     ));
 
   it('will delete all rows in the CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithHeadBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder)),
+      table(row(defaultCell, emptyCell),
+            row(cellWAnchor, defaultCell),
+            row(defaultCell, cellWHead),
+            row(emptyCell, defaultCell)),
 
       deleteRowCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, emptyCellBuilder),
-        defaultRowBuilder(emptyCellBuilder, cellBuilder))
+      table(row(defaultCell, emptyCell),
+            row(emptyCell, defaultCell))
     ));
 });
 

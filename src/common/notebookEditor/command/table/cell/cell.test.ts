@@ -2,7 +2,7 @@ import { Command, EditorState } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
-import { cellBuilder, cellWithAnchorBuilder, cellWithCursorBuilder, cellWithDimensionBuilder, cellWithHeadBuilder, defaultCellBuilder, defaultHeaderCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, emptyHeaderCellBuilder, executeTableTestCommand, tableParagraphBuilder } from '../../test/tableTestUtil';
+import { defaultCell, cellWAnchor, cellWCursor, cellWDimension, cellWHead, cell, hCell, row, table, emptyCell, emptyHeaderCell, executeTableTestCommand, tableP as p } from '../../test/tableTestUtil';
 import { ANCHOR, CURSOR } from '../../test/testUtil';
 
 import { mergeCellsCommand, splitCellCommand, GetCellTypeFunctionType } from './cell';
@@ -14,8 +14,7 @@ import { mergeCellsCommand, splitCellCommand, GetCellTypeFunctionType } from './
 describe('mergeCellsCommand', () => {
   it('does not do anything when only one Cell is selected', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder)),
+      table(row(cellWAnchor, defaultCell)),
 
       mergeCellsCommand,
 
@@ -24,9 +23,8 @@ describe('mergeCellsCommand', () => {
 
   it('does not do anything when the selection cuts across spanning Cells', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellWithDimensionBuilder(2, 1)),
-        defaultRowBuilder(cellBuilder, cellWithHeadBuilder, cellBuilder)),
+      table(row(cellWAnchor, cellWDimension(2, 1)),
+            row(defaultCell, cellWHead, defaultCell)),
 
       mergeCellsCommand,
 
@@ -35,75 +33,66 @@ describe('mergeCellsCommand', () => {
 
   it('can merge two Cells in a column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)),
+      table(row(cellWAnchor, cellWHead, defaultCell)),
 
       mergeCellsCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder))
+      table(row(cell({ [AttributeType.ColSpan]: 2 }, p('x'), p('x')), defaultCell))
     ));
 
   it('can merge two Cells in a row', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellWithHeadBuilder, cellBuilder)),
+      table(row(cellWAnchor, defaultCell),
+            row(cellWHead, defaultCell)),
 
       mergeCellsCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
-        defaultRowBuilder(cellBuilder))
+      table(row(cell({ [AttributeType.RowSpan]: 2 }, p('x'), p('x')), defaultCell),
+            row(defaultCell))
     ));
 
   it('can merge a rectangle of Cells', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, emptyCellBuilder, emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder, cellWithHeadBuilder, cellBuilder)
+      table(row(defaultCell, cellWAnchor, emptyCell, emptyCell, defaultCell),
+            row(defaultCell, emptyCell, emptyCell, cellWHead, defaultCell)
       ),
 
       mergeCellsCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)
+      table(row(defaultCell, cell({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 3 }, p('x'), p('x')), defaultCell),
+            row(defaultCell, defaultCell)
       )
     ));
 
   it('can merge already spanning Cells', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder(1, 2), emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellWithHeadBuilder, cellBuilder)),
+      table(row(defaultCell, cellWAnchor, cellWDimension(1, 2), emptyCell, defaultCell),
+            row(defaultCell, emptyCell, cellWHead, defaultCell)),
 
       mergeCellsCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 3 }, tableParagraphBuilder('x'), tableParagraphBuilder('x'), tableParagraphBuilder('x')), cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder))
+      table(row(defaultCell, cell({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 3 }, p('x'), p('x'), p('x')), defaultCell),
+            row(defaultCell, defaultCell))
     ));
 
   it('keeps the column width of the first column', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder(`x<${ANCHOR}>`)), cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithHeadBuilder)),
+      table(row(cell({ [AttributeType.ColWidth]: [100] }, p(`x<${ANCHOR}>`)), defaultCell),
+            row(defaultCell, cellWHead)),
 
       mergeCellsCommand,
 
-      defaultTableBuilder(
-        defaultRowBuilder(
-          defaultCellBuilder(
+      table(
+        row(
+          cell(
             { [AttributeType.ColSpan]: 2, [AttributeType.RowSpan]: 2, [AttributeType.ColWidth]: [100, 0] },
-            tableParagraphBuilder('x'),
-            tableParagraphBuilder('x'),
-            tableParagraphBuilder('x'),
-            tableParagraphBuilder('x')
+            p('x'),
+            p('x'),
+            p('x'),
+            p('x')
           )
         ),
-        defaultRowBuilder()
+        row()
       )
     ));
 });
@@ -111,8 +100,7 @@ describe('mergeCellsCommand', () => {
 describe('splitCellCommand', () => {
   it('does nothing when cursor is inside of a Cell with attributes colSpan = 1 and rowSpan = 1', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithCursorBuilder, cellBuilder)),
+      table(row(cellWCursor, defaultCell)),
 
         splitCellCommand(),
 
@@ -121,30 +109,25 @@ describe('splitCellCommand', () => {
 
   it('can split col-spanning Cell with cursor', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)), cellBuilder)),
+      table(row(cell({ [AttributeType.ColSpan]: 2 }, p(`foo<${CURSOR}>`)), defaultCell)),
 
       splitCellCommand(),
 
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
+      table(row(cell(p('foo')), emptyCell, defaultCell))
     ));
 
   it('can split when col-spanning HeaderCell with cursor', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(defaultHeaderCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${CURSOR}>`)))),
+      table(row(hCell({ [AttributeType.ColSpan]: 2 }, p(`foo<${CURSOR}>`)))),
 
       splitCellCommand(),
 
-      defaultTableBuilder(
-        defaultRowBuilder(defaultHeaderCellBuilder(tableParagraphBuilder('foo')), emptyHeaderCellBuilder))
+      table(row(hCell(p('foo')), emptyHeaderCell))
     ));
 
   it('does nothing for a multi-CellSelection', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellWithHeadBuilder, cellBuilder)),
+      table(row(cellWAnchor, cellWHead, defaultCell)),
 
         splitCellCommand(),
 
@@ -153,8 +136,7 @@ describe('splitCellCommand', () => {
 
   it('does nothing when the selected Cell does not span anything', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder)),
+      table(row(cellWAnchor, defaultCell)),
 
         splitCellCommand(),
 
@@ -163,54 +145,46 @@ describe('splitCellCommand', () => {
 
   it('can split a col-spanning Cell', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder)),
+      table(row(cell({ [AttributeType.ColSpan]: 2 }, p(`foo<${ANCHOR}>`)), defaultCell)),
 
       splitCellCommand(),
 
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder))
+      table(row(cell(p('foo')), emptyCell, defaultCell))
     ));
 
   it('can split a row-spanning Cell', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)),
+      table(row(defaultCell, cell({ [AttributeType.RowSpan]: 2 }, p(`foo<${ANCHOR}>`)), defaultCell),
+            row(defaultCell, defaultCell)),
 
       splitCellCommand(),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+      table(row(defaultCell, cell(p('foo')), defaultCell),
+            row(defaultCell, emptyCell, defaultCell))
     ));
 
   it('can split a rectangular Cell', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
-        defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder)
+      table(row(cellWDimension(4, 1)),
+            row(defaultCell, cell({ [AttributeType.RowSpan]: 2, [AttributeType.ColSpan]: 2 }, p(`foo<${ANCHOR}>`)), defaultCell),
+            row(defaultCell, defaultCell)
       ),
 
       splitCellCommand(),
 
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithDimensionBuilder(4, 1)),
-        defaultRowBuilder(cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder, cellBuilder)
+      table(row(cellWDimension(4, 1)),
+            row(defaultCell, cell(p('foo')), emptyCell, defaultCell),
+            row(defaultCell, emptyCell, emptyCell, defaultCell)
       )
     ));
 
   it('distributes column widths', () =>
     executeTableTestCommand(
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, tableParagraphBuilder(`a<${ANCHOR}>`)))),
+      table(row(cell({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 0, 200] }, p(`a<${ANCHOR}>`)))),
 
       splitCellCommand(),
 
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('a')), emptyCellBuilder, defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder())))
+      table(row(cell({ [AttributeType.ColWidth]: [100] }, p('a')), emptyCell, cell({ [AttributeType.ColWidth]: [200] }, p())))
     ));
 
   describe('with custom Cell type', () => {
@@ -222,15 +196,13 @@ describe('splitCellCommand', () => {
     const splitCellWithOnlyHeaderInColumnZero: Command = (state, dispatch) => splitCellCommand(createGetCellTypeFunction(state))(state, dispatch);
     it('can split a row-spanning header Cell into a header and normal Cell ', () =>
       executeTableTestCommand(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder(`foo<${ANCHOR}>`)), cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder)),
+        table(row(defaultCell, cell({ [AttributeType.RowSpan]: 2 }, p(`foo<${ANCHOR}>`)), defaultCell),
+              row(defaultCell, defaultCell)),
 
         splitCellWithOnlyHeaderInColumnZero,
 
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, defaultHeaderCellBuilder(tableParagraphBuilder('foo')), cellBuilder),
-          defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder))
+        table(row(defaultCell, hCell(p('foo')), defaultCell),
+              row(defaultCell, emptyCell, defaultCell))
       ));
   });
 });

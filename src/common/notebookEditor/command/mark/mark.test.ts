@@ -10,34 +10,37 @@ import { toggleMarkCommand } from './mark';
 const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj();
 const { bold: boldType, italic: italicType } = notebookSchemaWithBuildersObj.schema.marks;
 
-const { [NodeName.DOC]: docBuilder, [NodeName.PARAGRAPH]: paragraphBuilder } = getNotebookSchemaNodeBuilders([NodeName.DOC, NodeName.PARAGRAPH]);
-const { [MarkName.BOLD]: boldBuilder, [MarkName.ITALIC]: italicBuilder } = getNotebookSchemaMarkBuilders([MarkName.BOLD, MarkName.ITALIC]);
+const { [NodeName.DOC]: doc, [NodeName.PARAGRAPH]: p } = getNotebookSchemaNodeBuilders([NodeName.DOC, NodeName.PARAGRAPH]);
+const { [MarkName.BOLD]: b, [MarkName.ITALIC]: i } = getNotebookSchemaMarkBuilders([MarkName.BOLD, MarkName.ITALIC]);
 
 // == Mark ========================================================================
 describe('toggleMarkCommand', () => {
   const toggleItalic = toggleMarkCommand(italicType, {/*no attrs*/});
   const toggleBold = toggleMarkCommand(boldType, {/*no attrs*/});
 
-  it('can add a mark', () => {
-    const startState = docBuilder(paragraphBuilder(`one <${A}>two<${B}>`)),
-          expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two')));
+  it('can add a Mark', () => {
+    const startState = doc(p(`one <${A}>two<${B}>`)),
+          expectedEndState = doc(p('one ', i('two')));
+
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
-  it('can stack marks', () => {
-    const startState = docBuilder(paragraphBuilder(`one <${A}>tw`, boldBuilder(`o<${B}>`))),
-          expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('tw', boldBuilder('o'))));
+  it('can stack Marks', () => {
+    const startState = doc(p(`one <${A}>tw`, b(`o<${B}>`))),
+          expectedEndState = doc(p('one ', i('tw', b('o'))));
+
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
-  it('can remove marks', () => {
-    const startState = docBuilder(paragraphBuilder(italicBuilder(`one <${A}>two<${B}>`))),
-          expectedEndState = docBuilder(paragraphBuilder(italicBuilder('one '), 'two'));
+  it('can remove Marks', () => {
+    const startState = doc(p(i(`one <${A}>two<${B}>`))),
+          expectedEndState = doc(p(i('one '), 'two'));
+
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
-  it('can toggle pending marks', () => {
-    const startState = docBuilder(paragraphBuilder(`hell<${A}>o`));
+  it('can toggle pending Marks', () => {
+    const startState = doc(p(`hell<${A}>o`));
     if(!validateNodeWithTag(startState)) throw new Error('startState is not a ProseMirrorNodeWithTag');
 
     let state = createTestState(startState);
@@ -49,15 +52,17 @@ describe('toggleMarkCommand', () => {
     ist(state.storedMarks?.length, 1);
   });
 
-  it('skips whitespace at selection ends when adding marks', () => {
-    const startState = docBuilder(paragraphBuilder(`one<${A}> two  <${B}>three`)),
-          expectedEndState = docBuilder(paragraphBuilder('one ', italicBuilder('two'), '  three'));
+  it('skips whitespace at selection ends when adding Marks', () => {
+    const startState = doc(p(`one<${A}> two  <${B}>three`)),
+          expectedEndState = doc(p('one ', i('two'), '  three'));
+
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 
   it('does not skip whitespace-only selections', () => {
-    const startState = docBuilder(paragraphBuilder(`one<${A}> <${B}>two`)),
-          expectedEndState = docBuilder(paragraphBuilder('one', italicBuilder(' '), 'two'));
+    const startState = doc(p(`one<${A}> <${B}>two`)),
+          expectedEndState = doc(p('one', i(' '), 'two'));
+          
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 });

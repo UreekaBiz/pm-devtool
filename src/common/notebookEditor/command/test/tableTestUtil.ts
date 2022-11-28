@@ -60,37 +60,37 @@ const schemaWithCellAttrs = new Schema({
 });
 
 export const {
-  [NodeName.CELL]: defaultCellBuilder,
-  [NodeName.HEADER_CELL]: defaultHeaderCellBuilder,
-  [NodeName.ROW]: defaultRowBuilder,
-  [NodeName.TABLE]: defaultTableBuilder,
+  [NodeName.CELL]: cell,
+  [NodeName.HEADER_CELL]: hCell,
+  [NodeName.ROW]: row,
+  [NodeName.TABLE]: table,
 
   // NOTE: contentMatch objects used by PM make comparison
   //       by object type instead of by properties (e.g. names of Nodes/Marks)
   //       hence, these doc and paragraph builders
   //       must be used when testing Table Commands
-  [NodeName.DOC]: tableDocBuilder,
-  [NodeName.PARAGRAPH]: tableParagraphBuilder,
+  [NodeName.DOC]: tableDoc,
+  [NodeName.PARAGRAPH]: tableP,
 } = getNotebookSchemaNodeBuilders([NodeName.CELL, NodeName.DOC, NodeName.HEADER_CELL, NodeName.ROW, NodeName.TABLE, NodeName.PARAGRAPH], schemaWithCellAttrs);
 
 
 // -- Cell ------------------------------------------------------------------------
-export const cellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder('x'));
-export const cellWithDimensionBuilder = (colSpan: number, rowSpan: number) => defaultCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, tableParagraphBuilder('x'));
+export const defaultCell = cell({ ...defaultCellAttrs }, tableP('x'));
+export const cellWDimension = (colSpan: number, rowSpan: number) => cell({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, tableP('x'));
 
-export const emptyCellBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder());
-export const cellWithCursorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${CURSOR}>`));
-export const cellWithAnchorBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${ANCHOR}>`));
-export const cellWithHeadBuilder = defaultCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${HEAD}>`));
-export const colWidth100CellBuilder = defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('x'));
-export const colWidth200CellBuilder = defaultCellBuilder({ [AttributeType.ColWidth]: [200] }, tableParagraphBuilder('x'));
+export const emptyCell = cell({ ...defaultCellAttrs }, tableP());
+export const cellWCursor = cell({ ...defaultCellAttrs }, tableP(`x<${CURSOR}>`));
+export const cellWAnchor = cell({ ...defaultCellAttrs }, tableP(`x<${ANCHOR}>`));
+export const cellWHead = cell({ ...defaultCellAttrs }, tableP(`x<${HEAD}>`));
+export const colWidth100Cell = cell({ [AttributeType.ColWidth]: [100] }, tableP('x'));
+export const colWidth200Cell = cell({ [AttributeType.ColWidth]: [200] }, tableP('x'));
 
 // -- HeaderCell ------------------------------------------------------------------
-export const headerCellWithDimensionBuilder = (colSpan: number, rowSpan: number) => defaultHeaderCellBuilder({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, tableParagraphBuilder('x'));
+export const headerCellWDimension = (colSpan: number, rowSpan: number) => hCell({ [AttributeType.ColSpan]: colSpan, [AttributeType.RowSpan]: rowSpan }, tableP('x'));
 
-export const headerCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder('x'));
-export const emptyHeaderCellBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder());
-export const headerCellWithCursorBuilder = defaultHeaderCellBuilder({ ...defaultCellAttrs }, tableParagraphBuilder(`x<${CURSOR}>`));
+export const headerCell = hCell({ ...defaultCellAttrs }, tableP('x'));
+export const emptyHeaderCell = hCell({ ...defaultCellAttrs }, tableP());
+export const headerCellWCursor = hCell({ ...defaultCellAttrs }, tableP(`x<${CURSOR}>`));
 
 // == Util ========================================================================
 // -- Table -----------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import ist from 'ist';
 
-import { cellBuilder, cellWithDimensionBuilder, defaultRowBuilder, defaultTableBuilder } from '../../../../notebookEditor/command/test/tableTestUtil';
+import { defaultCell, cellWDimension, row, table } from '../../../../notebookEditor/command/test/tableTestUtil';
 
 import { TableMap } from './TableMap';
 import { TableRect } from './TableRect';
@@ -16,11 +16,10 @@ describe('TableMap', () => {
   it('finds the right shape for a simple table', () => {
     ist(
       TableMap.getTableMap(
-        defaultTableBuilder(
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-          defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)
+        table(row(defaultCell, defaultCell, defaultCell),
+              row(defaultCell, defaultCell, defaultCell),
+              row(defaultCell, defaultCell, defaultCell),
+              row(defaultCell, defaultCell, defaultCell)
         )
       ).map.join(', '),
 
@@ -29,7 +28,7 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for colSpans', () => {
-    ist(TableMap.getTableMap(defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder)))
+    ist(TableMap.getTableMap(table(row(defaultCell, cellWDimension(2, 1)), row(cellWDimension(2, 1), defaultCell), row(defaultCell, defaultCell, defaultCell)))
       .map.join(', '),
 
       '1, 6, 6, 13, 13, 18, 25, 30, 35'
@@ -37,7 +36,7 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for rowSpans', () => {
-    ist(TableMap.getTableMap(defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellBuilder, cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellBuilder)))
+    ist(TableMap.getTableMap(table(row(cellWDimension(1, 2), defaultCell, cellWDimension(1, 2)), row(defaultCell)))
       .map.join(', '),
 
       '1, 6, 11, 1, 18, 11'
@@ -45,7 +44,7 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for deep rowSpans', () => {
-    ist(TableMap.getTableMap(defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(1, 4), cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(1, 2)), defaultRowBuilder()))
+    ist(TableMap.getTableMap(table(row(cellWDimension(1, 4), cellWDimension(2, 1)), row(cellWDimension(1, 2), cellWDimension(1, 2)), row()))
       .map.join(', '),
 
       '1, 6, 6, 1, 13, 18, 1, 13, 18'
@@ -53,14 +52,14 @@ describe('TableMap', () => {
   });
 
   it('finds the right shape for larger rectangles', () => {
-    ist(TableMap.getTableMap(defaultTableBuilder(defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(4, 4)), defaultRowBuilder(cellBuilder), defaultRowBuilder(cellBuilder), defaultRowBuilder(cellBuilder)))
+    ist(TableMap.getTableMap(table(row(defaultCell, cellWDimension(4, 4)), row(defaultCell), row(defaultCell), row(defaultCell)))
       .map.join(', '),
 
       '1, 6, 6, 6, 6, 13, 6, 6, 6, 6, 20, 6, 6, 6, 6, 27, 6, 6, 6, 6'
     );
   });
 
-  const tableMap = TableMap.getTableMap(defaultTableBuilder(defaultRowBuilder(cellWithDimensionBuilder(2, 3), cellBuilder, cellWithDimensionBuilder(1, 2)), defaultRowBuilder(cellBuilder), defaultRowBuilder(cellWithDimensionBuilder(2, 1))));
+  const tableMap = TableMap.getTableMap(table(row(cellWDimension(2, 3), defaultCell, cellWDimension(1, 2)), row(defaultCell), row(cellWDimension(2, 1))));
   // expected to be:
   //  1  1  6 11
   //  1  1 18 11

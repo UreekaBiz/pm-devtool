@@ -4,7 +4,7 @@ import { EditorState } from 'prosemirror-state';
 import { eq } from 'prosemirror-test-builder';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { cellBuilder, cellWithAnchorBuilder, cellWithDimensionBuilder, defaultCellBuilder, defaultRowBuilder, defaultTableBuilder, emptyCellBuilder, emptyHeaderCellBuilder, headerCellBuilder, tableDocBuilder, tableParagraphBuilder } from '../../../command/test/tableTestUtil';
+import { defaultCell, cellWAnchor, cellWDimension, cell, row, table, emptyCell, emptyHeaderCell, headerCell, tableDoc, tableP } from '../../../command/test/tableTestUtil';
 import { A, ANCHOR, B, ProseMirrorNodeWithTag, validateNodeWithTag } from '../../../command/test/testUtil';
 import { TableMap } from '../class';
 
@@ -36,101 +36,101 @@ describe('pastedCells', () => {
   };
 
   it('returns simple Cells', () => {
-    const startState = defaultTableBuilder(defaultRowBuilder(`<${A}>`, emptyCellBuilder, emptyCellBuilder, `<${B}>`));
+    const startState = table(row(`<${A}>`, emptyCell, emptyCell, `<${B}>`));
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [emptyCellBuilder, emptyCellBuilder],
+      [emptyCell, emptyCell],
     ];
 
     executePastedCellsTest(startState, 2/*width*/, 1/*height*/, rowsContent);
   });
 
   it('returns Cells wrapped in a row', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder, emptyCellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(emptyCell, emptyCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [emptyCellBuilder, emptyCellBuilder],
+      [emptyCell, emptyCell],
     ];
 
     executePastedCellsTest(startState, 2/*width*/, 1/*height*/, rowsContent);
   });
 
   it('returns Cells when the cursor is inside them', () => {
-    const startState = defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder(`<${A}>foo`)), defaultCellBuilder(tableParagraphBuilder(`<${B}>bar`))));
+    const startState = table(row(cell(tableP(`<${A}>foo`)), cell(tableP(`<${B}>bar`))));
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder],
+      [cell(tableP('foo')), emptyCell],
     ];
 
     executePastedCellsTest(startState, 2/*width*/, 1/*height*/, rowsContent);
   });
 
   it('returns multiple rows', () => {
-    const startState = defaultTableBuilder(defaultRowBuilder(`<${A}>`, emptyCellBuilder, emptyCellBuilder), defaultRowBuilder(emptyCellBuilder, cellBuilder), `<${B}>`);
+    const startState = table(row(`<${A}>`, emptyCell, emptyCell), row(emptyCell, defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [emptyCellBuilder, emptyCellBuilder],
-      [emptyCellBuilder, cellBuilder],
+      [emptyCell, emptyCell],
+      [emptyCell, defaultCell],
     ];
 
     executePastedCellsTest(startState, 2/*width*/, 2/*height*/, rowsContent);
   });
 
   it('will enter a fully selected table', () => {
-    const startState = tableDocBuilder(`<${A}>`, defaultTableBuilder(defaultRowBuilder(cellBuilder)), `<${B}>`);
+    const startState = tableDoc(`<${A}>`, table(row(defaultCell)), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [cellBuilder],
+      [defaultCell],
     ];
 
     executePastedCellsTest(startState, 1/*width*/, 1/*height*/, rowsContent);
   });
 
   it('can normalize a partially-selected row', () => {
-    const startState = defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder(), `<${A}>`), emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`);
+    const startState = table(row(cell(tableP(), `<${A}>`), emptyCell, defaultCell), row(defaultCell, defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [emptyCellBuilder, cellBuilder],
-      [cellBuilder, cellBuilder],
+      [emptyCell, defaultCell],
+      [defaultCell, defaultCell],
     ];
 
     executePastedCellsTest(startState, 2/*width*/, 2/*height*/, rowsContent);
   });
 
   it('will make sure the result is rectangular', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(cellWDimension(2, 2), defaultCell), row(), row(defaultCell, defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [cellWithDimensionBuilder(2, 2), cellBuilder],
-      [emptyCellBuilder],
-      [cellBuilder, cellBuilder, emptyCellBuilder],
+      [cellWDimension(2, 2), defaultCell],
+      [emptyCell],
+      [defaultCell, defaultCell, emptyCell],
     ];
 
     executePastedCellsTest(startState, 3/*width*/, 3/*height*/, rowsContent);
   });
 
   it('can handle rowspans sticking out', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(1, 3), cellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(cellWDimension(1, 3), defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [cellWithDimensionBuilder(1, 3), cellBuilder],
-      [emptyCellBuilder],
-      [emptyCellBuilder],
+      [cellWDimension(1, 3), defaultCell],
+      [emptyCell],
+      [emptyCell],
     ];
 
     executePastedCellsTest(startState, 2/*width*/, 3/*height*/, rowsContent);
   });
 
   it('returns null for non-cell selection', () => {
-    const startState = tableDocBuilder(tableParagraphBuilder(`foo<${A}>bar`), tableParagraphBuilder(`baz<${B}>`));
+    const startState = tableDoc(tableP(`foo<${A}>bar`), tableP(`baz<${B}>`));
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     executePastedCellsTest(startState, null/*no width*/);
@@ -158,73 +158,73 @@ describe('clipCells', () => {
   };
 
   it('can clip off excess Cells', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(emptyCell, defaultCell), row(defaultCell, defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [emptyCellBuilder],
+      [emptyCell],
     ];
 
     executeClipCellsTest(startState, 1/*width*/, 1/*height*/, rowsContent);
   });
 
   it('will pad by repeating Cells', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder, cellBuilder), defaultRowBuilder(cellBuilder, emptyCellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(emptyCell, defaultCell), row(defaultCell, emptyCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [emptyCellBuilder, cellBuilder, emptyCellBuilder, cellBuilder],
-      [cellBuilder, emptyCellBuilder, cellBuilder, emptyCellBuilder],
-      [emptyCellBuilder, cellBuilder, emptyCellBuilder, cellBuilder],
-      [cellBuilder, emptyCellBuilder, cellBuilder, emptyCellBuilder],
+      [emptyCell, defaultCell, emptyCell, defaultCell],
+      [defaultCell, emptyCell, defaultCell, emptyCell],
+      [emptyCell, defaultCell, emptyCell, defaultCell],
+      [defaultCell, emptyCell, defaultCell, emptyCell],
     ];
 
     executeClipCellsTest(startState, 4/*width*/, 4/*height*/, rowsContent);
   });
 
   it('takes rowspan into account when counting width', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(cellWDimension(2, 2), defaultCell), row(defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [cellWithDimensionBuilder(2, 2), cellBuilder, cellWithDimensionBuilder(2, 2), cellBuilder],
-      [cellBuilder, cellBuilder],
+      [cellWDimension(2, 2), defaultCell, cellWDimension(2, 2), defaultCell],
+      [defaultCell, defaultCell],
     ];
 
     executeClipCellsTest(startState, 6/*width*/, 2/*height*/, rowsContent);
   });
 
   it('clips off excess colspan', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(cellWDimension(2, 2), defaultCell), row(defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [cellWithDimensionBuilder(2, 2), cellBuilder, cellWithDimensionBuilder(1, 2)],
-      [cellBuilder],
+      [cellWDimension(2, 2), defaultCell, cellWDimension(1, 2)],
+      [defaultCell],
     ];
 
     executeClipCellsTest(startState, 4/*width*/, 2/*height*/, rowsContent);
   });
 
   it('clips off excess rowspan', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(2, 2), cellBuilder), defaultRowBuilder(cellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(cellWDimension(2, 2), defaultCell), row(defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [cellWithDimensionBuilder(2, 2)],
+      [cellWDimension(2, 2)],
       [],
-      [cellWithDimensionBuilder(2, 1)],
+      [cellWDimension(2, 1)],
     ];
 
     executeClipCellsTest(startState, 2/*width*/, 3/*height*/, rowsContent);
   });
 
   it('clips off excess rowspan when new table height is bigger than the current table height', () => {
-    const startState = defaultTableBuilder(`<${A}>`, defaultRowBuilder(cellWithDimensionBuilder(1, 2), cellWithDimensionBuilder(2, 1)), defaultRowBuilder(cellBuilder, cellBuilder), `<${B}>`);
+    const startState = table(`<${A}>`, row(cellWDimension(1, 2), cellWDimension(2, 1)), row(defaultCell, defaultCell), `<${B}>`);
     if(!validateNodeWithTag(startState)) throw new Error('expected startState to be a ProseMirrorNodeWithTag');
 
     const rowsContent = [
-      [cellWithDimensionBuilder(1, 1), cellWithDimensionBuilder(2, 1)],
+      [cellWDimension(1, 1), cellWDimension(2, 1)],
     ];
 
     executeClipCellsTest(startState, 3/*width*/, 1/*height*/, rowsContent);
@@ -255,76 +255,76 @@ describe('insertCells', () => {
 
   it('keeps the original Cells', () => {
     const startState =
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder, cellBuilder, cellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder));
+      table(
+        row(cellWAnchor, defaultCell, defaultCell),
+        row(defaultCell, defaultCell, defaultCell));
     const cells =
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder(`<${A}>foo`)), emptyCellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(2, 1), `<${B}>`));
+      table(
+        row(cell(tableP(`<${A}>foo`)), emptyCell),
+        row(cellWDimension(2, 1), `<${B}>`));
     if(!validateNodeWithTag(startState) || !validateNodeWithTag(cells)) throw new Error('expected startState and cells to be ProseMirrorNodesWithTag');
 
-    const expectedResult = defaultTableBuilder(defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder, cellBuilder), defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellBuilder));
+    const expectedResult = table(row(cell(tableP('foo')), emptyCell, defaultCell), row(cellWDimension(2, 1), defaultCell));
 
     executeInsertCellsTest(startState, cells, expectedResult);
   });
 
   it('makes sure the table is big enough', () => {
     const startState =
-      defaultTableBuilder(
-        defaultRowBuilder(cellWithAnchorBuilder));
+      table(
+        row(cellWAnchor));
     const cells =
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder(`<${A}>foo`)), emptyCellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(2, 1), `<${B}>`));
+      table(
+        row(cell(tableP(`<${A}>foo`)), emptyCell),
+        row(cellWDimension(2, 1), `<${B}>`));
     if(!validateNodeWithTag(startState) || !validateNodeWithTag(cells)) throw new Error('expected startState and cells to be ProseMirrorNodesWithTag');
 
     const expectedResult =
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(2, 1)));
+      table(
+        row(cell(tableP('foo')), emptyCell),
+        row(cellWDimension(2, 1)));
 
     executeInsertCellsTest(startState, cells, expectedResult);
   });
 
   it('preserves headers while growing a table', () => {
-    const startState = defaultTableBuilder(
-      defaultRowBuilder(headerCellBuilder, headerCellBuilder, headerCellBuilder),
-      defaultRowBuilder(headerCellBuilder, cellBuilder, cellBuilder),
-      defaultRowBuilder(headerCellBuilder, cellBuilder, cellWithAnchorBuilder));
+    const startState = table(
+      row(headerCell, headerCell, headerCell),
+      row(headerCell, defaultCell, defaultCell),
+      row(headerCell, defaultCell, cellWAnchor));
     const cells =
-      defaultTableBuilder(
-        defaultRowBuilder(defaultCellBuilder(tableParagraphBuilder(`<${A}>foo`)), emptyCellBuilder),
-        defaultRowBuilder(cellBuilder, cellBuilder, `<${B}>`));
+      table(
+        row(cell(tableP(`<${A}>foo`)), emptyCell),
+        row(defaultCell, defaultCell, `<${B}>`));
     if(!validateNodeWithTag(startState) || !validateNodeWithTag(cells)) throw new Error('expected startState and cells to be ProseMirrorNodesWithTag');
 
-    const expectedResult = defaultTableBuilder(
-      defaultRowBuilder(headerCellBuilder, headerCellBuilder, headerCellBuilder, emptyHeaderCellBuilder),
-      defaultRowBuilder(headerCellBuilder, cellBuilder, cellBuilder, emptyCellBuilder),
-      defaultRowBuilder(headerCellBuilder, cellBuilder, defaultCellBuilder(tableParagraphBuilder('foo')), emptyCellBuilder),
-      defaultRowBuilder(emptyHeaderCellBuilder, emptyCellBuilder, cellBuilder, cellBuilder)
+    const expectedResult = table(
+      row(headerCell, headerCell, headerCell, emptyHeaderCell),
+      row(headerCell, defaultCell, defaultCell, emptyCell),
+      row(headerCell, defaultCell, cell(tableP('foo')), emptyCell),
+      row(emptyHeaderCell, emptyCell, defaultCell, defaultCell)
     );
 
     executeInsertCellsTest(startState, cells, expectedResult);
   });
 
   it('will split interfering rowSpan Cells', () => {
-    const startState = defaultTableBuilder(
-      defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(1, 4), cellBuilder),
-      defaultRowBuilder(cellWithAnchorBuilder, cellBuilder),
-      defaultRowBuilder(cellBuilder, cellBuilder),
-      defaultRowBuilder(cellBuilder, cellBuilder)
+    const startState = table(
+      row(defaultCell, cellWDimension(1, 4), defaultCell),
+      row(cellWAnchor, defaultCell),
+      row(defaultCell, defaultCell),
+      row(defaultCell, defaultCell)
     );
     const cells =
-      defaultTableBuilder(
-        defaultRowBuilder(`<${A}>`, emptyCellBuilder, emptyCellBuilder, emptyCellBuilder, `<${B}>`));
+      table(
+        row(`<${A}>`, emptyCell, emptyCell, emptyCell, `<${B}>`));
     if(!validateNodeWithTag(startState) || !validateNodeWithTag(cells)) throw new Error('expected startState and cells to be ProseMirrorNodesWithTag');
 
-    const expectedResult = defaultTableBuilder(
-      defaultRowBuilder(cellBuilder, cellBuilder, cellBuilder),
-      defaultRowBuilder(emptyCellBuilder, emptyCellBuilder, emptyCellBuilder),
-      defaultRowBuilder(cellBuilder, defaultCellBuilder({ [AttributeType.RowSpan]: 2 }, tableParagraphBuilder()), cellBuilder),
-      defaultRowBuilder(cellBuilder, cellBuilder)
+    const expectedResult = table(
+      row(defaultCell, defaultCell, defaultCell),
+      row(emptyCell, emptyCell, emptyCell),
+      row(defaultCell, cell({ [AttributeType.RowSpan]: 2 }, tableP()), defaultCell),
+      row(defaultCell, defaultCell)
     );
 
     executeInsertCellsTest(startState, cells, expectedResult);
@@ -332,22 +332,22 @@ describe('insertCells', () => {
 
   it('will split interfering colSpan Cells', () => {
     const startState =
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(cellWithDimensionBuilder(2, 1), cellBuilder),
-        defaultRowBuilder(cellBuilder, cellWithDimensionBuilder(2, 1)));
+      table(
+        row(defaultCell, cellWAnchor, defaultCell),
+        row(cellWDimension(2, 1), defaultCell),
+        row(defaultCell, cellWDimension(2, 1)));
     const cells =
-      defaultTableBuilder(`<${A}>`,
-        defaultRowBuilder(emptyCellBuilder),
-        defaultRowBuilder(emptyCellBuilder),
-        defaultRowBuilder(emptyCellBuilder), `<${B}>`);
+      table(`<${A}>`,
+        row(emptyCell),
+        row(emptyCell),
+        row(emptyCell), `<${B}>`);
 
     if(!validateNodeWithTag(startState) || !validateNodeWithTag(cells)) throw new Error('expected startState and cells to be ProseMirrorNodesWithTag');
 
-    const expectedResult = defaultTableBuilder(
-      defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder),
-      defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder),
-      defaultRowBuilder(cellBuilder, emptyCellBuilder, emptyCellBuilder)
+    const expectedResult = table(
+      row(defaultCell, emptyCell, defaultCell),
+      row(defaultCell, emptyCell, defaultCell),
+      row(defaultCell, emptyCell, emptyCell)
     );
 
     executeInsertCellsTest(startState, cells, expectedResult);
@@ -355,16 +355,16 @@ describe('insertCells', () => {
 
   it('preserves widths when splitting', () => {
     const startState =
-      defaultTableBuilder(
-        defaultRowBuilder(cellBuilder, cellWithAnchorBuilder, cellBuilder),
-        defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableParagraphBuilder('x')))
+      table(
+        row(defaultCell, cellWAnchor, defaultCell),
+        row(cell({ [AttributeType.ColSpan]: 3, [AttributeType.ColWidth]: [100, 200, 300] }, tableP('x')))
       );
-    const cells = defaultTableBuilder(`<${A}>`, defaultRowBuilder(emptyCellBuilder), defaultRowBuilder(emptyCellBuilder), `<${B}>`);
+    const cells = table(`<${A}>`, row(emptyCell), row(emptyCell), `<${B}>`);
     if(!validateNodeWithTag(startState) || !validateNodeWithTag(cells)) throw new Error('expected startState and cells to be ProseMirrorNodesWithTag');
 
-    const expectedResult = defaultTableBuilder(
-      defaultRowBuilder(cellBuilder, emptyCellBuilder, cellBuilder),
-      defaultRowBuilder(defaultCellBuilder({ [AttributeType.ColWidth]: [100] }, tableParagraphBuilder('x')), emptyCellBuilder, defaultCellBuilder({ [AttributeType.ColWidth]: [300] }, tableParagraphBuilder()))
+    const expectedResult = table(
+      row(defaultCell, emptyCell, defaultCell),
+      row(cell({ [AttributeType.ColWidth]: [100] }, tableP('x')), emptyCell, cell({ [AttributeType.ColWidth]: [300] }, tableP()))
     );
 
     executeInsertCellsTest(startState, cells, expectedResult);
