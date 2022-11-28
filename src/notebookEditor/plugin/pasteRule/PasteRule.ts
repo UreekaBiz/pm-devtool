@@ -45,12 +45,13 @@ export class PasteRule {
  */
 export const createPasteRulePlugins = ({ rules }: {rules: PasteRule[]; }): Plugin[] => {
   // -- State -----------------------------------------------------------
-  let dragSourceElement: Element | null = null/*default*/;
-  let draggedElement: any/*cannot know what will be dragged into the Editor*/;
-  let draggedText: Selection | null = null/*default*/;
+  let dragSourceElement: Element | null = null/*default*/,
+      draggedElement: any/*cannot know what will be dragged into the Editor*/,
+      draggedText: Selection | null = null/*default*/;
+
   let caretOffset: number | undefined = undefined/*default*/;
-  let isPastedFromProseMirror = false/*default*/;
-  let isDroppedFromProseMirror = false/*default*/;
+  let isPastedFromProseMirror = false/*default*/,
+      isDroppedFromProseMirror = false/*default*/;
 
   const plugins = rules.map((rule) => {
     return new Plugin({
@@ -61,12 +62,12 @@ export const createPasteRulePlugins = ({ rules }: {rules: PasteRule[]; }): Plugi
       appendTransaction: (transactions, oldState, state) => {
         const transaction = transactions[0/*first one*/];
 
-        const isPaste = transaction.getMeta(UI_EVENT_META) === 'paste' && !isPastedFromProseMirror;
-        const isDrop = transaction.getMeta(UI_EVENT_META) === 'drop' && !isDroppedFromProseMirror;
+        const isPaste = transaction.getMeta(UI_EVENT_META) === 'paste' && !isPastedFromProseMirror,
+              isDrop = transaction.getMeta(UI_EVENT_META) === 'drop' && !isDroppedFromProseMirror;
         if(!isPaste && !isDrop) return/*not pasting or dropping anything*/;
 
-        const from = oldState.doc.content.findDiffStart(state.doc.content);
-        const to = oldState.doc.content.findDiffEnd(state.doc.content);
+        const from = oldState.doc.content.findDiffStart(state.doc.content),
+              to = oldState.doc.content.findDiffEnd(state.doc.content);
         if(!from || typeof from !== 'number' || !to || from === to.b) return/*there is no changed range*/;
 
         // build a chainable state
@@ -170,17 +171,17 @@ const executePasteRuleHandler = (currentState: EditorState, from: number, to: nu
   currentState.doc.nodesBetween(from, to, (node, pos) => {
     if(!node.isTextblock) return/*do not check if not a TextBlock*/;
 
-    const resolvedFrom = Math.max(from, pos);
-    const resolvedTo = Math.min(to, pos + node.content.size);
-    const textToMatch = node.textBetween(resolvedFrom - pos, resolvedTo - pos, undefined/*no block separator*/, '\ufffc'/*leaf separator*/);
+    const maxFrom = Math.max(from, pos),
+          minTo = Math.min(to, pos + node.content.size),
+          textToMatch = node.textBetween(maxFrom - pos, minTo - pos, undefined/*no block separator*/, '\ufffc'/*leaf separator*/);
 
     const matches = applyPasteRuleMatcher(textToMatch, rule.matcher);
     matches.forEach(match => {
       if(match.index === undefined) return/*not a valid match*/;
 
-      const start = resolvedFrom + match.index + 1;
-      const end = start + match[0].length;
-      const range = { from: currentState.tr.mapping.map(start), to: currentState.tr.mapping.map(end) };
+      const start = maxFrom + match.index + 1,
+            end = start + match[0].length,
+            range = { from: currentState.tr.mapping.map(start), to: currentState.tr.mapping.map(end) };
 
       const handlerStart = range.from,
             handlerEnd = range.to;
@@ -207,19 +208,19 @@ const applyPasteRuleMatcher = (text: string, matcher: PasteRuleMatcher): RegExpM
   } /* else -- there are matches */
 
   return matches.map((pasteRuleMatch) => {
-    const result: RegExpMatchArray = [/*default empty*/];
-    result.push(pasteRuleMatch.text);
-    result.index = pasteRuleMatch.index;
-    result.input = text;
+    const resultingArray: RegExpMatchArray = [/*default empty*/];
+          resultingArray.push(pasteRuleMatch.text);
+          resultingArray.index = pasteRuleMatch.index;
+          resultingArray.input = text;
 
     if(pasteRuleMatch.replaceWith) {
       if(!pasteRuleMatch.text.includes(pasteRuleMatch.replaceWith)) {
         console.warn('pasteRuleMatch.replaceWith must be part of pasteRuleMatch.text');
       } /* else -- pasteRuleMatch is part of the matched Text */
 
-      result.push(pasteRuleMatch.replaceWith);
+      resultingArray.push(pasteRuleMatch.replaceWith);
     } /* else -- not specifying a string to replaceWith */
 
-    return result;
+    return resultingArray;
   });
 };
