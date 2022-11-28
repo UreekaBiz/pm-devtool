@@ -7,20 +7,26 @@ import { toggleMarkCommand } from './mark';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj();
-const { bold: boldType, italic: italicType } = notebookSchemaWithBuildersObj.schema.marks;
+const { bold: boldType, italic: italicType } = getNotebookSchemaWithBuildersObj().schema.marks;
 
 const { [NodeName.DOC]: doc, [NodeName.PARAGRAPH]: p } = getNotebookSchemaNodeBuilders([NodeName.DOC, NodeName.PARAGRAPH]);
 const { [MarkName.BOLD]: b, [MarkName.ITALIC]: i } = getNotebookSchemaMarkBuilders([MarkName.BOLD, MarkName.ITALIC]);
 
 // == Mark ========================================================================
 describe('toggleMarkCommand', () => {
-  const toggleItalic = toggleMarkCommand(italicType, {/*no attrs*/});
-  const toggleBold = toggleMarkCommand(boldType, {/*no attrs*/});
+  const toggleBold = toggleMarkCommand(boldType, {/*no attrs*/}),
+        toggleItalic = toggleMarkCommand(italicType, {/*no attrs*/});
 
   it('can add a Mark', () => {
     const startState = doc(p(`one <${A}>two<${B}>`)),
           expectedEndState = doc(p('one ', i('two')));
+
+    wrapTest(startState, toggleItalic, expectedEndState);
+  });
+
+  it('only applies the Mark to the Text part when there is white-space selected', () => {
+    const startState = doc(p(`one <${A}>    two three   <${B}> four`)),
+          expectedEndState = doc(p('one     ', i('two three'), '    four'));
 
     wrapTest(startState, toggleItalic, expectedEndState);
   });
@@ -62,7 +68,7 @@ describe('toggleMarkCommand', () => {
   it('does not skip whitespace-only selections', () => {
     const startState = doc(p(`one<${A}> <${B}>two`)),
           expectedEndState = doc(p('one', i(' '), 'two'));
-          
+
     wrapTest(startState, toggleItalic, expectedEndState);
   });
 });

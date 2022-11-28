@@ -1,4 +1,4 @@
-import { MarkType } from 'prosemirror-model';
+import { MarkType, ResolvedPos } from 'prosemirror-model';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { AbstractDocumentUpdate } from '../type';
 
@@ -106,13 +106,13 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
    * Name is toggled
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { empty, $cursor, ranges } = editorState.selection as TextSelection;
+    const { empty, $cursor, ranges } = editorState.selection as TextSelection/*explicitly looking for $cursor property*/;
     if((empty && !$cursor) || !doesMarkApplyToRanges(editorState.doc, ranges, this.markType)) return false/*invalid state to toggle Mark*/;
 
-    if($cursor) {
+    if($cursor) /* there is an empty TextSelection */ {
       if(this.markType.isInSet(editorState.storedMarks || $cursor.marks())) { tr.removeStoredMark(this.markType); }
       else { tr.addStoredMark(this.markType.create(this.attributes)); }
-    } else {
+    } else /* non-empty TextSelection */ {
       let rangeHasMark = false/*default*/;
       for(let i = 0; !rangeHasMark && i < ranges.length; i++) {
         let { $from, $to } = ranges[i];
@@ -124,29 +124,7 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
         if(rangeHasMark) {
           tr.removeMark($from.pos, $to.pos, this.markType);
         } else {
-          const nodeAfter$FromStart = $from.nodeAfter,
-                nodeBefore$ToEnd = $to.nodeBefore;
-          let from = $from.pos,
-              to = $to.pos;
-
-          let spaceStart = 0/*default no space to account for*/;
-          if(nodeAfter$FromStart && nodeAfter$FromStart.text) {
-            const execArr = /^\s*/.exec(nodeAfter$FromStart.text);
-            if(execArr) {
-              spaceStart = execArr[0/*leading white space*/].length;
-            } /* else -- do not change default */
-          } /* else -- do not change default */
-
-          let spaceEnd = 0/*default no space to account for*/;
-          if(nodeBefore$ToEnd && nodeBefore$ToEnd.text) {
-            spaceEnd = nodeBefore$ToEnd.text.length - nodeBefore$ToEnd.text.trimEnd().length;
-          } /*  else -- do not change default */
-
-          if(from + spaceStart < to) {
-            from += spaceStart;
-            to -= spaceEnd;
-          } /* else -- do not modify Range */
-
+          const { from, to } = getMarkRangeAccountingForWhiteSpace($from, $to);
           tr.addMark(from, to, this.markType.create(this.attributes));
         }
       }
@@ -157,6 +135,38 @@ export class ToggleMarkDocumentUpdate implements AbstractDocumentUpdate {
     return tr/*updated*/;
   }
 }
+
+/**
+ * given two {@link ResolvedPos}itions, return the range inside
+ * them that contains Text Nodes, removing the ranges that contain
+ * leading or trailing whitespace
+ */
+const getMarkRangeAccountingForWhiteSpace = ($from: ResolvedPos, $to: ResolvedPos) => {
+  const nodeAfter$From = $from.nodeAfter,
+        nodeBefore$To = $to.nodeBefore;
+  let from = $from.pos,
+      to = $to.pos;
+
+  // account for leading white-space
+  let spaceStart = 0/*default no space to account for*/;
+  if(nodeAfter$From && nodeAfter$From.text) {
+    spaceStart = nodeAfter$From.text.length - nodeAfter$From.text.trimStart().length;
+  } /* else -- there is no Node after $from or said Node has no Text */
+
+  // account for trailing white-space
+  let spaceEnd = 0/*default no space to account for*/;
+  if(nodeBefore$To && nodeBefore$To.text) {
+    spaceEnd = nodeBefore$To.text.length - nodeBefore$To.text.trimEnd().length;
+  } /*  there is no Node before $to or said Node has no Text */
+
+  // update the Ranges
+  if((from + spaceStart) < to) {
+    from += spaceStart;
+    to -= spaceEnd;
+  } /* else -- do not modify Range */
+
+  return { from, to };
+};
 
 // --------------------------------------------------------------------------------
 /**

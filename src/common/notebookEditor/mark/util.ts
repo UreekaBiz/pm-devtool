@@ -22,6 +22,7 @@ export const getMarkValue = (node: ProseMirrorNode, markName: MarkName, attribut
 /** returns a string with the names of all allowed Marks for a Node  */
 export const getAllowedMarks = (allowedMarks: MarkName[]) => allowedMarks.join(' ');
 
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/8c6751f0c638effb22110b62b40a1632ea6867c9/packages/core/src/helpers/getMarkRange.ts
 /** Get the Range covered by a Mark */
 export const getRangeCoveredByMark =($pos: ResolvedPos, markType: MarkType, markAttributes: Record<AttributeType | string, any> = {/*default no attributes*/}) => {
   let $childStart = $pos.parent.childAfter($pos.parentOffset);
