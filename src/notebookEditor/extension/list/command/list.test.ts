@@ -45,11 +45,11 @@ describe('toggleListCommand', () => {
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
-  // it('wraps the loose child of a ListItem whenever there are loose children in a single ListItem', () => {
-  //   const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>bar`)))),
-  //         expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo'))), bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>bar`))));
-  //   wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
-  // });
+  it('sets up a state that will be addressed by an appendedTransaction when leaving loose ListItems in a List', () => {
+    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>bar`)))),
+          expectedEndState = docBuilder(paragraphBuilder('foo'), listItemBuilder(paragraphBuilder(`<${A}>bar`)));
+    wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
+  });
 
   it('changes the type of the List when the cursor is inside it', () => {
     const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo')), listItemBuilder(paragraphBuilder(`<${A}>bar`)), listItemBuilder(paragraphBuilder('baz')))),
@@ -57,9 +57,9 @@ describe('toggleListCommand', () => {
     wrapTest(startState, toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}), expectedEndState);
   });
 
-  // it('only splits items where valid', () => {
-  //   const startState = docBuilder(paragraphBuilder(`<${A}>one`), orderedListBuilder(listItemBuilder('two')), paragraphBuilder(`three<${B}>`)),
-  //         expectedEndState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('one'), orderedListBuilder(listItemBuilder('two'))), listItemBuilder(paragraphBuilder('three'))));
-  //   wrapTest(startState, toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}), expectedEndState);
-  // });
+  it('only wraps Blocks that are not ListItems already', () => {
+    const startState = docBuilder(paragraphBuilder(`<${A}>one`), orderedListBuilder(listItemBuilder(paragraphBuilder('two'))), paragraphBuilder(`three<${B}>`)),
+          expectedEndState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder("one"))), orderedListBuilder(listItemBuilder(paragraphBuilder("two"))), orderedListBuilder(listItemBuilder(paragraphBuilder("three"))));
+    wrapTest(startState, toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}), expectedEndState);
+  });
 });
