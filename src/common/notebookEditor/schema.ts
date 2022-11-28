@@ -41,6 +41,7 @@ import { NodeName } from './node';
 //       (SEE: ExtensionPriority)
 export const NodeSpecs: Record<NodeName, NodeSpec> = {
   // -- priority ordered ----------------------------------------------------------
+  [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
   [NodeName.PARAGRAPH]: ParagraphNodeSpec,
   [NodeName.TABLE]: TableNodeSpec,
   [NodeName.CODEBLOCK]: CodeBlockNodeSpec,
@@ -48,6 +49,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeSpec,
   [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeSpec,
+  [NodeName.LIST_ITEM]: ListItemNodeSpec,
 
   // -- priority does not matter --------------------------------------------------
   [NodeName.BULLET_LIST]: BulletListNodeSpec,
@@ -59,8 +61,6 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.HEADING]: HeadingNodeSpec,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeSpec,
   [NodeName.IMAGE]: ImageNodeSpec,
-  [NodeName.LIST_ITEM]: ListItemNodeSpec,
-  [NodeName.MARK_HOLDER]: MarkHolderNodeSpec,
   [NodeName.ORDERED_LIST]: OrderedListNodeSpec,
   [NodeName.ROW]: RowNodeSpec,
 
