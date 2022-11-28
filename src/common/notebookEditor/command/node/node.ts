@@ -2,7 +2,7 @@ import { Fragment, NodeType } from 'prosemirror-model';
 import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { canSplit, findWrapping, liftTarget } from 'prosemirror-transform';
 
-import { isBlank } from '../../../util';
+import { isBlank, isNotNullOrUndefined } from '../../../util';
 import { Attributes } from '../../attribute';
 import { isMarkHolderNode } from '../../extension/markHolder';
 import { isTextNode } from '../../extension/text';
@@ -258,79 +258,26 @@ export class ToggleWrapDocumentUpdate implements AbstractDocumentUpdate {
     * of the given type with the given Attributes
     */
   public update(editorState: EditorState, tr: Transaction) {
-    const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, this.attrs);
+    const { $from, $to } = editorState.selection;
 
+    const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, this.attrs);
     if(nodeActive) {
-      return new LiftBlockDocumentUpdate(this.nodeType, this.attrs).update(editorState, editorState.tr);
+      // lift the Node
+      const liftRange = $from.blockRange($to);
+      if(!liftRange) return false/*no range to lift*/;
+
+      const targetDepth = liftTarget(liftRange);
+      if(!isNotNullOrUndefined<number>(targetDepth)) return false/*no depth at which to lift the Block*/;
+
+      return tr.lift(liftRange, targetDepth).scrollIntoView();
     } /* else -- wrap */
 
-    return new WrapInDocumentUpdate(this.nodeType, this.attrs).update(editorState, tr);
-  }
-}
+    const wrapRange = $from.blockRange($to);
+    if(!wrapRange) return false/*no range to wrap*/;
 
-/** wrap the Selection in a Node of the given type with the given Attributes */
-export const wrapInCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new WrapInDocumentUpdate(nodeType, attrs), state, dispatch);
-export class WrapInDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly nodeType: NodeType, private readonly attrs: Partial<Attributes>) {/*nothing additional*/}
-  /*
-   * modify the given Transaction such that the Selection is wrapped in a Node
-   * of the given type with the given Attributes
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    const { $from, $to } = editorState.selection;
-
-    const range = $from.blockRange($to);
-    const wrapping = range && findWrapping(range, this.nodeType, this.attrs);
+    const wrapping = findWrapping(wrapRange, this.nodeType, this.attrs);
     if(!wrapping) return false/*no valid wrapping was found*/;
 
-    tr.wrap(range, wrapping).scrollIntoView();
-
-    return tr/*updated*/;
-  }
-}
-
-// -- Lift ------------------------------------------------------------------------
-/**
- * lift the selected block, or the closest ancestor block of the
- * selection that can be lifted, out of its parent Node
- */
-export const liftCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftDocumentUpdate(), state, dispatch);
-export class LiftDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
-
-  // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L217
-  /*
-   * modify the given Transaction such that the selected Block or
-   * the closest ancestor Block of the Selection that can be lifted
-   * is lifted out of its parent Node
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    const { $from, $to } = editorState.selection;
-    const blockRange = $from.blockRange($to);
-
-    const targetDepth = blockRange && liftTarget(blockRange);
-    if(!blockRange || targetDepth === null) return false/*no depth at which to lift the Block*/;
-
-    tr.lift(blockRange, targetDepth).scrollIntoView();
-    return tr/*updated*/;
-  }
-}
-
-/** lift the selected Block if it is of the given type and has the given attributes */
-export const liftBlockNodeCommand = (nodeType: NodeType, attrs: Partial<Attributes>): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftBlockDocumentUpdate(nodeType, attrs), state, dispatch);
-export class LiftBlockDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly nodeType: NodeType, attrs: Partial<Attributes>) {/*nothing additional*/}
-  /*
-   * modify the given transaction such that the selected Block if it is of the given
-   * type and has the given attributes
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    const nodeActive = isNodeActive(editorState, this.nodeType.name as NodeName/*by definition*/, {/*no attrs*/});
-    if(!nodeActive) return false/*specified Node is not present, nothing to lift*/;
-
-    return new LiftDocumentUpdate().update(editorState, tr);
+    return tr.wrap(wrapRange, wrapping).scrollIntoView();
   }
 }
