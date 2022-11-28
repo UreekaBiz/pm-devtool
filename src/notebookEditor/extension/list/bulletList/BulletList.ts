@@ -8,6 +8,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
 import { toggleListCommand } from '../command/toggleListCommand';
+import { BulletListAttrs } from './attribute';
 
 // ********************************************************************************
 // == RegEx =======================================================================
@@ -22,15 +23,15 @@ export const BulletList = new NodeExtension({
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Attribute -----------------------------------------------------------------
-  defineNodeAttributes: (extensionStorage) => ({/*currently no attrs*/}),
+  defineNodeAttributes: (extensionStorage) => (BulletListAttrs),
 
   // -- Spec ----------------------------------------------------------------------
   partialNodeSpec: { ...BulletListNodeSpec },
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([ { tag: `ul[${DATA_NODE_TYPE}="${NodeName.BULLET_LIST}"]` }, { tag: 'ul' }], {/*currently no attrs*/}),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, {/*currently no attrs*/})),
+    parseDOM: createExtensionParseRules([ { tag: `ul[${DATA_NODE_TYPE}="${NodeName.BULLET_LIST}"]` }, { tag: 'ul' }], BulletListAttrs),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, BulletListAttrs)),
   }),
 
   // -- Input ---------------------------------------------------------------------
