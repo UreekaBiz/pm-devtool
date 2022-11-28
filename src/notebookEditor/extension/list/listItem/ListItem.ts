@@ -3,6 +3,7 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
+import { Editor } from 'notebookEditor/editor/Editor';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority, ParseRulePriority } from 'notebookEditor/model';
@@ -45,12 +46,8 @@ export const ListItem = new NodeExtension({
       'Enter': chainCommands(liftListItemCommand('Enter'), splitListItemKeepMarksCommand),
       'Shift-Tab': liftListItemCommand('Shift-Tab'),
       'Tab': sinkListItemCommand,
-      'Backspace': () => {
-        const liftResult = liftListItemCommand('Backspace')(editor.view.state, editor.view.dispatch);
-        if(liftResult) return liftResult/* else -- could not Lift */;
-
-        return joinBackwardToEndOfClosestListItemCommand(editor.view.state, editor.view.dispatch);
-      },
+      'Backspace': () => listItemBackSpaceBehavior(editor),
+      'Mod-Backspace': () => listItemBackSpaceBehavior(editor),
       'Delete': joinForwardToStartOfClosestListItemCommand,
     }),
 
@@ -60,3 +57,11 @@ export const ListItem = new NodeExtension({
     listItemPlugin(),
   ],
 });
+
+// == Util ========================================================================
+const listItemBackSpaceBehavior = (editor: Editor) => {
+  const liftResult = liftListItemCommand('Backspace')(editor.view.state, editor.view.dispatch);
+  if(liftResult) return liftResult/* else -- could not Lift */;
+
+  return joinBackwardToEndOfClosestListItemCommand(editor.view.state, editor.view.dispatch);
+};
