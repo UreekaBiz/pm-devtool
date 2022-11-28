@@ -40,7 +40,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 
     // check if any ListItems are direct children of the Doc and if they are
     // lift their contents again
-    const newListItemPositions = getListItemPositions(doc, { from, to });
+    const newListItemPositions = getListItemPositions(tr.doc, { from, to });
     for(let i=0; i<newListItemPositions.length; i++) {
       const insidePos = newListItemPositions[i]+2/*inside the ListItem, inside its firstChild*/,
             mappedInsidePos = tr.mapping.map(insidePos),
