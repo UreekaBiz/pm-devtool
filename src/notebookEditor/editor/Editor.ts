@@ -96,9 +96,9 @@ export class Editor {
 
   /** create a {@link Schema} from the given {@link Extension}s */
   private buildSchemaFromExtensions(extensions: Extension[]) {
-    const nodes = getNodeSpecs(extensions);
-    const marks = getMarkSpecs(extensions);
-    const topNode = getTopNode(extensions);
+    const topNode = getTopNode(extensions),
+          nodes = getNodeSpecs(extensions),
+          marks = getMarkSpecs(extensions);
 
     return new Schema({ topNode, nodes, marks });
   }
