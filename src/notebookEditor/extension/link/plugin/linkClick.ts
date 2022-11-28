@@ -15,11 +15,10 @@ import { sanitizeLinkInput } from '../util';
 // pointer style is set through a class by React (SEE: Editor.tsx, index.css)
 
 // == Plugin ======================================================================
-const linkClickKey = new PluginKey<NoPluginState>('linkClickKey');
 export const linkClick = (): Plugin => {
   return new Plugin({
-    // -- Setup -------------------------------------------------------------------
-    key: linkClickKey,
+    // -- Definition --------------------------------------------------------------
+    key: new PluginKey<NoPluginState>('linkClickKey'),
 
     // -- Props -------------------------------------------------------------------
     // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/helpers/clickHandler.ts

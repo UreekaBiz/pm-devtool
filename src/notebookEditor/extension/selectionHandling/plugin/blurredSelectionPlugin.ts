@@ -1,9 +1,10 @@
-import { EditorState, Plugin } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { isNodeSelection, SELECTED_TEXT_CLASS } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
+import { NoPluginState } from 'notebookEditor/model';
 
 // ********************************************************************************
 // REF: https://discuss.prosemirror.net/t/add-css-class-to-current-node-or-selected-nodes/1287
@@ -15,6 +16,11 @@ import { Editor } from 'notebookEditor/editor/Editor';
  * (SEE: index.css)
  */
 export const blurredSelectionPlugin = (editor: Editor) => new Plugin({
+  // -- Definition ----------------------------------------------------------------
+  key: new PluginKey<NoPluginState>('blurredSelectionPluginKey'),
+
+
+  // -- Props ---------------------------------------------------------------------
   props: {
     decorations(state: EditorState) {
       if(editor.view.hasFocus()) return undefined/*only show decoration if View is not focused*/;

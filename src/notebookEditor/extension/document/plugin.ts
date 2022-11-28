@@ -13,11 +13,10 @@ import { serializeDocumentFragment } from './serialize';
 // of other Extensions or Plugins.
 
 // == Plugin ======================================================================
-const documentPluginKey = new PluginKey<NoPluginState>('documentPluginKey');
 export const documentPlugin = () =>
   new Plugin<NoPluginState>({
-    // -- Setup -------------------------------------------------------------------
-    key: documentPluginKey,
+    // -- Definition --------------------------------------------------------------
+    key: new PluginKey<NoPluginState>('documentPluginKey'),
 
     // -- Props -------------------------------------------------------------------
     props: {

@@ -1,8 +1,9 @@
-import { EditorState, Plugin, Transaction } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 
 import { PM_CLASS } from 'common';
 
 import { isValidHTMLElement, isValidRegExp } from 'notebookEditor/extension/util';
+import { NoPluginState } from 'notebookEditor/model';
 
 // ********************************************************************************
 // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/2b69f344c713befecd4ec606df5e9ba680aa2ce8/packages/core/src/PasteRule.ts
@@ -53,8 +54,10 @@ export const createPasteRulePlugins = ({ rules }: {rules: PasteRule[]; }): Plugi
   let isPastedFromProseMirror = false/*default*/,
       isDroppedFromProseMirror = false/*default*/;
 
-  const plugins = rules.map((rule) => {
+  const plugins = rules.map((rule, index) => {
     return new Plugin({
+      // -- Definition ------------------------------------------------------------
+      key: new PluginKey<NoPluginState>(`pasteRule-${index}-Key`),
 
       // -- Transaction -----------------------------------------------------------
       // apply the effects of the PasteRule's handler if Text that got

@@ -1,4 +1,4 @@
-import { Plugin } from 'prosemirror-state';
+import { Plugin, PluginKey } from 'prosemirror-state';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
@@ -7,6 +7,9 @@ import { wrapAndLiftListItemChildren } from './util';
 // ********************************************************************************
 // == Plugin ======================================================================
 export const wrapAndLiftListItemChildrenPlugin = () => new Plugin<NoPluginState>({
+  // -- Definition --------------------------------------------------------------
+  key: new PluginKey<NoPluginState>('wrapAndLiftListItemChildrenPluginKey'),
+
   // -- Transaction -------------------------------------------------------------
   // prevent any ListItems from having loose children inside of them
   appendTransaction(transactions, oldState, newState) {

@@ -1,10 +1,15 @@
-import { Plugin } from 'prosemirror-state';
+import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { getReplacedTextMarkMarkType, isGapCursorSelection } from 'common';
 
+import { NoPluginState } from 'notebookEditor/model';
+
 // == Plugin ======================================================================
 export const replacedTextMarkPlugin = () => new Plugin({
+  // -- Definition ----------------------------------------------------------------
+  key: new PluginKey<NoPluginState>('replacedTextMarkPluginKey'),
+
   // -- Props ---------------------------------------------------------------------
   props: {
     // .. Handler .................................................................

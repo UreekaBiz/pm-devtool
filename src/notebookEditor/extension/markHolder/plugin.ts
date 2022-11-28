@@ -1,8 +1,10 @@
 import { Slice } from 'prosemirror-model';
-import { NodeSelection, Plugin, Selection, TextSelection } from 'prosemirror-state';
+import { NodeSelection, Plugin, PluginKey, Selection, TextSelection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { createMarkHolderNode, getNodesAffectedByStepMap, isMarkHolderNode, markFromJSONMark, parseStringifiedMarksArray, stringifyMarksArray, AttributeType, NodeName } from 'common';
+
+import { NoPluginState } from 'notebookEditor/model';
 
 import { parseStoredMarks } from './util';
 
@@ -13,6 +15,9 @@ const blockNodesThatPreserveMarks = new Set([NodeName.HEADING, NodeName.PARAGRAP
 
 // == Plugin ======================================================================
 export const markHolderPlugin = () => new Plugin({
+  // -- Definition ----------------------------------------------------------------
+  key: new PluginKey<NoPluginState>('markHolderPluginKey'),
+
   // -- Transaction ---------------------------------------------------------------
   // when a BlockNode that must preserve Marks (SEE: blockNodesThatPreserveMarks Set
   // above) gets its Content removed but the Node is not deleted (i.e., the

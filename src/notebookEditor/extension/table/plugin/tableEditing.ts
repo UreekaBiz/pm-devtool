@@ -55,9 +55,11 @@ export const tableEditingPluginKey = new PluginKey<TableEditingState>('tableEdit
  * Mouse and Arrow key events
  */
 export const tableEditingPlugin = (allowTableNodeSelection = false/*default*/) =>
-  new Plugin<TableEditingState>({
-    // -- State -------------------------------------------------------------------
+new Plugin<TableEditingState>({
+    // -- Definition --------------------------------------------------------------
     key: tableEditingPluginKey,
+
+    // -- State -------------------------------------------------------------------
     state: {
       init() { return new TableEditingState(null/*default no currentValue*/); },
       apply: (transaction, thisPluginState, oldState, newState) => thisPluginState.apply(transaction, thisPluginState, oldState, newState),

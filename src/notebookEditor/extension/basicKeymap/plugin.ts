@@ -1,7 +1,9 @@
-import { Plugin } from 'prosemirror-state';
+import { Plugin, PluginKey } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import { selectTextBlockStartOrEndCommand, NodeName } from 'common';
+
+import { NoPluginState } from 'notebookEditor/model';
 
 // == Constant ====================================================================
 const HOME = 'Home';
@@ -13,6 +15,9 @@ const END = 'End';
  * through the ProseMirror keymap Plugin
  */
 export const basicKeymapPlugin = () => new Plugin({
+  // -- Definition --------------------------------------------------------------
+  key: new PluginKey<NoPluginState>('basicKeyMapPluginKey'),
+
   // -- Props ---------------------------------------------------------------------
   props: {
     // .. Handler .................................................................

@@ -11,11 +11,10 @@ import { NoPluginState } from 'notebookEditor/model/type';
 // valid link
 
 // == Plugin ======================================================================
-const linkCreateKey = new PluginKey<NoPluginState>('linkCreateKey');
 export const linkCreate = (validate?: (url: string) => boolean): Plugin => {
   return new Plugin({
-    // -- Setup -------------------------------------------------------------------
-    key: linkCreateKey,
+    // -- Definition --------------------------------------------------------------
+    key: new PluginKey<NoPluginState>('linkCreateKey'),
 
     // -- Transaction -------------------------------------------------------------
     // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/helpers/autolink.ts

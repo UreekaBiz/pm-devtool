@@ -36,14 +36,15 @@ class InBetweenInlineAtomsState {
 }
 
 // == Plugin ======================================================================
-const inBetweenInlineAtomsKey = new PluginKey<InBetweenInlineAtomsState>('inBetweenInlineAtomsKey');
+const inBetweenInlineAtomsKey = new PluginKey<InBetweenInlineAtomsState>('inBetweenInlineAtomsPluginKey');
+
 export const inBetweenInlineAtomsPlugin = () => {
   // differentiate between the state where the User is composing an input
   // (e.g. inserting a special character after inserting a '~' symbol)
   let composingInput = false/*default*/;
 
   const plugin = new Plugin<InBetweenInlineAtomsState>({
-    // -- Setup -------------------------------------------------------------------
+    // -- Definition --------------------------------------------------------------
     key: inBetweenInlineAtomsKey,
 
     // -- State -------------------------------------------------------------------

@@ -5,6 +5,7 @@ import { createMarkHolderNode, generateNodeId, getParagraphNodeType, getSelected
 
 // ********************************************************************************
 export const headingPlugin = () => new Plugin({
+  // -- Definition --------------------------------------------------------------
   key: new PluginKey('headingPluginKey'),
 
   // -- Props ---------------------------------------------------------------------

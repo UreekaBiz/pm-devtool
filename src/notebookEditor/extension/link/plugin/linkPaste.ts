@@ -12,10 +12,10 @@ import { NoPluginState } from 'notebookEditor/model/type';
 // ensure Links that get pasted into the Editor receive the Link Mark
 
 // == Plugin ======================================================================
-const linkPasteKey = new PluginKey<NoPluginState>('linkPasteKey');
 export const linkPaste = (editor: Editor): Plugin => {
   return new Plugin({
-    key: linkPasteKey,
+    // -- Definition --------------------------------------------------------------
+    key: new PluginKey<NoPluginState>('linkPasteKey'),
 
     // -- Props -------------------------------------------------------------------
     // NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/extension-link/src/helpers/pasteHandler.ts
