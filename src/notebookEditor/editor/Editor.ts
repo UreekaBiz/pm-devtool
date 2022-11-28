@@ -136,14 +136,13 @@ export class Editor {
   /** called when there is a new Transaction to be dispatched on the view. It
    * updates the React's state with the new Editor and then calls the
    * {@link TransactionListener}s*/
-  // FIXME: make it an observable?
   private onDispatchTransaction = (transaction: Transaction) => {
     // updates the view and the React's state
     this.view.updateState(this.view.state.apply(transaction));
     this.updateReactEditorCallback();
 
     // call the Transaction listeners
-    this.transactionListeners.forEach(listener => listener(this, transaction));
+    this.transactionListeners.forEach((listener) => listener(this, transaction));
   };
 
   // -- Storage -------------------------------------------------------------------
