@@ -32,12 +32,15 @@ export class JoinBackwardToEndOfClosestListItemDocumentUpdate implements Abstrac
     const previousList = doc.child(previousChildIndex);
     if(!isListNode(previousList)) return false/*no List to join into*/;
 
-    let lastChildOfListPos = 0/*default*/;
-    previousList.descendants((node, pos) => { lastChildOfListPos = (pos + 1/*inside the Node*/) + node.nodeSize; });
+    let lastTextChildOfListPos = 0/*default*/;
+    previousList.descendants((node, pos) => {
+      if(!node.isText) return/*ignore*/;
+      lastTextChildOfListPos = (pos + 1/*inside the Node*/) + node.nodeSize;
+    });
 
-    const $lastChildOfListPos = doc.resolve(lastChildOfListPos);
+    const $lastChildOfListPos = doc.resolve(lastTextChildOfListPos);
     if(!(parent.type === $lastChildOfListPos.parent.type)) return false/*cannot be merged*/;
 
-    return tr.delete(lastChildOfListPos, from);
+    return tr.delete(lastTextChildOfListPos, from);
   }
 }
