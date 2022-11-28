@@ -46,12 +46,14 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
             mappedInsidePos = tr.mapping.map(insidePos),
             $mappedInsidePos = tr.doc.resolve(mappedInsidePos);
       const greatGrandParent = $mappedInsidePos.node(-2/*greatGrandParent depth*/);
-      if(!greatGrandParent || !isDocumentNode(greatGrandParent)) continue/*Doc is not greatGrandParent*/;
+      if(!greatGrandParent) continue/*Doc is not greatGrandParent*/;
 
-      const blockRange = $mappedInsidePos.blockRange();
-      if(!blockRange) continue/*no range to lift again*/;
+      if((greatGrandParent.isBlock && !greatGrandParent.isTextblock) || isDocumentNode(greatGrandParent)) {
+        const blockRange = $mappedInsidePos.blockRange();
+        if(!blockRange) continue/*no range to lift again*/;
 
-      tr.lift(blockRange, 0/*lift to be direct children of the Doc*/);
+        tr.lift(blockRange, blockRange.depth-1/*decrease depth*/);
+      } /* else -- no need to lift */
     }
 
     return tr/*updated*/;
