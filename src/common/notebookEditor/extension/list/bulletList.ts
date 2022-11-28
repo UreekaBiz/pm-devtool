@@ -18,13 +18,13 @@ export type BulletListAttributes = AttributesTypeFromNodeSpecAttributes<typeof B
 export const BulletListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `(${NodeName.BULLET_LIST} | ${NodeName.ORDERED_LIST} | ${NodeName.LIST_ITEM})+`,
-  group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
   /**
    * NOTE: preserve the BulletList parent when pasting if possible, BulletList is
    *       an important parent during replace operations
    *       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
    */
   defining: true/*(SEE: NOTE above)*/,
+  group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
 
   // .. Attribute .................................................................
   attrs: BulletListAttributeSpec,
