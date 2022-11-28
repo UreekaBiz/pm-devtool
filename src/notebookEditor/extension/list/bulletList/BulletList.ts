@@ -3,9 +3,9 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, BulletListNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+import { ExtensionPriority, ParseRulePriority } from 'notebookEditor/model';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 import { BulletListAttrs } from './attribute';
@@ -20,7 +20,7 @@ const bulletListRegEx = /^\s*([-+*])\s$/;
 export const BulletList = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.BULLET_LIST,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.BULLET_LIST,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => (BulletListAttrs),
@@ -30,7 +30,11 @@ export const BulletList = new NodeExtension({
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([ { tag: `ul[${DATA_NODE_TYPE}="${NodeName.BULLET_LIST}"]` }, { tag: 'ul' }], BulletListAttrs),
+    parseDOM: createExtensionParseRules([
+      { tag: `ul[${DATA_NODE_TYPE}="${NodeName.BULLET_LIST}"]`, priority: ParseRulePriority.BULLET_LIST },
+      { tag: 'ul', priority: ParseRulePriority.BULLET_LIST }],
+    BulletListAttrs),
+
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, BulletListAttrs)),
   }),
 

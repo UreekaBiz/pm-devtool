@@ -103,11 +103,18 @@ export enum ExtensionPriority {
   NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
 
   /**
+   * ensure that BulletList and OrderedList have a higher priority
+   * than ListItems since they are meant to wrap them
+   */
+  BULLET_LIST = 109,
+  ORDERED_LIST = 108,
+
+  /**
    * since the Commands added by Lists handle Keydown,
    * they should run before other Plugins that also do so, but after
    * other TextBlock Nodes
    */
-  LIST_ITEM = 108,
+  LIST_ITEM = 107,
 
   /**
    * the BasicKeymap contains Commands that represent
@@ -135,4 +142,18 @@ export enum ExtensionPriority {
 
   // -- Mark ----------------------------------------------------------------------
   // Currently nothing
+}
+
+// -- ParseRule -------------------------------------------------------------------
+// REF: https://prosemirror.net/docs/ref/#model.ParseRule.priority
+// NOTE: if ParseRule priority is left unspecified, it defaults to 50
+//       (SEE: REF above)
+// NOTE: names match Extension, Node or Mark names for sanity
+export enum ParseRulePriority {
+  /** ensure that BulletLists and OrderedLists are parsed before ListItems */
+  BULLET_LIST = 53,
+  ORDERED_LIST = 52,
+
+  /** ensure that ListItems are parsed after Bullet and Ordered Lists */
+  LIST_ITEM = 51,
 }

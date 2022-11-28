@@ -22,6 +22,12 @@ export const OrderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
   content: `(${NodeName.ORDERED_LIST} | ${NodeName.BULLET_LIST} | ${NodeName.LIST_ITEM})+`,
+  /**
+   * NOTE: preserve the OrderedList parent when pasting if possible, OrderedList is
+   *       an important parent during replace operations
+   *       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
+   */
+  defining: true/*(SEE: NOTE above)*/,
 
   // .. Attribute .................................................................
   attrs: OrderedListAttributeSpec,

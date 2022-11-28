@@ -3,9 +3,9 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE, AttributeType } from 'common';
 
-import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
+import { ExtensionPriority, ParseRulePriority } from 'notebookEditor/model';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 import { OrderedListAttrs } from './attribute';
@@ -20,7 +20,7 @@ const orderedListRegex = /^(\d+)\.\s$/;
 export const OrderedList = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.ORDERED_LIST,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.ORDERED_LIST,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => OrderedListAttrs,
@@ -30,7 +30,10 @@ export const OrderedList = new NodeExtension({
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([ { tag: `ol[${DATA_NODE_TYPE}="${NodeName.ORDERED_LIST}"]` }, { tag: 'ol' }], OrderedListAttrs),
+    parseDOM: createExtensionParseRules([
+      { tag: `ol[${DATA_NODE_TYPE}="${NodeName.ORDERED_LIST}"]`, priority: ParseRulePriority.ORDERED_LIST },
+      { tag: 'ol', priority: ParseRulePriority.ORDERED_LIST }],
+    OrderedListAttrs),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, OrderedListAttrs)),
   }),
 

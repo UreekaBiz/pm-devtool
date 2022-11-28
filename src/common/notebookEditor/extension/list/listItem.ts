@@ -20,7 +20,13 @@ export type ListItemAttributes = AttributesTypeFromNodeSpecAttributes<typeof Lis
 export const ListItemNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `${NodeGroup.BLOCK}*`,
-  defining: true/*important parent during replace operations, preserve content if possible*/,
+  /**
+   * NOTE: since Lists are the Nodes with the 'defining' property in their spec,
+   *       they will be the ones that ensure their content gets pasted correctly
+   *       and hence ListItems themselves can be dropped. This is why defining must
+   *       be set to false
+   */
+  defining: false/*(SEE: NOTE above)*/,
   draggable: false/*do not allow dragging*/,
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
 
