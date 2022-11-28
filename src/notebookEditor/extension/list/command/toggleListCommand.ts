@@ -1,6 +1,6 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { findParentNodeClosestToPos, AbstractDocumentUpdate, Attributes, NodeName, isDocumentNode, isListItemNode } from 'common';
+import { findParentNodeClosestToPos, AbstractDocumentUpdate, Attributes, NodeName, isListItemNode } from 'common';
 
 import { LiftListItemDocumentUpdate } from '../listItem/command';
 
@@ -33,15 +33,20 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
         else /*change type */ { tr.setNodeMarkup(closestParentList.pos, listType, this.attrs); }
       } /* else - not nested, list does not exist, or cannot lift*/
     } else /*wrap*/ {
-      const insideDocBlockChildrenPositions: number[] = [/*default empty*/];
+      let nearestBlockParent = findParentNodeClosestToPos(blockRange.$from, (node) => (node.isBlock && !node.isTextblock))?.node;
+      if(!nearestBlockParent) {
+        nearestBlockParent = tr.doc;
+      } /* else -- use nearest parent */
+      const nearestBlockChildrenPositions: number[] = [/*default empty*/];
+
       tr.doc.nodesBetween(from, to, (node, pos, parent, index) => {
-        if(parent && isDocumentNode(parent)) {
-          insideDocBlockChildrenPositions.push(pos+1/*inside the Child*/);
+        if(parent && parent === nearestBlockParent) {
+          nearestBlockChildrenPositions.push(pos+1/*inside the Child*/);
         } /* else -- ignore */
       });
 
-      for(let i=0; i<insideDocBlockChildrenPositions.length; i++) {
-        const $pos = tr.doc.resolve(tr.mapping.map(insideDocBlockChildrenPositions[i]));
+      for(let i=0; i<nearestBlockChildrenPositions.length; i++) {
+        const $pos = tr.doc.resolve(tr.mapping.map(nearestBlockChildrenPositions[i]));
         const nodeAtPos = tr.doc.nodeAt($pos.pos);
         if(nodeAtPos && isListItemNode(nodeAtPos)) continue/*already wrapped*/;
 
