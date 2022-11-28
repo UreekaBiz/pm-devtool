@@ -1,4 +1,4 @@
-import { Plugin } from 'prosemirror-state';
+import { Plugin, PluginKey } from 'prosemirror-state';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
@@ -7,6 +7,9 @@ import { checkAndMergeListAtPos } from './command/util';
 // ********************************************************************************
 // == Plugin ======================================================================
 export const listItemPlugin = () => new Plugin<NoPluginState>({
+  // -- Definition --------------------------------------------------------------
+  key: new PluginKey('listItemPluginKey'),
+
   // -- Transaction -------------------------------------------------------------
   // ensure that Lists are merged and joined if possible (SEE: checkAndMergeList)
   appendTransaction(transactions, oldState, newState) {
