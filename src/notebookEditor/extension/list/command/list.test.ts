@@ -1,65 +1,55 @@
-import { getNotebookSchemaNodeBuilders, wrapTest, A, B, NodeName } from 'common';
+import { listBlockquoteBuilder, listDocBuilder, defaultBulletListBuilder, defaultListItemBuilder, defaultOrderedListBuilder, listParagraphBuilder, wrapTest, A, B, NodeName } from 'common';
 
 import { toggleListCommand } from './toggleListCommand';
 
 // ********************************************************************************
-// == Constant ====================================================================
-const {
-  [NodeName.BLOCKQUOTE]: blockquoteBuilder,
-  [NodeName.BULLET_LIST]: bulletListBuilder,
-  [NodeName.DOC]: docBuilder,
-  [NodeName.LIST_ITEM]: listItemBuilder,
-  [NodeName.ORDERED_LIST]: orderedListBuilder,
-  [NodeName.PARAGRAPH]: paragraphBuilder,
-} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.BULLET_LIST, NodeName.DOC, NodeName.LIST_ITEM, NodeName.ORDERED_LIST, NodeName.PARAGRAPH]);
-
 // == Test ====================================================================
 describe('toggleListCommand', () => {
   it('can wrap a Paragraph', () => {
-    const startState = docBuilder(paragraphBuilder(`<${A}>foo`)),
-          expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo'))));
+    const startState = listDocBuilder(listParagraphBuilder(`<${A}>foo`)),
+          expectedEndState = listDocBuilder(defaultBulletListBuilder(defaultListItemBuilder(listParagraphBuilder('foo'))));
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
   it('can wrap a nested Paragraph', () => {
-    const startState = docBuilder(blockquoteBuilder(paragraphBuilder(`<${A}>foo`))),
-          expectedEndState = docBuilder(blockquoteBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('foo')))));
+    const startState = listDocBuilder(listBlockquoteBuilder(listParagraphBuilder(`<${A}>foo`))),
+          expectedEndState = listDocBuilder(listBlockquoteBuilder(defaultOrderedListBuilder(defaultListItemBuilder(listParagraphBuilder('foo')))));
     wrapTest(startState, toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}), expectedEndState);
   });
 
   it('can wrap multiple Paragraphs', () => {
-    const startState = docBuilder(paragraphBuilder('foo'), paragraphBuilder(`ba<${A}>r`), paragraphBuilder(`ba<${B}>z`)),
-          expectedEndState = docBuilder(paragraphBuilder('foo'), bulletListBuilder(listItemBuilder(paragraphBuilder('bar'))), bulletListBuilder(listItemBuilder(paragraphBuilder('baz'))));
+    const startState = listDocBuilder(listParagraphBuilder('foo'), listParagraphBuilder(`ba<${A}>r`), listParagraphBuilder(`ba<${B}>z`)),
+          expectedEndState = listDocBuilder(listParagraphBuilder('foo'), defaultBulletListBuilder(defaultListItemBuilder(listParagraphBuilder('bar'))), defaultBulletListBuilder(defaultListItemBuilder(listParagraphBuilder('baz'))));
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
   it('unwraps the first Paragraph in a ListItem if already active', () => {
-    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`)))),
-          expectedEndState = docBuilder(paragraphBuilder(`<${A}>foo`));
+    const startState = listDocBuilder(defaultBulletListBuilder(defaultListItemBuilder(listParagraphBuilder(`<${A}>foo`)))),
+          expectedEndState = listDocBuilder(listParagraphBuilder(`<${A}>foo`));
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
   it('toggles the type of a List successfully', () => {
-    const startState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`)))),
-          expectedEndState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder(`<${A}>foo`))));
+    const startState = listDocBuilder(defaultOrderedListBuilder(defaultListItemBuilder(listParagraphBuilder(`<${A}>foo`)))),
+          expectedEndState = listDocBuilder(defaultBulletListBuilder(defaultListItemBuilder(listParagraphBuilder(`<${A}>foo`))));
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
   it('sets up a state that will be addressed by an appendedTransaction when leaving loose ListItems in a List', () => {
-    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo'), paragraphBuilder(`<${A}>bar`)))),
-          expectedEndState = docBuilder(paragraphBuilder('foo'), listItemBuilder(paragraphBuilder(`<${A}>bar`)));
+    const startState = listDocBuilder(defaultBulletListBuilder(defaultListItemBuilder(listParagraphBuilder('foo'), listParagraphBuilder(`<${A}>bar`)))),
+          expectedEndState = listDocBuilder(listParagraphBuilder('foo'), defaultListItemBuilder(listParagraphBuilder(`<${A}>bar`)));
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
   it('changes the type of the List when the cursor is inside it', () => {
-    const startState = docBuilder(bulletListBuilder(listItemBuilder(paragraphBuilder('foo')), listItemBuilder(paragraphBuilder(`<${A}>bar`)), listItemBuilder(paragraphBuilder('baz')))),
-          expectedEndState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder('foo')), listItemBuilder(paragraphBuilder(`<${A}>bar`)), listItemBuilder(paragraphBuilder('baz'))));
+    const startState = listDocBuilder(defaultBulletListBuilder(defaultListItemBuilder(listParagraphBuilder('foo')), defaultListItemBuilder(listParagraphBuilder(`<${A}>bar`)), defaultListItemBuilder(listParagraphBuilder('baz')))),
+          expectedEndState = listDocBuilder(defaultOrderedListBuilder(defaultListItemBuilder(listParagraphBuilder('foo')), defaultListItemBuilder(listParagraphBuilder(`<${A}>bar`)), defaultListItemBuilder(listParagraphBuilder('baz'))));
     wrapTest(startState, toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}), expectedEndState);
   });
 
   it('only wraps Blocks that are not ListItems already', () => {
-    const startState = docBuilder(paragraphBuilder(`<${A}>one`), orderedListBuilder(listItemBuilder(paragraphBuilder('two'))), paragraphBuilder(`three<${B}>`)),
-          expectedEndState = docBuilder(orderedListBuilder(listItemBuilder(paragraphBuilder("one"))), orderedListBuilder(listItemBuilder(paragraphBuilder("two"))), orderedListBuilder(listItemBuilder(paragraphBuilder("three"))));
+    const startState = listDocBuilder(listParagraphBuilder(`<${A}>one`), defaultOrderedListBuilder(defaultListItemBuilder(listParagraphBuilder('two'))), listParagraphBuilder(`three<${B}>`)),
+          expectedEndState = listDocBuilder(defaultOrderedListBuilder(defaultListItemBuilder(listParagraphBuilder("one"))), defaultOrderedListBuilder(defaultListItemBuilder(listParagraphBuilder("two"))), defaultOrderedListBuilder(defaultListItemBuilder(listParagraphBuilder("three"))));
     wrapTest(startState, toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}), expectedEndState);
   });
 });
