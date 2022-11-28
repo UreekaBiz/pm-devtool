@@ -19,11 +19,11 @@ export type OrderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeof 
 // == Spec ========================================================================
 // -- Node Spec -------------------------------------------------------------------
 export const OrderedListNodeSpec: Readonly<NodeSpec> = {
-  name: NodeName.ORDERED_LIST/*expected and guaranteed to be unique*/,
-
+  // .. Definition ................................................................
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
   content: `(${NodeName.ORDERED_LIST} | ${NodeName.BULLET_LIST} | ${NodeName.LIST_ITEM})+`,
 
+  // .. Attribute .................................................................
   attrs: OrderedListAttributeSpec,
 };
 
