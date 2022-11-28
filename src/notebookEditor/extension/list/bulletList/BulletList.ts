@@ -1,3 +1,4 @@
+import { wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, BulletListNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
@@ -5,7 +6,6 @@ import { getNodeOutputSpec, BulletListNodeSpec, NodeName, DATA_NODE_TYPE } from 
 import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
-import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 import { BulletListAttrs } from './attribute';
@@ -35,7 +35,7 @@ export const BulletList = new NodeExtension({
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [createWrappingInputRule(bulletListRegEx, editor.view.state.schema.nodes[NodeName.BULLET_LIST])],
+  inputRules: (editor) => [wrappingInputRule(bulletListRegEx, editor.view.state.schema.nodes[NodeName.BULLET_LIST])],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],

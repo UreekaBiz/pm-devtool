@@ -1,3 +1,4 @@
+import { InputRule, inputRules } from 'prosemirror-inputrules';
 import { Schema } from 'prosemirror-model';
 import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView, DirectEditorProps, NodeViewConstructor } from 'prosemirror-view';
@@ -10,7 +11,6 @@ import { sortExtensionsByPriority } from 'notebookEditor/extension/type/Extensio
 import { getMarkSpecs } from 'notebookEditor/extension/type/MarkExtension/util';
 import { getNodeSpecs, getTopNode, isNodeExtension } from 'notebookEditor/extension/type/NodeExtension/util';
 import { AbstractNodeController, DialogStorage, ExtensionName, NodeViewStorage } from 'notebookEditor/model';
-import { inputRulesPlugin, InputRule } from 'notebookEditor/plugin/inputRule/InputRule';
 import { createPasteRulePlugins, PasteRule } from 'notebookEditor/plugin/pasteRule/PasteRule';
 
 import { EditorContentProps, EditorContentState } from './component/EditorContent';
@@ -164,7 +164,7 @@ export class Editor {
   /** initialize the plugins defined by the {@link Extensions} */
   private initializePlugins(): Plugin[] {
     // get InputRules
-    const inputRules = this.extensions.reduce<InputRule[]>((pluginArray, sortedExtension) => {
+    const rules = this.extensions.reduce<InputRule[]>((pluginArray, sortedExtension) => {
       pluginArray.push(...sortedExtension.definition.inputRules(this));
       return pluginArray;
     }, [/*initially empty*/]);
@@ -180,7 +180,7 @@ export class Editor {
     const initializedPlugins = this.extensions.reduce<Plugin[]>((pluginArray, sortedExtension) => {
       pluginArray.push(...sortedExtension.definition.addProseMirrorPlugins(this, sortedExtension.storage));
       return pluginArray;
-    }, [inputRulesPlugin({ rules: inputRules }), ...pasteRulePlugins]);
+    }, [inputRules({ rules }), ...pasteRulePlugins]);
 
     return initializedPlugins;
   }

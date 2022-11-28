@@ -1,3 +1,4 @@
+import { wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE, AttributeType } from 'common';
@@ -5,7 +6,6 @@ import { getNodeOutputSpec, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE, Attri
 import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
-import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 import { OrderedListAttrs } from './attribute';
@@ -36,7 +36,7 @@ export const OrderedList = new NodeExtension({
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [
-    createWrappingInputRule(orderedListRegex,
+    wrappingInputRule(orderedListRegex,
     editor.view.state.schema.nodes[NodeName.ORDERED_LIST],
 
     // getAttrs function

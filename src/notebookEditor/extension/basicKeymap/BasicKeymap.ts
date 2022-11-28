@@ -1,10 +1,10 @@
+import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { chainCommands, deleteSelection, joinBackward, joinForward, liftEmptyBlock, selectNodeBackward, selectNodeForward } from 'prosemirror-commands';
 
 import { splitBlockKeepMarksCommand } from 'common';
 
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model';
-import { undoInputRuleCommand } from 'notebookEditor/plugin/inputRule/command';
 
 import { Extension } from '../type/Extension/Extension';
 import { basicKeymapPlugin } from './plugin';
@@ -29,7 +29,7 @@ export const BasicKeymap = new Extension({
     basicKeymapPlugin(),
     keymap({
       'Enter': chainCommands(liftEmptyBlock, splitBlockKeepMarksCommand),
-      'Backspace': chainCommands(undoInputRuleCommand, deleteSelection, joinBackward, selectNodeBackward),
+      'Backspace': chainCommands(undoInputRule, deleteSelection, joinBackward, selectNodeBackward),
       'Mod-Backspace': chainCommands(deleteSelection, joinBackward, selectNodeBackward),
       'Delete': chainCommands(deleteSelection, joinForward, selectNodeForward),
       'Mod-Delete': chainCommands(deleteSelection, joinForward, selectNodeForward),

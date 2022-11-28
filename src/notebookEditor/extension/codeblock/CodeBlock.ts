@@ -1,3 +1,4 @@
+import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { chainCommands } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
 
@@ -7,7 +8,6 @@ import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArro
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model';
-import { createTextblockTypeInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
 import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
 import { NodeExtension } from '../type/NodeExtension/NodeExtension';
@@ -48,7 +48,7 @@ export const CodeBlock = new NodeExtension({
   defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<CodeBlockController>(editor, node, NodeName.CODEBLOCK, getPos, isCodeBlockNode, CodeBlockController),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [createTextblockTypeInputRule(codeBlockRegEx, getCodeBlockNodeType(editor.view.state.schema))],
+  inputRules: (editor) => [textblockTypeInputRule(codeBlockRegEx, getCodeBlockNodeType(editor.view.state.schema))],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],

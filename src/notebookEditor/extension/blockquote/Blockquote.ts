@@ -1,10 +1,10 @@
+import { wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
 import { getBlockquoteNodeType, getNodeOutputSpec, BlockquoteNodeSpec, NodeName, DATA_NODE_TYPE, toggleWrapCommand } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model/type';
-import { createWrappingInputRule } from 'notebookEditor/plugin/inputRule/inputRuleBuilders';
 
 import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
 import { NodeExtension } from '../type/NodeExtension/NodeExtension';
@@ -34,7 +34,7 @@ export const Blockquote = new NodeExtension({
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [createWrappingInputRule(blockquoteRegex, getBlockquoteNodeType(editor.view.state.schema))],
+  inputRules: (editor) => [wrappingInputRule(blockquoteRegex, getBlockquoteNodeType(editor.view.state.schema))],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],

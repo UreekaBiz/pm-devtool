@@ -1,9 +1,9 @@
+import { InputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
 import { getHeadingNodeType, generateNodeId, getNodeOutputSpec, AttributeType, HeadingLevel, HeadingNodeSpec, NodeName } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
-import { InputRule } from 'notebookEditor/plugin/inputRule/InputRule';
 
 import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
 import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
