@@ -27,10 +27,7 @@ export const ListItem = new NodeExtension({
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
     // match ListItem tags and Block Nodes (which use the div tag)
-    parseDOM: createExtensionParseRules([
-      { tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` },
-      { tag: 'li' },
-      { tag: 'div' }], ListItemAttrs),
+    parseDOM: createExtensionParseRules([{ tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], ListItemAttrs),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ListItemAttrs)),
   }),
 
