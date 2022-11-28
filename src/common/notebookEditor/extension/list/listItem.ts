@@ -9,10 +9,6 @@ import { NotebookSchemaType } from '../../schema';
 // == Attribute ===================================================================
 // NOTE: This values must have matching types the ones defined in the Extension.
 const ListItemAttributeSpec = {
-  // NOTE: these attributes have influence in all ListItems
-  [AttributeType.PaddingTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-
   // NOTE: these attributes only have influence on ListItems inside OrderedLists
   [AttributeType.ListStyleType]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
   [AttributeType.Separator]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
