@@ -147,8 +147,7 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
    * the current Selection is split
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const selectionReference = editorState.selection;
-    const { $from, $to } = selectionReference;
+    const { $from, $to } = editorState.selection;
 
     if(isNodeSelection(editorState.selection) && editorState.selection.node.isBlock) {
       if(!$from.parentOffset || !canSplit(editorState.doc, $from.pos)) {
