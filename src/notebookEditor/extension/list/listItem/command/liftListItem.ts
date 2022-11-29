@@ -40,7 +40,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
      *       bl(li(blockquote(li(p('hello'))))) will not lift the first ListItem, and
      *       just lifts the inner most one
      */
-    let listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
+    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
 
     for(let i=0; i<listItemPositions.length; i++) {
       const updatedTr = liftListItem(tr, listItemPositions[i]);

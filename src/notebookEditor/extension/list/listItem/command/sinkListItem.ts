@@ -19,11 +19,21 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
 
     const { doc, selection } = editorState,
-          { empty, $from, from, to } = selection;
+          { empty, $from, from, $to, to } = selection;
     if(empty && from !== $from.before() + 1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
 
     // -- Sink --------------------------------------------------------------------
-    const listItemPositions = getListItemPositions(doc, { from, to });
+    const blockRange = $from.blockRange($to);
+    if(!blockRange) return false/*no range in which to lift ListItems*/;
+    const { depth: blockRangeDepth } = blockRange;
+
+    /**
+     * NOTE: only take into account ListItems whose depth is greater than or equal to
+     *       blockRangeDepth - 1, so that for example:
+     *       bl(li(blockquote(li(p('hello'))))) will not sink the first ListItem, and
+     *       just sinks the inner most one
+     */
+    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
     for(let i = 0; i < listItemPositions.length; i++) {
       const updatedTr = sinkListItem(tr, listItemPositions[i]);
       if(updatedTr) { tr = updatedTr; }
