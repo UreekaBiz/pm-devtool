@@ -1,4 +1,4 @@
-import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
 import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
@@ -107,43 +107,50 @@ export const selectAllInsideTableCommand: Command = (state, dispatch) =>
 export class SelectAllInsideTableDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
-  /**
-   * modify the given Transaction such that the selected Columns
-   * are removed from a Table */
   public update(editorState: EditorState, tr: Transaction) {
     if(!isAllBlockNodeRangeSelected(editorState.selection)) return false/*not all the Content of the current Block is selected*/;
 
     // if there is no CellSelection, select the current Cell
     const $currentCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(tr.selection.from));
     if(!$currentCellPos) return false/*no Cell to select*/;
-
     if(!isCellSelection(editorState.selection)) {
       return tr.setSelection(new CellSelection($currentCellPos))/*updated*/;
     }  /* else -- there already is a CellSelection */
 
-    const table = $currentCellPos.node(-1/*grandParent*/);
-    if(!table || !isTableNode(table)) return false/*no Table to select*/;
-    const tableMap = TableMap.getTableMap(table);
+    // if the whole Table is not currently selected, select it
+    const selectAllTableUpdatedTr = selectAllTable(editorState, tr, $currentCellPos);
+    if(selectAllTableUpdatedTr) {
+      return selectAllTableUpdatedTr/*updated*/;
+    } /* else -- all the table is already selected */
 
-    const firstCellPos =  tableMap.cellPositionAt(table, 0/*first row*/, 0/*first column*/),
-          lastCellPos = tableMap.cellPositionAt(table, tableMap.width-1/*account for 0 indexing*/, tableMap.height-1/*account for 0 indexing*/);
-
-    console.log(tr.doc.nodeAt(firstCellPos)?.type.name)
-    console.log(tr.doc.nodeAt(lastCellPos)?.type.name)
-    const $firstCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(firstCellPos)),
-          $lastCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(lastCellPos));
-    if(!$firstCellPos || !$lastCellPos) return false/*no Cells to select*/;
-
-    const { anchor, head } = editorState.selection,
-          allTableAlreadySelected = $firstCellPos.pos === anchor && $lastCellPos.pos === head;
-    if(!allTableAlreadySelected) {
-      return tr.setSelection(new CellSelection($firstCellPos, $lastCellPos))/*updated*/;
-    } else /*all Table is selected*/ {
-
-    }
     return false/*default*/;
   }
 }
+/* select the whole Table if it is not currently selected */
+const selectAllTable = (editorState: EditorState, tr: Transaction, $currentCellPos: ResolvedPos) => {
+  const table = $currentCellPos.node(-1/*grandParent*/);
+  if(!table || !isTableNode(table)) return false/*no Table to select*/;
+  const tableMap = TableMap.getTableMap(table),
+        tableStart = $currentCellPos.start(-1/*grandParent depth*/);
+
+  const firstCellPos = tableStart + tableMap.map[0/*first cell*/],
+        lastCellPos = tableStart + tableMap.map[tableMap.map.length-1/*the last Cell*/];
+  const firstCell = tr.doc.nodeAt(firstCellPos),
+        lastCell = tr.doc.nodeAt(lastCellPos);
+  if(!firstCell || !lastCell || !firstCell.type.spec.tableRole || !lastCell.type.spec.tableRole) return false/*no Cells at the given positions*/;
+
+  const $firstCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(firstCellPos+1/*inside the Cell*/)),
+        $lastCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(lastCellPos+1/*inside the Cell*/));
+  if(!$firstCellPos || !$lastCellPos) return false/*no Cells to select*/;
+
+  const { anchor, head } = editorState.selection,
+        allTableAlreadySelected = $firstCellPos.pos === anchor && $lastCellPos.pos === head;
+  if(!allTableAlreadySelected) {
+    return tr.setSelection(new CellSelection($firstCellPos, $lastCellPos))/*updated*/;
+  } /* else -- all the Table is already selected */
+
+  return false/*do not select all Table*/;
+};
 
 // == Row =========================================================================
 /** add a Table Row before the Selection */
