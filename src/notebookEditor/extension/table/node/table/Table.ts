@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { deleteTableWhenAllCellsSelectedCommand, getNodeOutputSpec, goToCellCommand, isTableNode, AddRowAfterDocumentUpdate, GoToCellDocumentUpdate, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
+import { deleteTableWhenAllCellsSelectedCommand, getNodeOutputSpec, goToCellCommand, isTableNode, selectAllInsideTableCommand, AddRowAfterDocumentUpdate, GoToCellDocumentUpdate, NodeName, TableNodeSpec, DATA_NODE_TYPE, TABLE_HANDLE_DETECTION_AREA, MIN_CELL_WIDTH } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
@@ -70,6 +70,11 @@ export const Table = new NodeExtension({
       'Mod-Backspace': deleteTableWhenAllCellsSelectedCommand,
       'Delete': deleteTableWhenAllCellsSelectedCommand,
       'Mod-Delete': deleteTableWhenAllCellsSelectedCommand,
+
+      // select all the content of the Cell or HeaderCell, or the
+      // whole Table if it is already selected
+      'Cmd-a': selectAllInsideTableCommand,
+      'Cmd-A': selectAllInsideTableCommand,
     }),
 
     tableEditingPlugin(false/*do not allow Table Node Selection*/),

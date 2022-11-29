@@ -4,14 +4,14 @@ import { Command, EditorState, Selection, Transaction } from 'prosemirror-state'
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
 import { findParentNodeClosestToPos } from '../../../../notebookEditor/node/util';
-import { isCellSelection } from '../../../../notebookEditor/selection';
+import { isAllBlockNodeRangeSelected, isCellSelection } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
-import { TableMap } from '../../../extension/table/class';
+import { CellSelection, TableMap } from '../../../extension/table/class';
 import { isCellNode } from '../../..//extension/table/node/cell';
 import { isHeaderCellNode } from '../../../extension/table/node/headerCell';
 import { getTableNodeTypes, isTableNode, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from '../../../extension/table/node/table';
 import { TableRole } from '../../../extension/table/type';
-import { addColumnSpans, isColumnHeader, isSelectionHeadInRow, removeColumnSpans, getSelectedTableRect, updateTableNodeAttributes } from '../../..//extension/table/util';
+import { addColumnSpans, isColumnHeader, isSelectionHeadInRow, removeColumnSpans, getSelectedTableRect, updateTableNodeAttributes, getResolvedCellPosAroundResolvedPos } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
 import { createTable } from './util';
@@ -99,6 +99,49 @@ export class DeleteTableWhenAllCellsSelectedDocumentUpdate implements AbstractDo
 
     const updatedTr = new DeleteTableDocumentUpdate().update(editorState, tr);
     return updatedTr;
+  }
+}
+
+export const selectAllInsideTableCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SelectAllInsideTableDocumentUpdate(), state, dispatch);
+export class SelectAllInsideTableDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/ }
+
+  /**
+   * modify the given Transaction such that the selected Columns
+   * are removed from a Table */
+  public update(editorState: EditorState, tr: Transaction) {
+    if(!isAllBlockNodeRangeSelected(editorState.selection)) return false/*not all the Content of the current Block is selected*/;
+
+    // if there is no CellSelection, select the current Cell
+    const $currentCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(tr.selection.from));
+    if(!$currentCellPos) return false/*no Cell to select*/;
+
+    if(!isCellSelection(editorState.selection)) {
+      return tr.setSelection(new CellSelection($currentCellPos))/*updated*/;
+    }  /* else -- there already is a CellSelection */
+
+    const table = $currentCellPos.node(-1/*grandParent*/);
+    if(!table || !isTableNode(table)) return false/*no Table to select*/;
+    const tableMap = TableMap.getTableMap(table);
+
+    const firstCellPos =  tableMap.cellPositionAt(0/*first row*/, 0/*first column*/, table),
+          lastCellPos = tableMap.cellPositionAt(tableMap.width-1/*account for 0 indexing*/, tableMap.height-1/*account for 0 indexing*/, table);
+
+    console.log(tr.doc.nodeAt(firstCellPos)?.type.name)
+    console.log(tr.doc.nodeAt(lastCellPos)?.type.name)
+    const $firstCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(firstCellPos)),
+          $lastCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(lastCellPos));
+    if(!$firstCellPos || !$lastCellPos) return false/*no Cells to select*/;
+
+    const { anchor, head } = editorState.selection,
+          allTableAlreadySelected = $firstCellPos.pos === anchor && $lastCellPos.pos === head;
+    if(!allTableAlreadySelected) {
+      return tr.setSelection(new CellSelection($firstCellPos, $lastCellPos))/*updated*/;
+    } else /*all Table is selected*/ {
+
+    }
+    return false/*default*/;
   }
 }
 

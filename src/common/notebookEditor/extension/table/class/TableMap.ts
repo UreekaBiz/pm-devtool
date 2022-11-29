@@ -123,8 +123,8 @@ export class TableMap {
 
   /** get the {@link TableRect} spanning the two given Cells */
   public getTableRectBetweenCellPositions(firstCellPos: number, secondCellPos: number) {
-    const { left: leftA, right: rightA, top: topA, bottom: bottomA } = this.getCellTableRect(firstCellPos);
-    const { left: leftB, right: rightB, top: topB, bottom: bottomB } = this.getCellTableRect(secondCellPos);
+    const { left: leftA, right: rightA, top: topA, bottom: bottomA } = this.getCellTableRect(firstCellPos),
+          { left: leftB, right: rightB, top: topB, bottom: bottomB } = this.getCellTableRect(secondCellPos);
 
     const minLeft = Math.min(leftA, leftB),
           minTop = Math.min(topA, topB),
