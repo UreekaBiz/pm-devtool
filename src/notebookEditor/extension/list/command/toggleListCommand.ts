@@ -24,7 +24,7 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
     const { depth: blockRangeDepth } = blockRange;
 
     /**
-     * NOTE: only take into account Lists whose depth is greater than or equal to
+     * NOTE: only take into account ListItems whose depth is greater than or equal to
      *       blockRangeDepth - 1, so that for example:
      *       bl(li(blockquote(p('hello')))) will not return the top level bulletList
      *       and will instead wrap the paragraph

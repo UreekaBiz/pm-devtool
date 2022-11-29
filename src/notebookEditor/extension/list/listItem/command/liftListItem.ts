@@ -18,7 +18,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     // -- Checks ------------------------------------------------------------------
     const { doc, selection } = editorState,
-          { empty, $from, from, to } = selection;
+          { empty, $from, from, $to, to } = selection;
 
     if(this.triggerKey === 'Backspace' || this.triggerKey === 'Enter') {
       if(!empty) return false/*do not allow if Selection not empty when Back*/;
@@ -30,7 +30,18 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     } /* else -- backspace / enter checks done */
 
     // -- Lift --------------------------------------------------------------------
-    let listItemPositions = getListItemPositions(doc, { from, to });
+    const blockRange = $from.blockRange($to);
+    if(!blockRange) return false/*no range in which to lift ListItems*/;
+    const { depth: blockRangeDepth } = blockRange;
+
+    /**
+     * NOTE: only take into account ListItems whose depth is greater than or equal to
+     *       blockRangeDepth - 1, so that for example:
+     *       bl(li(blockquote(li(p('hello'))))) will not lift the first ListItem, and
+     *       just lifts the inner most one
+     */
+    let listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
+
     for(let i=0; i<listItemPositions.length; i++) {
       const updatedTr = liftListItem(tr, listItemPositions[i]);
       if(updatedTr) {

@@ -5,14 +5,21 @@ import { canJoin } from 'prosemirror-transform';
 import { isListItemNode, SelectionRange } from 'common';
 
 // ********************************************************************************
-/** get the position inside each ListItem present in the given Range */
-export const getListItemPositions = (doc: ProseMirrorNode, range: SelectionRange) => {
-  const { from, to } = range;
+/**
+ * get the position inside each ListItem present in the given Range.
+ * If maxDepth is given, only the ListItems that have a depth greater
+ * than or equal to it will be returned
+ */
+export const getListItemPositions = (doc: ProseMirrorNode, selectionRange: SelectionRange, maxDepth?: number) => {
+  const { from, to } = selectionRange;
   const listItemPositions: number[] = [/*default empty*/];
 
   doc.nodesBetween(from, to, (node, pos) => {
     if(isListItemNode(node)) {
-      listItemPositions.push(pos);
+      const $listItemPos = doc.resolve(pos);
+      if(!maxDepth/*not given or equal to 0, the Doc depth*/ || $listItemPos.depth >= maxDepth) {
+        listItemPositions.push(pos);
+      } /* else -- maxDepth was specified and the ListItem position's depth is not greater than or equal to it */
     } /* else -- not an item of the specified type, ignore */
 
     return !node.isLeaf/*keep descending if node is not a Leaf*/;
