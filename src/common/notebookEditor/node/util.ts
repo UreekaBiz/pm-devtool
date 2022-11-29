@@ -35,12 +35,12 @@ export const findNodeById = (document: DocumentNodeType, nodeId: NodeIdentifier)
  * and return a {@link FindParentNodeClosestToPosReturnType} object
  * with information about the found Node
  */
-type NodePredicate = (node: ProseMirrorNode) => boolean;
+type NodePredicate = (node: ProseMirrorNode, depth: number) => boolean;
 type FindParentNodeClosestToPosReturnObjType = { pos: number; start: number; depth: number; node: ProseMirrorNode; } | undefined
 export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePredicate): FindParentNodeClosestToPosReturnObjType => {
   for(let depth = $pos.depth; depth > 0; depth--) {
     const nodeAtDepth = $pos.node(depth);
-    if(predicate(nodeAtDepth)) {
+    if(predicate(nodeAtDepth, depth)) {
       return { pos: depth > 0 ? $pos.before(depth) : 0/*doc depth*/, start: $pos.start(depth), depth, node: nodeAtDepth };
     } /* else -- ignore Node */
   }

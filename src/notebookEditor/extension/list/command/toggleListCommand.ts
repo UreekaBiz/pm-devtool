@@ -1,6 +1,6 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { findParentNodeClosestToPos, AbstractDocumentUpdate, Attributes, NodeName, isListItemNode } from 'common';
+import { findParentNodeClosestToPos, isListNode, isListItemNode, AbstractDocumentUpdate, Attributes, NodeName } from 'common';
 
 import { LiftListItemDocumentUpdate } from '../listItem/command';
 
@@ -21,9 +21,15 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
 
     let blockRange = $from.blockRange($to);
     if(!blockRange) return false/*no blockRange exists, nothing to do*/;
+    const { depth: blockRangeDepth } = blockRange;
 
-    const closestParentList = findParentNodeClosestToPos(blockRange.$from, (node) =>
-      node.type.name === NodeName.BULLET_LIST || node.type.name === NodeName.ORDERED_LIST);
+    /**
+     * NOTE: only take into account Lists whose depth is greater than or equal to
+     *       blockRangeDepth - 1, so that for example:
+     *       bl(li(blockquote(p('hello')))) will not return the top level bulletList
+     *       and will instead wrap the paragraph
+     */
+    const closestParentList = findParentNodeClosestToPos(blockRange.$from, (node, depth) => depth >= blockRangeDepth-1/*(SEE: NOTE above)*/ && isListNode(node));
 
     if(closestParentList) {
       if(blockRange.depth >= 1/*is nested*/
