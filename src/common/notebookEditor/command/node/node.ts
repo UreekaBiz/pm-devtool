@@ -33,8 +33,8 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
     // if the current Block and the Selection are both empty
     // (or only a MarkHolder is present), replace the
     // parent Block with the desired Block
-    const { content, firstChild } = $anchor.parent;
-    const { size: contentSize } = content;
+    const { content, firstChild } = $anchor.parent,
+          { size: contentSize } = content;
 
     let onlyContainsEmptyTextNodes = true/*default*/;
     $anchor.parent.content.forEach(child => {
@@ -58,9 +58,8 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
       return tr/*nothing left to do*/;
     } /* else -- not the same parent (multiple Selection) or content not empty, insert Block below */
 
-    const above = $head.node(-1/*document level*/),
-          after = $head.indexAfter(-1/*document level*/);
-
+    const above = $head.node(-1/*grandParent*/),
+          after = $head.indexAfter(-1/*grandParent depth*/);
     if(!blockNodeType || !above.canReplaceWith(after, after, blockNodeType)) return false/*cannot replace Node above*/;
 
     const creationPos = $head.after();

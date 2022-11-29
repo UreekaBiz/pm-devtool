@@ -1,5 +1,5 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
-import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
@@ -35,12 +35,18 @@ export class CreateAndInsertTableDocumentUpdate implements AbstractDocumentUpdat
    */
   public update(editorState: EditorState, tr: Transaction) {
     const tableNode = createTable(editorState.schema, this.rows, this.columns, this.withHeaderRow);
-    const selectionOffset = tr.selection.anchor + 1/*inside the table*/;
+    const { $from, from } = tr.selection;
 
-    tr.replaceSelectionWith(tableNode)
-      .scrollIntoView()
-      .setSelection(TextSelection.near(tr.doc.resolve(selectionOffset)));
+    if($from.parent.isTextblock && !$from.parent.content.size/*empty*/) {
+      const parentStart = from - $from.parentOffset - 1/*the position of the parent*/,
+            parentEnd = parentStart + $from.parent.nodeSize;
+      tr.replaceRangeWith(parentStart, parentEnd, tableNode);
+    } else {
+      tr.replaceSelectionWith(tableNode);
+    }
 
+    tr.setSelection(Selection.near(tr.doc.resolve(from), 1/*bias to the right*/))
+      .scrollIntoView();
     return tr/*updated*/;
   }
 }

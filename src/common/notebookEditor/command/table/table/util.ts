@@ -9,13 +9,13 @@ import { createCell } from '../cell/util';
 
 // == Create ======================================================================
 export const createTable = (schema: NotebookSchemaType, rowsCount: number, colsCount: number, withHeaderRow: boolean, cellContent?: Fragment | ProseMirrorNode | Array<ProseMirrorNode>): ProseMirrorNode => {
-  const types = getTableNodeTypes(schema);
-  const headerCells: ProseMirrorNode[] = [];
-  const cells: ProseMirrorNode[] = [];
+  const tableTypes = getTableNodeTypes(schema);
+  const headerCells: ProseMirrorNode[] = [/*default empty*/],
+        cells: ProseMirrorNode[] = [/*default empty*/];
 
   for(let index = 0; index < colsCount; index += 1) {
-    const cellType = types[NodeName.CELL];
-    const headerType = types[NodeName.HEADER_CELL];
+    const cellType = tableTypes[NodeName.CELL],
+          headerType = tableTypes[NodeName.HEADER_CELL];
     if(!cellType || !headerType) throw new Error('Cell or Header type not defined defined. Check that the correct names are being used');
 
     const cell = createCell(cellType, cellContent);
@@ -30,11 +30,11 @@ export const createTable = (schema: NotebookSchemaType, rowsCount: number, colsC
     } /* else -- do not add header row */
   }
 
-  const rows = [];
+  const rows = [/*default empty*/];
   for(let index = 0; index < rowsCount; index += 1) {
-    rows.push(types.row.createChecked(null/*no attrs*/, withHeaderRow && index === 0 ? headerCells : cells));
+    rows.push(tableTypes.row.createChecked(null/*no attrs*/, withHeaderRow && index === 0 ? headerCells : cells));
   }
 
-  return types.table.createChecked({ [AttributeType.Id]: generateNodeId() }, rows);
+  return tableTypes.table.createChecked({ [AttributeType.Id]: generateNodeId() }, rows);
 };
 
