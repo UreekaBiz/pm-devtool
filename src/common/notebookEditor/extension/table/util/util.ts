@@ -86,7 +86,7 @@ export const isColumnHeader = (table: ProseMirrorNode, tableMap: TableMap, colum
  * the given {@link ResolvedPos}
  */
 export const getResolvedCellPosAroundResolvedPos = ($pos: ResolvedPos) => {
-  for(let depth = $pos.depth - 1; depth > 0; depth--) {
+  for(let depth = $pos.depth - 1/*start 1 above*/; depth > 0/*while not reaching the Doc depth*/; depth--) {
     if($pos.node(depth).type.spec.tableRole === TableRole.Row) {
       return $pos.node(0/*the document*/).resolve($pos.before(depth + 1/*Cell depth*/));
     } /* else -- Node has no tableRole */

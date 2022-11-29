@@ -143,8 +143,8 @@ const selectAllTable = (editorState: EditorState, tr: Transaction, $currentCellP
         $lastCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(lastCellPos+1/*inside the Cell*/));
   if(!$firstCellPos || !$lastCellPos) return false/*no Cells to select*/;
 
-  const { anchor, head } = editorState.selection,
-        allTableAlreadySelected = $firstCellPos.pos === anchor && $lastCellPos.pos === head;
+  const newCellSelection = new CellSelection($firstCellPos, $lastCellPos),
+        allTableAlreadySelected = newCellSelection.eq(editorState.selection);
   if(!allTableAlreadySelected) {
     return tr.setSelection(new CellSelection($firstCellPos, $lastCellPos))/*updated*/;
   } /* else -- all the Table is already selected */
