@@ -1,9 +1,11 @@
+import { chainCommands, deleteSelection, joinBackward, joinForward, liftEmptyBlock, selectNodeBackward, selectNodeForward } from 'prosemirror-commands';
 import { undoInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
-import { chainCommands, deleteSelection, joinBackward, joinForward, liftEmptyBlock, selectNodeBackward, selectNodeForward } from 'prosemirror-commands';
+import { Command } from 'prosemirror-state';
 
 import { splitBlockKeepMarksCommand } from 'common';
 
+import { Editor } from 'notebookEditor/editor/Editor';
 import { ExtensionName, ExtensionPriority } from 'notebookEditor/model';
 
 import { Extension } from '../type/Extension/Extension';
@@ -25,14 +27,24 @@ export const BasicKeymap = new Extension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: () => [
+  addProseMirrorPlugins: (editor) => [
     basicKeymapPlugin(),
     keymap({
-      'Enter': chainCommands(liftEmptyBlock, splitBlockKeepMarksCommand),
-      'Backspace': chainCommands(undoInputRule, deleteSelection, joinBackward, selectNodeBackward),
-      'Mod-Backspace': chainCommands(deleteSelection, joinBackward, selectNodeBackward),
-      'Delete': chainCommands(deleteSelection, joinForward, selectNodeForward),
-      'Mod-Delete': chainCommands(deleteSelection, joinForward, selectNodeForward),
+      'Enter': () => wrapBasicKeymapCommand(editor, chainCommands(liftEmptyBlock, splitBlockKeepMarksCommand)),
+      'Backspace': () => wrapBasicKeymapCommand(editor, chainCommands(undoInputRule, deleteSelection, joinBackward, selectNodeBackward)),
+      'Mod-Backspace': () => wrapBasicKeymapCommand(editor, chainCommands(deleteSelection, joinBackward, selectNodeBackward)),
+      'Delete': () => wrapBasicKeymapCommand(editor, chainCommands(deleteSelection, joinForward, selectNodeForward)),
+      'Mod-Delete': () => wrapBasicKeymapCommand(editor, chainCommands(deleteSelection, joinForward, selectNodeForward)),
     }),
   ],
 });
+
+// == Util ========================================================================
+const wrapBasicKeymapCommand = (editor: Editor, command: Command) => {
+  try {
+    return command(editor.view.state, editor.view.dispatch, editor.view);
+  } catch(error) {
+    console.warn(`error executing a Command`, error);
+    return false/*do not execute*/;
+  }
+};
