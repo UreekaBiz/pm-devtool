@@ -92,18 +92,19 @@ export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpd
    * parent Block Node are selected and return it
    */
   public update(editorState: EditorState, tr: Transaction) {
-    const { selection } = tr;
-    const { $from, empty } = selection;
+    const { selection } = tr,
+          { empty, $from } = selection;
+    let { from, to } = selection;
 
     if(!empty) return false/*do not overwrite Selection*/;
     if(!$from.parent.isTextblock) return false/*not a valid Node*/;
     if($from.parent.type.name !== this.nodeName) return false/*do not handle inside this Node*/;
     if($from.parent.textContent.length < 1) return false/*nothing to Select*/;
 
-    const { from, to } = getBlockNodeRange(tr.selection);
-    if(tr.selection.from === from && tr.selection.to === to) return false/*already selected all inside this Block*/;
+    const { from: blockRangeFrom, to: blockRangeTo } = getBlockNodeRange(tr.selection);
+    if(from === blockRangeFrom && to === blockRangeTo) return false/*already selected all inside this Block*/;
 
-    tr.setSelection(TextSelection.create(tr.doc, from, to));
+    tr.setSelection(TextSelection.create(tr.doc, blockRangeFrom, blockRangeTo));
     return tr/*updated*/;
   }
 }
