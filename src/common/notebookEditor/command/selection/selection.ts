@@ -3,7 +3,7 @@ import { Command, EditorState, NodeSelection, Selection, TextSelection, Transact
 
 import { minFromMax } from '../../../util';
 import { NodeName } from '../../node';
-import { getBlockNodeRange } from '../../selection';
+import { getBlockNodeRange, isAllBlockNodeRangeSelected } from '../../selection';
 import { AbstractDocumentUpdate } from '../type';
 
 // ********************************************************************************
@@ -94,16 +94,16 @@ export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpd
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = tr,
           { empty, $from } = selection;
-    let { from, to } = selection;
 
     if(!empty) return false/*do not overwrite Selection*/;
     if(!$from.parent.isTextblock) return false/*not a valid Node*/;
     if($from.parent.type.name !== this.nodeName) return false/*do not handle inside this Node*/;
     if($from.parent.textContent.length < 1) return false/*nothing to Select*/;
 
-    const { from: blockRangeFrom, to: blockRangeTo } = getBlockNodeRange(tr.selection);
-    if(from === blockRangeFrom && to === blockRangeTo) return false/*already selected all inside this Block*/;
+    if(isAllBlockNodeRangeSelected(selection)) return false/*already selected all the Block range*/;
 
+
+    const { from: blockRangeFrom, to: blockRangeTo } = getBlockNodeRange(selection);
     tr.setSelection(TextSelection.create(tr.doc, blockRangeFrom, blockRangeTo));
     return tr/*updated*/;
   }

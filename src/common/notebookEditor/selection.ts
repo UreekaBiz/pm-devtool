@@ -96,7 +96,16 @@ export const resolveNewSelection = (selection: Selection, tr: Transaction, bias?
  * computes the Range that holds all Nodes in between the start and end of the
  * Blocks located at the anchor and head of the given {@link Selection}
  */
- export const getBlockNodeRange = (selection: Selection) => ({
+export const getBlockNodeRange = (selection: Selection) => ({
   from: selection.from - selection.$from.parentOffset,
   to: (selection.to - selection.$to.parentOffset) + selection.$to.parent.nodeSize - 2/*account for the start and end of the parent Node*/,
 });
+
+/** check if the Selection currently spans all the content of the current Block */
+export const isAllBlockNodeRangeSelected = (selection: Selection) => {
+  const { from: currentFrom, to: currentTo } = selection,
+        { from: blockRangeFrom, to: blockRangeTo } = getBlockNodeRange(selection);
+  if(currentFrom === blockRangeFrom && currentTo === blockRangeTo) return true/*range inside Block is selected */;
+
+  return false/*not range inside Block is selected*/;
+};

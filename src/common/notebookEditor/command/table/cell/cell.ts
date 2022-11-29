@@ -197,6 +197,7 @@ export class GoToCellDocumentUpdate implements AbstractDocumentUpdate {
     return tr/*updated*/;
   }
 }
+
 // == Util ========================================================================
 /* check if the given CellNode is empty */
 const isCellEmpty = (cell: ProseMirrorNode) => {
