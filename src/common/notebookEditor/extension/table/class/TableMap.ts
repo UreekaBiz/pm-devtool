@@ -162,7 +162,7 @@ export class TableMap {
    * return the position at which the Cell at the given row and
    * column starts, or would start, if any
    */
-  public cellPositionAt(row: number, column: number, table: ProseMirrorNode) {
+  public cellPositionAt(table: ProseMirrorNode, row: number, column: number) {
     for(let rowIndex = 0, rowStart = 0; ; rowIndex++) {
       const rowEnd = rowStart + table.child(rowIndex).nodeSize;
       if(rowIndex === row) {

@@ -111,13 +111,13 @@ export const insertCells = (state: EditorState, dispatch: DispatchType, tableSta
   } /* else -- did not need to isolate vertically */
 
   for(let row = top; row < bottom; row++) {
-    const from = tableMap.cellPositionAt(row, left, table),
-          to = tableMap.cellPositionAt(row, right, table);
+    const from = tableMap.cellPositionAt(table, row, left),
+          to = tableMap.cellPositionAt(table, row, right);
     tr.replace(tr.mapping.slice(mapFrom).map(from + tableStart), tr.mapping.slice(mapFrom).map(to + tableStart), new Slice(cells.rows[row - top], 0/*use full Slice*/, 0/*use full Slice*/));
   }
 
   recomputeTableMap();
-  tr.setSelection(new CellSelection(tr.doc.resolve(tableStart + tableMap.cellPositionAt(top, left, table)), tr.doc.resolve(tableStart + tableMap.cellPositionAt(bottom - 1/*account for 0 indexing*/, right - 1/*account for 0 indexing*/, table))));
+  tr.setSelection(new CellSelection(tr.doc.resolve(tableStart + tableMap.cellPositionAt(table, top, left)), tr.doc.resolve(tableStart + tableMap.cellPositionAt(table, bottom - 1/*account for 0 indexing*/, right - 1/*account for 0 indexing*/))));
 
   if(dispatch) {
     dispatch(tr);
@@ -309,7 +309,7 @@ const isolateHorizontal = (tr: Transaction, table: ProseMirrorNode, tableMap: Ta
       const newCell = cell.type.createAndFill(updateTableNodeAttributes(cell.attrs, AttributeType.RowSpan, cellTop + cell.attrs[AttributeType.RowSpan] - top));
       if(!newCell) continue/*could not create Cell, do nothing*/;
 
-      tr.insert(tr.mapping.slice(mapFrom).map(tableMap.cellPositionAt(top, cellLeft, table)), newCell);
+      tr.insert(tr.mapping.slice(mapFrom).map(tableMap.cellPositionAt(table, top, cellLeft)), newCell);
 
       col += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- no need to change anything */

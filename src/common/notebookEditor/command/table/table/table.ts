@@ -125,8 +125,8 @@ export class SelectAllInsideTableDocumentUpdate implements AbstractDocumentUpdat
     if(!table || !isTableNode(table)) return false/*no Table to select*/;
     const tableMap = TableMap.getTableMap(table);
 
-    const firstCellPos =  tableMap.cellPositionAt(0/*first row*/, 0/*first column*/, table),
-          lastCellPos = tableMap.cellPositionAt(tableMap.width-1/*account for 0 indexing*/, tableMap.height-1/*account for 0 indexing*/, table);
+    const firstCellPos =  tableMap.cellPositionAt(table, 0/*first row*/, 0/*first column*/),
+          lastCellPos = tableMap.cellPositionAt(table, tableMap.width-1/*account for 0 indexing*/, tableMap.height-1/*account for 0 indexing*/);
 
     console.log(tr.doc.nodeAt(firstCellPos)?.type.name)
     console.log(tr.doc.nodeAt(lastCellPos)?.type.name)
@@ -313,7 +313,7 @@ const removeRow = (tr: Transaction, { tableMap, table, tableStart }: OptionalRec
       const { attrs } = cell;
       const cellCopy = cell.type.create(updateTableNodeAttributes(attrs, AttributeType.RowSpan, cell.attrs[AttributeType.RowSpan] - 1), cell.content);
 
-      const newPos = tableMap.cellPositionAt(rowNumber + 1, column, table);
+      const newPos = tableMap.cellPositionAt(table, rowNumber + 1, column);
       tr.insert(tr.mapping.slice(mapFrom).map(tableStart + newPos), cellCopy);
       column += cell.attrs[AttributeType.ColSpan] - 1;
     } /* else -- do nothing */
@@ -428,7 +428,7 @@ const addColumn = (tr: Transaction, { table, tableMap, tableStart }: OptionalRec
           ? getTableNodeTypes(table.type.schema)[NodeName.CELL]
           : table.nodeAt(tableMap.map[mapIndex + referenceColumn])?.type;
 
-      const mappedPos = tableMap.cellPositionAt(row, columnNumber, table);
+      const mappedPos = tableMap.cellPositionAt(table, row, columnNumber);
       const cellOfType = cellType?.createAndFill();
 
       if(cellOfType) {
