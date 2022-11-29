@@ -50,13 +50,6 @@ describe('toggleListCommand', () => {
     wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
   });
 
-  it('sets up a state that will be addressed by an appendedTransaction when leaving loose ListItems in a List', () => {
-    const startState = doc(bl(li(p('foo'), p(`<${A}>bar`)))),
-          expectedEndState = doc(p('foo'), li(p(`<${A}>bar`)));
-
-    wrapTest(startState, toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}), expectedEndState);
-  });
-
   it('changes the type of the List when the cursor is inside it', () => {
     const startState = doc(bl(li(p('foo')), li(p(`<${A}>bar`)), li(p('baz')))),
           expectedEndState = doc(ol(li(p('foo')), li(p(`<${A}>bar`)), li(p('baz'))));
@@ -67,7 +60,7 @@ describe('toggleListCommand', () => {
   it('only wraps Blocks that are not ListItems already', () => {
     const startState = doc(p(`<${A}>one`), ol(li(p('two'))), p(`three<${B}>`)),
           expectedEndState = doc(ol(li(p("one"))), ol(li(p("two"))), ol(li(p("three"))));
-          
+
     wrapTest(startState, toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}), expectedEndState);
   });
 });

@@ -7,13 +7,11 @@ import { splitListItemKeepMarksCommand } from './splitListItem';
 // ********************************************************************************
 // == Constant ====================================================================
 const {
-  [NodeName.BLOCKQUOTE]: blockquote,
   [NodeName.BULLET_LIST]: bl,
   [NodeName.DOC]: doc,
   [NodeName.LIST_ITEM]: li,
-  [NodeName.ORDERED_LIST]: ol,
   [NodeName.PARAGRAPH]: p,
-} = getNotebookSchemaNodeBuilders([NodeName.BLOCKQUOTE, NodeName.BULLET_LIST, NodeName.DOC, NodeName.LIST_ITEM, NodeName.ORDERED_LIST, NodeName.PARAGRAPH]);
+} = getNotebookSchemaNodeBuilders([NodeName.BULLET_LIST, NodeName.DOC, NodeName.LIST_ITEM, NodeName.PARAGRAPH]);
 
 // == Test ====================================================================
 // -- Split -------------------------------------------------------------------
@@ -185,18 +183,6 @@ describe('liftListItemCommand', () => {
       doc(bl(li(p('a')),
              li(p('b'))),
           p('c'));
-
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
-  });
-
-  it('handles lifting correctly inside Blocks that are not TextBlocks', () => {
-    const startState =
-      doc(blockquote(ol(li(p(`hello<${A}>`))),
-                        li(p(`world<${B}>`)))),
-
-    expectedEndState =
-      doc(blockquote(p('hello')),
-                     p('world'));
 
     wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
   });
