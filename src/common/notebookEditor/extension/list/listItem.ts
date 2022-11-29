@@ -19,7 +19,7 @@ export type ListItemAttributes = AttributesTypeFromNodeSpecAttributes<typeof Lis
 // -- Node Spec -------------------------------------------------------------------
 export const ListItemNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  content: `${NodeGroup.BLOCK}*`,
+  content: `${NodeGroup.BLOCK}{1}`/*only one block per ListItem*/,
   /**
    * NOTE: since Lists are the Nodes with the 'defining' property in their spec,
    *       they will be the ones that ensure their content gets pasted correctly

@@ -5,7 +5,7 @@ import { isListNode } from 'common';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
-import { checkAndMergeListAtPos, wrapAndLiftListItemChildren } from './command/util';
+import { checkAndMergeListAtPos } from './command/util';
 
 // ********************************************************************************
 // == Plugin ======================================================================
@@ -25,9 +25,7 @@ export const listItemPlugin = () => new Plugin<NoPluginState>({
       wereListsMerged = checkAndMergeListAtPos(tr, tr.selection.$from.after(1/*direct child of Doc depth*/));
     } /* else -- already merged */
 
-    const wereChildrenWrappedAndLifted = wrapAndLiftListItemChildren(tr);
-
-    if(wereListsMerged || wereChildrenWrappedAndLifted) {
+    if(wereListsMerged) {
       return tr;
     } /* else -- no Lists were merged */
 
