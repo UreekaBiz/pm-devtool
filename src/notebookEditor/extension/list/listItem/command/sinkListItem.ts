@@ -1,7 +1,7 @@
 import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { findParentNodeClosestToPos, isListNode, AbstractDocumentUpdate, isListItemNode } from 'common';
+import { findParentNodeClosestToPos, isListNode, isListItemNode, isGapCursorSelection, AbstractDocumentUpdate } from 'common';
 
 import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from './util';
 
@@ -16,10 +16,11 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
   /** modify the given Transaction such that a ListItem augments its depth */
   public update(editorState: EditorState, tr: Transaction) {
     // -- Checks ------------------------------------------------------------------
-    if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
-
     const { doc, selection } = editorState,
           { empty, $from, from, $to, to } = selection;
+
+    if(isGapCursorSelection(selection)) return false/*do not allow*/;
+    if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
     if(empty && from !== $from.before() + 1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
 
     // -- Sink --------------------------------------------------------------------

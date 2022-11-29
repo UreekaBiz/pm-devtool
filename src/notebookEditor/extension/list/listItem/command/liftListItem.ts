@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isListItemNode, isListNode, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
+import { isListItemNode, isListNode, isGapCursorSelection, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
 
 import { getListItemPositions } from './util';
 
@@ -17,9 +17,10 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction) {
     // -- Checks ------------------------------------------------------------------
-    const { doc, selection } = editorState,
-          { empty, $from, from, $to, to } = selection;
+    const { doc, selection } = editorState;
+    if(isGapCursorSelection(selection)) return false/*do not allow*/;
 
+    const { empty, $from, from, $to, to } = selection;
     if(this.triggerKey === 'Backspace' || this.triggerKey === 'Enter') {
       if(!empty) return false/*do not allow if Selection not empty when Back*/;
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
