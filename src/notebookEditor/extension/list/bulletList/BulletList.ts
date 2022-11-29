@@ -7,8 +7,8 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { ExtensionPriority, ParseRulePriority } from 'notebookEditor/model';
 
 import { toggleListCommand } from '../command/toggleListCommand';
+import { createListWrapInputRule } from '../inputRule';
 import { BulletListAttrs } from './attribute';
-import { createListWrapInputRule } from '../util';
 
 // ********************************************************************************
 

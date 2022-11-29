@@ -1,7 +1,7 @@
 import { InputRule } from 'prosemirror-inputrules';
 import { findWrapping, canJoin } from 'prosemirror-transform';
 
-import { AttributeType, NodeGroup, NodeName } from 'common';
+import { AttributeType, isListNode, NodeName } from 'common';
 
 // ********************************************************************************
 // == RegEx =======================================================================
@@ -23,7 +23,8 @@ export const createListWrapInputRule = (nodeName: NodeName.BULLET_LIST | NodeNam
     const { tr } = state;
 
     // this is the specific check to be performed
-    if(tr.selection.$from.node(-2/*ancestor depth, may be a List*/)?.type.spec.group?.includes(NodeGroup.LIST)) return null/*do not allow inside a List*/;
+    const maybeList = tr.selection.$from.node(-2/*ancestor depth, may be a List*/);
+    if(maybeList && isListNode(maybeList)) return null/*do not allow inside a List*/;
 
     tr.delete(start, end);
     let $start = tr.doc.resolve(start),
