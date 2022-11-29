@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isListNode, isListItemNode, AbstractDocumentUpdate } from 'common';
+import { isListItemNode, isListNode, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
 
 import { getListItemPositions } from './util';
 
@@ -38,24 +38,6 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       } /* else -- do not lift that ListItem */
     }
 
-    // check if any ListItems must be lifted again so that they are not children
-    // of anything other than a List. The positions must be the ones before any
-    // modifications to the Transaction were made, so that the mapping works
-    for(let i=0; i<listItemPositions.length; i++) {
-      const listItemPos = listItemPositions[i],
-            mappedListItemPos = tr.mapping.map(listItemPos),
-            $mappedListItemPos = tr.doc.resolve(mappedListItemPos);
-
-      let listItem = tr.doc.nodeAt(mappedListItemPos);
-      if(!listItem || !isListItemNode(listItem)) continue;
-      if(isListNode($mappedListItemPos.parent)) continue/*valid parent, nothing to do*/;
-
-      const $firstChildInsideListItemPos = tr.doc.resolve($mappedListItemPos.pos + 2/*inside the ListItem, inside the firstChild*/),
-            rangeToLift = $firstChildInsideListItemPos.blockRange();
-      if(!rangeToLift) continue/*no range to lift*/;
-      tr.lift(rangeToLift, rangeToLift.depth - 1/*just decrease depth*/);
-    }
-
     if(tr.docChanged) { return tr/*updated*/; }
     else { return false/*no changes were made to the doc*/; }
   }
@@ -72,10 +54,23 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
 
   const listItemEndPos = mappedListItemPos + listItem.nodeSize,
         $listItemEndPos = tr.doc.resolve(listItemEndPos);
-  const liftBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
+  let liftBlockRange: NodeRange | null = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
 
-  const targetDepth = liftTarget(liftBlockRange);
-  tr.lift(liftBlockRange, targetDepth ? targetDepth : liftBlockRange.depth - 1/*decrease depth*/);
+  const $insideListItemPos = tr.doc.resolve($listItemEndPos.pos-2/*inside the ListItem, inside its lastChild*/),
+        gggParent = $insideListItemPos.node(-3/*great-great-grandParent depth*/);
+  let liftListItemChild = false/*default*/;
+  if(gggParent && gggParent.isBlock && !gggParent.isTextblock && !isListNode(gggParent)) {
+    liftListItemChild = true;
+  } /* else -- greatGrandParent does not exist, it is not a Node like Doc or Blockquote, or it is a List */
+
+  if(liftListItemChild) {
+    liftBlockRange = $insideListItemPos.blockRange();
+    const targetDepth = liftBlockRange && liftTarget(liftBlockRange);
+    isNotNullOrUndefined<number>(targetDepth) && tr.lift(liftBlockRange!/*guaranteed by targetDepth being defined*/, targetDepth);
+  } else {
+    const targetDepth = liftTarget(liftBlockRange);
+    tr.lift(liftBlockRange, targetDepth ? targetDepth : liftBlockRange.depth - 1/*decrease depth*/);
+  }
 
   return tr;
 };
