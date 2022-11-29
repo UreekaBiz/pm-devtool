@@ -29,7 +29,9 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
       if(updatedTr) { tr = updatedTr; }
       else { return false/*could not sink at least one of the listItems*/; }
     }
-    return tr/*updated*/;
+
+    if(tr.docChanged) { return tr/*updated*/; }
+    else { return false/*no changes were made to the doc*/; }
   }
 }
 
