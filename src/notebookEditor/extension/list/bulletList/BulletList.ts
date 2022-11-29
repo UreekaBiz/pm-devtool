@@ -1,4 +1,3 @@
-import { wrappingInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, BulletListNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
@@ -9,12 +8,9 @@ import { ExtensionPriority, ParseRulePriority } from 'notebookEditor/model';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 import { BulletListAttrs } from './attribute';
+import { createListWrapInputRule } from '../util';
 
 // ********************************************************************************
-// == RegEx =======================================================================
-// NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-example-setup/blob/master/src/inputrules.ts
-// (SEE: addInputRules below)
-const bulletListRegEx = /^\s*([-+*])\s$/;
 
 // == Node ========================================================================
 export const BulletList = new NodeExtension({
@@ -33,17 +29,17 @@ export const BulletList = new NodeExtension({
     parseDOM: createExtensionParseRules([
       { tag: `ul[${DATA_NODE_TYPE}="${NodeName.BULLET_LIST}"]`, priority: ParseRulePriority.BULLET_LIST },
       { tag: 'ul', priority: ParseRulePriority.BULLET_LIST }],
-    BulletListAttrs),
+      BulletListAttrs),
 
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, BulletListAttrs)),
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [wrappingInputRule(bulletListRegEx, editor.view.state.schema.nodes[NodeName.BULLET_LIST])],
+  inputRules: (editor) => [createListWrapInputRule(NodeName.BULLET_LIST)],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-8': toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/}) })],
+  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-8': toggleListCommand(NodeName.BULLET_LIST, {/*no attrs*/ }) })],
 });
