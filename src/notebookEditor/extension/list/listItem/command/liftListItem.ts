@@ -48,22 +48,21 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 const liftListItem = (tr: Transaction, listItemPos: number) => {
   const mappedListItemPos = tr.mapping.map(listItemPos),
         listItem = tr.doc.nodeAt(mappedListItemPos),
-        $listItemPos = tr.doc.resolve(mappedListItemPos),
-        list = $listItemPos.node(-1/*ancestor*/);
-  if(!listItem || !isListItemNode(listItem) || !list) return false/*cannot lift item, do not modify Transaction*/;
+        $listItemPos = tr.doc.resolve(mappedListItemPos);
+  if(!listItem || !isListItemNode(listItem)) return false/*cannot lift item, do not modify Transaction*/;
 
   const listItemEndPos = mappedListItemPos + listItem.nodeSize,
         $listItemEndPos = tr.doc.resolve(listItemEndPos);
-  let liftBlockRange: NodeRange | null = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
+  let liftBlockRange: NodeRange | null = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth);
 
   const $insideListItemPos = tr.doc.resolve($listItemEndPos.pos-2/*inside the ListItem, inside its lastChild*/),
-        gggParent = $insideListItemPos.node(-3/*great-great-grandParent depth*/);
-  let liftListItemChild = false/*default*/;
-  if(gggParent && gggParent.isBlock && !gggParent.isTextblock && !isListNode(gggParent)) {
-    liftListItemChild = true;
-  } /* else -- greatGrandParent does not exist, it is not a Node like Doc or Blockquote, or it is a List */
+        listContainer = $insideListItemPos.node(-3/*Node holding the List*/);
+  let liftListItemContents = false/*default*/;
+  if(listContainer && (listContainer.isBlock && !listContainer.isTextblock) && !isListNode(listContainer)) {
+    liftListItemContents = true;
+  } /* else -- listContainer does not exist, it is not a Node like Doc or Blockquote, or it is a List */
 
-  if(liftListItemChild) {
+  if(liftListItemContents) {
     liftBlockRange = $insideListItemPos.blockRange();
     const targetDepth = liftBlockRange && liftTarget(liftBlockRange);
     isNotNullOrUndefined<number>(targetDepth) && tr.lift(liftBlockRange!/*guaranteed by targetDepth being defined*/, targetDepth);
