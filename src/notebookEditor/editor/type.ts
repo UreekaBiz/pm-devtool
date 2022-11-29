@@ -22,7 +22,6 @@ import { Link } from 'notebookEditor/extension/link/Link';
 import { BulletList } from 'notebookEditor/extension/list/bulletList/BulletList';
 import { ListItem } from 'notebookEditor/extension/list/listItem/ListItem';
 import { OrderedList } from 'notebookEditor/extension/list/orderedList/OrderedList';
-import { WrapAndLiftListItemChildren } from 'notebookEditor/extension/list/wrapAndLiftListItemChildren/WrapAndLiftListItemChildren';
 import { MarkHolder } from 'notebookEditor/extension/markHolder/MarkHolder';
 import { EditableInlineNodeWithContent } from 'notebookEditor/extension/nestedViewNode/editableInlineNodeWithContent/EditableInlineNodeWithContent';
 import { NestedViewBlockNode } from 'notebookEditor/extension/nestedViewNode/nestedViewBlockNode/NestedViewBlockNode';
@@ -62,7 +61,6 @@ export const editorDefinition: Extension[] = [
   Document,
   EditableInlineNodeWithContent,
   EmojiSuggestion,
-  WrapAndLiftListItemChildren,
   GapCursor,
   HeaderCell,
   Heading,
