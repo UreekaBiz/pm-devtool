@@ -8,7 +8,7 @@ import { demoAsyncNode2ToolItem } from 'notebookEditor/extension/demoAsyncNode2/
 import { headingLevelToolItem } from 'notebookEditor/extension/heading/toolItem';
 import { horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule/toolItem';
 import { markItalic } from 'notebookEditor/extension/italic/toolItem';
-import { orderedListToolItem, taskListToolItem, unorderedListToolItem } from 'notebookEditor/extension/list/toolItem/toolItem';
+import { orderedListToolItem, unorderedListToolItem } from 'notebookEditor/extension/list/toolItem/toolItem';
 import { editableInlineNodeWithContentToolItem } from 'notebookEditor/extension/nestedViewNode/editableInlineNodeWithContent/toolItem';
 import { nestedViewBlockNodeToolItem } from 'notebookEditor/extension/nestedViewNode/nestedViewBlockNode/toolItem';
 import { markSubScript } from 'notebookEditor/extension/subScript/toolItem';
@@ -56,7 +56,6 @@ export const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   blockquoteToolItem,
   orderedListToolItem,
   unorderedListToolItem,
-  taskListToolItem,
   horizontalRuleToolItem,
   tableToolItem,
 
