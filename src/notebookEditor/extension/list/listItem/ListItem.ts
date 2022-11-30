@@ -8,7 +8,6 @@ import { createExtensionParseRules, getExtensionAttributesObject } from 'noteboo
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority } from 'notebookEditor/model';
 
-import { ListItemAttrs } from './attribute';
 import { joinBackwardToEndOfClosestListItemCommand, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
 import { listItemPlugin } from './plugin';
 
@@ -20,15 +19,15 @@ export const ListItem = new NodeExtension({
   priority: ExtensionPriority.LIST_ITEM,
 
   // -- Attribute -----------------------------------------------------------------
-  defineNodeAttributes: (extensionStorage) => ListItemAttrs,
+  defineNodeAttributes: (extensionStorage) => ({/*currently nothing*/}),
 
   // -- Spec ----------------------------------------------------------------------
   partialNodeSpec: { ...ListItemNodeSpec },
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([{ tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], ListItemAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ListItemAttrs)),
+    parseDOM: createExtensionParseRules([{ tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], {/*currently nothing*/}),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, {/*currently nothing*/})),
   }),
 
   // -- Input ---------------------------------------------------------------------

@@ -89,10 +89,6 @@ export enum AttributeType {
   Href = 'href',
   Target = 'target',
 
-  // .. ListItem  .................................................................
-  Separator = 'separator',
-  ListStyleType = 'listStyleType',
-
   // .. MarkHolder ................................................................
   StoredMarks = 'storedMarks',
 
