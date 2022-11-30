@@ -7,7 +7,7 @@ import { Extension } from '../type/Extension/Extension';
 import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 
 // ********************************************************************************
-// == Node ========================================================================
+// == Extension ===================================================================
 export const History = new Extension({
   // -- Definition ----------------------------------------------------------------
   name: ExtensionName.HISTORY,
