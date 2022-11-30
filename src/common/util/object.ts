@@ -162,7 +162,6 @@ export const mapValues = <Vi, Vf>(object: Record<string, Vi>, fn: (value: Vi, ke
 // clones the specified objects and sets the value at all of the paths to '<redacted>'
 export const redact = <T extends object>(o: T, paths: string[]) => {
   const clone = cloneDeep(o);
-    // TODO: this should only redact the values if they exists
     paths.forEach(path => set(clone, path, '<redacted>'));
   return clone;
 };

@@ -117,7 +117,6 @@ export const emailSchema = stringMedSchema/*bounded length for sanity*/
 // .. URL .........................................................................
 // a string()-based relaxed URL schema that allows for users to enter URL's such as
 // 'www.google.com' (e.g. URLs without protocols, etc.)
-// TODO: revisit and tighten this up
 // NOTE: if the Capture Groups of this RegExp are changed then #domainReportCanonicalizeDomain()
 //       *must* be changed!
 export const RELAXED_URL_REGEXP = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/|www\.)?([a-z0-9]+([.-]{1}[a-z0-9]+)*\.[a-z]{2,63}(:[0-9]{1,5})?)(\/.*)?$/i;
