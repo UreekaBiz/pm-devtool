@@ -6,7 +6,7 @@ import { AttributeType, isListNode, NodeName } from 'common';
 // ********************************************************************************
 // == RegEx =======================================================================
 // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-example-setup/blob/master/src/inputrules.ts
-const bulletListRegEx = /^\s*([-+*])\s$/;
+const unorderedListRegEx = /^\s*([-+*])\s$/;
 const orderedListRegex = /^(\d+)\.\s$/;
 
 // == Input Rule ==================================================================
@@ -14,11 +14,11 @@ const orderedListRegex = /^(\d+)\.\s$/;
 
 // NOTE: not using default wrappingInputRule since the specific check for the
 //       type of the parent where the match occurs must be performed
-export const createListWrapInputRule = (nodeName: NodeName.BULLET_LIST | NodeName.ORDERED_LIST) =>
-  new InputRule(nodeName === NodeName.BULLET_LIST ? bulletListRegEx : orderedListRegex, (state, match, start, end) => {
+export const createListWrapInputRule = (nodeName: NodeName.UNORDERED_LIST | NodeName.ORDERED_LIST) =>
+  new InputRule(nodeName === NodeName.UNORDERED_LIST ? unorderedListRegEx : orderedListRegex, (state, match, start, end) => {
     const listType = state.schema.nodes[nodeName],
-          attrs = nodeName === NodeName.BULLET_LIST
-            ? {/*no attrs for BulletList*/}
+          attrs = nodeName === NodeName.UNORDERED_LIST
+            ? {/*no attrs for UnorderedList*/}
             : { [AttributeType.StartValue]: Number(match[1/*the typed number*/]) };
     const { tr } = state;
 

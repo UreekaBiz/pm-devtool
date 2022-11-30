@@ -42,7 +42,7 @@ export const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfig
       blockquoteBorderLeftWidthToolItem,
     ],
   },
-  [NodeName.BULLET_LIST]: defaultUniqueToolItemConfiguration,
+  [NodeName.UNORDERED_LIST]: defaultUniqueToolItemConfiguration,
   [NodeName.CELL]: {
     position: 'start',
     items: [...cellToolItems],

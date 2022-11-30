@@ -103,10 +103,10 @@ export enum ExtensionPriority {
   NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
 
   /**
-   * ensure that BulletList and OrderedList have a higher priority
+   * ensure that UnorderedList and OrderedList have a higher priority
    * than ListItems since they are meant to wrap them
    */
-  BULLET_LIST = 109,
+  UNORDERED_LIST = 109,
   ORDERED_LIST = 108,
 
   /**
@@ -150,8 +150,8 @@ export enum ExtensionPriority {
 //       (SEE: REF above)
 // NOTE: names match Extension, Node or Mark names for sanity
 export enum ParseRulePriority {
-  /** ensure that BulletLists and OrderedLists are parsed before ListItems */
-  BULLET_LIST = 53,
+  /** ensure that UnorderedLists and OrderedLists are parsed before ListItems */
+  UNORDERED_LIST = 53,
   ORDERED_LIST = 52,
 
   /** ensure that ListItems are parsed after Bullet and Ordered Lists */

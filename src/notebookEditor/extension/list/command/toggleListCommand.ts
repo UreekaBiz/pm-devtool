@@ -6,10 +6,10 @@ import { LiftListItemDocumentUpdate } from '../listItem/command';
 
 // ********************************************************************************
 // toggle the type of a List
-export const toggleListCommand = (listTypeName: NodeName.BULLET_LIST | NodeName.ORDERED_LIST, attrs: Partial<Attributes>): Command => (state, dispatch) =>
+export const toggleListCommand = (listTypeName: NodeName.UNORDERED_LIST | NodeName.ORDERED_LIST, attrs: Partial<Attributes>): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new ToggleListDocumentUpdate(listTypeName, attrs), state, dispatch);
 export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly listTypeName: NodeName.BULLET_LIST | NodeName.ORDERED_LIST, private readonly attrs: Partial<Attributes>) {/*nothing additional*/}
+  public constructor(private readonly listTypeName: NodeName.UNORDERED_LIST | NodeName.ORDERED_LIST, private readonly attrs: Partial<Attributes>) {/*nothing additional*/}
 
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction): Transaction | false {
@@ -26,7 +26,7 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
     /**
      * NOTE: only take into account ListItems whose depth is greater than or equal to
      *       blockRangeDepth - 1, so that for example:
-     *       bl(li(blockquote(p('hello')))) will not return the top level bulletList
+     *       ul(li(blockquote(p('hello')))) will not return the top level unorderedList
      *       and will instead wrap the paragraph
      */
     const closestParentList = findParentNodeClosestToPos(blockRange.$from, (node, depth) => depth >= blockRangeDepth-1/*(SEE: NOTE above)*/ && isListNode(node));

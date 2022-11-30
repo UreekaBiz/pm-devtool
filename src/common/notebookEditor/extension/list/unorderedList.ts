@@ -8,14 +8,14 @@ import { NotebookSchemaType } from '../../schema';
 // ********************************************************************************
 // == Attribute ===================================================================
 // NOTE: This values must have matching types the ones defined in the Extension.
-const BulletListAttributeSpec = {
+const UnorderedListAttributeSpec = {
   [AttributeType.MarginLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
 };
-export type BulletListAttributes = AttributesTypeFromNodeSpecAttributes<typeof BulletListAttributeSpec>
+export type UnorderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeof UnorderedListAttributeSpec>
 
 // == Spec ========================================================================
 // -- Node Spec -------------------------------------------------------------------
-export const BulletListNodeSpec: Readonly<NodeSpec> = {
+export const UnorderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   /**
    * NOTE: explicitly only allowing Lists and ListItems
@@ -23,7 +23,7 @@ export const BulletListNodeSpec: Readonly<NodeSpec> = {
   content: `${NodeGroup.LIST}+`,
 
   /**
-   * NOTE: preserve the BulletList parent when pasting if possible, BulletList is
+   * NOTE: preserve the UnorderedList parent when pasting if possible, UnorderedList is
    *       an important parent during replace operations
    *       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
    */
@@ -31,11 +31,11 @@ export const BulletListNodeSpec: Readonly<NodeSpec> = {
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
 
   // .. Attribute .................................................................
-  attrs: BulletListAttributeSpec,
+  attrs: UnorderedListAttributeSpec,
 };
 
 // -- Render Spec -----------------------------------------------------------------
-export const BulletListNodeRendererSpec: NodeRendererSpec<BulletListAttributes> = {
+export const UnorderedListNodeRendererSpec: NodeRendererSpec<UnorderedListAttributes> = {
   tag: 'ul',
 
   attributes: {/*use the default renderer on all attributes*/},
@@ -45,13 +45,13 @@ export const BulletListNodeRendererSpec: NodeRendererSpec<BulletListAttributes> 
 // -- Node Type -------------------------------------------------------------------
 // NOTE: this is the only way since PM does not provide a way to specify the type
 //       of the attributes
-export type BulletListNodeType = ProseMirrorNode & { attrs: BulletListAttributes; };
-export const isBulletListNode = (node: ProseMirrorNode): node is BulletListNodeType => node.type.name === NodeName.BULLET_LIST;
+export type UnorderedListNodeType = ProseMirrorNode & { attrs: UnorderedListAttributes; };
+export const isUnorderedListNode = (node: ProseMirrorNode): node is UnorderedListNodeType => node.type.name === NodeName.UNORDERED_LIST;
 
-export const getBulletListNodeType = (schema: NotebookSchemaType) => schema.nodes[NodeName.BULLET_LIST];
-export const createBulletListNode = (schema: NotebookSchemaType, attributes?: Partial<BulletListAttributes>, content?: ProseMirrorNodeContent, marks?: Mark[]) =>
-  getBulletListNodeType(schema).create(attributes, content, marks);
+export const getUnorderedListNodeType = (schema: NotebookSchemaType) => schema.nodes[NodeName.UNORDERED_LIST];
+export const createUnorderedListNode = (schema: NotebookSchemaType, attributes?: Partial<UnorderedListAttributes>, content?: ProseMirrorNodeContent, marks?: Mark[]) =>
+  getUnorderedListNodeType(schema).create(attributes, content, marks);
 
 // -- JSON Node Type --------------------------------------------------------------
-export type BulletListJSONNodeType = JSONNode<BulletListAttributes> & { type: NodeName.BULLET_LIST; };
-export const isBulletListJSONNode = (node: JSONNode): node is BulletListJSONNodeType => node.type === NodeName.BULLET_LIST;
+export type UnorderedListJSONNodeType = JSONNode<UnorderedListAttributes> & { type: NodeName.UNORDERED_LIST; };
+export const isUnorderedListJSONNode = (node: JSONNode): node is UnorderedListJSONNodeType => node.type === NodeName.UNORDERED_LIST;

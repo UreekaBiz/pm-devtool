@@ -69,7 +69,7 @@ export const DefaultTheme: Theme = {
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
     },
-    [NodeName.BULLET_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
+    [NodeName.UNORDERED_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
     [NodeName.CELL]: {/*no defined value*/},
     [NodeName.CODEBLOCK]: {
       [AttributeType.PaddingLeft]: '4px',
@@ -199,7 +199,7 @@ export const GoogleDocsTheme: Theme = {
       [AttributeType.BorderColor]: '#CCCCCC',
       [AttributeType.MarginLeft]: '4px',
     },
-    [NodeName.BULLET_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
+    [NodeName.UNORDERED_LIST]: { [AttributeType.MarginLeft]: '1.5em' },
     [NodeName.CELL]: {/*no defined value*/},
     [NodeName.CODEBLOCK]: {
       [AttributeType.PaddingLeft]: '4px',

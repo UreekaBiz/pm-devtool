@@ -15,7 +15,7 @@ import { HorizontalRuleNodeRendererSpec } from '../extension/horizontalRule';
 import { ImageNodeRendererSpec } from '../extension/image';
 import { ItalicMarkRendererSpec } from '../extension/italic';
 import { LinkMarkRendererSpec } from '../extension/link';
-import { BulletListNodeRendererSpec } from '../extension/list/bulletList';
+import { UnorderedListNodeRendererSpec } from '../extension/list/unorderedList';
 import { ListItemNodeRendererSpec } from '../extension/list/listItem';
 import { OrderedListNodeRendererSpec } from '../extension/list/orderedList';
 import { MarkHolderNodeRendererSpec } from '../extension/markHolder';
@@ -44,7 +44,7 @@ import { getRenderTag, HTMLString, MarkRendererSpec, NodeRendererSpec, DATA_MARK
 // == Type ========================================================================
 export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.BLOCKQUOTE]: BlockquoteNodeRendererSpec as any/*FIXME!!!*/,
-  [NodeName.BULLET_LIST]: BulletListNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.UNORDERED_LIST]: UnorderedListNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.CELL]: CellNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.CODEBLOCK]: CodeBlockNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeRendererSpec as any/*FIXME!!!*/,

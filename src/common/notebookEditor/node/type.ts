@@ -12,7 +12,7 @@ export type NodeIdentifier = string/*alias*/;
 /** Unique identifier for each Node on the schema */
 export enum NodeName {
   BLOCKQUOTE = 'blockquote',
-  BULLET_LIST = 'bulletList',
+  UNORDERED_LIST = 'unorderedList',
   CELL = 'cell',
   CODEBLOCK = 'codeBlock',
   CODEBLOCK_REFERENCE = 'codeBlockReference',

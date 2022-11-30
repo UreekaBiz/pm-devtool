@@ -14,7 +14,7 @@ import { HorizontalRuleNodeSpec } from './extension/horizontalRule';
 import { ImageNodeSpec } from './extension/image';
 import { ItalicMarkSpec } from './extension/italic';
 import { LinkMarkSpec } from './extension/link';
-import { BulletListNodeSpec } from './extension/list/bulletList';
+import { UnorderedListNodeSpec } from './extension/list/unorderedList';
 import { ListItemNodeSpec } from './extension/list/listItem';
 import { OrderedListNodeSpec } from './extension/list/orderedList';
 import { MarkHolderNodeSpec } from './extension/markHolder';
@@ -52,7 +52,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.LIST_ITEM]: ListItemNodeSpec,
 
   // -- priority does not matter --------------------------------------------------
-  [NodeName.BULLET_LIST]: BulletListNodeSpec,
+  [NodeName.UNORDERED_LIST]: UnorderedListNodeSpec,
   [NodeName.CELL]: CellNodeSpec,
   [NodeName.CODEBLOCK_REFERENCE]: CodeBlockReferenceNodeSpec,
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeSpec,

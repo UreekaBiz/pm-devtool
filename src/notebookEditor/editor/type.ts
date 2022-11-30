@@ -19,7 +19,6 @@ import { HorizontalRule } from 'notebookEditor/extension/horizontalRule/Horizont
 import { Image } from 'notebookEditor/extension/image/Image';
 import { Italic } from 'notebookEditor/extension/italic/Italic';
 import { Link } from 'notebookEditor/extension/link/Link';
-import { BulletList } from 'notebookEditor/extension/list/bulletList/BulletList';
 import { ListItem } from 'notebookEditor/extension/list/listItem/ListItem';
 import { OrderedList } from 'notebookEditor/extension/list/orderedList/OrderedList';
 import { MarkHolder } from 'notebookEditor/extension/markHolder/MarkHolder';
@@ -38,6 +37,7 @@ import { Extension } from 'notebookEditor/extension/type/Extension/Extension';
 import { Text } from 'notebookEditor/extension/text/Text';
 import { TextStyle } from 'notebookEditor/extension/textStyle/TextStyle';
 import { Underline } from 'notebookEditor/extension/underline';
+import { UnorderedList } from 'notebookEditor/extension/list/unorderedList/UnorderedList';
 
 // ********************************************************************************
 // == Definition ==================================================================
@@ -50,7 +50,6 @@ export const editorDefinition: Extension[] = [
   BasicKeymap,
   Blockquote,
   Bold,
-  BulletList,
   Cell,
   Code,
   CodeBlock,
@@ -85,4 +84,5 @@ export const editorDefinition: Extension[] = [
   Text,
   TextStyle,
   Underline,
+  UnorderedList,
 ];

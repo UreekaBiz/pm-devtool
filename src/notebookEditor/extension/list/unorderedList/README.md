@@ -1,4 +1,4 @@
-# BulletList
+# UnorderedList
 
 This extension enables rendering of bullet lists in the editor.
 

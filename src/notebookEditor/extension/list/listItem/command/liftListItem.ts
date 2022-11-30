@@ -38,7 +38,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     /**
      * NOTE: only take into account ListItems whose depth is greater than or equal to
      *       blockRangeDepth - 1, so that for example:
-     *       bl(li(blockquote(li(p('hello'))))) will not lift the first ListItem, and
+     *       ul(li(blockquote(li(p('hello'))))) will not lift the first ListItem, and
      *       just lifts the inner most one
      */
     const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
