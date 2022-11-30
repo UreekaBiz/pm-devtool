@@ -63,8 +63,3 @@ const isListToolItemActive = (editor: Editor, nodeName: NodeName) => {
   const grandParent = $from.node(-2/*grandParent depth*/);
   return grandParent && grandParent.type.name === nodeName;
 };
-
-// return whether the ToolItem for the List should be shown at the given Depth
-export const shouldShowListToolItem = (editor: Editor) => {
-  return false;
-};

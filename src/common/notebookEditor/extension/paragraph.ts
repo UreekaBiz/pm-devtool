@@ -13,16 +13,6 @@ const ParagraphAttributesSpec = {
   [AttributeType.BackgroundColor]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
   [AttributeType.Color]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
   [AttributeType.FontSize]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-
-  [AttributeType.PaddingTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-
-  [AttributeType.MarginTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
 };
 export type ParagraphAttributes = AttributesTypeFromNodeSpecAttributes<typeof ParagraphAttributesSpec>
 

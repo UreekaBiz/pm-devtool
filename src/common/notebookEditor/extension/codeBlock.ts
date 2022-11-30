@@ -20,16 +20,6 @@ export const CodeBlockAttributesSpec = {
 
   /** does the text wrap within the CodeBlock */
   [AttributeType.Wrap]: noNodeOrMarkSpecAttributeDefaultValue<boolean>(),
-
-  [AttributeType.PaddingTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-
-  [AttributeType.MarginTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
 };
 export type CodeBlockAttributes = AttributesTypeFromNodeSpecAttributes<typeof CodeBlockAttributesSpec>;
 export const isCodeBlockAttributes = (attrs: any): attrs is CodeBlockAttributes => attrs.id !== undefined && attrs.wrap !== undefined;

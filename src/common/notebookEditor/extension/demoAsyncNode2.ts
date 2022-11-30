@@ -20,16 +20,6 @@ export const DemoAsyncNode2AttributeSpec = {
   [AttributeType.Delay]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
 
   [AttributeType.TextToReplace]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-
-  [AttributeType.PaddingTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.PaddingRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-
-  [AttributeType.MarginTop]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginBottom]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.MarginRight]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
 };
 export type DemoAsyncNode2Attributes = AttributesTypeFromNodeSpecAttributes<typeof DemoAsyncNode2AttributeSpec>;
 
