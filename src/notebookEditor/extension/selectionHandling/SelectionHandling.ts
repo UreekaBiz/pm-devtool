@@ -3,6 +3,7 @@ import { ExtensionName } from 'notebookEditor/model/type';
 import { Extension } from '../type/Extension/Extension';
 import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 import { blurredSelectionPlugin } from './plugin/blurredSelectionPlugin';
+import { bottomOfWindowPlugin } from './plugin/bottomOfWindowPlugin';
 import { inBetweenInlineAtomsPlugin } from './plugin/inBetweenInlineAtomsPlugin';
 
 // ********************************************************************************
@@ -28,5 +29,7 @@ export const SelectionHandling = new Extension({
     // prevent the cursor from disappearing when it is set in between two Nodes that
     // are inline but are not Text
     inBetweenInlineAtomsPlugin(),
+
+    bottomOfWindowPlugin(),
   ],
 });
