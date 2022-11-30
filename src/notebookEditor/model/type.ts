@@ -22,7 +22,6 @@ export enum ExtensionName {
   HISTORY = 'history',
   NESTED_VIEW_NODE = 'nestedViewNode',
   SELECTION_HANDLING = 'selectionHandling',
-  WRAP_AND_LIFT_LIST_ITEM_CHILDREN = 'wrapAndLiftListItemChildren',
 }
 
 // == Priority ====================================================================
