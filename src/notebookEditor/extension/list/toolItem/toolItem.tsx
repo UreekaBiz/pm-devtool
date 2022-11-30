@@ -44,6 +44,6 @@ export const unorderedListToolItem: ToolItem = {
 // -- Util ------------------------------------------------------------------------
 const isListToolItemActive = (editor: Editor, nodeName: NodeName) => {
   const { $from } = editor.view.state.selection;
-  const grandParent = $from.node(-2/*grandParent depth*/);
+  const grandParent = $from.node(-2/*expected to be a List*/);
   return grandParent && grandParent.type.name === nodeName;
 };
