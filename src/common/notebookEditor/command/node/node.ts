@@ -9,7 +9,7 @@ import { isTextNode } from '../../extension/text';
 import { isNodeActive, NodeName } from '../../node';
 import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../../selection';
 import { AbstractDocumentUpdate } from '../type';
-import { defaultBlockAt } from '../util';
+import { getDefaultBlockFromContentMatch } from '../util';
 
 // ********************************************************************************
 // -- Create ----------------------------------------------------------------------
@@ -117,7 +117,7 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
 
     const grandParentOfHead = $head.node(-1/*grandParent*/),
           indexAfterGrandParentOfHead = $head.indexAfter(-1/*grandParent depth*/);
-    const defaultBlockType = defaultBlockAt(grandParentOfHead.contentMatchAt(indexAfterGrandParentOfHead));
+    const defaultBlockType = getDefaultBlockFromContentMatch(grandParentOfHead.contentMatchAt(indexAfterGrandParentOfHead));
 
     if(!defaultBlockType) return false/*no valid type was found*/;
     if(!grandParentOfHead.canReplaceWith(indexAfterGrandParentOfHead, indexAfterGrandParentOfHead, defaultBlockType)) return false/*invalid replacement*/;

@@ -13,8 +13,8 @@ interface Props extends EditorToolComponentProps {/*no additional*/}
 
 // == Component ===================================================================
 export const PreviewPublishedNotebookToolItem: React.FC<Props> = ({ editor }) => {
-  const { view } = editor;
-  const { doc, selection } = editor.view.state;
+  const { view } = editor,
+        { doc, selection } = editor.view.state;
   const content = nodeToContent(doc);
 
   // == State =====================================================================

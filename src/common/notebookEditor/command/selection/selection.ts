@@ -102,7 +102,6 @@ export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpd
 
     if(isAllBlockNodeRangeSelected(selection)) return false/*already selected all the Block range*/;
 
-
     const { from: blockRangeFrom, to: blockRangeTo } = getBlockNodeRange(selection);
     tr.setSelection(TextSelection.create(tr.doc, blockRangeFrom, blockRangeTo));
     return tr/*updated*/;

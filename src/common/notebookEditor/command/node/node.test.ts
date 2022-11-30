@@ -10,8 +10,8 @@ import { splitBlockCommand, splitBlockKeepMarksCommand } from './node';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj();
-const { schema: notebookSchema } = notebookSchemaWithBuildersObj;
+const notebookSchemaWithBuildersObj = getNotebookSchemaWithBuildersObj(),
+      { schema: notebookSchema } = notebookSchemaWithBuildersObj;
 
 const { bold: boldType } = notebookSchema.marks;
 
