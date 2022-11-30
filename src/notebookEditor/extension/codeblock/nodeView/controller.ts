@@ -1,4 +1,4 @@
-import { getPosType, CodeBlockNodeType, AttributeType } from 'common';
+import { getPosType, CodeBlockNodeType, AttributeType, DATA_VISUAL_ID, DATA_ATTRIBUTE } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
@@ -19,6 +19,9 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
 
   // .. Mutation ..................................................................
   /**
+   * NOTE: these checks are as specific as possible to avoid messing with the
+   *       default ProseMirror lifecycle
+   *
    * ensure CodeBlock NodeViews do not get destroyed incorrectly either
    * logically (in the Storage) or the View
    */
@@ -39,6 +42,17 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
         return true/*ignore mutation*/;
       } /* else -- the mutation target has no textContent or it does not equal the visualId */
     } /* else -- the nodeView has no DOM or the mutation did not happen inside of it */
+
+    // if there was an attribute mutation and it includes the visualId, then ignore the mutation
+    // or an attribute of the CodeBlock changed, ignore it
+    if(mutation.type === 'attributes' && (mutation.attributeName === DATA_VISUAL_ID || mutation.attributeName?.includes(DATA_ATTRIBUTE))) {
+      return true/*(SEE: comment above)*/;
+    } /* else -- the mutation was not of attribute type, it did not change the visualId, or it did not update an attribute */
+
+    // if there was a childList mutation and the target is the visualId container, ignore it
+    if(mutation.type === 'childList' && mutation.target === this.nodeView.visualIdContainer) {
+      return true/*(SEE: comment above)*/;
+    } /* else -- mutation is not of childList type or the target was not the visualId container */
 
     return false/*do not ignore */;
   }

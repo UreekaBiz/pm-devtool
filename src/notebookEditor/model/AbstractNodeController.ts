@@ -35,7 +35,9 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     this.storage = storage;
 
     // only add the Storage if it is a NodeViewStorage (so NoStorage is not added)
-    if(this.storage && isNodeViewStorage(this.storage)) this.storage.addNodeView(node.attrs[AttributeType.Id], this);
+    if(this.storage && isNodeViewStorage(this.storage)) {
+      this.storage.addNodeView(node.attrs[AttributeType.Id], this);
+    } /* else -- no storage or it is not a NodeViewStorage */
 
     this.nodeModel = nodeModel;
     this.nodeView = nodeView;
@@ -45,7 +47,7 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     this.contentDOM = this.nodeView.contentDOM;
   }
 
-  // Sync getPos and node when prosemirror updates it.
+  // sync getPos and Node when ProseMirror updates them
   public updateProps(getPos: getPosType) {
     if(!isGetPos(getPos)) throw new Error('getPos is not a function when calling updateProps');
     this.getPos = getPos;
@@ -59,9 +61,12 @@ export abstract class AbstractNodeController<NodeType extends ProseMirrorNode, S
     if(this.node.attrs[AttributeType.Id] !== node.attrs[AttributeType.Id]) return false/*different Node, do not update*/;
     if(this.node.type.name !== node.type.name) return false/*different Node, do not update*/;
 
-    // update both storage and our reference to the Node
-    if(this.storage && isNodeViewStorage(this.storage)) this.storage.addNodeView(this.node.attrs[AttributeType.Id], this);
-    // updates node in the model and view
+    // update both storage and the reference to the Node
+    if(this.storage && isNodeViewStorage(this.storage)) {
+      this.storage.addNodeView(this.node.attrs[AttributeType.Id], this);
+    } /* else -- no storage or it is not a NodeViewStorage */
+
+    // update the Node in the model and view
     this.node = node as NodeType/*above check guarantees*/;
     this.nodeModel.node = node as NodeType/*above check guarantees*/;
     this.nodeView.node = node as NodeType/*above check guarantees*/;
