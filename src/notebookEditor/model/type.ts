@@ -154,6 +154,6 @@ export enum ParseRulePriority {
   UNORDERED_LIST = 53,
   ORDERED_LIST = 52,
 
-  /** ensure that ListItems are parsed after Bullet and Ordered Lists */
+  /** ensure that ListItems are parsed after Unordered and Ordered Lists */
   LIST_ITEM = 51,
 }
