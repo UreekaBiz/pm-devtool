@@ -1,10 +1,11 @@
 import { BiCodeAlt } from 'react-icons/bi';
 
-import { generateNodeId, getParentNode, getSelectedNode, isCodeBlockNode, isNodeSelection, AttributeType, NodeName } from 'common';
+import { generateNodeId, getParentNode, isCodeBlockNode, AttributeType, NodeName, isNodeActive } from 'common';
 
 import { toggleBlock } from 'notebookEditor/command/node';
 import { CheckBoxToolItem } from 'notebookEditor/extension/shared/component/CheckBoxToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
+import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { CodeBlockTypeToolItem } from './CodeBlockTypeToolItem';
 
@@ -20,16 +21,9 @@ export const codeBlockToolItem: ToolItem = {
   tooltip: 'Code Block (⌘ + ⇧ + C)',
 
   // Disable tool item if current selected node or its parent is a CodeBlock node
-  shouldBeDisabled: (editor) => {
-    const node = getSelectedNode(editor.view.state);
-    if(node && isCodeBlockNode(node)) return true/*(SEE: comment above)*/;
-
-    if(isCodeBlockNode(editor.view.state.selection.$anchor.parent)) return true/*(SEE: comment above)*/;
-
-    if(isNodeSelection(editor.view.state.selection)) return true/*disabled*/;
-
-    return false/*enabled*/;
-  },
+  shouldBeDisabled: (editor) => isNodeActive(editor.view.state, NodeName.CODEBLOCK),
+  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
+  isActive: (editor) => isNodeActive(editor.view.state, NodeName.CODEBLOCK),
   onClick: (editor) => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
 };
 
