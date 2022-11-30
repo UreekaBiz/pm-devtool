@@ -1,4 +1,3 @@
-import { BsListTask } from 'react-icons/bs';
 import { MdFormatListBulleted } from 'react-icons/md';
 import { RiListOrdered } from 'react-icons/ri';
 
@@ -40,21 +39,6 @@ export const unorderedListToolItem: ToolItem = {
   shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => isListToolItemActive(editor, NodeName.UNORDERED_LIST),
   onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleListCommand(NodeName.UNORDERED_LIST, {/*no attrs*/})),
-};
-
-// -- Task List -------------------------------------------------------------------
-export const taskListToolItem: ToolItem = {
-  toolType: 'button',
-  name: 'Task List',
-  label: 'Task List',
-
-  icon: <BsListTask size={16} />,
-  tooltip: 'Task List (⌘ + ⇧ + 9)',
-
-  shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
-  shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
-  isActive: (editor) => isListToolItemActive(editor, NodeName.UNORDERED_LIST),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleListCommand(NodeName.UNORDERED_LIST, {  })),
 };
 
 // -- Util ------------------------------------------------------------------------
