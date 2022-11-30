@@ -9,5 +9,4 @@ import { setAttributeParsingBehavior } from 'notebookEditor/extension/util';
 //       and added to all ParseRules of the parseDOM property
 export const OrderedListAttrs: NodeExtensionAttributes<OrderedListAttributes> = {
   [AttributeType.StartValue]: setAttributeParsingBehavior(AttributeType.StartValue, SetAttributeType.NUMBER, ORDERED_LIST_DEFAULT_START),
-  [AttributeType.MarginLeft]: setAttributeParsingBehavior(AttributeType.MarginLeft, SetAttributeType.STRING),
 };
