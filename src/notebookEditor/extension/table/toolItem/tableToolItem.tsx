@@ -167,7 +167,7 @@ export const toggleHeaderInFirstColumnToolItem: ToolItem = {
 };
 
 // --------------------------------------------------------------------------------
-export const generalTableToolItems: ToolItem[] = [
+export const tableToolItems: ToolItem[] = [
   deleteTableToolItem,
   deleteRowToolItem,
   addRowAboveToolItem,
@@ -181,8 +181,8 @@ export const generalTableToolItems: ToolItem[] = [
 
 // == Util ========================================================================
 const shouldShowTableToolItem = (editor: Editor, depth: SelectionDepth) => {
-  const { selection } = editor.view.state;
-  const { $anchor } = selection;
+  const { selection } = editor.view.state,
+        { $anchor } = selection;
 
   const negativeDepth = isCellSelection(selection) ? -2/*CellSelection Depth*/ : -3/*Table depth*/;
   const expectedTable = $anchor.node(negativeDepth);

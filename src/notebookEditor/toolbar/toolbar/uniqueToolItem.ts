@@ -9,7 +9,7 @@ import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEdit
 import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem } from 'notebookEditor/extension/horizontalRule/toolItem';
 import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem, verticalAlignBottomToolItem, verticalAlignMiddleToolItem, verticalAlignTopToolItem } from 'notebookEditor/extension/image/toolItem';
 import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link/toolItem';
-import { cellToolItems, generalTableToolItems } from 'notebookEditor/extension/table/toolItem';
+import { cellToolItems, tableToolItems } from 'notebookEditor/extension/table/toolItem';
 
 import { EditorToolComponentProps, ToolItem } from '../type';
 
@@ -119,7 +119,7 @@ export const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfig
   [NodeName.PARAGRAPH]: defaultUniqueToolItemConfiguration,
   [NodeName.TABLE]: {
     position: 'start',
-    items: [...generalTableToolItems],
+    items: [...tableToolItems],
   },
   [NodeName.TEXT]: defaultUniqueToolItemConfiguration,
 
