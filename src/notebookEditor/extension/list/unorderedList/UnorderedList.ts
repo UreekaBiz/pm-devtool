@@ -7,7 +7,7 @@ import { createExtensionParseRules, getExtensionAttributesObject } from 'noteboo
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
 import { toggleListCommand } from '../command/toggleListCommand';
-import { createListWrapInputRule } from '../inputRule';
+import { createListWrapInputRule } from '../listInputRule';
 import { UnorderedListAttrs } from './attribute';
 
 // ********************************************************************************

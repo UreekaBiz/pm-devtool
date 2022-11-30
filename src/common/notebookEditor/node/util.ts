@@ -41,7 +41,7 @@ export const findParentNodeClosestToPos = ($pos: ResolvedPos, predicate: NodePre
   for(let depth = $pos.depth; depth > 0; depth--) {
     const nodeAtDepth = $pos.node(depth);
     if(predicate(nodeAtDepth, depth)) {
-      return { pos: depth > 0 ? $pos.before(depth) : 0/*doc depth*/, start: $pos.start(depth), depth, node: nodeAtDepth };
+      return { pos: $pos.before(depth), start: $pos.start(depth), depth, node: nodeAtDepth };
     } /* else -- ignore Node */
   }
 

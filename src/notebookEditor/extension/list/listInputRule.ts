@@ -31,7 +31,7 @@ export const createListWrapInputRule = (nodeName: NodeName.UNORDERED_LIST | Node
         blockRange = $start.blockRange();
     if(!blockRange) return null/*do not apply rule*/;
 
-    const wrapping = blockRange && findWrapping(blockRange, listType, attrs);
+    const wrapping = findWrapping(blockRange, listType, attrs);
     if(!wrapping) return null/*do not apply rule*/;
     tr.wrap(blockRange, wrapping);
 
