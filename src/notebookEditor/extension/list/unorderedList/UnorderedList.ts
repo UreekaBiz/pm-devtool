@@ -2,9 +2,9 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, UnorderedListNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
+import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
-import { ExtensionPriority, ParseRulePriority } from 'notebookEditor/model';
 
 import { toggleListCommand } from '../command/toggleListCommand';
 import { createListWrapInputRule } from '../inputRule';
@@ -16,7 +16,7 @@ import { UnorderedListAttrs } from './attribute';
 export const UnorderedList = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.UNORDERED_LIST,
-  priority: ExtensionPriority.UNORDERED_LIST,
+  priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => (UnorderedListAttrs),
@@ -26,10 +26,7 @@ export const UnorderedList = new NodeExtension({
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([
-      { tag: `ul[${DATA_NODE_TYPE}="${NodeName.UNORDERED_LIST}"]`, priority: ParseRulePriority.UNORDERED_LIST },
-      { tag: 'ul', priority: ParseRulePriority.UNORDERED_LIST }],
-      UnorderedListAttrs),
+    parseDOM: createExtensionParseRules([{ tag: `ul[${DATA_NODE_TYPE}="${NodeName.UNORDERED_LIST}"]` }, { tag: 'ul' }], UnorderedListAttrs),
 
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, UnorderedListAttrs)),
   }),

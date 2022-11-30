@@ -6,7 +6,7 @@ import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'c
 import { Editor } from 'notebookEditor/editor/Editor';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
-import { ExtensionPriority, ParseRulePriority } from 'notebookEditor/model';
+import { ExtensionPriority } from 'notebookEditor/model';
 
 import { ListItemAttrs } from './attribute';
 import { joinBackwardToEndOfClosestListItemCommand, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
@@ -27,10 +27,7 @@ export const ListItem = new NodeExtension({
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    // match ListItem tags and Block Nodes (which use the div tag)
-    parseDOM: createExtensionParseRules([
-      { tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]`, priority: ParseRulePriority.LIST_ITEM },
-      { tag: 'li', priority: ParseRulePriority.LIST_ITEM }], ListItemAttrs),
+    parseDOM: createExtensionParseRules([{ tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], ListItemAttrs),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ListItemAttrs)),
   }),
 
