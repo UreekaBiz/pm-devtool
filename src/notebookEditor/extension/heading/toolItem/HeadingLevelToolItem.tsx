@@ -55,7 +55,7 @@ export const HeadingLevelToolItem: React.FC<EditorToolComponentProps> = ({ edito
       asMenuButton={HeadingMenuButton}
       options={headingLevelOptions}
       isButtonActive={(editor, depth) => isHeadingNode(editor.view.state.selection.$anchor.parent)}
-      shouldBeDisabled={(editor, depth) => depth !== 1/*only show on the direct parent*/}
+      shouldBeDisabled={(editor, depth) => !editor.view.state.selection.$anchor.parent.isTextblock }
       selectedOptionCheck={(parent, optionValue, optionIndex) => isHeadingNode(parent) && parent.attrs[AttributeType.Level] === (optionIndex+1/*account for 0 indexing*/)}
       handleClick={handleClick}
       handleKeydown={handleKeydown}
