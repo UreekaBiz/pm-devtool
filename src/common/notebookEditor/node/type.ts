@@ -73,7 +73,7 @@ export type ProseMirrorNodeContent = Fragment | ProseMirrorNode | ProseMirrorNod
 // --------------------------------------------------------------------------------
 export const nodeToJSONNode = (node: ProseMirrorNode) => node.toJSON() as JSONNode;
 export const nodeToContent = (node: ProseMirrorNode) => JSON.stringify(nodeToJSONNode(node)) as NodeContent;
-export const contentToJSONNode = (content: NodeContent) => JSON.parse(content) as JSONNode/*FIXME: handle exceptions!!!*/;
+export const contentToJSONNode = (content: NodeContent) => JSON.parse(content) as JSONNode;
 export const contentToNode = (schema: Schema, content?: NodeContent) => content ? ProseMirrorNode.fromJSON(schema, contentToJSONNode(content)) : undefined/*none*/;
 
 // == Unique Node Id ==============================================================

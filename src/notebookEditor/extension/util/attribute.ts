@@ -166,8 +166,5 @@ export const getDOMNodeRenderedValue = (node: ProseMirrorNode, attributeType: At
 
   // Get the value from the current theme.
   const themeValue = getThemeValue(nodeName, attributeType);
-
-  // FIXME: What happens if the the value is undefined? In this case the node will
-  //        inherit the value from the parent but how do we know what the value is?
   return themeValue;
 };

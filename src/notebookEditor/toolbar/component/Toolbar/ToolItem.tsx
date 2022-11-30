@@ -42,7 +42,7 @@ const InternalToolItem: React.FC<Props> = ({ editor, tool, depth }) => {
         title: `Error while executing the tool ${tool.label}`,
         description: message,
         status: 'error',
-        duration: 3000/*3 seconds*//*FIXME: make this a constant (classes of these for different cases?)*/,
+        duration: 3000/*ms*/,
         isClosable: true,
       });
     }

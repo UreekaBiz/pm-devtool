@@ -39,4 +39,4 @@ export const getMarkName = (mark: ProseMirrorMark) => mark.type.name as MarkName
 export const isMarkName = (name: string): name is MarkName => Object.values(MarkName).includes(name as MarkName/*by definition*/);
 export const markFromJSONMark = (schema: NotebookSchemaType, jsonMark: JSONMark) => ProseMirrorMark.fromJSON(schema, jsonMark);
 export const stringifyMarksArray = (marks: readonly ProseMirrorMark[]) => JSON.stringify(marks);
-export const parseStringifiedMarksArray = (stringifiedMarks: string) => JSON.parse(stringifiedMarks) as JSONMark[]/*FIXME: handle exceptions!!!*/;
+export const parseStringifiedMarksArray = (stringifiedMarks: string) => JSON.parse(stringifiedMarks) as JSONMark[];

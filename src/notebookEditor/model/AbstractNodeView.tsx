@@ -31,7 +31,7 @@ export abstract class AbstractNodeView<NodeType extends ProseMirrorNode, Storage
   // a react component that will be used to render the view of the Node. This
   // component is meant to be used wrapped inside a WrapReactNodeView.
   // SEE: ReactNodeView.ts
-  public reactNodeView?: <A extends HTMLAttributes>(props: ReactNodeViewProps<A, NodeType, NodeModel, any/*FIXME: types*/>) => ReactElement<ReactNodeViewComponentProps<A, NodeType, NodeModel, typeof this>>;
+  public reactNodeView?: <A extends HTMLAttributes>(props: ReactNodeViewProps<A, NodeType, NodeModel, any>) => ReactElement<ReactNodeViewComponentProps<A, NodeType, NodeModel, typeof this>>;
 
   // ------------------------------------------------------------------------------
   // the corresponding model for this view.
