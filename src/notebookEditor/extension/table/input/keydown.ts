@@ -2,7 +2,7 @@ import { keydownHandler } from 'prosemirror-keymap';
 import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isCellSelection, getMovedCellResolvedPos, AbstractDocumentUpdate, CellSelection } from 'common';
+import { isCellSelection, getMovedCellResolvedPos, AbstractDocumentUpdate, CellSelection, isNotNullOrUndefined } from 'common';
 import { deleteCellSelectionCommand, setNewCellSelectionFromInput } from './selection';
 import { isCursorAtEndOfCell } from './util';
 
@@ -28,7 +28,7 @@ class TableArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
     if(this.axis !== 'horizontal' && !selection.empty) return false/*do not allow*/;
 
     const isAtEndOfCell = view && isCursorAtEndOfCell(view, this.axis, this.direction);
-    if(!isAtEndOfCell || isAtEndOfCell === null) return false/*not at the end of the Cell*/;
+    if(!isNotNullOrUndefined<number>(isAtEndOfCell) || !isNotNullOrUndefined<number>(isAtEndOfCell)) return false/*not at the end of the Cell*/;
 
     if(this.axis == 'horizontal') {
       return setNewCellSelectionFromInput(editorState, Selection.near(editorState.doc.resolve(selection.head + this.direction), this.direction), tr);
@@ -61,7 +61,7 @@ class TableShiftArrowHandlerDocumentUpdate implements AbstractDocumentUpdate {
     let { selection } = editorState;
     if(!isCellSelection(selection)) {
       const isAtEnd = view && isCursorAtEndOfCell(view, this.axis, this.direction);
-      if(!isAtEnd || isAtEnd === null) return false/*nothing to do*/;
+      if(!isNotNullOrUndefined<number>(isAtEnd)) return false/*nothing to do*/;
 
       selection = new CellSelection(editorState.doc.resolve(isAtEnd));
     } /* else -- Selection is CellSelection */

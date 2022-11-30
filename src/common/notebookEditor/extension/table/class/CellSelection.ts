@@ -341,10 +341,7 @@ Selection.jsonID('cell', CellSelection);
 // == BookMark Class ==============================================================
 class CellBookmark implements SelectionBookmark {
   // -- Lifecycle -----------------------------------------------------------------
-  constructor(public anchorPos: number, public headPos: number) {
-    this.anchorPos = anchorPos;
-    this.headPos = headPos;
-  }
+  constructor(public anchorPos: number, public headPos: number) {/*nothing additional*/}
 
   // -- Method --------------------------------------------------------------------
   /** (SEE: {@link SelectionBookmark} map) */
