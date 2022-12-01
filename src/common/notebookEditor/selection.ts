@@ -1,5 +1,5 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
-import { AllSelection, EditorState, NodeSelection, Selection, TextSelection, Transaction } from 'prosemirror-state';
+import { AllSelection, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 
 import { CellSelection } from './extension/table/class';
 
@@ -66,29 +66,6 @@ export const getEndOfDocPosition = (doc: ProseMirrorNode) =>
   }
 
   return ascendants;
-};
-
-// --------------------------------------------------------------------------------
-/**
- * @param selection The {@link Selection} that is resolved
- * @param tr The {@link Transaction} whose document is used to resolve the newSelection
- * @returns The new {@link Selection} that is used after the Transaction
- *          performs its modifications
- */
- export enum SelectionBias {
-  LEFT = -1,
-  RIGHT = 1
-}
-export const resolveNewSelection = (selection: Selection, tr: Transaction, bias?: SelectionBias) => {
-  if(isNodeSelection(selection)) {
-    return new NodeSelection(tr.doc.resolve(selection.anchor));
-  } /* else -- a Node is not selected */
-
-  if(!selection.empty) {
-    return new TextSelection(tr.doc.resolve(selection.anchor), tr.doc.resolve(selection.head));
-  } /* else -- selection is empty */
-
-  return Selection.near(tr.doc.resolve(selection.anchor), bias ? bias : SelectionBias.LEFT/*default*/);
 };
 
 // == Range =======================================================================
