@@ -30,8 +30,8 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
               to = range.$to.pos;
 
         editorState.doc.nodesBetween(from, to, (node, pos) => {
-          const trimmedFrom = Math.max(pos, from);
-          const trimmedTo = Math.min(pos + node.nodeSize, to);
+          const maxFrom = Math.max(pos, from),
+                minTo = Math.min(pos + node.nodeSize, to);
           const markTypeIsPresent = node.marks.find(mark => mark.type === markType);
 
           // if a Mark of the given type is already present, merge its
@@ -39,11 +39,11 @@ export class SetMarkDocumentUpdate implements AbstractDocumentUpdate {
           if(markTypeIsPresent) {
             node.marks.forEach(mark => {
               if(markType === mark.type) {
-                tr.addMark(trimmedFrom, trimmedTo, markType.create({ ...mark.attrs, ...this.attributes }));
+                tr.addMark(maxFrom, minTo, markType.create({ ...mark.attrs, ...this.attributes }));
               } /* else -- Mark of type not present */
             });
           } else {
-            tr.addMark(trimmedFrom, trimmedTo, markType.create(this.attributes));
+            tr.addMark(maxFrom, minTo, markType.create(this.attributes));
           }
         });
       });
