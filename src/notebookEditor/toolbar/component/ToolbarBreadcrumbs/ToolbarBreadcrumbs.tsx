@@ -2,7 +2,6 @@ import { Flex } from '@chakra-ui/react';
 
 import { getAllAscendantsFromSelection, getMarkName, getNodeName, isTextNode, SelectionDepth } from 'common';
 
-import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 import { buildMarkToolbar } from 'notebookEditor/toolbar/toolbar/buildMarkToolbar';
 import { buildNodeToolbar } from 'notebookEditor/toolbar/toolbar/buildNodeToolbar';
@@ -23,7 +22,7 @@ export const ToolbarBreadcrumbs: React.FC<Props> = ({ onSelection, selectedDepth
 
   const breadCrumbItems: JSX.Element[] = [];
 
-  const marks = getAllMarksFromSelection(editor.view.state);
+  const marks = editor.view.state.selection.$from.marks();
   marks.forEach((mark, i) => {
     if(!mark) return /*nothing to do*/;
     const markName = getMarkName(mark);

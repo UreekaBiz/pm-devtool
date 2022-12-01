@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getAllAscendantsFromSelection, getMarkName, getNodeName, SelectionDepth } from 'common';
 
-import { getAllMarksFromSelection } from 'notebookEditor/extension/util';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
 import { buildMarkToolbar } from '../toolbar/buildMarkToolbar';
@@ -43,7 +42,7 @@ export const SideBar = () => {
 
     // Create a toolbar for each mark on the current selection
     // NOTE: Order matters.
-    const marks = getAllMarksFromSelection(editor.view.state);
+    const marks = editor.view.state.selection.$from.marks();
     marks.forEach((mark, i) => {
       if(!mark) return undefined/*nothing to do*/;
 
