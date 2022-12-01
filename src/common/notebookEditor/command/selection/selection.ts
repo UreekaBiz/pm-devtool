@@ -81,7 +81,14 @@ export class SetNodeSelectionDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // ................................................................................
-/** select the contents of the current parent Block Node */
+/**
+ * select the contents of the current parent Block Node. If the current parent
+ * of the Selection's from is not a Node whose name matches the given one, it will
+ * not be returned. Specific functionality depends on this (e.g. selecting a
+ * Cmd+A inside CodeBlock that is inside a Table would first select everything inside
+ * the CodeBlock, then the Cell, then the Table, and then the whole Document).
+ * Hence it should remain a Node-specific Command
+ */
 export const selectBlockNodeContentCommand = (nodeName: NodeName): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SelectBlockNodeContentDocumentUpdate(nodeName), state, dispatch);
 export class SelectBlockNodeContentDocumentUpdate implements AbstractDocumentUpdate {
