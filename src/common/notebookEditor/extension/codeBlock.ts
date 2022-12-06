@@ -54,7 +54,7 @@ const renderCodeBlockNodeView = (attributes: CodeBlockAttributes, content: strin
   //       (hence it is a single line below)
   // NOTE: createNodeDataTypeAttribute must be used for all nodeRenderSpecs
   //       that define their own renderNodeView
-  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${createNodeDataAttribute(AttributeType.Type)}="${attributes.type}" ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/}; white-space: ${getWrapStyles(wrap)}"><div class="${CODEBLOCK_INNER_CONTAINER_CLASS}" style="font-family: ${getCodeBlockFontStyles(type as CodeBlockType/*by definition*/)};">${content.length > 0 ? content : `<br class="${PROSEMIRROR_TRAILING_BREAK_CLASS}" />`}</div><div class="${CODEBLOCK_VISUAL_ID_CONTAINER_CLASS}">${visualId}</div></div>`;
+  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${createNodeDataAttribute(AttributeType.Type)}="${attributes.type}" ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/}; white-space: ${getWrapStyles(wrap)}"><div class="${CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS}" style="font-family: ${getCodeBlockFontStyles(type as CodeBlockType/*by definition*/)};">${content.length > 0 ? content : `<br class="${PROSEMIRROR_TRAILING_BREAK_CLASS}" />`}</div><div class="${CODEBLOCK_VISUAL_ID_CONTAINER_CLASS}">${visualId}</div></div>`;
 };
 
 export const CodeBlockNodeRendererSpec: NodeRendererSpec<CodeBlockAttributes> = {
@@ -105,7 +105,7 @@ export const getCodeBlockFontStyles = (type: CodeBlockType) => type === CodeBloc
 export const DATA_VISUAL_ID = 'data-visualid';
 
 // class of the div that holds the content of the CodeBlock
-export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
+export const CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS = 'codeBlockCodeMirrorViewContainer';
 
 // class of the div that holds the visualId of the CodeBlock
 export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';

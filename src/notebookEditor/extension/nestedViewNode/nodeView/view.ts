@@ -24,7 +24,7 @@ export abstract class AbstractNestedViewNodeView<NodeType extends NestedViewNode
 
   // a reference to the inner Editor View that is used to change
   // this Node's content
-	public innerView: EditorView | undefined;
+	public innerView: EditorView | undefined/*not set yet by Controller*/;
 
   // == Lifecycle =================================================================
   public constructor(model: NodeModel, editor: Editor, node: NodeType, storage: Storage, getPos: getPosType) {

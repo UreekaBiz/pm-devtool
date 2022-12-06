@@ -8,7 +8,7 @@
 }
 
 /* -- Inner Container ---------------------------------------------------------- */
-[data-node-type="codeBlock"] > .codeBlockInnerContainer {
+[data-node-type="codeBlock"] > .codeBlockCodeMirrorViewContainer {
   flex-basis: 95%;
   padding: 5px;
   min-height: 1.5em;

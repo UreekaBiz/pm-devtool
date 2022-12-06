@@ -1,4 +1,6 @@
-import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
+import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
+
+import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -10,7 +12,10 @@ import { CodeBlockStorage } from './storage';
 // == Class =======================================================================
 export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlockStorage, CodeBlockModel> {
   /** the div that holds the content plus the visualId container of the CodeBlock */
-  private innerContainer: HTMLDivElement;
+  public codeMirrorViewContainer: HTMLDivElement;
+
+  /** the codeMirrorView */
+  public codeMirrorView: CodeMirrorEditorView | undefined/*not set yet by Controller*/;
 
   /** the container where the content of the CodeBlock is rendered */
   public readonly contentDOM: HTMLDivElement;
@@ -24,10 +29,10 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
 
     // -- UI ----------------------------------------------------------------------
     // Create DOM elements and append it to the outer container (dom)
-    const innerContainer = document.createElement('div');
-    this.innerContainer = innerContainer;
-    this.innerContainer.classList.add(CODEBLOCK_INNER_CONTAINER_CLASS);
-    this.dom.appendChild(this.innerContainer);
+    const codeMirrorViewContainer = document.createElement('div');
+    this.codeMirrorViewContainer = codeMirrorViewContainer;
+    this.codeMirrorViewContainer.classList.add(CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS);
+    this.dom.appendChild(this.codeMirrorViewContainer);
 
     this.visualIdContainer = document.createElement('div');
     this.visualIdContainer.contentEditable = 'false';
@@ -37,7 +42,7 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     // -- ProseMirror -------------------------------------------------------------
     // Tell PM that the content fo the node must go into the paragraph element,
     // by delegating keeping track of the it to PM (SEE: NodeView#contentDOM)
-    this.contentDOM = this.innerContainer;
+    this.contentDOM = this.codeMirrorViewContainer;
 
     // Sync view with current state
     this.updateView();
@@ -65,7 +70,7 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     this.dom.style.whiteSpace = getWrapStyles(wrap);
 
     // update Inner Container
-    this.innerContainer.style.fontFamily = getCodeBlockFontStyles(type as CodeBlockType/*by definition*/);
+    this.codeMirrorViewContainer.style.fontFamily = getCodeBlockFontStyles(type as CodeBlockType/*by definition*/);
 
     // update VisualId Container
     this.visualIdContainer.innerHTML = visualId;
