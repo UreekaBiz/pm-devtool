@@ -60,6 +60,7 @@ export enum AttributeType {
   Status = 'status',
 
   // .. CodeBlock .................................................................
+  Language = 'language',
   Type = 'type',
   Wrap = 'wrap',
 

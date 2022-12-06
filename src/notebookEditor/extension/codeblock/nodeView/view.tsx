@@ -1,4 +1,5 @@
 import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
+import { EditorView } from 'prosemirror-view';
 
 import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
@@ -14,8 +15,11 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
   /** the div that holds the content plus the visualId container of the CodeBlock */
   public codeMirrorViewContainer: HTMLDivElement;
 
-  /** the codeMirrorView */
+  /** the CodeMirrorView */
   public codeMirrorView: CodeMirrorEditorView | undefined/*not set yet by Controller*/;
+
+  /** the regular EditorView, also set here for consistency accessing through Controller  */
+  public outerView: EditorView;
 
   /** the container where the content of the CodeBlock is rendered */
   public readonly contentDOM: HTMLDivElement;
@@ -28,6 +32,8 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     super(model, editor, node, storage, getPos);
 
     // -- UI ----------------------------------------------------------------------
+    this.outerView = this.editor.view;
+
     // Create DOM elements and append it to the outer container (dom)
     const codeMirrorViewContainer = document.createElement('div');
     this.codeMirrorViewContainer = codeMirrorViewContainer;
