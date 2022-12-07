@@ -1,10 +1,20 @@
-import { getPosType, CodeBlockNodeType, AttributeType, DATA_VISUAL_ID, DATA_ATTRIBUTE } from 'common';
+import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { defaultKeymap, indentWithTab } from '@codemirror/commands';
+import { bracketMatching, defaultHighlightStyle, foldGutter, foldKeymap, indentOnInput, syntaxHighlighting } from '@codemirror/language';
+import { drawSelection, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers, rectangularSelection, EditorView as CodeMirrorEditorView } from '@codemirror/view';
+import { highlightSelectionMatches, selectNextOccurrence } from '@codemirror/search';
+import { EditorState as CodeMirrorEditorState } from '@codemirror/state';
+import { redo, undo } from 'prosemirror-history';
+import { Node as ProseMirrorNode } from 'prosemirror-model';
+
+import { getPosType, CodeBlockNodeType, AttributeType, CodeBlockLanguage } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 
 import { CodeBlockModel } from './model';
 import { CodeBlockStorage } from './storage';
+import { backspaceHandler, computeChange, forwardSelection, maybeEscape, setCodeBlockLanguage, valueChanged } from './util';
 import { CodeBlockView } from './view';
 
 // ********************************************************************************
@@ -15,45 +25,156 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
           view = new CodeBlockView(model, editor, node, codeBlockStorage, getPos);
 
     super(model, view, editor, node, codeBlockStorage, getPos);
+    this.setupCodeMirrorView();
+  }
+
+  private setupCodeMirrorView() {
+    const state = CodeMirrorEditorState.create({
+      extensions: [
+        // enable autocompletion per Language
+        autocompletion(),
+
+        // whenever the cursor is next to a Bracket, highlight it
+        // and the one that matches it
+        bracketMatching(),
+
+        // when a closeable bracket is inserted,its closing one
+        // is immediately inserted after it
+        closeBrackets(),
+
+        // reset Selection on CodeMirrorView blur
+        CodeMirrorEditorView.domEventHandlers({ blur(event, codeMirrorView) { codeMirrorView.dispatch({ selection: { anchor: 0/*start of CodeMirrorView*/ } }); } }),
+
+        // allow multiple Selections
+        CodeMirrorEditorState.allowMultipleSelections.of(true),
+
+        // draw the cursor as a vertical line
+        drawSelection({ cursorBlinkRate: 1000/*ms*/ }),
+
+        // allow the gutter to be folded (collapsed) per lines
+        foldGutter(),
+
+        // highlight the current line
+        highlightActiveLineGutter(),
+
+        // highlight Text that matches the Selection
+        highlightSelectionMatches(),
+
+        // mark Lines that have a cursor in them
+        highlightActiveLine(),
+
+        // enable re-indentation on input, which may be triggered per language
+        indentOnInput(),
+
+        // Keymap expected behavior
+        keymap.of([
+          { key: 'Mod-d', run: selectNextOccurrence, preventDefault: true/*prevent default for mod-D*/ },
+          { key: 'ArrowUp', run: (codeMirrorView) => maybeEscape('line', -1, codeMirrorView, this.nodeView.outerView, this.getPos) },
+          { key: 'ArrowLeft', run: (codeMirrorView) => maybeEscape('char', -1, codeMirrorView, this.nodeView.outerView, this.getPos) },
+          { key: 'ArrowDown', run: (codeMirrorView) => maybeEscape('line', 1, codeMirrorView, this.nodeView.outerView, this.getPos) },
+          { key: 'ArrowRight', run: (codeMirrorView) => maybeEscape('char', 1, codeMirrorView, this.nodeView.outerView, this.getPos) },
+          { key: 'Mod-z', run: () => undo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
+          { key: 'Mod-Shift-z', run: () => redo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
+          { key: 'Backspace', run: (codeMirrorView) => backspaceHandler(this.nodeView.outerView, codeMirrorView) },
+          { key: 'Mod-Backspace', run: (codeMirrorView) => backspaceHandler(this.nodeView.outerView, codeMirrorView) },
+          ...defaultKeymap,
+          ...foldKeymap,
+          ...closeBracketsKeymap,
+          ...completionKeymap,
+          indentWithTab,
+        ]),
+
+        // show Line Numbers
+        lineNumbers(),
+
+        // allow rectangular Selections
+        rectangularSelection(),
+
+        // allow syntax highlighting in the CodeMirror Editor
+        syntaxHighlighting(defaultHighlightStyle),
+
+        // CodeMirrorEditorView.updateListener.of(update => this.forwardUpdate(update))
+      ],
+
+      doc: this.node.textContent,
+    });
+
+    const codeMirrorView = new CodeMirrorEditorView({
+      state,
+      dispatch: (tr) => {
+        codeMirrorView.update([tr]);
+
+        if(!this.nodeModel.isUpdating) {
+          const textUpdate = tr.state.toJSON().doc;
+          valueChanged(textUpdate, this.node, this.getPos, this.nodeView.outerView);
+          forwardSelection(codeMirrorView, this.nodeView.outerView, this.getPos);
+        } /* else -- currently updating */
+
+      },
+    });
+
+    this.nodeView.codeMirrorViewContainer.append(codeMirrorView.dom);
+    setCodeBlockLanguage(codeMirrorView, this.nodeModel.languageCompartment, this.node.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript/*default*/);
+    this.nodeView.codeMirrorView = codeMirrorView;
+  }
+
+  // == ProseMirror ===============================================================
+  // .. Update ....................................................................
+  public update(node: ProseMirrorNode) {
+    const superUpdate = super.update(node);
+    if(!superUpdate) return false/*did not receive the right type of Node*/;
+    if(!this.nodeView.codeMirrorView) return false/*not set yet*/;
+
+    if(node.attrs[AttributeType.Language] !== this.node.attrs[AttributeType.Language]) {
+      setCodeBlockLanguage(this.nodeView.codeMirrorView, this.nodeModel.languageCompartment, node.attrs[AttributeType.Language]);
+    }
+
+    const change = computeChange(this.nodeView.codeMirrorView.state.doc.toString(), node.textContent);
+    if(change) {
+      this.nodeModel.isUpdating = true;
+      this.nodeView.codeMirrorView.dispatch({ changes: { from: change.from, to: change.to, insert: change.text }, selection: { anchor: change.from + change.text.length } });
+      this.nodeModel.isUpdating = false;
+    } /* else -- no change happening */
+
+    return true/*updated*/;
+  }
+
+  // .. Selection .................................................................
+  // REF: https://prosemirror.net/examples/codemirror/ #selectNode
+  /** focus the CodeMirrorView when the CodeBlock is selected */
+  public selectNode() {
+    if(!this.nodeView.codeMirrorView) return/*not set yet, nothing to do*/;
+    this.nodeView.codeMirrorView?.focus();
+  }
+
+  // REF: https://prosemirror.net/examples/codemirror/ #setSelection
+  /** set the selection inside the CodeMirrorView */
+  public setSelection(anchor: number, head: number)  {
+    if(!this.nodeView.codeMirrorView) return/*not set yet, nothing to do*/;
+
+    try {
+      this.nodeModel.isUpdating = true;
+      this.nodeView.codeMirrorView.dispatch({ selection: { anchor, head } });
+      this.nodeView.codeMirrorView.focus();
+      forwardSelection(this.nodeView.codeMirrorView, this.nodeView.outerView, this.getPos);
+    } finally {
+      this.nodeModel.isUpdating = false;
+    }
+  }
+
+  // .. Event .....................................................................
+  // REF: https://prosemirror.net/examples/codemirror/ #stopEvent
+  /**
+   * prevent the outer EditorView from trying to handle DOM events
+   * that bubble up from the CodeMirrorView
+   */
+  public stopEvent(event: Event) {
+    return true/*outer EditorView will not handle the event*/;
   }
 
   // .. Mutation ..................................................................
-  /**
-   * NOTE: these checks are as specific as possible to avoid messing with the
-   *       default ProseMirror lifecycle
-   *
-   * ensure CodeBlock NodeViews do not get destroyed incorrectly either
-   * logically (in the Storage) or the View
-   */
-   public ignoreMutation(mutation: MutationRecord | { type: 'selection'; target: Element; }) {
-    // REF: https://discuss.prosemirror.net/t/what-can-cause-a-nodeview-to-be-rebuilt/4959
-    // NOTE: this specifically addresses the CodeBlock NodeViews being removed
-    //       after destroy() gets called when the DOM mutation happens inside
-    //       the DOM when adding or removing Headings, which change the VisualId
-    //       of the CodeBlock and hence trigger the mutation.
-    //       Currently this logic is exclusive to CodeBlocks since their VisualId gets
-    //       updated dynamically
-    if(this.nodeView.dom?.contains(mutation.target)) {
-      const id = this.node.attrs[AttributeType.Id];
-      if(!id) return false/*do not ignore mutation*/;
-
-      const visualId = this.nodeView.storage.getVisualId(this.node.attrs.id ?? '');
-      if(visualId === mutation.target.textContent?.trim()) {
-        return true/*ignore mutation*/;
-      } /* else -- the mutation target has no textContent or it does not equal the visualId */
-    } /* else -- the nodeView has no DOM or the mutation did not happen inside of it */
-
-    // if there was an attribute mutation and it includes the visualId, then ignore the mutation
-    // or an attribute of the CodeBlock changed, ignore it
-    if(mutation.type === 'attributes' && (mutation.attributeName === DATA_VISUAL_ID || mutation.attributeName?.includes(DATA_ATTRIBUTE))) {
-      return true/*(SEE: comment above)*/;
-    } /* else -- the mutation was not of attribute type, it did not change the visualId, or it did not update an attribute */
-
-    // if there was a childList mutation and the target is the visualId container, ignore it
-    if(mutation.type === 'childList' && mutation.target === this.nodeView.visualIdContainer) {
-      return true/*(SEE: comment above)*/;
-    } /* else -- mutation is not of childList type or the target was not the visualId container */
-
-    return false/*do not ignore */;
+  /** ignore all Mutations, since they should be handled by CodeMirror */
+  public ignoreMutation(mutation: MutationRecord | { type: 'selection'; target: Element; }) {
+    return true/*ignore all mutations*/;
   }
 }
