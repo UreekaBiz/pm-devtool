@@ -14,7 +14,7 @@ import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeControl
 
 import { CodeBlockModel } from './model';
 import { CodeBlockStorage } from './storage';
-import { backspaceHandler, computeChange, forwardSelection, maybeEscape, setCodeBlockLanguage, valueChanged } from './util';
+import { maybeDeleteCodeBlock, computeChangedTextRange, syncSelections, maybeEscapeFromCodeBlock, setCodeBlockLanguage, accountForCodeBlockValueChange } from './util';
 import { CodeBlockView } from './view';
 
 // ********************************************************************************
@@ -66,17 +66,17 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
         // enable re-indentation on input, which may be triggered per language
         indentOnInput(),
 
-        // Keymap expected behavior
+        // Keymap of expected behavior
         keymap.of([
           { key: 'Mod-d', run: selectNextOccurrence, preventDefault: true/*prevent default for mod-D*/ },
-          { key: 'ArrowUp', run: (codeMirrorView) => maybeEscape('line', -1, codeMirrorView, this.nodeView.outerView, this.getPos) },
-          { key: 'ArrowLeft', run: (codeMirrorView) => maybeEscape('char', -1, codeMirrorView, this.nodeView.outerView, this.getPos) },
-          { key: 'ArrowDown', run: (codeMirrorView) => maybeEscape('line', 1, codeMirrorView, this.nodeView.outerView, this.getPos) },
-          { key: 'ArrowRight', run: (codeMirrorView) => maybeEscape('char', 1, codeMirrorView, this.nodeView.outerView, this.getPos) },
+          { key: 'ArrowUp', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', -1, this.nodeView.outerView, this.getPos, codeMirrorView) },
+          { key: 'ArrowLeft', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', -1, this.nodeView.outerView, this.getPos, codeMirrorView) },
+          { key: 'ArrowDown', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', 1, this.nodeView.outerView, this.getPos, codeMirrorView) },
+          { key: 'ArrowRight', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', 1, this.nodeView.outerView, this.getPos, codeMirrorView) },
           { key: 'Mod-z', run: () => undo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
           { key: 'Mod-Shift-z', run: () => redo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
-          { key: 'Backspace', run: (codeMirrorView) => backspaceHandler(this.nodeView.outerView, codeMirrorView) },
-          { key: 'Mod-Backspace', run: (codeMirrorView) => backspaceHandler(this.nodeView.outerView, codeMirrorView) },
+          { key: 'Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(this.nodeView.outerView, codeMirrorView) },
+          { key: 'Mod-Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(this.nodeView.outerView, codeMirrorView) },
           ...defaultKeymap,
           ...foldKeymap,
           ...closeBracketsKeymap,
@@ -92,8 +92,6 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
 
         // allow syntax highlighting in the CodeMirror Editor
         syntaxHighlighting(defaultHighlightStyle),
-
-        // CodeMirrorEditorView.updateListener.of(update => this.forwardUpdate(update))
       ],
 
       doc: this.node.textContent,
@@ -106,9 +104,9 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
 
         if(!this.nodeModel.isUpdating) {
           const textUpdate = tr.state.toJSON().doc;
-          valueChanged(textUpdate, this.node, this.getPos, this.nodeView.outerView);
-          forwardSelection(codeMirrorView, this.nodeView.outerView, this.getPos);
-        } /* else -- currently updating */
+          accountForCodeBlockValueChange(this.nodeView.outerView, this.node, this.getPos, textUpdate);
+          syncSelections(codeMirrorView, this.nodeView.outerView, this.getPos);
+        } /* else -- updating */
 
       },
     });
@@ -119,7 +117,6 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
   }
 
   // == ProseMirror ===============================================================
-  // .. Update ....................................................................
   public update(node: ProseMirrorNode) {
     const superUpdate = super.update(node);
     if(!superUpdate) return false/*did not receive the right type of Node*/;
@@ -129,12 +126,21 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
       setCodeBlockLanguage(this.nodeView.codeMirrorView, this.nodeModel.languageCompartment, node.attrs[AttributeType.Language]);
     }
 
-    const change = computeChange(this.nodeView.codeMirrorView.state.doc.toString(), node.textContent);
-    if(change) {
-      this.nodeModel.isUpdating = true;
-      this.nodeView.codeMirrorView.dispatch({ changes: { from: change.from, to: change.to, insert: change.text }, selection: { anchor: change.from + change.text.length } });
-      this.nodeModel.isUpdating = false;
-    } /* else -- no change happening */
+    const currentCodeBlockText = this.nodeView.codeMirrorView.state.doc.toString(),
+          newCodeBlockText = node.textContent;
+    const changedTextRange = computeChangedTextRange(currentCodeBlockText, newCodeBlockText);
+    if(changedTextRange) {
+      try {
+        this.nodeModel.isUpdating = true/*start update*/;
+        this.nodeView.codeMirrorView.dispatch({
+          changes: { from: changedTextRange.from, to: changedTextRange.to, insert: changedTextRange.text },
+          selection: { anchor: changedTextRange.from + changedTextRange.text.length },
+        });
+
+      } finally {
+        this.nodeModel.isUpdating = false/*end update*/;
+      }
+    } /* else -- no changes to account for */
 
     return true/*updated*/;
   }
@@ -151,14 +157,15 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
   /** set the selection inside the CodeMirrorView */
   public setSelection(anchor: number, head: number)  {
     if(!this.nodeView.codeMirrorView) return/*not set yet, nothing to do*/;
+    if(!this.nodeView.codeMirrorView.hasFocus) return/*the codeMirrorView is not currently focused*/;
 
     try {
-      this.nodeModel.isUpdating = true;
+      this.nodeModel.isUpdating = true/*update started*/;
       this.nodeView.codeMirrorView.dispatch({ selection: { anchor, head } });
       this.nodeView.codeMirrorView.focus();
-      forwardSelection(this.nodeView.codeMirrorView, this.nodeView.outerView, this.getPos);
+      syncSelections(this.nodeView.codeMirrorView, this.nodeView.outerView, this.getPos);
     } finally {
-      this.nodeModel.isUpdating = false;
+      this.nodeModel.isUpdating = false/*update finished*/;
     }
   }
 

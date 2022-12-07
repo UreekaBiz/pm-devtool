@@ -1,10 +1,9 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
-import { chainCommands } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
 
-import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectTextBlockStartOrEndCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
+import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/command/node';
+import { toggleBlock } from 'notebookEditor/command/node';
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model';
@@ -14,6 +13,7 @@ import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
+import { goIntoCodeBlockArrowCommand } from './command';
 import { CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
 
@@ -60,21 +60,18 @@ export const CodeBlock = new NodeExtension({
       'Shift-Mod-c': () => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
       'Shift-Mod-C': () => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
 
-      // remove CodeBlock when Selection is at start of Document or CodeBlock is empty
-      'Backspace': () => shortcutCommandWrapper(editor, blockBackspaceCommand(NodeName.CODEBLOCK)),
-
-      // maintain expected Mod-Backspace behavior
-      'Mod-Backspace': () => shortcutCommandWrapper(editor, blockModBackspaceCommand(NodeName.CODEBLOCK)),
-
-      // set GapCursor or Selection at start or end of Block if necessary
-      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('start', NodeName.CODEBLOCK)),
-      'ArrowDown': chainCommands(blockArrowDownCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('end', NodeName.CODEBLOCK)),
-
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),
 
       // exit Node on Shift-Enter
       'Shift-Enter': () => applyDocumentUpdates(editor, [new LeaveBlockNodeDocumentUpdate(NodeName.CODEBLOCK)]),
+
+      // select a CodeBlock if arrow traversal would put the cursor inside it
+      'ArrowLeft': goIntoCodeBlockArrowCommand('left'),
+      'ArrowRight': goIntoCodeBlockArrowCommand('right'),
+      'ArrowUp': goIntoCodeBlockArrowCommand('up'),
+      'ArrowDown': goIntoCodeBlockArrowCommand('down'),
     }),
   ],
 });
+
