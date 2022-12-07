@@ -120,8 +120,12 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
 
   // == ProseMirror ===============================================================
   public update(node: ProseMirrorNode) {
+    // NOTE: these checks must be done before the super call, since otherwise
+    //       the compartments of the CodeMirrorView will not be updated, as
+    //       the received Node will then be this.node
     if(!this.nodeView.codeMirrorView) return false/*no View to update*/;
-    if(node.attrs[AttributeType.Language] !== this.node.attrs[AttributeType.Language]) {
+    const updatedNodeLanguage = node.attrs[AttributeType.Language];
+    if(updatedNodeLanguage/*not undefined*/ && updatedNodeLanguage !== this.node.attrs[AttributeType.Language]) {
       setCodeBlockLanguage(this.nodeView.codeMirrorView, this.nodeModel.languageCompartment, node.attrs[AttributeType.Language]);
     } /* else -- language did not change */
 
