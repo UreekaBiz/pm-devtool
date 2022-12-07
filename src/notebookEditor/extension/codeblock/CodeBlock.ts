@@ -93,7 +93,6 @@ const toggleCodeBlock = (editor: Editor) => {
   return true/*handled*/;
 };
 
-
 // NOTE: not a Command since storage must be accessed
 const goIntoCodeBlock = (editor: Editor, direction: 'left' | 'right' | 'up' | 'down') => {
   const { view } = editor,
