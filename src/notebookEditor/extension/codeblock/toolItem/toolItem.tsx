@@ -6,7 +6,7 @@ import { toggleBlock } from 'notebookEditor/command/node';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
-import { CodeBlockTypeToolItem } from './CodeBlockTypeToolItem';
+import { CodeBlockLanguageToolItem } from './CodeBlockLanguageToolItem';
 
 //*********************************************************************************
 // === Tool Items =================================================================
@@ -30,6 +30,6 @@ export const codeBlockTypeToolItem: ToolItem = {
   toolType: 'component',
   name: 'codeBlockTypeToolItem',
 
-  component: CodeBlockTypeToolItem,
+  component: CodeBlockLanguageToolItem,
   shouldShow: (editor) => isCodeBlockNode(getParentNode(editor.view.state.selection)),
 };
