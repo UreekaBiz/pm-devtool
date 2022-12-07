@@ -7,11 +7,10 @@ import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const options: DropdownToolItemType[] = [
-  { value: CodeBlockLanguage.CSS, label: 'CSS' },
-  { value: CodeBlockLanguage.HTML, label: 'HTML' },
-  { value: CodeBlockLanguage.JavaScript, label: 'JavaScript' },
-];
+const options: DropdownToolItemType[] = Object.entries(CodeBlockLanguage).reduce<DropdownToolItemType[]>((options, currentCodeBlockLanguage) => {
+  options.push({ value: currentCodeBlockLanguage[1/*the enum value*/], label: currentCodeBlockLanguage[0/*the enum name*/] });
+  return options;
+}, [/*default empty*/]);
 
 // == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/}
