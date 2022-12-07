@@ -69,10 +69,10 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
         // Keymap of expected behavior
         keymap.of([
           { key: 'Mod-d', run: selectNextOccurrence, preventDefault: true/*prevent default for mod-D*/ },
-          { key: 'ArrowUp', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', -1, this.nodeView.outerView, this.getPos, codeMirrorView) },
-          { key: 'ArrowLeft', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', -1, this.nodeView.outerView, this.getPos, codeMirrorView) },
-          { key: 'ArrowDown', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', 1, this.nodeView.outerView, this.getPos, codeMirrorView) },
-          { key: 'ArrowRight', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', 1, this.nodeView.outerView, this.getPos, codeMirrorView) },
+          { key: 'ArrowUp', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', -1/*up*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
+          { key: 'ArrowLeft', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', -1/*left*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
+          { key: 'ArrowDown', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', 1/*down*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
+          { key: 'ArrowRight', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', 1/*right*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
           { key: 'Mod-z', run: () => undo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
           { key: 'Mod-Shift-z', run: () => redo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
           { key: 'Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(this.nodeView.outerView, codeMirrorView) },
@@ -111,9 +111,9 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
       },
     });
 
+    this.nodeView.codeMirrorView = codeMirrorView;
     this.nodeView.codeMirrorViewContainer.append(codeMirrorView.dom);
     setCodeBlockLanguage(codeMirrorView, this.nodeModel.languageCompartment, this.node.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript/*default*/);
-    this.nodeView.codeMirrorView = codeMirrorView;
   }
 
   // == ProseMirror ===============================================================
