@@ -83,7 +83,6 @@ export const maybeEscapeFromCodeBlock = (unit: 'char' | 'line', direction: -1/*l
 
   const resultingPosition = getPos() + (direction < 0/*left/upwards*/ ? 0/*start of CodeBlock*/ : codeBlockNode.nodeSize),
         newOuterViewSelection = Selection.near(outerEditorView.state.doc.resolve(resultingPosition), direction);
-
   const { tr } = outerEditorView.state;
         tr.setSelection(newOuterViewSelection).scrollIntoView();
   outerEditorView.dispatch(tr);

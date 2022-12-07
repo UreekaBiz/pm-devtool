@@ -94,7 +94,7 @@ const toggleCodeBlock = (editor: Editor) => {
 };
 
 
-// NOTE: not a Command since storage must be accessed, and no Transaction is dispatched
+// NOTE: not a Command since storage must be accessed
 const goIntoCodeBlock = (editor: Editor, direction: 'left' | 'right' | 'up' | 'down') => {
   const { view } = editor,
         { state } = view;
@@ -113,6 +113,12 @@ const goIntoCodeBlock = (editor: Editor, direction: 'left' | 'right' | 'up' | 'd
   const codeBlockView = storage.getNodeView(id);
   if(!codeBlockView) return false/*no CodeBlockView to select after moving in direction*/;
 
+  // sync outerView selection
+  const { tr } = state;
+  tr.setSelection(nextPos);
+  view.dispatch(tr);
+
+  // focus codeMirrorView
   codeBlockView.nodeView.codeMirrorView?.focus();
   return true/*handled*/;
 };
