@@ -49,7 +49,7 @@ export const CodeBlock = new NodeExtension({
   defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<CodeBlockController>(editor, node, NodeName.CODEBLOCK, getPos, isCodeBlockNode, CodeBlockController),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [textblockTypeInputRule(codeBlockRegEx, getCodeBlockNodeType(editor.view.state.schema))],
+  inputRules: (editor) => [textblockTypeInputRule(codeBlockRegEx, getCodeBlockNodeType(editor.view.state.schema), () => ({ [AttributeType.Id]: generateNodeId() }))],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],
