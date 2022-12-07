@@ -6,6 +6,7 @@ import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNod
 import { toggleBlock } from 'notebookEditor/command/node';
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
+import { Editor } from 'notebookEditor/editor/Editor';
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
@@ -14,7 +15,7 @@ import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
 import { goIntoCodeBlockArrowCommand } from './command';
-import { CodeBlockStorage, CodeBlockController } from './nodeView';
+import { getCodeBlockViewStorage, CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
 
 // ********************************************************************************
@@ -57,8 +58,8 @@ export const CodeBlock = new NodeExtension({
   addProseMirrorPlugins: (editor) => [
     keymap({
       // toggle a CodeBlock
-      'Shift-Mod-c': () => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
-      'Shift-Mod-C': () => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
+      'Shift-Mod-c': () => toggleCodeBlock(editor),
+      'Shift-Mod-C': () => toggleCodeBlock(editor),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),
@@ -75,3 +76,18 @@ export const CodeBlock = new NodeExtension({
   ],
 });
 
+// NOTE: not a Command since storage must be accessed
+const toggleCodeBlock = (editor: Editor) => {
+  const id = generateNodeId(),
+        commandResult = toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: id });
+
+  const { selection } = editor.view.state;
+  if(!isCodeBlockNode(selection.$from.parent)) return commandResult/*no need to focus CodeBlock, it was toggled*/;
+
+  const storage = getCodeBlockViewStorage(editor);
+  const codeBlockView = storage.getNodeView(id);
+  if(!codeBlockView) return false/*not setup yet*/;
+
+  setTimeout(() => codeBlockView.nodeView.codeMirrorView?.focus(), 0/*after View has been created, T&E*/);
+  return true/*handled*/;
+};

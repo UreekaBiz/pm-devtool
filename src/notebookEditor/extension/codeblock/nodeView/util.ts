@@ -41,6 +41,13 @@ export const syncSelections = (codeMirrorView: CodeMirrorEditorView, outerView: 
         codeMirrorViewAnchor = codeMirrorView.state.selection.main.from + offsetIntoCodeBlock,
         codeMirrorViewHead = codeMirrorView.state.selection.main.to + offsetIntoCodeBlock;
 
+  // prevent toggle CodeBlock into undo error case,
+  // since codeMirrorView has no isDestroyed() method
+  if(isNaN(codeMirrorViewAnchor) || isNaN(codeMirrorViewHead)) {
+    outerView.focus();
+    return/*do nothing*/;
+  } /* else -- CodeMirrorView still exists */
+
   const outerViewSelection = TextSelection.create(outerView.state.doc, codeMirrorViewAnchor, codeMirrorViewHead);
   if(outerViewSelection.eq(outerView.state.selection)) return/*no need to sync*/;
   outerView.dispatch(outerView.state.tr.setSelection(outerViewSelection));

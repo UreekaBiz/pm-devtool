@@ -4,14 +4,16 @@ import { EditorView } from 'prosemirror-view';
 import { isCodeBlockNode, AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
+// == Key Handler =================================================================
+/** select the corresponding CodeBlock if arrow traversal would place the cursor inside it */
 export const goIntoCodeBlockArrowCommand = (direction: 'left' | 'right' | 'up' | 'down'): Command => (state, dispatch, view) =>
   AbstractDocumentUpdate.execute(new GoIntoCodeBlockArrowDocumentUpdate(direction), state, dispatch, view);
 export class GoIntoCodeBlockArrowDocumentUpdate implements AbstractDocumentUpdate {
   public constructor(private readonly direction: 'left' | 'right' | 'up' | 'down') {/*nothing additional*/}
 
   /**
-   * modify the given Transaction such that a Paragraph Node is set following
-   * the given constraints (SEE: NOTE above) and return it
+   * modify the given Transaction such that the corresponding CodeBlock is selected
+   * if arrow traversal would place the cursor inside it
    */
   public update(editorState: EditorState, tr: Transaction, view?: EditorView) {
     if(!view) return false/*View not given*/;
