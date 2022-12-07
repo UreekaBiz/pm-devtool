@@ -7,7 +7,7 @@ import { EditorState as CodeMirrorEditorState } from '@codemirror/state';
 import { redo, undo } from 'prosemirror-history';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
-import { getPosType, CodeBlockNodeType, AttributeType, CodeBlockLanguage } from 'common';
+import { getPosType, AttributeType, CodeBlockNodeType, CodeBlockLanguage } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
@@ -92,6 +92,9 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
 
         // allow syntax highlighting in the CodeMirror Editor
         syntaxHighlighting(defaultHighlightStyle),
+
+        // -- Attribute -----------------------------------------------------------
+        this.nodeModel.languageCompartment.of([/*default empty*/]),
       ],
 
       doc: this.node.textContent,
@@ -101,7 +104,6 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
       state,
       dispatch: (tr) => {
         codeMirrorView.update([tr]);
-
         if(!this.nodeModel.isUpdating) {
           const textUpdate = tr.state.toJSON().doc;
           accountForCodeBlockValueChange(this.nodeView.outerView, this.node, this.getPos, textUpdate);
@@ -118,13 +120,13 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
 
   // == ProseMirror ===============================================================
   public update(node: ProseMirrorNode) {
-    const superUpdate = super.update(node);
-    if(!superUpdate) return false/*did not receive the right type of Node*/;
-    if(!this.nodeView.codeMirrorView) return false/*not set yet*/;
-
+    if(!this.nodeView.codeMirrorView) return false/*no View to update*/;
     if(node.attrs[AttributeType.Language] !== this.node.attrs[AttributeType.Language]) {
       setCodeBlockLanguage(this.nodeView.codeMirrorView, this.nodeModel.languageCompartment, node.attrs[AttributeType.Language]);
-    }
+    } /* else -- language did not change */
+
+    const superUpdate = super.update(node);
+    if(!superUpdate) return false/*did not receive the right type of Node*/;
 
     const currentCodeBlockText = this.nodeView.codeMirrorView.state.doc.toString(),
           newCodeBlockText = node.textContent;
@@ -136,7 +138,6 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
           changes: { from: changedTextRange.from, to: changedTextRange.to, insert: changedTextRange.text },
           selection: { anchor: changedTextRange.from + changedTextRange.text.length },
         });
-
       } finally {
         this.nodeModel.isUpdating = false/*end update*/;
       }

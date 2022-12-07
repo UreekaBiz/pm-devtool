@@ -67,10 +67,10 @@ export const accountForCodeBlockValueChange = (outerView: EditorView, codeBlockN
 
 // == Key Handling ================================================================
 // NOTE: this is inspired by https://prosemirror.net/examples/codemirror/ #maybeEscape
-export const maybeEscapeFromCodeBlock = (unit: 'char' | 'line', direction: -1/*left/upwards*/ | 1/*right/downwards*/, outerEditorView: EditorView, getPos: getPosType, codeMirrorEditorView: CodeMirrorEditorView) => {
-  const { main: mainCodeMirrorSelectionRange } = codeMirrorEditorView.state.selection,
-        lineAtFrom = codeMirrorEditorView.state.doc.lineAt(mainCodeMirrorSelectionRange.from),
-        lineAmount = codeMirrorEditorView.state.doc.lines;
+export const maybeEscapeFromCodeBlock = (unit: 'char' | 'line', direction: -1/*left/upwards*/ | 1/*right/downwards*/, outerEditorView: EditorView, getPos: getPosType, codeMirrorView: CodeMirrorEditorView) => {
+  const { main: mainCodeMirrorSelectionRange } = codeMirrorView.state.selection,
+        lineAtFrom = codeMirrorView.state.doc.lineAt(mainCodeMirrorSelectionRange.from),
+        lineAmount = codeMirrorView.state.doc.lines;
 
   if(mainCodeMirrorSelectionRange.to !== mainCodeMirrorSelectionRange.from /*Selection not empty*/
     || lineAtFrom.number !== (direction < 0/*left/upwards*/ ? 1/*first Line*/ : lineAmount/*lastLine*/)
@@ -99,7 +99,7 @@ export const maybeDeleteCodeBlock = (outerView: EditorView, codeMirrorView: Code
   setBlockType(outerView.state.schema.nodes.paragraph)(outerView.state, outerView.dispatch);
 
   // focus the outerView after DOM changes
-  setTimeout(() => outerView.focus(), 20/*T&E*/);
+  setTimeout(() => outerView.focus(), 0/*T&E*/);
   return true/*handled*/;
 };
 
