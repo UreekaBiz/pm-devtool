@@ -21,9 +21,6 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
   /** the regular EditorView, also set here for consistency accessing through Controller  */
   public outerView: EditorView;
 
-  /** the container where the content of the CodeBlock is rendered */
-  public readonly contentDOM: HTMLDivElement;
-
   /** the div that holds the visualId of the CodeBlock */
   public readonly visualIdContainer: HTMLDivElement;
 
@@ -44,11 +41,6 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     this.visualIdContainer.contentEditable = 'false';
     this.visualIdContainer.classList.add(CODEBLOCK_VISUAL_ID_CONTAINER_CLASS);
     this.dom.appendChild(this.visualIdContainer);
-
-    // -- ProseMirror -------------------------------------------------------------
-    // Tell PM that the content fo the node must go into the paragraph element,
-    // by delegating keeping track of the it to PM (SEE: NodeView#contentDOM)
-    this.contentDOM = this.codeMirrorViewContainer;
 
     // Sync view with current state
     this.updateView();
