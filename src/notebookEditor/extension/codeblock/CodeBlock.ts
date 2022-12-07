@@ -109,10 +109,10 @@ const goIntoCodeBlock = (editor: Editor, direction: 'left' | 'right' | 'up' | 'd
   const { [AttributeType.Id]: id } = nextPos.$head.parent.attrs;
   if(!id) return false/*no CodeBlock to select after moving in direction*/;
 
-
   const storage = getCodeBlockViewStorage(editor);
   const codeBlockView = storage.getNodeView(id);
-  codeBlockView?.nodeView.codeMirrorView?.focus();
+  if(!codeBlockView) return false/*no CodeBlockView to select after moving in direction*/;
 
+  codeBlockView.nodeView.codeMirrorView?.focus();
   return true/*handled*/;
 };
