@@ -165,7 +165,6 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
   /** set the selection inside the CodeMirrorView */
   public setSelection(anchor: number, head: number)  {
     if(!this.nodeView.codeMirrorView) return/*not set yet, nothing to do*/;
-    if(!this.nodeView.codeMirrorView.hasFocus) return/*the codeMirrorView is not currently focused*/;
 
     try {
       this.nodeModel.isUpdating = true/*update started*/;
