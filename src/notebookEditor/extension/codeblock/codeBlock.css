@@ -24,3 +24,9 @@
 [data-node-type="codeBlock"] > .codeBlockVisualIdContainer {
   flex-basis: 5%;
 }
+
+/* -- CodeMirror --------------------------------------------------------------- */
+/* do not show any special kind of outline when the CodeMirrorView is selected   */
+.ͼ1.cm-editor.cm-focused {
+  outline: none;
+}
