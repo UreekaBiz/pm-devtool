@@ -107,7 +107,10 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
         if(!this.nodeModel.isUpdating) {
           const textUpdate = tr.state.toJSON().doc;
           accountForCodeBlockValueChange(this.nodeView.outerView, this.node, this.getPos, textUpdate);
-          syncSelections(codeMirrorView, this.nodeView.outerView, this.getPos);
+
+          if(codeMirrorView.hasFocus) {
+            syncSelections(codeMirrorView, this.nodeView.outerView, this.getPos);
+          } /* else -- codeMirrorView has no focus, do not sync Selection*/
         } /* else -- updating */
 
       },

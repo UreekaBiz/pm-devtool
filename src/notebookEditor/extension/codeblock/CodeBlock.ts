@@ -117,7 +117,13 @@ const goIntoCodeBlock = (editor: Editor, direction: 'left' | 'right' | 'up' | 'd
   tr.setSelection(nextPos);
   view.dispatch(tr);
 
-  // focus codeMirrorView
-  codeBlockView.nodeView.codeMirrorView?.focus();
+  // sync codeMirrorView selection
+  if((direction === 'right' || direction === 'down')) {
+    codeBlockView.nodeView.codeMirrorView?.focus();
+  } else {
+    // set Selection at end of CodeBlock
+    codeBlockView.nodeView.codeMirrorView?.focus();
+    codeBlockView.nodeView.codeMirrorView?.dispatch({ selection: { anchor: nextPos.$anchor.parent.nodeSize - 2/*account for start and end of CodeBlock*/ } });
+  }
   return true/*handled*/;
 };
