@@ -36,7 +36,25 @@ const FROM_OUTSIDE_META = 'fromOutside'/*(SEE: NOTE above)*/;
 export type AbstractNestedNodeViewNodeStorageType = NodeViewStorage<AbstractNestedNodeViewNodeController<any, any, any, any>>;
 export abstract class AbstractNestedNodeViewNodeController<NodeType extends NestedViewNodeType, Storage extends AbstractNestedNodeViewNodeStorageType, NodeModel extends AbstractNestedViewNodeModel<NodeType, Storage> = any, NodeView extends AbstractNestedViewNodeView<NodeType, Storage, NodeModel> = any> extends AbstractNodeController<NestedViewNodeType, AbstractNestedNodeViewNodeStorageType, NodeModel, NodeView> {
   // == ProseMirror ===============================================================
-    // .. Update ....................................................................
+  // .. Selection .................................................................
+  public selectNode() {
+    if(!this.editor.view.editable) return/*nothing to do*/;
+
+    this.nodeView.dom.classList.add(PM_SELECTED_CLASS);
+    if(!this.nodeModel.isEditing) {
+      this.openInnerView();
+    } /* else -- already editing, no need to do anything */
+  }
+
+  public deselectNode() {
+    this.nodeView.dom.classList.remove(PM_SELECTED_CLASS);
+
+    if(this.nodeModel.isEditing) {
+      this.closeInnerView();
+    } /* else -- no longer editing, no need to do anything */
+  }
+
+  // .. Update ....................................................................
   // NOTE: this is inspired by https://prosemirror.net/examples/footnote/ #update
   // to handle updates from outside (i.e. through collaborative editing) or when
   // the user undoes something, which is handled by the outer View, find the
@@ -86,24 +104,6 @@ export abstract class AbstractNestedNodeViewNodeController<NodeType extends Nest
     // ensure the contents of the reused NVN are rendered correctly
     this.nodeView.setupView();
     this.nodeView.renderNodeContent();
-  }
-
-  // .. Selection .................................................................
-  public selectNode() {
-    if(!this.editor.view.editable) return/*nothing to do*/;
-
-    this.nodeView.dom.classList.add(PM_SELECTED_CLASS);
-    if(!this.nodeModel.isEditing) {
-      this.openInnerView();
-    } /* else -- already editing, no need to do anything */
-  }
-
-  public deselectNode() {
-    this.nodeView.dom.classList.remove(PM_SELECTED_CLASS);
-
-    if(this.nodeModel.isEditing) {
-      this.closeInnerView();
-    } /* else -- no longer editing, no need to do anything */
   }
 
   // .. Destroy ...................................................................

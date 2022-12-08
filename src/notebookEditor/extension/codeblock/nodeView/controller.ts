@@ -1,14 +1,10 @@
-import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
-import { Node as ProseMirrorNode } from 'prosemirror-model';
-
-import { getPosType, AttributeType, CodeBlockNodeType, CodeBlockLanguage } from 'common';
+import { getPosType, CodeBlockNodeType, AttributeType, DATA_VISUAL_ID, DATA_ATTRIBUTE } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeController';
 
 import { CodeBlockModel } from './model';
 import { CodeBlockStorage } from './storage';
-import { computeChangedTextRange, syncSelections, setCodeBlockLanguage, accountForCodeBlockValueChange, createCodeMirrorViewState } from './util';
 import { CodeBlockView } from './view';
 
 // ********************************************************************************
@@ -19,101 +15,45 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
           view = new CodeBlockView(model, editor, node, codeBlockStorage, getPos);
 
     super(model, view, editor, node, codeBlockStorage, getPos);
-    this.setupCodeMirrorView();
-  }
-
-  private setupCodeMirrorView() {
-    const codeMirrorView = new CodeMirrorEditorView({
-      state: createCodeMirrorViewState(this.nodeView.outerView, this.getPos, this.node.textContent, this.nodeModel.languageCompartment),
-
-      dispatch: (tr) => {
-        codeMirrorView.update([tr]);
-
-        if(!this.nodeModel.isUpdating) {
-          const textUpdate = tr.state.toJSON().doc;
-          accountForCodeBlockValueChange(this.nodeView.outerView, this.node, this.getPos, textUpdate);
-
-          if(codeMirrorView.hasFocus) {
-            syncSelections(codeMirrorView, this.nodeView.outerView, this.getPos);
-          } /* else -- codeMirrorView has no focus, do not sync Selection*/
-        } /* else -- updating */
-
-      },
-    });
-
-    this.nodeView.codeMirrorView = codeMirrorView;
-    this.nodeView.codeMirrorViewContainer.append(codeMirrorView.dom);
-    setCodeBlockLanguage(codeMirrorView, this.nodeModel.languageCompartment, this.node.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript/*default*/);
-  }
-
-  // == ProseMirror ===============================================================
-  public update(node: ProseMirrorNode) {
-    // NOTE: these checks must be done before the super call, since otherwise
-    //       the compartments of the CodeMirrorView will not be updated, as
-    //       the received Node will then be this.node
-    if(!this.nodeView.codeMirrorView) return false/*no View to update*/;
-    const updatedNodeLanguage = node.attrs[AttributeType.Language];
-    if(updatedNodeLanguage/*not undefined*/ && updatedNodeLanguage !== this.node.attrs[AttributeType.Language]) {
-      setCodeBlockLanguage(this.nodeView.codeMirrorView, this.nodeModel.languageCompartment, node.attrs[AttributeType.Language]);
-    } /* else -- language did not change */
-
-    const superUpdate = super.update(node);
-    if(!superUpdate) return false/*did not receive the right type of Node*/;
-
-    const currentCodeBlockText = this.nodeView.codeMirrorView.state.doc.toString(),
-          newCodeBlockText = node.textContent;
-    const changedTextRange = computeChangedTextRange(currentCodeBlockText, newCodeBlockText);
-    if(changedTextRange) {
-      try {
-        this.nodeModel.isUpdating = true/*start update*/;
-        this.nodeView.codeMirrorView.dispatch({
-          changes: { from: changedTextRange.from, to: changedTextRange.to, insert: changedTextRange.text },
-          selection: { anchor: changedTextRange.from + changedTextRange.text.length },
-        });
-      } finally {
-        this.nodeModel.isUpdating = false/*end update*/;
-      }
-    } /* else -- no changes to account for */
-
-    return true/*updated*/;
-  }
-
-  // .. Selection .................................................................
-  // REF: https://prosemirror.net/examples/codemirror/ #selectNode
-  /** focus the CodeMirrorView when the CodeBlock is selected */
-  public selectNode() {
-    if(!this.nodeView.codeMirrorView) return/*not set yet, nothing to do*/;
-    this.nodeView.codeMirrorView?.focus();
-  }
-
-  // REF: https://prosemirror.net/examples/codemirror/ #setSelection
-  /** set the selection inside the CodeMirrorView */
-  public setSelection(anchor: number, head: number)  {
-    if(!this.nodeView.codeMirrorView) return/*not set yet, nothing to do*/;
-
-    try {
-      this.nodeModel.isUpdating = true/*update started*/;
-      this.nodeView.codeMirrorView.dispatch({ selection: { anchor, head } });
-      this.nodeView.codeMirrorView.focus();
-      syncSelections(this.nodeView.codeMirrorView, this.nodeView.outerView, this.getPos);
-    } finally {
-      this.nodeModel.isUpdating = false/*update finished*/;
-    }
-  }
-
-  // .. Event .....................................................................
-  // REF: https://prosemirror.net/examples/codemirror/ #stopEvent
-  /**
-   * prevent the outer EditorView from trying to handle DOM events
-   * that bubble up from the CodeMirrorView
-   */
-  public stopEvent(event: Event) {
-    return true/*outer EditorView will not handle the event*/;
   }
 
   // .. Mutation ..................................................................
-  /** ignore all Mutations, since they should be handled by CodeMirror */
-  public ignoreMutation(mutation: MutationRecord | { type: 'selection'; target: Element; }) {
-    return true/*ignore all mutations*/;
+  /**
+   * NOTE: these checks are as specific as possible to avoid messing with the
+   *       default ProseMirror lifecycle
+   *
+   * ensure CodeBlock NodeViews do not get destroyed incorrectly either
+   * logically (in the Storage) or the View
+   */
+   public ignoreMutation(mutation: MutationRecord | { type: 'selection'; target: Element; }) {
+    // REF: https://discuss.prosemirror.net/t/what-can-cause-a-nodeview-to-be-rebuilt/4959
+    // NOTE: this specifically addresses the CodeBlock NodeViews being removed
+    //       after destroy() gets called when the DOM mutation happens inside
+    //       the DOM when adding or removing Headings, which change the VisualId
+    //       of the CodeBlock and hence trigger the mutation.
+    //       Currently this logic is exclusive to CodeBlocks since their VisualId gets
+    //       updated dynamically
+    if(this.nodeView.dom?.contains(mutation.target)) {
+      const id = this.node.attrs[AttributeType.Id];
+      if(!id) return false/*do not ignore mutation*/;
+
+      const visualId = this.nodeView.storage.getVisualId(this.node.attrs.id ?? '');
+      if(visualId === mutation.target.textContent?.trim()) {
+        return true/*ignore mutation*/;
+      } /* else -- the mutation target has no textContent or it does not equal the visualId */
+    } /* else -- the nodeView has no DOM or the mutation did not happen inside of it */
+
+    // if there was an attribute mutation and it includes the visualId, then ignore the mutation
+    // or an attribute of the CodeBlock changed, ignore it
+    if(mutation.type === 'attributes' && (mutation.attributeName === DATA_VISUAL_ID || mutation.attributeName?.includes(DATA_ATTRIBUTE))) {
+      return true/*(SEE: comment above)*/;
+    } /* else -- the mutation was not of attribute type, it did not change the visualId, or it did not update an attribute */
+
+    // if there was a childList mutation and the target is the visualId container, ignore it
+    if(mutation.type === 'childList' && mutation.target === this.nodeView.visualIdContainer) {
+      return true/*(SEE: comment above)*/;
+    } /* else -- mutation is not of childList type or the target was not the visualId container */
+
+    return false/*do not ignore */;
   }
 }

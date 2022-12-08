@@ -1,7 +1,4 @@
-import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
-import { EditorView } from 'prosemirror-view';
-
-import { getPosType, AttributeType, CodeBlockNodeType, NodeName, CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
+import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -13,13 +10,10 @@ import { CodeBlockStorage } from './storage';
 // == Class =======================================================================
 export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlockStorage, CodeBlockModel> {
   /** the div that holds the content plus the visualId container of the CodeBlock */
-  public codeMirrorViewContainer: HTMLDivElement;
+  private innerContainer: HTMLDivElement;
 
-  /** the CodeMirrorView */
-  public codeMirrorView: CodeMirrorEditorView | undefined/*not set yet by Controller*/;
-
-  /** the regular EditorView, also set here for consistency accessing through Controller  */
-  public outerView: EditorView;
+  /** the container where the content of the CodeBlock is rendered */
+  public readonly contentDOM: HTMLDivElement;
 
   /** the div that holds the visualId of the CodeBlock */
   public readonly visualIdContainer: HTMLDivElement;
@@ -29,18 +23,21 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     super(model, editor, node, storage, getPos);
 
     // -- UI ----------------------------------------------------------------------
-    this.outerView = this.editor.view;
-
     // Create DOM elements and append it to the outer container (dom)
-    const codeMirrorViewContainer = document.createElement('div');
-    this.codeMirrorViewContainer = codeMirrorViewContainer;
-    this.codeMirrorViewContainer.classList.add(CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS);
-    this.dom.appendChild(this.codeMirrorViewContainer);
+    const innerContainer = document.createElement('div');
+    this.innerContainer = innerContainer;
+    this.innerContainer.classList.add(CODEBLOCK_INNER_CONTAINER_CLASS);
+    this.dom.appendChild(this.innerContainer);
 
     this.visualIdContainer = document.createElement('div');
     this.visualIdContainer.contentEditable = 'false';
     this.visualIdContainer.classList.add(CODEBLOCK_VISUAL_ID_CONTAINER_CLASS);
     this.dom.appendChild(this.visualIdContainer);
+
+    // -- ProseMirror -------------------------------------------------------------
+    // Tell PM that the content fo the node must go into the paragraph element,
+    // by delegating keeping track of the it to PM (SEE: NodeView#contentDOM)
+    this.contentDOM = this.innerContainer;
 
     // Sync view with current state
     this.updateView();
@@ -56,12 +53,21 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
   // -- Update --------------------------------------------------------------------
   public updateView() {
     const { attrs } = this.node;
-    const id = attrs[AttributeType.Id];
+    const id = attrs[AttributeType.Id],
+          type = attrs[AttributeType.Type] ?? CodeBlockType.Code/*default*/,
+          wrap = attrs[AttributeType.Wrap] ?? false/*default*/;
     if(!id) return/*nothing to do*/;
+    const visualId = this.storage.getVisualId(id);
 
     // update DOM
-    const visualId = this.storage.getVisualId(id);
     this.dom.setAttribute(DATA_VISUAL_ID, visualId);
+    this.dom.setAttribute(createNodeDataAttribute(AttributeType.Type), type);
+    this.dom.style.whiteSpace = getWrapStyles(wrap);
+
+    // update Inner Container
+    this.innerContainer.style.fontFamily = getCodeBlockFontStyles(type as CodeBlockType/*by definition*/);
+
+    // update VisualId Container
     this.visualIdContainer.innerHTML = visualId;
   }
 }

@@ -1,9 +1,9 @@
 import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
+import { getWrapStyles, noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFromNodeSpecAttributes } from '../attribute';
 import { getRenderAttributes } from '../htmlRenderer/attribute';
 import { RendererState } from '../htmlRenderer/state';
-import { createNodeDataTypeAttribute, NodeRendererSpec, PROSEMIRROR_TRAILING_BREAK_CLASS } from '../htmlRenderer/type';
+import { createNodeDataAttribute, createNodeDataTypeAttribute, NodeRendererSpec, PROSEMIRROR_TRAILING_BREAK_CLASS } from '../htmlRenderer/type';
 import { getAllowedMarks, MarkName } from '../mark';
 import { JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../node/type';
 import { NotebookSchemaType } from '../schema';
@@ -15,8 +15,11 @@ import { NotebookSchemaType } from '../schema';
 export const CodeBlockAttributesSpec = {
   [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<NodeIdentifier>(),
 
-  /** the Language of the current CodeBlock */
-  [AttributeType.Language]: noNodeOrMarkSpecAttributeDefaultValue<CodeBlockLanguage>(),
+  /** a ContentType-like string that defines what code is in the CodeBlock */
+  [AttributeType.Type]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+
+  /** does the text wrap within the CodeBlock */
+  [AttributeType.Wrap]: noNodeOrMarkSpecAttributeDefaultValue<boolean>(),
 };
 export type CodeBlockAttributes = AttributesTypeFromNodeSpecAttributes<typeof CodeBlockAttributesSpec>;
 export const isCodeBlockAttributes = (attrs: any): attrs is CodeBlockAttributes => attrs.id !== undefined && attrs.wrap !== undefined;
@@ -41,14 +44,17 @@ export const CodeBlockNodeSpec: NodeSpec = {
 // -- Render Spec -----------------------------------------------------------------
 const renderCodeBlockNodeView = (attributes: CodeBlockAttributes, content: string, state: RendererState) => {
   const id = attributes[AttributeType.Id],
-        visualId = id ? state[NodeName.CODEBLOCK].visualIds[id] : ''/*no visual id*/;
+        type = attributes[AttributeType.Type] ?? CodeBlockType.Code/*default*/,
+        wrap = attributes[AttributeType.Wrap] ?? false/*default*/;
+
+  const visualId = id ? state[NodeName.CODEBLOCK].visualIds[id] : ''/*no visual id*/;
   const renderAttributes = getRenderAttributes(NodeName.CODEBLOCK, { ...attributes, [AttributeType.Wrap]: ''/*string required -- ignore value*/ }, CodeBlockNodeRendererSpec, CodeBlockNodeSpec);
 
   // NOTE: must not contain white space, else the renderer has issues
   //       (hence it is a single line below)
   // NOTE: createNodeDataTypeAttribute must be used for all nodeRenderSpecs
   //       that define their own renderNodeView
-  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/};"><div class="${CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS}">${content.length > 0 ? content : `<br class="${PROSEMIRROR_TRAILING_BREAK_CLASS}" />`}</div><div class="${CODEBLOCK_VISUAL_ID_CONTAINER_CLASS}">${visualId}</div></div>`;
+  return `<div id=${id} ${createNodeDataTypeAttribute(NodeName.CODEBLOCK)} ${createNodeDataAttribute(AttributeType.Type)}="${attributes.type}" ${DATA_VISUAL_ID}="${visualId}" style="${renderAttributes.style ?? ''/*empty string if not defined*/}; white-space: ${getWrapStyles(wrap)}"><div class="${CODEBLOCK_INNER_CONTAINER_CLASS}" style="font-family: ${getCodeBlockFontStyles(type as CodeBlockType/*by definition*/)};">${content.length > 0 ? content : `<br class="${PROSEMIRROR_TRAILING_BREAK_CLASS}" />`}</div><div class="${CODEBLOCK_VISUAL_ID_CONTAINER_CLASS}">${visualId}</div></div>`;
 };
 
 export const CodeBlockNodeRendererSpec: NodeRendererSpec<CodeBlockAttributes> = {
@@ -85,11 +91,13 @@ export const REMOVED_CODEBLOCK_VISUALID = 'Removed';
 // used as the hash when a CodeBlock is empty
 export const EMPTY_CODEBLOCK_HASH = 'EmptyString';
 
-export enum CodeBlockLanguage {
-  CSS = 'css',
-  HTML = 'html',
-  JavaScript = 'javascript',
-}
+export enum CodeBlockType { Text = 'Text', Code = 'Code'}
+
+/**
+ * used to get the font-family styles for the CodeBlock
+ * given its {@link CodeBlockType}
+ */
+export const getCodeBlockFontStyles = (type: CodeBlockType) => type === CodeBlockType.Code ? 'monospace' : 'inherit';
 
 // -- CSS -------------------------------------------------------------------------
 // the attribute that ensures that VisualId for a CodeBlock appears
@@ -97,7 +105,7 @@ export enum CodeBlockLanguage {
 export const DATA_VISUAL_ID = 'data-visualid';
 
 // class of the div that holds the content of the CodeBlock
-export const CODEBLOCK_CODEMIRROR_VIEW_CONTAINER_CLASS = 'codeBlockCodeMirrorViewContainer';
+export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
 
 // class of the div that holds the visualId of the CodeBlock
 export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';

@@ -8,7 +8,7 @@
 }
 
 /* -- Inner Container ---------------------------------------------------------- */
-[data-node-type="codeBlock"] > .codeBlockCodeMirrorViewContainer {
+[data-node-type="codeBlock"] > .codeBlockInnerContainer {
   flex-basis: 95%;
   padding: 5px;
   min-height: 1.5em;
@@ -23,14 +23,4 @@
 /* -- VisualId Container ------------------------------------------------------- */
 [data-node-type="codeBlock"] > .codeBlockVisualIdContainer {
   flex-basis: 5%;
-}
-
-/* -- CodeMirror --------------------------------------------------------------- */
-/* do not show any special kind of outline when the CodeMirrorView is selected   */
-.cm-focused {
-  outline: none !important/*since the class can be accompanied by other selectors, ensure no outline is present*/;
-}
-
-.codeBlockMark-highlight {
-  background-color: yellow;
 }
