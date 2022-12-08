@@ -1,10 +1,15 @@
+import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { defaultKeymap, indentWithTab } from '@codemirror/commands';
+import { bracketMatching, defaultHighlightStyle, foldGutter, foldKeymap, indentOnInput, syntaxHighlighting } from '@codemirror/language';
 import { css } from '@codemirror/lang-css';
 import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
-import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
-import { Compartment } from '@codemirror/state';
+import { highlightSelectionMatches, selectNextOccurrence } from '@codemirror/search';
+import { Compartment, EditorState as CodeMirrorEditorState } from '@codemirror/state';
+import { drawSelection, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers, rectangularSelection, EditorView as CodeMirrorEditorView } from '@codemirror/view';
 import { setBlockType } from 'prosemirror-commands';
 import { GapCursor } from 'prosemirror-gapcursor';
+import { redo, undo } from 'prosemirror-history';
 import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 import { TextSelection, Selection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
@@ -12,6 +17,79 @@ import { EditorView } from 'prosemirror-view';
 import { getPosType, isCodeBlockNode, CodeBlockLanguage } from 'common';
 
 // ********************************************************************************
+// == State =======================================================================
+export const createCodeMirrorViewState = (outerView: EditorView, getPos: getPosType, initialTextContent: string, languageCompartment: Compartment) => CodeMirrorEditorState.create({
+  extensions: [
+    // enable autocompletion per Language
+    autocompletion(),
+
+    // whenever the cursor is next to a Bracket, highlight it
+    // and the one that matches it
+    bracketMatching(),
+
+    // when a closeable bracket is inserted,its closing one
+    // is immediately inserted after it
+    closeBrackets(),
+
+    // reset Selection on CodeMirrorView blur
+    CodeMirrorEditorView.domEventHandlers({ blur(event, codeMirrorView) { codeMirrorView.dispatch({ selection: { anchor: 0/*start of CodeMirrorView*/ } }); } }),
+
+    // allow multiple Selections
+    CodeMirrorEditorState.allowMultipleSelections.of(true),
+
+    // draw the cursor as a vertical line
+    drawSelection({ cursorBlinkRate: 1000/*ms*/ }),
+
+    // allow the gutter to be folded (collapsed) per lines
+    foldGutter(),
+
+    // highlight the current line
+    highlightActiveLineGutter(),
+
+    // highlight Text that matches the Selection
+    highlightSelectionMatches(),
+
+    // mark Lines that have a cursor in them
+    highlightActiveLine(),
+
+    // enable re-indentation on input, which may be triggered per language
+    indentOnInput(),
+
+    // Keymap of expected behavior
+    keymap.of([
+      { key: 'Mod-d', run: selectNextOccurrence, preventDefault: true/*prevent default for mod-D*/ },
+      { key: 'ArrowUp', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', -1/*up*/, outerView, getPos, codeMirrorView) },
+      { key: 'ArrowLeft', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', -1/*left*/, outerView, getPos, codeMirrorView) },
+      { key: 'ArrowDown', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', 1/*down*/, outerView, getPos, codeMirrorView) },
+      { key: 'ArrowRight', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', 1/*right*/, outerView, getPos, codeMirrorView) },
+      { key: 'Mod-z', run: () => undo(outerView.state, outerView.dispatch) },
+      { key: 'Mod-Shift-z', run: () => redo(outerView.state, outerView.dispatch) },
+      { key: 'Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(outerView, codeMirrorView) },
+      { key: 'Mod-Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(outerView, codeMirrorView) },
+      ...defaultKeymap,
+      ...foldKeymap,
+      ...closeBracketsKeymap,
+      ...completionKeymap,
+      indentWithTab,
+    ]),
+
+    // show Line Numbers
+    lineNumbers(),
+
+    // allow rectangular Selections
+    rectangularSelection(),
+
+    // allow syntax highlighting in the CodeMirror Editor
+    syntaxHighlighting(defaultHighlightStyle),
+
+    // -- Attribute -----------------------------------------------------------
+    languageCompartment.of([/*default empty*/]),
+  ],
+
+  doc: initialTextContent,
+});
+
+
 // == Change ======================================================================
 // NOTE: this is inspired by https://prosemirror.net/examples/codemirror/ #update
 export const computeChangedTextRange = (currentCodeBlockText: string, newCodeBlockText: string) => {

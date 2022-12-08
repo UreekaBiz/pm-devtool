@@ -1,11 +1,5 @@
-import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
-import { defaultKeymap, indentWithTab } from '@codemirror/commands';
-import { bracketMatching, defaultHighlightStyle, foldGutter, foldKeymap, indentOnInput, syntaxHighlighting } from '@codemirror/language';
-import { drawSelection, highlightActiveLineGutter, highlightActiveLine, keymap, lineNumbers, rectangularSelection, EditorView as CodeMirrorEditorView } from '@codemirror/view';
-import { highlightSelectionMatches, selectNextOccurrence } from '@codemirror/search';
-import { EditorState as CodeMirrorEditorState } from '@codemirror/state';
-import { redo, undo } from 'prosemirror-history';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
 
 import { getPosType, AttributeType, CodeBlockNodeType, CodeBlockLanguage } from 'common';
 
@@ -14,7 +8,7 @@ import { AbstractNodeController } from 'notebookEditor/model/AbstractNodeControl
 
 import { CodeBlockModel } from './model';
 import { CodeBlockStorage } from './storage';
-import { maybeDeleteCodeBlock, computeChangedTextRange, syncSelections, maybeEscapeFromCodeBlock, setCodeBlockLanguage, accountForCodeBlockValueChange } from './util';
+import { computeChangedTextRange, syncSelections, setCodeBlockLanguage, accountForCodeBlockValueChange, createCodeMirrorViewState } from './util';
 import { CodeBlockView } from './view';
 
 // ********************************************************************************
@@ -29,81 +23,11 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
   }
 
   private setupCodeMirrorView() {
-    const state = CodeMirrorEditorState.create({
-      extensions: [
-        // enable autocompletion per Language
-        autocompletion(),
-
-        // whenever the cursor is next to a Bracket, highlight it
-        // and the one that matches it
-        bracketMatching(),
-
-        // when a closeable bracket is inserted,its closing one
-        // is immediately inserted after it
-        closeBrackets(),
-
-        // reset Selection on CodeMirrorView blur
-        CodeMirrorEditorView.domEventHandlers({ blur(event, codeMirrorView) { codeMirrorView.dispatch({ selection: { anchor: 0/*start of CodeMirrorView*/ } }); } }),
-
-        // allow multiple Selections
-        CodeMirrorEditorState.allowMultipleSelections.of(true),
-
-        // draw the cursor as a vertical line
-        drawSelection({ cursorBlinkRate: 1000/*ms*/ }),
-
-        // allow the gutter to be folded (collapsed) per lines
-        foldGutter(),
-
-        // highlight the current line
-        highlightActiveLineGutter(),
-
-        // highlight Text that matches the Selection
-        highlightSelectionMatches(),
-
-        // mark Lines that have a cursor in them
-        highlightActiveLine(),
-
-        // enable re-indentation on input, which may be triggered per language
-        indentOnInput(),
-
-        // Keymap of expected behavior
-        keymap.of([
-          { key: 'Mod-d', run: selectNextOccurrence, preventDefault: true/*prevent default for mod-D*/ },
-          { key: 'ArrowUp', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', -1/*up*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
-          { key: 'ArrowLeft', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', -1/*left*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
-          { key: 'ArrowDown', run: (codeMirrorView) => maybeEscapeFromCodeBlock('line', 1/*down*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
-          { key: 'ArrowRight', run: (codeMirrorView) => maybeEscapeFromCodeBlock('char', 1/*right*/, this.nodeView.outerView, this.getPos, codeMirrorView) },
-          { key: 'Mod-z', run: () => undo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
-          { key: 'Mod-Shift-z', run: () => redo(this.nodeView.outerView.state, this.nodeView.outerView.dispatch) },
-          { key: 'Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(this.nodeView.outerView, codeMirrorView) },
-          { key: 'Mod-Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(this.nodeView.outerView, codeMirrorView) },
-          ...defaultKeymap,
-          ...foldKeymap,
-          ...closeBracketsKeymap,
-          ...completionKeymap,
-          indentWithTab,
-        ]),
-
-        // show Line Numbers
-        lineNumbers(),
-
-        // allow rectangular Selections
-        rectangularSelection(),
-
-        // allow syntax highlighting in the CodeMirror Editor
-        syntaxHighlighting(defaultHighlightStyle),
-
-        // -- Attribute -----------------------------------------------------------
-        this.nodeModel.languageCompartment.of([/*default empty*/]),
-      ],
-
-      doc: this.node.textContent,
-    });
-
     const codeMirrorView = new CodeMirrorEditorView({
-      state,
+      state: createCodeMirrorViewState(this.nodeView.outerView, this.getPos, this.node.textContent, this.nodeModel.languageCompartment),
       dispatch: (tr) => {
         codeMirrorView.update([tr]);
+        
         if(!this.nodeModel.isUpdating) {
           const textUpdate = tr.state.toJSON().doc;
           accountForCodeBlockValueChange(this.nodeView.outerView, this.node, this.getPos, textUpdate);
