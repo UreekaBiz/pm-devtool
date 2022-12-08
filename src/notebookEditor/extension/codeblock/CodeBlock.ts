@@ -2,7 +2,7 @@ import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { Selection } from 'prosemirror-state';
 
-import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
+import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, isGapCursorSelection, insertNewlineCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { toggleBlock } from 'notebookEditor/command/node';
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
@@ -97,6 +97,8 @@ const toggleCodeBlock = (editor: Editor) => {
 const goIntoCodeBlock = (editor: Editor, direction: 'left' | 'right' | 'up' | 'down') => {
   const { view } = editor,
         { state } = view;
+  if(isGapCursorSelection(state.selection)) return false/*do not handle*/;
+
   const wouldLeaveTextBlock = view.endOfTextblock(direction);
   if(!wouldLeaveTextBlock) return false/*would not leave TextBlock*/;
 

@@ -3,10 +3,11 @@ import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
 import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
 import { Compartment } from '@codemirror/state';
+import { setBlockType } from 'prosemirror-commands';
+import { GapCursor } from 'prosemirror-gapcursor';
+import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
 import { TextSelection, Selection } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Fragment, Node as ProseMirrorNode } from 'prosemirror-model';
-import { setBlockType } from 'prosemirror-commands';
 
 import { getPosType, isCodeBlockNode, CodeBlockLanguage } from 'common';
 
@@ -81,11 +82,15 @@ export const maybeEscapeFromCodeBlock = (unit: 'char' | 'line', direction: -1/*l
   const codeBlockNode = outerEditorView.state.doc.nodeAt(getPos());
   if(!codeBlockNode || !isCodeBlockNode(codeBlockNode)) return false/*not a CodeBlock, do not handle*/;
 
-  const resultingPosition = getPos() + (direction < 0/*left/upwards*/ ? 0/*start of CodeBlock*/ : codeBlockNode.nodeSize),
-        newOuterViewSelection = Selection.near(outerEditorView.state.doc.resolve(resultingPosition), direction);
-  const { tr } = outerEditorView.state;
-        tr.setSelection(newOuterViewSelection).scrollIntoView();
+  const resultingPosition = getPos() + (direction < 0/*left/upwards*/ ? 0/*start of CodeBlock*/ : codeBlockNode.nodeSize);
+  let newOuterViewSelection = Selection.near(outerEditorView.state.doc.resolve(resultingPosition), direction);
 
+  const { tr } = outerEditorView.state;
+  if(newOuterViewSelection.eq(outerEditorView.state.selection)) {
+    newOuterViewSelection = new GapCursor(tr.doc.resolve(resultingPosition));
+  } /* else -- Selection is different, no need to set GapCursor */
+
+  tr.setSelection(newOuterViewSelection).scrollIntoView();
   outerEditorView.dispatch(tr);
   outerEditorView.focus();
   return true/*handled*/;
