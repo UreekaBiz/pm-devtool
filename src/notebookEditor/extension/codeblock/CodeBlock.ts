@@ -2,9 +2,11 @@ import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 import { Selection } from 'prosemirror-state';
 
-import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, isGapCursorSelection, AttributeType, CodeBlockNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
+import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, isGapCursorSelection, insertNewlineCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { toggleBlock } from 'notebookEditor/command/node';
+import { applyDocumentUpdates } from 'notebookEditor/command/update';
+import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { Editor } from 'notebookEditor/editor/Editor';
 import { ExtensionPriority } from 'notebookEditor/model';
 
@@ -58,6 +60,12 @@ export const CodeBlock = new NodeExtension({
       // toggle a CodeBlock
       'Shift-Mod-c': () => toggleCodeBlock(editor),
       'Shift-Mod-C': () => toggleCodeBlock(editor),
+
+      // insert a newline on Enter
+      'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),
+
+      // exit Node on Shift-Enter
+      'Shift-Enter': () => applyDocumentUpdates(editor, [new LeaveBlockNodeDocumentUpdate(NodeName.CODEBLOCK)]),
 
       // select a CodeBlock if arrow traversal would put the cursor inside it
       'ArrowLeft': () => goIntoCodeBlock(editor, 'left'),
