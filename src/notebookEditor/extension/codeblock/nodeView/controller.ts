@@ -1,5 +1,5 @@
-import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorView as CodeMirrorEditorView } from '@codemirror/view';
+import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { getPosType, AttributeType, CodeBlockNodeType, CodeBlockLanguage } from 'common';
 
@@ -25,9 +25,10 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
   private setupCodeMirrorView() {
     const codeMirrorView = new CodeMirrorEditorView({
       state: createCodeMirrorViewState(this.nodeView.outerView, this.getPos, this.node.textContent, this.nodeModel.languageCompartment),
+
       dispatch: (tr) => {
         codeMirrorView.update([tr]);
-        
+
         if(!this.nodeModel.isUpdating) {
           const textUpdate = tr.state.toJSON().doc;
           accountForCodeBlockValueChange(this.nodeView.outerView, this.node, this.getPos, textUpdate);

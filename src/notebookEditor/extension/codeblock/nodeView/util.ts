@@ -16,6 +16,8 @@ import { EditorView } from 'prosemirror-view';
 
 import { getPosType, isCodeBlockNode, CodeBlockLanguage } from 'common';
 
+import { highlightCodeBlockSelection } from './mark';
+
 // ********************************************************************************
 // == State =======================================================================
 export const createCodeMirrorViewState = (outerView: EditorView, getPos: getPosType, initialTextContent: string, languageCompartment: Compartment) => CodeMirrorEditorState.create({
@@ -66,6 +68,7 @@ export const createCodeMirrorViewState = (outerView: EditorView, getPos: getPosT
       { key: 'Mod-Shift-z', run: () => redo(outerView.state, outerView.dispatch) },
       { key: 'Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(outerView, codeMirrorView) },
       { key: 'Mod-Backspace', run: (codeMirrorView) => maybeDeleteCodeBlock(outerView, codeMirrorView) },
+      { key: "Mod-h", preventDefault: true/*prevent default for mod-H*/, run: highlightCodeBlockSelection },
       ...defaultKeymap,
       ...foldKeymap,
       ...closeBracketsKeymap,
