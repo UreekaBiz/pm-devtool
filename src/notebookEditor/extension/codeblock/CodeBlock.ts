@@ -41,7 +41,7 @@ export const CodeBlock = new NodeExtension({
   addStorage: () => new CodeBlockStorage(),
 
   // -- Transaction ---------------------------------------------------------------
-  transactionListener: (editor, tr) => codeBlockOnTransaction(editor, tr),
+  transactionListener: (editor, tr) => codeBlockOnTransaction(editor, tr), 
 
   // -- View ----------------------------------------------------------------------
   defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<CodeBlockController>(editor, node, NodeName.CODEBLOCK, getPos, isCodeBlockNode, CodeBlockController),
