@@ -33,7 +33,7 @@ export const CodeBlockNodeSpec: NodeSpec = {
   // .. Definition ................................................................
   content: `${NodeName.TEXT}*`,
   group: NodeGroup.BLOCK,
-  marks: getAllowedMarks([MarkName.BOLD, MarkName.CODE, MarkName.ITALIC, MarkName.STRIKETHROUGH, MarkName.SUB_SCRIPT, MarkName.SUPER_SCRIPT, MarkName.TEXT_STYLE, MarkName.UNDERLINE]),
+  marks: getAllowedMarks([MarkName.BOLD, MarkName.ITALIC, MarkName.STRIKETHROUGH, MarkName.SUB_SCRIPT, MarkName.SUPER_SCRIPT, MarkName.TEXT_STYLE, MarkName.UNDERLINE]),
 
   // .. Attribute .................................................................
   attrs: CodeBlockAttributesSpec,
