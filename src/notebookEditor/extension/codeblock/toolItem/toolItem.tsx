@@ -7,6 +7,7 @@ import { CheckBoxToolItem } from 'notebookEditor/extension/shared/component/Chec
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
+import { CodeBlockLanguageToolItem } from './CodeBlockLanguageToolItem';
 import { CodeBlockTypeToolItem } from './CodeBlockTypeToolItem';
 
 //*********************************************************************************
@@ -25,6 +26,14 @@ export const codeBlockToolItem: ToolItem = {
   shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => isNodeActive(editor.view.state, NodeName.CODEBLOCK),
   onClick: (editor) => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
+};
+
+export const codeBlockLanguageToolItem: ToolItem = {
+  toolType: 'component',
+  name: 'codeBlockLanguageToolItem',
+
+  component: CodeBlockLanguageToolItem,
+  shouldShow: (editor) => isCodeBlockNode(getParentNode(editor.view.state.selection)),
 };
 
 export const codeBlockTypeToolItem: ToolItem = {

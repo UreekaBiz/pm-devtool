@@ -2,7 +2,7 @@ import Prism from 'prismjs';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange } from 'common';
+import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange, CODEBLOCK_TOKEN_CLASS } from 'common';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
@@ -94,7 +94,7 @@ const getSyntaxDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType
     if(isPrismToken(tokenOrString)) {
       const from = absolutePos,
         to = absolutePos + tokenOrString.content.length;
-      decorations.push(Decoration.inline(from, to, { class: `token` }));
+      decorations.push(Decoration.inline(from, to, { class: `${CODEBLOCK_TOKEN_CLASS}-${tokenOrString.type}` }));
       absolutePos += tokenOrString.content.length;
     } else /*found a non-Token string*/ {
       absolutePos += tokenOrString.length;

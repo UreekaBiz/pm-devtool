@@ -1,4 +1,4 @@
-import { isCodeBlockNode, AttributeType, CodeBlockType, NodeName, UpdateSingleNodeAttributesDocumentUpdate, SetTextSelectionDocumentUpdate } from 'common';
+import { isCodeBlockNode, AttributeType, NodeName, UpdateSingleNodeAttributesDocumentUpdate, SetTextSelectionDocumentUpdate, CodeBlockLanguage } from 'common';
 
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { DropdownTool, DropdownToolItemType } from 'notebookEditor/extension/shared/component/DropdownToolItem/DropdownTool';
@@ -7,34 +7,36 @@ import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
 // == Constant ====================================================================
-const options: DropdownToolItemType[] = [{ value: CodeBlockType.Code, label: 'Code' }, { value: CodeBlockType.Text, label: 'Text' }];
+const options: DropdownToolItemType[] = Object.entries(CodeBlockLanguage).reduce<DropdownToolItemType[]>((options, currentCodeBlockLanguage) => {
+  options.push({ value: currentCodeBlockLanguage[1/*the enum value*/], label: currentCodeBlockLanguage[0/*the enum name*/] });
+  return options;
+}, [/*default empty*/]);
 
 // == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/}
 
 // == Component ===================================================================
-export const CodeBlockTypeToolItem: React.FC<Props> = ({ editor }) => {
+export const CodeBlockLanguageToolItem: React.FC<Props> = ({ editor }) => {
   const { $anchor, anchor } = editor.view.state.selection;
   const parentNode = $anchor.parent;
   if(!isCodeBlockNode(parentNode)) throw new Error('Invalid CodeBlock WrapTool Render');
 
-  const type = parentNode.attrs[AttributeType.Type] ?? CodeBlockType.Code/*default*/;
+  const language = parentNode.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript/*default*/;
 
   // -- Handler -------------------------------------------------------------------
-  const handleChange = (type: string) => {
-    // text should wrap by contract (even though it can be change by the user)
-    const wrap = type === CodeBlockType.Text;
-    // (SEE: CodeBlock.ts)
+  const handleChange = (language: string) => {
     applyDocumentUpdates(editor, [
-      new UpdateSingleNodeAttributesDocumentUpdate(NodeName.CODEBLOCK, anchor - $anchor.parentOffset - 1/*the CodeBlock itself*/, { [AttributeType.Type]: type, [AttributeType.Wrap]: wrap }),
+      new UpdateSingleNodeAttributesDocumentUpdate(NodeName.CODEBLOCK, anchor - $anchor.parentOffset - 1/*the CodeBlock itself*/, { [AttributeType.Language]: language }),
       new SetTextSelectionDocumentUpdate({ from: anchor, to: anchor }),
     ]);
   };
 
   // -- UI ------------------------------------------------------------------------
   return (
-    <InputToolItemContainer name='Type'>
-      <DropdownTool value={type} options={options} placeholder='Type' onChange={handleChange}/>
+    <InputToolItemContainer name='Language'>
+      <DropdownTool value={language} options={options} placeholder='Language' onChange={handleChange}/>
     </InputToolItemContainer>
   );
 };
+
+
