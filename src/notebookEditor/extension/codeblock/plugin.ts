@@ -8,6 +8,7 @@ import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, Select
 /** highlight the content of a CodeBlock given its language */
 
 // == Constant ====================================================================
+const REGULAR_STRING = 'regular string';
 const codeBlockPluginKey = new PluginKey<CodeBlockPluginState>('codeBlockPluginKey');
 
 // == Class =======================================================================
@@ -41,12 +42,12 @@ export class CodeBlockPluginState {
         const { position, node } = codeBlockNodePositions[i];
         if(!isCodeBlockNode(node)) continue/*does not exist anymore*/;
 
+        this.decorationSet = this.decorationSet.remove(this.decorationSet.find(position, position + node.nodeSize));
         const syntaxDecorations = getSyntaxDecorations(position, node);
         if(!syntaxDecorations?.length) continue/*no decorations to add*/;
         this.decorationSet = this.decorationSet.add(newEditorState.doc, [...syntaxDecorations]);
       }
     }
-
     return this/*state updated*/;
   };
 }
@@ -101,22 +102,43 @@ const getSyntaxDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType
   const prismGrammar = Prism.languages[language];
   if(!prismGrammar) return/*no prismGrammar exists for given language*/;
 
-  const tokenOrStrings = Prism.tokenize(codeBlock.textContent, prismGrammar);
+  const parsedTokens = parseTokens(Prism.tokenize(codeBlock.textContent, prismGrammar));
   let absolutePos = codeBlockPos + 1/*skip the CodeBlock node itself*/;
-  for(let i = 0; i < tokenOrStrings.length; i++) {
-    const tokenOrString = tokenOrStrings[i];
-    if(isPrismToken(tokenOrString)) {
+  for(let i = 0; i < parsedTokens.length; i++) {
+    const parsedToken = parsedTokens[i];
+    const { text, type } = parsedToken;
+
+    if(type !== REGULAR_STRING) {
       const from = absolutePos,
-        to = absolutePos + tokenOrString.content.length;
-      decorations.push(Decoration.inline(from, to, { class: `${CODEBLOCK_TOKEN_CLASS}-${tokenOrString.type}` }));
-      absolutePos += tokenOrString.content.length;
+            to = absolutePos + text.length;
+      decorations.push(Decoration.inline(from, to, { class: `${CODEBLOCK_TOKEN_CLASS}-${type}` }));
+      absolutePos += text.length;
     } else /*found a non-Token string*/ {
-      absolutePos += tokenOrString.length;
+      absolutePos += text.length;
     }
   }
 
   return decorations;
 };
 
-// == Type Guard ==================================================================
-const isPrismToken = (tokenOrString: any): tokenOrString is Prism.Token => typeof tokenOrString !== 'string';
+const parseTokens = (tokens:  (string | Prism.Token)[]) => {
+  const parsed: { text: string; type: string; }[] = [/*default empty*/];
+  for(let i=0; i<tokens.length; i++) {
+    const tokenOrString = tokens[i];
+    if(typeof tokenOrString === 'string') {
+      parsed.push({ text: tokenOrString, type: REGULAR_STRING });
+    } else /*a Token*/ {
+      const { content } = tokenOrString;
+      if(typeof content === 'string') {
+        parsed.push({ text: content, type: tokenOrString.type });
+      } else {
+        const parsedContent = Array.isArray(content)
+          ? parseTokens(content)
+          : parseTokens([content]/*is a Token*/);
+
+        parsed.push(...parsedContent);
+      }
+    }
+  }
+  return parsed;
+};
