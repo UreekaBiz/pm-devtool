@@ -95,12 +95,6 @@ export const DATA_VISUAL_ID = 'data-visualid';
 // class of the div that holds the content of the CodeBlock
 export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
 
-// class of the div that holds the line numbers of the CodeBlock
-export const CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS = 'codeBlockLineNumbersContainer';
-
-// class of the div that holds content  of the CodeBlock
-export const CODEBLOCK_CONTENT_CONTAINER_CLASS = 'codeBlockContentContainer';
-
 // class of the div that holds the visualId of the CodeBlock
 export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';
 

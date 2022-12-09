@@ -9,7 +9,6 @@
 
 /* -- Inner Container ---------------------------------------------------------- */
 [data-node-type="codeBlock"] > .codeBlockInnerContainer {
-  display: flex;
   flex-basis: 95%;
   padding: 5px;
   min-height: 1.5em;
@@ -20,19 +19,18 @@
   overflow: auto;
   font-size: 1.25em;
   hyphens: none;
+
+  counter-reset: div;
 }
 
-/* -- Line Number Container ---------------------------------------------------- */
-[data-node-type="codeBlock"] > .codeBlockLineNumbersContainer {
-  display: flex;
-  flex-direction: column;
-  color: "#AAA"
+[data-node-type="codeBlock"] > .codeBlockInnerContainer > [data-node-type="paragraph"]::before {
+  counter-increment: div;
+  content: counter(div)" ";
+  font-size: 1em;
+  color: #AAA;
 }
-
-/* -- Content Container -------------------------------------------------------- */
-[data-node-type="codeBlock"] > [data-node-type="paragraph"]::before {
-  content: "XD";
-  background: #EDF2F7 !important;
+[data-node-type="codeBlock"] > .codeBlockInnerContainer > [data-node-type="paragraph"] {
+  background: #EDF2F7;
 }
 
 /* -- VisualId Container ------------------------------------------------------- */
