@@ -16,6 +16,7 @@ import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
 import { CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
+import { codeBlockPlugin } from './plugin';
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -80,5 +81,6 @@ export const CodeBlock = new NodeExtension({
       'Cmd-a': () => shortcutCommandWrapper(editor, selectBlockNodeContentCommand(NodeName.CODEBLOCK)),
       'Cmd-A': () => shortcutCommandWrapper(editor, selectBlockNodeContentCommand(NodeName.CODEBLOCK)),
     }),
+    codeBlockPlugin(editor),
   ],
 });

@@ -24,3 +24,7 @@
 [data-node-type="codeBlock"] > .codeBlockVisualIdContainer {
   flex-basis: 5%;
 }
+
+.token {
+  color: red;
+}

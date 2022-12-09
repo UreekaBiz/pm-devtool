@@ -15,6 +15,9 @@ import { NotebookSchemaType } from '../schema';
 export const CodeBlockAttributesSpec = {
   [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<NodeIdentifier>(),
 
+  /** the language the CodeBlock contains */
+  [AttributeType.Language]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+
   /** a ContentType-like string that defines what code is in the CodeBlock */
   [AttributeType.Type]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
 
@@ -92,6 +95,12 @@ export const REMOVED_CODEBLOCK_VISUALID = 'Removed';
 export const EMPTY_CODEBLOCK_HASH = 'EmptyString';
 
 export enum CodeBlockType { Text = 'Text', Code = 'Code'}
+
+export enum CodeBlockLanguage {
+  CSS = 'css',
+  HTML = 'html',
+  JavaScript = 'javascript',
+}
 
 /**
  * used to get the font-family styles for the CodeBlock
