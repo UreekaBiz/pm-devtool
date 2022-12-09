@@ -15,16 +15,12 @@ export type UnorderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeo
 // -- Node Spec -------------------------------------------------------------------
 export const UnorderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  /**
-   * NOTE: explicitly only allowing Lists and ListItems
-   */
+  // NOTE: explicitly only allowing Lists and ListItems
   content: `${NodeGroup.LIST}+`,
 
-  /**
-   * NOTE: preserve the UnorderedList parent when pasting if possible, UnorderedList is
-   *       an important parent during replace operations
-   *       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
-   */
+  // NOTE: preserve the UnorderedList parent when pasting if possible, UnorderedList is
+  //       an important parent during replace operations
+  //       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
   defining: true/*(SEE: NOTE above)*/,
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
 

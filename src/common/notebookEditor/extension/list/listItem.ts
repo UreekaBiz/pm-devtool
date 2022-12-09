@@ -17,19 +17,15 @@ export const ListItemNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `${NodeGroup.BLOCK}{1}`/*only one block per ListItem*/,
 
-  /**
-   * NOTE: since Lists are the Nodes with the 'defining' property in their spec,
-   *       they will be the ones that ensure their content gets pasted correctly
-   *       and hence ListItems themselves can be dropped. This is why defining must
-   *       be set to false
-   */
+  // NOTE: since Lists are the Nodes with the 'defining' property in their spec,
+  //       they will be the ones that ensure their content gets pasted correctly
+  //       and hence ListItems themselves can be dropped. This is why defining must
+  //       be set to false
   defining: false/*(SEE: NOTE above)*/,
   draggable: false/*do not allow dragging*/,
 
-  /**
-   * NOTE: explicitly not a Block since ListItems should not be able to contain
-   *       other ListItems
-   */
+  // NOTE: explicitly not a Block since ListItems should not be able to contain
+  //       other ListItems
   group: `${NodeGroup.LIST}`,
 
   // .. Attribute .................................................................

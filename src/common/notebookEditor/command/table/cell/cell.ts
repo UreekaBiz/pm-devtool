@@ -13,8 +13,7 @@ import { AbstractDocumentUpdate } from '../../type';
 // NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/commands.js
 
 /**
- * merge the selected Cells into a single Cell, if
- * its outline forms a Rectangle
+ * merge the selected Cells into a single Cell, if its outline forms a Rectangle
  */
 export const mergeCellsCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new MergeCellsDocumentUpdate(), state, dispatch);

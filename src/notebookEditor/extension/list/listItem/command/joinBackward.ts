@@ -3,10 +3,7 @@ import { Command, EditorState, Selection, Transaction } from 'prosemirror-state'
 import { AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
-/**
- * join the parent of the current Selection to the end of the
- * closest ListItem above
- */
+// join the parent of the current Selection to the end of the closest ListItem above
 export const joinBackwardToEndOfClosestListItemCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new JoinBackwardToEndOfClosestListItemDocumentUpdate(), state, dispatch);
 

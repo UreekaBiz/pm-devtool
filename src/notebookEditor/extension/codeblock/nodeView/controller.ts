@@ -19,12 +19,11 @@ export class CodeBlockController extends AbstractNodeController<CodeBlockNodeTyp
 
   // .. Mutation ..................................................................
   /**
-   * NOTE: these checks are as specific as possible to avoid messing with the
-   *       default ProseMirror lifecycle
-   *
    * ensure CodeBlock NodeViews do not get destroyed incorrectly either
    * logically (in the Storage) or the View
    */
+   // NOTE: these checks are as specific as possible to avoid messing with the
+   //       default ProseMirror lifecycle
    public ignoreMutation(mutation: MutationRecord | { type: 'selection'; target: Element; }) {
     // REF: https://discuss.prosemirror.net/t/what-can-cause-a-nodeview-to-be-rebuilt/4959
     // NOTE: this specifically addresses the CodeBlock NodeViews being removed

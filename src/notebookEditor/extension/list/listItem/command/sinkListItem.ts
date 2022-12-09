@@ -28,12 +28,10 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(!blockRange) return false/*no range in which to lift ListItems*/;
     const { depth: blockRangeDepth } = blockRange;
 
-    /**
-     * NOTE: only take into account ListItems whose depth is greater than or equal to
-     *       blockRangeDepth - 1, so that for example:
-     *       ul(li(blockquote(li(p('hello'))))) will not sink the first ListItem, and
-     *       just sinks the inner most one
-     */
+    // NOTE: only take into account ListItems whose depth is greater than or equal to
+    //       blockRangeDepth - 1, so that for example:
+    //       ul(li(blockquote(li(p('hello'))))) will not sink the first ListItem, and
+    //       just sinks the inner most one
     const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
     for(let i = 0; i < listItemPositions.length; i++) {
       const updatedTr = sinkListItem(tr, listItemPositions[i]);
