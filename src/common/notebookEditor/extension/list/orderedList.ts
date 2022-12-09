@@ -18,16 +18,12 @@ export type OrderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeof 
 // -- Node Spec -------------------------------------------------------------------
 export const OrderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  /**
-   * NOTE: explicitly only allowing Lists and ListItems
-   */
+  // NOTE: explicitly only allowing Lists and ListItems
    content: `${NodeGroup.LIST}+`,
 
-  /**
-   * NOTE: preserve the OrderedList parent when pasting if possible, OrderedList is
-   *       an important parent during replace operations
-   *       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
-   */
+  // NOTE: preserve the OrderedList parent when pasting if possible, OrderedList is
+  //       an important parent during replace operations
+  //       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
   defining: true/*(SEE: NOTE above)*/,
   group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
 

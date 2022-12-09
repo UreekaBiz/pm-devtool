@@ -23,12 +23,10 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
     if(!blockRange) return false/*no blockRange exists, nothing to do*/;
     const { depth: blockRangeDepth } = blockRange;
 
-    /**
-     * NOTE: only take into account ListItems whose depth is greater than or equal to
-     *       blockRangeDepth - 1, so that for example:
-     *       ul(li(blockquote(p('hello')))) will not return the top level unorderedList
-     *       and will instead wrap the paragraph
-     */
+    // NOTE: only take into account ListItems whose depth is greater than or equal to
+    //       blockRangeDepth - 1, so that for example:
+    //       ul(li(blockquote(p('hello')))) will not return the top level unorderedList
+    //       and will instead wrap the paragraph
     const closestParentList = findParentNodeClosestToPos(blockRange.$from, (node, depth) => depth >= blockRangeDepth-1/*(SEE: NOTE above)*/ && isListNode(node));
 
     if(closestParentList) {
