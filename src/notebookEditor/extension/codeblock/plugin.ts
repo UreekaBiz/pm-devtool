@@ -1,67 +1,82 @@
 import Prism from 'prismjs';
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, combineTransactionSteps, getTransformChangedRanges, AttributeType, CodeBlockNodeType, NodePosition } from 'common';
-
-import { NoPluginState } from 'notebookEditor/model';
+import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange } from 'common';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
 
+// == Constant ====================================================================
+const codeBlockPluginKey = new PluginKey<CodeBlockPluginState>('codeBlockPluginKey');
+
+// == Class =======================================================================
+export class CodeBlockPluginState {
+  constructor(public decorationSet: DecorationSet) {/*nothing additional*/ }
+
+  // produce a new Plugin state
+  public apply = (tr: Transaction, thisPluginState: CodeBlockPluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
+    // map current DecorationSet (will delete removed Decorations automatically)
+    this.decorationSet = this.decorationSet.map(tr.mapping, tr.doc);
+
+    // get the updated Ranges
+    const newStateRanges: SelectionRange[] = [/*default empty*/];
+    tr.mapping.maps.forEach((stepMap, stepMapIndex) => {
+      stepMap.forEach((from, to) => {
+        const newStart = tr.mapping.slice(stepMapIndex).map(from, -1/*associate to the left*/),
+              newEnd = tr.mapping.slice(stepMapIndex).map(to);
+        newStateRanges.push({ from: newStart, to: newEnd });
+      });
+    });
+
+    // compute the new Decorations
+    for(let i=0; i < newStateRanges.length; i++) {
+      const codeBlockNodePositions: NodePosition[] = [];
+      newEditorState.doc.nodesBetween(newStateRanges[i].from, newStateRanges[i].to, (node, position) => {
+        if(!isCodeBlockNode(node)) return/*ignore Node*/;
+        codeBlockNodePositions.push({ node, position });
+      });
+
+      for(let i = 0; i < codeBlockNodePositions.length; i++) {
+        const { position, node } = codeBlockNodePositions[i];
+        if(!isCodeBlockNode(node)) continue/*does not exist anymore*/;
+
+        const codeBlockDecorations = getDecorations(position, node);
+        if(!codeBlockDecorations?.length) continue/*no decorations added*/;
+
+        this.decorationSet = this.decorationSet.add(newEditorState.doc, [...codeBlockDecorations]);
+      }
+    }
+
+    return this/*state updated*/;
+  };
+}
+
+
 // == Plugin ======================================================================
-export const codeBlockPlugin = () => {
-  let latestDecoratedRange = { from: 0, to: 0 }/*default*/;
+export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
+  // -- Setup -------------------------------------------------------------------
+  key: codeBlockPluginKey,
 
-  const plugin = new Plugin<NoPluginState>({
-    // -- Setup -------------------------------------------------------------------
-    key: new PluginKey<NoPluginState>('codeBlockPluginKey'),
+  // -- State -------------------------------------------------------------------
+  state: {
+    // initialize the plugin state
+    init: (_, state) => new CodeBlockPluginState(DecorationSet.empty/*default*/),
 
-    // -- Transaction -------------------------------------------------------------
-    appendTransaction: (transactions, oldState, newState) => {
-      if(oldState.doc === newState.doc) return null/*no Transaction to dispatch*/;
+    // apply changes to the plugin state from a View Transaction
+    apply: (transaction, thisPluginState, oldState, newState) => thisPluginState.apply(transaction, thisPluginState, oldState, newState),
+  },
 
-      const transform = combineTransactionSteps(oldState.doc, [...transactions]),
-            changes = getTransformChangedRanges(transform);
+  // -- Props -------------------------------------------------------------------
+  props: {
+    decorations: (state) => {
+      const thisPluginState = codeBlockPluginKey.getState(state);
+      if(!thisPluginState) return/*no state*/;
 
-      latestDecoratedRange = changes.reduce((latestRange, change) => {
-        const { newRange } = change;
-        const from = Math.max(latestRange.from, newRange.from),
-              to = Math.min(latestRange.to, newRange.to);
-        return { from, to };
-      }, { from: 0/*start of doc*/, to: newState.doc.nodeSize });
-
-      return null/*no Transaction to dispatch*/;
+      return thisPluginState.decorationSet;
     },
-
-    // -- Props -------------------------------------------------------------------
-    // TODO: save state and map decorations
-    props: {
-      decorations: (state) => {
-        const codeBlockNodePositions: NodePosition[] = [];
-        state.doc.nodesBetween(latestDecoratedRange.from, latestDecoratedRange.to, (node, position) => {
-          if(!isCodeBlockNode(node)) return/*ignore Node*/;
-          codeBlockNodePositions.push({ node, position });
-        });
-
-        const decorations: Decoration[] = [/*default empty*/];
-        for(let i = 0; i < codeBlockNodePositions.length; i++) {
-          const { position, node } = codeBlockNodePositions[i];
-          if(!isCodeBlockNode(node)) continue/*does not exist anymore*/;
-
-          const codeBlockDecorations = getDecorations(position, node);
-          if(!codeBlockDecorations?.length) continue/*no decorations added*/;
-
-          decorations.push(...codeBlockDecorations);
-        }
-
-        return DecorationSet.create(state.doc, decorations);
-      },
-    },
-  });
-
-  return plugin;
-};
+  },
+});
 
 // == Util ========================================================================
 const getDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
@@ -79,7 +94,7 @@ const getDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
     const tokenOrString = tokenOrStrings[i];
     if(isPrismToken(tokenOrString)) {
       const from = absolutePos,
-            to = absolutePos + tokenOrString.content.length;
+        to = absolutePos + tokenOrString.content.length;
       decorations.push(Decoration.inline(from, to, { class: `token` }));
       absolutePos += tokenOrString.content.length;
     } else /*found a non-Token string*/ {
@@ -90,4 +105,5 @@ const getDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
   return decorations;
 };
 
+// == Type Guard ==================================================================
 const isPrismToken = (tokenOrString: any): tokenOrString is Prism.Token => typeof tokenOrString !== 'string';

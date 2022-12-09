@@ -44,7 +44,7 @@ export const nestedViewNodePlugin = () => {
       // initialize the plugin state
       init: (_, state) => new NestedViewNodePluginState(0/*default*/, 0/*default*/),
 
-      // apply changes to the plugin state from a view transaction
+      // apply changes to the plugin state from a View Transaction
       apply: (transaction, thisPluginState, oldState, newState) => thisPluginState.apply(transaction, thisPluginState, oldState, newState),
     },
 
