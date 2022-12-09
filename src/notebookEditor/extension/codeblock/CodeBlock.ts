@@ -1,8 +1,7 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
-import { chainCommands } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
 
-import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectBlockNodeContentCommand, selectTextBlockStartOrEndCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
+import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectBlockNodeContentCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/command/node';
 import { applyDocumentUpdates } from 'notebookEditor/command/update';
@@ -68,8 +67,8 @@ export const CodeBlock = new NodeExtension({
       'Mod-Backspace': () => shortcutCommandWrapper(editor, blockModBackspaceCommand(NodeName.CODEBLOCK)),
 
       // set GapCursor or Selection at start or end of Block if necessary
-      'ArrowUp': chainCommands(blockArrowUpCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('start', NodeName.CODEBLOCK)),
-      'ArrowDown': chainCommands(blockArrowDownCommand(NodeName.CODEBLOCK), selectTextBlockStartOrEndCommand('end', NodeName.CODEBLOCK)),
+      'ArrowUp': blockArrowUpCommand(NodeName.CODEBLOCK),
+      'ArrowDown': blockArrowDownCommand(NodeName.CODEBLOCK),
 
       // insert a newline on Enter
       'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),
