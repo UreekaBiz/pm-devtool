@@ -32,6 +32,10 @@
 	hyphens: none;
 }
 
+[data-node-type="codeBlock"] > .codeBlockInnerContainer > [data-node-type="paragraph"] {
+  background: #EDF2F7;
+}
+
 /* -- VisualId Container ------------------------------------------------------- */
 [data-node-type="codeBlock"] > .codeBlockVisualIdContainer {
   flex-basis: 5%;

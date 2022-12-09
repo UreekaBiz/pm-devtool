@@ -3,12 +3,10 @@ import { BiCodeAlt } from 'react-icons/bi';
 import { generateNodeId, getParentNode, isCodeBlockNode, AttributeType, NodeName, isNodeActive } from 'common';
 
 import { toggleBlock } from 'notebookEditor/command/node';
-import { CheckBoxToolItem } from 'notebookEditor/extension/shared/component/CheckBoxToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { CodeBlockLanguageToolItem } from './CodeBlockLanguageToolItem';
-import { CodeBlockTypeToolItem } from './CodeBlockTypeToolItem';
 
 //*********************************************************************************
 // === Tool Items =================================================================
@@ -33,28 +31,5 @@ export const codeBlockLanguageToolItem: ToolItem = {
   name: 'codeBlockLanguageToolItem',
 
   component: CodeBlockLanguageToolItem,
-  shouldShow: (editor) => isCodeBlockNode(getParentNode(editor.view.state.selection)),
-};
-
-export const codeBlockTypeToolItem: ToolItem = {
-  toolType: 'component',
-  name: 'codeBlockTypeToolItem',
-
-  component: CodeBlockTypeToolItem,
-  shouldShow: (editor) => isCodeBlockNode(getParentNode(editor.view.state.selection)),
-};
-
-export const codeBlockWrapToolItem: ToolItem =  {
-  toolType: 'component',
-  name: 'codeBlockWrapToolItem',
-
-  component: (props) =>
-    <CheckBoxToolItem
-      {...props}
-      name='Wrap'
-      attributeType={AttributeType.Wrap}
-      nodeName={NodeName.CODEBLOCK}
-    />,
-
   shouldShow: (editor) => isCodeBlockNode(getParentNode(editor.view.state.selection)),
 };

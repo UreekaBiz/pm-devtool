@@ -61,8 +61,6 @@ export enum AttributeType {
 
   // .. CodeBlock .................................................................
   Language = 'language',
-  Type = 'type',
-  Wrap = 'wrap',
 
   // .. CodeBlockReference ........................................................
   CodeBlockReference = 'codeBlockReference',
@@ -175,9 +173,6 @@ export const filterStyleAttributes = (attributes: Attributes) => {
   }
   return filteredAttributes;
 };
-
-/** return the right wrap styles depending on whether isWrap is true or false */
-export const getWrapStyles = (isWrap: boolean) => isWrap ? 'break-spaces' : 'pre';
 
 // -- Spacing ---------------------------------------------------------------------
 /** record of margin attributes and merge attribute value */

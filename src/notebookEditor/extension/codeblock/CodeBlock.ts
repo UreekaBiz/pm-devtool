@@ -1,10 +1,8 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
-import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, insertNewlineCommand, selectBlockNodeContentCommand, AttributeType, CodeBlockNodeSpec, LeaveBlockNodeDocumentUpdate, NodeName, DATA_NODE_TYPE } from 'common';
+import { getCodeBlockNodeType, getNodeOutputSpec, isCodeBlockNode, CodeBlockNodeSpec, NodeName, DATA_NODE_TYPE, toggleWrapCommand, AttributeType, generateNodeId } from 'common';
 
-import { toggleBlock, blockBackspaceCommand, blockModBackspaceCommand, blockArrowUpCommand, blockArrowDownCommand } from 'notebookEditor/command/node';
-import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model';
 
@@ -57,29 +55,9 @@ export const CodeBlock = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-      // toggle a CodeBlock
-      'Shift-Mod-c': () => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
-      'Shift-Mod-C': () => toggleBlock(editor, NodeName.CODEBLOCK, { [AttributeType.Id]: generateNodeId() }),
-
-      // remove CodeBlock when Selection is at start of Document or CodeBlock is empty
-      'Backspace': () => shortcutCommandWrapper(editor, blockBackspaceCommand(NodeName.CODEBLOCK)),
-
-      // maintain expected Mod-Backspace behavior
-      'Mod-Backspace': () => shortcutCommandWrapper(editor, blockModBackspaceCommand(NodeName.CODEBLOCK)),
-
-      // set GapCursor or Selection at start or end of Block if necessary
-      'ArrowUp': blockArrowUpCommand(NodeName.CODEBLOCK),
-      'ArrowDown': blockArrowDownCommand(NodeName.CODEBLOCK),
-
-      // insert a newline on Enter
-      'Enter': () => shortcutCommandWrapper(editor, insertNewlineCommand(NodeName.CODEBLOCK)),
-
-      // exit Node on Shift-Enter
-      'Shift-Enter': () => applyDocumentUpdates(editor, [new LeaveBlockNodeDocumentUpdate(NodeName.CODEBLOCK)]),
-
-      // select all the content of the CodeBlock
-      'Cmd-a': () => shortcutCommandWrapper(editor, selectBlockNodeContentCommand(NodeName.CODEBLOCK)),
-      'Cmd-A': () => shortcutCommandWrapper(editor, selectBlockNodeContentCommand(NodeName.CODEBLOCK)),
+      // Toggle CodeBlock
+      'Mod-Shift-c': () => shortcutCommandWrapper(editor, toggleWrapCommand(getCodeBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() })),
+      'Mod-Shift-C': () => shortcutCommandWrapper(editor, toggleWrapCommand(getCodeBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() })),
     }),
 
     codeBlockPlugin(),

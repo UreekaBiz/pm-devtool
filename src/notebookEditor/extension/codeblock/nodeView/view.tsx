@@ -1,4 +1,4 @@
-import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
+import { getPosType, AttributeType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -59,30 +59,13 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
 
   // -- Update --------------------------------------------------------------------
   public updateView() {
-    const { attrs } = this.node;
-    const id = attrs[AttributeType.Id],
-          type = attrs[AttributeType.Type] ?? CodeBlockType.Code/*default*/,
-          wrap = attrs[AttributeType.Wrap] ?? false/*default*/;
+    const { attrs } = this.node,
+          id = attrs[AttributeType.Id];
     if(!id) return/*nothing to do*/;
     const visualId = this.storage.getVisualId(id);
 
     // update DOM
     this.dom.setAttribute(DATA_VISUAL_ID, visualId);
-    this.dom.setAttribute(createNodeDataAttribute(AttributeType.Type), type);
-    this.dom.style.whiteSpace = getWrapStyles(wrap);
-
-    // update lineNumberContainer
-    this.lineNumberContainer.innerHTML = '';
-    const lines = this.node.textContent.split('\n');
-    lines.forEach((line, lineIndex) => {
-      const lineNum = document.createElement('div');
-            lineNum.style.color = '#aaa';
-            lineNum.textContent = lineIndex.toString();
-      this.lineNumberContainer.appendChild(lineNum);
-    });
-
-    // update innerContainer
-    this.innerContainer.style.fontFamily = getCodeBlockFontStyles(type as CodeBlockType/*by definition*/);
 
     // update visualIdContainer
     this.visualIdContainer.innerHTML = visualId;

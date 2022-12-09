@@ -1,4 +1,4 @@
-import { AttributeType, CodeBlockAttributes, CodeBlockLanguage, CodeBlockType, SetAttributeType } from 'common';
+import { AttributeType, CodeBlockAttributes, CodeBlockLanguage, SetAttributeType } from 'common';
 
 import { setAttributeParsingBehavior, uniqueIdParsingBehavior } from 'notebookEditor/extension/util';
 
@@ -14,6 +14,4 @@ export const getCodeBlockAttrs = (storage: ExtensionStorageType): NodeExtensionA
   [AttributeType.Id]: uniqueIdParsingBehavior(storage),
 
   [AttributeType.Language]: setAttributeParsingBehavior(AttributeType.Language, SetAttributeType.STRING, CodeBlockLanguage.JavaScript),
-  [AttributeType.Type]: setAttributeParsingBehavior(AttributeType.Type, SetAttributeType.STRING, CodeBlockType.Code),
-  [AttributeType.Wrap]: setAttributeParsingBehavior(AttributeType.Wrap, SetAttributeType.BOOLEAN, false/*default wrap for Code type is false*/),
 });
