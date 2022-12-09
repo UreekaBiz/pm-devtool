@@ -6,15 +6,13 @@ import { InputToolItemContainer } from 'notebookEditor/extension/shared/componen
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
-// NOTE: Using directly DropdownTool instead of DropdownToolItem because this needs
-//       does extra functionality besides updating the AttributeType passed as a
-//       prop.
-
 // == Constant ====================================================================
 const options: DropdownToolItemType[] = [{ value: CodeBlockType.Code, label: 'Code' }, { value: CodeBlockType.Text, label: 'Text' }];
 
 // == Interface ===================================================================
 interface Props extends EditorToolComponentProps {/*no additional*/}
+
+// == Component ===================================================================
 export const CodeBlockTypeToolItem: React.FC<Props> = ({ editor }) => {
   const { $anchor, anchor } = editor.view.state.selection;
   const parentNode = $anchor.parent;

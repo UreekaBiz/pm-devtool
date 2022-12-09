@@ -2,7 +2,7 @@ import Prism from 'prismjs';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange } from 'common';
+import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange, CODEBLOCK_TOKEN_CLASS } from 'common';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
@@ -68,11 +68,26 @@ export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
 
   // -- Props -------------------------------------------------------------------
   props: {
+    // decorate the Syntax inside a CodeBlock
     decorations: (state) => {
       const thisPluginState = codeBlockPluginKey.getState(state);
       if(!thisPluginState) return/*no state*/;
 
       return thisPluginState.decorationSet;
+    },
+
+    // ensure paste into a CodeBlock is always just text
+    handlePaste: (view, event, slice) => {
+      const { selection } = view.state;
+      if(!selection.empty) return false/*let PM handle the event*/;
+
+      const { $from } = selection;
+      if(!isCodeBlockNode($from.parent)) return false/*let PM handle the event*/;
+
+      const text = slice.content.textBetween(0, slice.content.size, '\n');
+
+      view.dispatch(view.state.tr.insertText(text));
+      return true/*handled*/;
     },
   },
 });
@@ -87,14 +102,13 @@ const getSyntaxDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType
   if(!prismGrammar) return/*no prismGrammar exists for given language*/;
 
   const tokenOrStrings = Prism.tokenize(codeBlock.textContent, prismGrammar);
-
   let absolutePos = codeBlockPos + 1/*skip the CodeBlock node itself*/;
   for(let i = 0; i < tokenOrStrings.length; i++) {
     const tokenOrString = tokenOrStrings[i];
     if(isPrismToken(tokenOrString)) {
       const from = absolutePos,
         to = absolutePos + tokenOrString.content.length;
-      decorations.push(Decoration.inline(from, to, { class: `token` }));
+      decorations.push(Decoration.inline(from, to, { class: `${CODEBLOCK_TOKEN_CLASS}-${tokenOrString.type}` }));
       absolutePos += tokenOrString.content.length;
     } else /*found a non-Token string*/ {
       absolutePos += tokenOrString.length;

@@ -33,7 +33,7 @@ export const CodeBlockNodeSpec: NodeSpec = {
   // .. Definition ................................................................
   content: `${NodeName.TEXT}*`,
   group: NodeGroup.BLOCK,
-  marks: getAllowedMarks([MarkName.BOLD, MarkName.CODE, MarkName.ITALIC, MarkName.STRIKETHROUGH, MarkName.SUB_SCRIPT, MarkName.SUPER_SCRIPT, MarkName.TEXT_STYLE, MarkName.UNDERLINE]),
+  marks: getAllowedMarks([MarkName.BOLD, MarkName.ITALIC, MarkName.STRIKETHROUGH, MarkName.SUB_SCRIPT, MarkName.SUPER_SCRIPT, MarkName.TEXT_STYLE, MarkName.UNDERLINE]),
 
   // .. Attribute .................................................................
   attrs: CodeBlockAttributesSpec,
@@ -118,6 +118,9 @@ export const CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS = 'codeBlockLineNumbersConta
 
 // class of the div that holds the content of the CodeBlock
 export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
+
+// class of span tags of a CodeBlock
+export const CODEBLOCK_TOKEN_CLASS = 'codeBlockToken';
 
 // class of the div that holds the visualId of the CodeBlock
 export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';
