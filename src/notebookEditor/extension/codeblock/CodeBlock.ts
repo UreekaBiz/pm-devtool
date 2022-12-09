@@ -81,6 +81,7 @@ export const CodeBlock = new NodeExtension({
       'Cmd-a': () => shortcutCommandWrapper(editor, selectBlockNodeContentCommand(NodeName.CODEBLOCK)),
       'Cmd-A': () => shortcutCommandWrapper(editor, selectBlockNodeContentCommand(NodeName.CODEBLOCK)),
     }),
-    codeBlockPlugin(editor),
+
+    codeBlockPlugin(),
   ],
 });

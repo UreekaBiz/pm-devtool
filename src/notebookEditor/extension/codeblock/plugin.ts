@@ -2,35 +2,54 @@ import Prism from 'prismjs';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, AttributeType, CodeBlockNodeType } from 'common';
+import { isCodeBlockNode, combineTransactionSteps, getTransformChangedRanges, AttributeType, CodeBlockNodeType, NodePosition } from 'common';
 
-import { Editor } from 'notebookEditor/editor/Editor';
 import { NoPluginState } from 'notebookEditor/model';
-
-import { getCodeBlockViewStorage, CodeBlockController } from './nodeView';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
 
 // == Plugin ======================================================================
-export const codeBlockPlugin = (editor: Editor) => new Plugin<NoPluginState>({
+export const codeBlockPlugin = () => {
+  let latestDecoratedRange = { from: 0, to: 0 }/*default*/;
+
+  const plugin = new Plugin<NoPluginState>({
     // -- Setup -------------------------------------------------------------------
     key: new PluginKey<NoPluginState>('codeBlockPluginKey'),
 
+    // -- Transaction -------------------------------------------------------------
+    appendTransaction: (transactions, oldState, newState) => {
+      if(oldState.doc === newState.doc) return null/*no Transaction to dispatch*/;
+
+      const transform = combineTransactionSteps(oldState.doc, [...transactions]),
+            changes = getTransformChangedRanges(transform);
+
+      latestDecoratedRange = changes.reduce((latestRange, change) => {
+        const { newRange } = change;
+        const from = Math.max(latestRange.from, newRange.from),
+              to = Math.min(latestRange.to, newRange.to);
+        return { from, to };
+      }, { from: 0/*start of doc*/, to: newState.doc.nodeSize });
+
+      return null/*no Transaction to dispatch*/;
+    },
+
     // -- Props -------------------------------------------------------------------
+    // TODO: save state and map decorations
     props: {
       decorations: (state) => {
-        const codeBlockControllers: CodeBlockController[] = [/*default empty*/];
-        const storage = getCodeBlockViewStorage(editor);
-              storage.forEachNodeView(controller => codeBlockControllers.push(controller));
+        const codeBlockNodePositions: NodePosition[] = [];
+        state.doc.nodesBetween(latestDecoratedRange.from, latestDecoratedRange.to, (node, position) => {
+          if(!isCodeBlockNode(node)) return/*ignore Node*/;
+          codeBlockNodePositions.push({ node, position });
+        });
 
         const decorations: Decoration[] = [/*default empty*/];
-        for(let i=0; i<codeBlockControllers.length; i++) {
-          const codeBlockPos = codeBlockControllers[i].getPos(),
-                codeBlock = state.doc.nodeAt(codeBlockPos);
-          if(!codeBlock || !isCodeBlockNode(codeBlock)) continue/*does not exist anymore*/;
+        for(let i = 0; i < codeBlockNodePositions.length; i++) {
+          const { position, node } = codeBlockNodePositions[i];
+          if(!isCodeBlockNode(node)) continue/*does not exist anymore*/;
 
-          const codeBlockDecorations = getDecorations(codeBlockPos, codeBlock);
+          const codeBlockDecorations = getDecorations(position, node);
           if(!codeBlockDecorations?.length) continue/*no decorations added*/;
 
           decorations.push(...codeBlockDecorations);
@@ -40,6 +59,9 @@ export const codeBlockPlugin = (editor: Editor) => new Plugin<NoPluginState>({
       },
     },
   });
+
+  return plugin;
+};
 
 // == Util ========================================================================
 const getDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
@@ -53,7 +75,7 @@ const getDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
   const tokenOrStrings = Prism.tokenize(codeBlock.textContent, prismGrammar);
 
   let absolutePos = codeBlockPos + 1/*skip the CodeBlock node itself*/;
-  for(let i=0; i<tokenOrStrings.length; i++) {
+  for(let i = 0; i < tokenOrStrings.length; i++) {
     const tokenOrString = tokenOrStrings[i];
     if(isPrismToken(tokenOrString)) {
       const from = absolutePos,
