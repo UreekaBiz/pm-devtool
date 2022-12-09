@@ -1,7 +1,8 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 
 import { Attributes, AttributeType } from '../../../attribute';
-import { TableRole, TableProblem } from '../type';
+import { isTableNode } from '../node';
+import { TableProblem } from '../type';
 import { TableRect } from './TableRect';
 
 // ********************************************************************************
@@ -190,7 +191,7 @@ export class TableMap {
 // == Util ========================================================================
 /** compute a {@link TableMap} */
 const computeTableMap = (table: ProseMirrorNode) => {
-  if(table.type.spec.tableRole !== TableRole.Table) {
+  if(!isTableNode(table)) {
     throw new RangeError('Not a table node: ' + table.type.name);
   } /* else -- given Node is a Table Node */
 

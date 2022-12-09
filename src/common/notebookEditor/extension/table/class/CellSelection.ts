@@ -6,16 +6,11 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 
 import { AttributeType } from '../../../attribute';
+import { isCellNode, isHeaderCellNode, isRowNode, isTableNode } from '../node';
 import { isNodeSelection, isTextSelection } from '../../../selection';
+import { isTableTypeNode } from '../type';
 import { areResolvedPositionsInTable, isResolvedPosPointingAtCell, updateTableNodeAttributes, removeColumnSpans } from '../util';
-import { TableRole } from '../type';
 import { TableMap } from './TableMap';
-
-
-// This file defines a ProseMirror selection subclass that models
-// table cell selections. The table plugin needs to be active to wire
-// in the user interaction part of table selections (so that you
-// actually get such selections when you select across cells).
 
 // ********************************************************************************
 // == Constant ====================================================================
@@ -354,8 +349,8 @@ class CellBookmark implements SelectionBookmark {
     const $anchorCell = doc.resolve(this.anchorPos),
           $headCell = doc.resolve(this.headPos);
 
-    if($anchorCell.parent.type.spec.tableRole === TableRole.Row
-      && $headCell.parent.type.spec.tableRole === TableRole.Row
+    if(isRowNode($anchorCell.parent)
+      && isRowNode($headCell.parent)
       && $anchorCell.index() < $anchorCell.parent.childCount
       && $headCell.index() < $headCell.parent.childCount
       && areResolvedPositionsInTable($anchorCell, $headCell)
@@ -397,7 +392,7 @@ const isCellBoundarySelection = ({ $from, $to }: { $from: ResolvedPos; $to: Reso
     if($to.before(toDepth + 1) > $to.start(toDepth)) break;
   }
 
-  return (afterFromPos === beforeToPos && ($from.node(fromDepth).type.spec.tableRole === TableRole.Table || $from.node(fromDepth).type.spec.tableRole === TableRole.Row));
+  return (afterFromPos === beforeToPos && (isTableNode($from.node(fromDepth)) || isRowNode($from.node(fromDepth))));
 };
 
 /** check if the {@link Selection} is across cells */
@@ -407,18 +402,18 @@ const isTextSelectionAcrossCells = ({ $from, $to }: { $from: ResolvedPos; $to: R
 
   for(let fromDepth = $from.depth; fromDepth > 0; fromDepth--) {
     let nodeAtDepth = $from.node(fromDepth);
-    if(nodeAtDepth.type.spec.tableRole === TableRole.Cell || nodeAtDepth.type.spec.tableRole === TableRole.HeaderCell) {
+    if(isHeaderCellNode(nodeAtDepth) || isCellNode(nodeAtDepth)) {
       fromCellBoundaryNode = nodeAtDepth;
       break;
-    } /* else -- specs do not specify tableRole */
+    } /* else -- nodeAtDepth is not a Cell */
   }
 
   for(let toDepth = $to.depth; toDepth > 0; toDepth--) {
     let nodeAtDepth = $to.node(toDepth);
-    if(nodeAtDepth.type.spec.tableRole === TableRole.Cell || nodeAtDepth.type.spec.tableRole === TableRole.HeaderCell) {
+    if(isHeaderCellNode(nodeAtDepth) || isCellNode(nodeAtDepth)) {
       toCellBoundaryNode = nodeAtDepth;
       break;
-    } /* else -- specs do not specify tableRole */
+    } /* else -- nodeAtDepth is not a Cell */
   }
 
   return (fromCellBoundaryNode !== toCellBoundaryNode && $to.parentOffset === 0);
@@ -429,13 +424,12 @@ export const normalizeSelection = (newState: EditorState, allowTableNodeSelectio
   const doc = (tr || newState).doc;
 
   let normalizedSelection: Selection | undefined = undefined/*default*/;
-  let tableRole: TableRole | undefined = undefined/*default*/;
-
-  if(isNodeSelection(selection) && (tableRole = selection.node.type.spec.tableRole)) {
-    if(tableRole === TableRole.Cell || tableRole === TableRole.HeaderCell) {
+  if(isNodeSelection(selection) && isTableTypeNode(selection.node)) {
+    const { node } = selection;
+    if(isHeaderCellNode(node) || isCellNode(node)) {
       normalizedSelection = CellSelection.create(doc, selection.from);
 
-    } else if(tableRole === TableRole.Row) {
+    } else if(isRowNode(node)) {
       const $cell = doc.resolve(selection.from + 1);
       normalizedSelection = CellSelection.createRowSelection($cell, $cell);
 

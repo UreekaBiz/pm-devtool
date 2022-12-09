@@ -4,8 +4,9 @@ import { EditorState } from 'prosemirror-state';
 import { Attributes, AttributeType } from '../../../attribute';
 import { isCellSelection, isNodeSelection } from '../../../selection';
 import { TableMap, TableRect } from '../class';
-import { getHeaderCellNodeType } from '../node/headerCell';
-import { TableRole } from '../type';
+import { isCellNode } from '../node/cell';
+import { getHeaderCellNodeType, isHeaderCellNode } from '../node/headerCell';
+import { isRowNode } from '../node/row';
 
 // ********************************************************************************
 // NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/util.js
@@ -15,7 +16,7 @@ import { TableRole } from '../type';
 export const isSelectionHeadInRow = (state: EditorState) => {
   const { $head } = state.selection;
   for(let depth = $head.depth; depth > 0/*not the top level (Document)*/; depth--) {
-    if($head.node(depth).type.spec.tableRole === TableRole.Row) {
+    if(isRowNode($head.node(depth))) {
       return true;
     } /* else -- Node at depth is not a Row */
   }
@@ -87,9 +88,9 @@ export const isColumnHeader = (table: ProseMirrorNode, tableMap: TableMap, colum
  */
 export const getResolvedCellPosAroundResolvedPos = ($pos: ResolvedPos) => {
   for(let depth = $pos.depth - 1/*start 1 above*/; depth > 0/*while not reaching the Doc depth*/; depth--) {
-    if($pos.node(depth).type.spec.tableRole === TableRole.Row) {
+    if(isRowNode($pos.node(depth))) {
       return $pos.node(0/*the document*/).resolve($pos.before(depth + 1/*Cell depth*/));
-    } /* else -- Node has no tableRole */
+    } /* else -- Node is not a Row node */
   }
 
   return null/*default*/;
@@ -102,9 +103,9 @@ export const getResolvedCellPosAroundResolvedPos = ($pos: ResolvedPos) => {
 export const getCellWrapperAtResolvedPos = ($pos: ResolvedPos) => {
   for(let depth = $pos.depth; depth > 0; depth--) {
     // it is possible for Cell to be at the same depth
-    const role = $pos.node(depth).type.spec.tableRole;
+    const node = $pos.node(depth);
 
-    if(role === TableRole.HeaderCell || role === TableRole.Cell) {
+    if(isCellNode(node) || isHeaderCellNode(node)) {
       return $pos.node(depth);
     } /* else -- keep looking upwards through depth */
   }
@@ -121,7 +122,7 @@ export const getResolvedCellPos = (state: EditorState) => {
       ? $anchorCell
       : $headCell;
 
-  } else if(isNodeSelection(selection) && selection.node && selection.node.type.spec.tableRole === TableRole.Cell) {
+  } else if(isNodeSelection(selection) && isCellNode(selection.node)) {
     return selection.$anchor;
   } /* else -- look for $cellPos */
 
@@ -129,27 +130,25 @@ export const getResolvedCellPos = (state: EditorState) => {
 };
 const getResolvedCellPosNearResolvedPos = ($pos: ResolvedPos) => {
   // look at positions immediately after
-  for(let after = $pos.nodeAfter, pos = $pos.pos; after; after = after.firstChild, pos++) {
-    const role = after.type.spec.tableRole;
+  for(let nodeAfter = $pos.nodeAfter, pos = $pos.pos; nodeAfter; nodeAfter = nodeAfter.firstChild, pos++) {
 
-    if(role === TableRole.Cell || role === TableRole.HeaderCell) {
+    if(isCellNode(nodeAfter) || isHeaderCellNode(nodeAfter)) {
       return $pos.doc.resolve(pos);
-    } /* else -- Node has no TableRole */
+    } /* else -- Node is neither a Cell nor a HeaderCell */
   }
 
   // look at positions that are before the given one
-  for(let before = $pos.nodeBefore, pos = $pos.pos; before; before = before.lastChild, pos--) {
-    const role = before.type.spec.tableRole;
-    if(role == TableRole.Cell || role == TableRole.HeaderCell) {
-      return $pos.doc.resolve(pos - before.nodeSize);
-    } /* else -- Node has no TableRole */
+  for(let nodeBefore = $pos.nodeBefore, pos = $pos.pos; nodeBefore; nodeBefore = nodeBefore.lastChild, pos--) {
+    if(isCellNode(nodeBefore) || isHeaderCellNode(nodeBefore)) {
+      return $pos.doc.resolve(pos - nodeBefore.nodeSize);
+    } /* else -- Node is neither a Cell nor a HeaderCell */
   }
 
   return/*default undefined*/;
 };
 
 /** return whether the given {@link ResolvedPos} points at a Cell */
-export const isResolvedPosPointingAtCell = ($pos: ResolvedPos) => $pos.parent.type.spec.tableRole === TableRole.Row && $pos.nodeAfter/*there is a Cell*/;
+export const isResolvedPosPointingAtCell = ($pos: ResolvedPos) => isRowNode($pos.parent) && $pos.nodeAfter/*there is a Cell*/;
 
 /** return a {@link ResolvedPos} that points past its nodeAfter */
 export const moveResolvedCellPosForward = ($pos: ResolvedPos) => $pos.nodeAfter && $pos.node(0/*the document*/).resolve($pos.pos + $pos.nodeAfter.nodeSize);

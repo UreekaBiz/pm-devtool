@@ -10,7 +10,6 @@ import { CellSelection, TableMap } from '../../../extension/table/class';
 import { isCellNode } from '../../..//extension/table/node/cell';
 import { isHeaderCellNode } from '../../../extension/table/node/headerCell';
 import { getTableNodeTypes, isTableNode, TABLE_DEFAULT_COLUMNS, TABLE_DEFAULT_ROWS, TABLE_DEFAULT_WITH_HEDER_ROW } from '../../../extension/table/node/table';
-import { TableRole } from '../../../extension/table/type';
 import { addColumnSpans, isColumnHeader, isSelectionHeadInRow, removeColumnSpans, getSelectedTableRect, updateTableNodeAttributes, getResolvedCellPosAroundResolvedPos } from '../../..//extension/table/util';
 import { AbstractDocumentUpdate } from '../../type';
 
@@ -61,7 +60,7 @@ export class DeleteTableDocumentUpdate implements AbstractDocumentUpdate {
 
     for(let depth = $pos.depth; depth > 0; depth--) {
       const nodeAtDepth = $pos.node(depth);
-      if(nodeAtDepth.type.spec.tableRole === TableRole.Table) {
+      if(isTableNode(nodeAtDepth)) {
         tr.delete($pos.before(depth), $pos.after(depth)).scrollIntoView();
       } /* else -- not a Table, do nothing */
     }
@@ -137,7 +136,7 @@ const selectAllTable = (editorState: EditorState, tr: Transaction, $currentCellP
         lastCellPos = tableStart + tableMap.map[tableMap.map.length-1/*the last Cell*/];
   const firstCell = tr.doc.nodeAt(firstCellPos),
         lastCell = tr.doc.nodeAt(lastCellPos);
-  if(!firstCell || !lastCell || !firstCell.type.spec.tableRole || !lastCell.type.spec.tableRole) return false/*no Cells at the given positions*/;
+  if(!firstCell || !lastCell || !(isHeaderCellNode(firstCell) || isCellNode(firstCell)) || !(isHeaderCellNode(lastCell) || isCellNode(lastCell))) return false/*no Cells at the given positions*/;
 
   const $firstCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(firstCellPos+1/*inside the Cell*/)),
         $lastCellPos = getResolvedCellPosAroundResolvedPos(tr.doc.resolve(lastCellPos+1/*inside the Cell*/));

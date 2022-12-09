@@ -4,7 +4,9 @@ import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFro
 import { createNodeDataTypeAttribute, NodeRendererSpec } from '../../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeIdentifier, NodeName, ProseMirrorNodeContent } from '../../../node/type';
 import { NotebookSchemaType } from '../../../schema';
-import { TableRole } from '../type';
+import { getCellNodeType } from './cell';
+import { getHeaderCellNodeType } from './headerCell';
+import { getRowNodeType } from './row';
 
 // ********************************************************************************
 // == Attribute ===================================================================
@@ -19,7 +21,6 @@ export const TableNodeSpec: NodeSpec = {
   // .. Definition ................................................................
   content: `${NodeName.ROW}+`,
   group: `${NodeGroup.BLOCK}`,
-  tableRole: TableRole.Table,
 
   // .. Attribute .................................................................
   attrs: TableAttributeSpec,
@@ -70,16 +71,12 @@ export const TABLE_CONTAINER_CLASS = 'tableWrapper';
 
 // --------------------------------------------------------------------------------
 /**
- * returns the {@link NodeType}s in the given {@link Schema} that
- * have a {@link TableRole} in their definition
+ * returns the {@link NodeType}s in the given {@link Schema} that are related to
+ * Table functionality
  */
-export const getTableNodeTypes = (schema: Schema): { [nodeName: string]: NodeType; } =>
-  Object.entries(schema.nodes).reduce<{ [nodeName: string]: NodeType; }>((acc, entry) => {
-    const [nodeName, nodeType] = entry;
-
-    if(nodeType.spec.tableRole) {
-      return { ...acc, [nodeName]: nodeType };
-    } /* else -- not a Node with a TableRole, ignore */
-
-    return acc;
-  }, {/*default empty*/});
+export const getTableNodeTypes = (schema: Schema): { [nodeName: string]: NodeType; } => ({
+  [NodeName.TABLE]: getTableNodeType(schema),
+  [NodeName.ROW]: getRowNodeType(schema),
+  [NodeName.HEADER_CELL]: getHeaderCellNodeType(schema),
+  [NodeName.CELL]: getCellNodeType(schema),
+});

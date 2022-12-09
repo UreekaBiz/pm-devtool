@@ -1,6 +1,6 @@
 import { EditorView } from 'prosemirror-view';
 
-import { getResolvedCellPosAroundResolvedPos, isTextSelection, TableRole, TD_NODENAME, TH_NODENAME } from 'common';
+import { getResolvedCellPosAroundResolvedPos, isCellNode, isHeaderCellNode, isTextSelection, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { isValidHTMLElement } from '../../util';
 
@@ -18,7 +18,7 @@ export const isCursorAtEndOfCell = (view: EditorView, axis: 'horizontal' | 'vert
     let index = direction < 0 ? $head.index(depth) : $head.indexAfter(depth);
     if(index !== (direction < 0 ? 0/*first child*/ : ancestorNode.childCount)) return null/*nothing to do*/;
 
-    if(ancestorNode.type.spec.tableRole === TableRole.Cell || ancestorNode.type.spec.tableRole == TableRole.HeaderCell) {
+    if(isHeaderCellNode(ancestorNode) || isCellNode(ancestorNode)) {
       const cellPos = $head.before(depth);
       const directionString: 'left' | 'right' | 'up' | 'down' = axis === 'vertical' ? (direction > 0 ? 'down' : 'up') : direction > 0 ? 'right' : 'left';
 

@@ -5,8 +5,8 @@ import { HISTORY_META } from '../../../../notebookEditor/command/type';
 import { AttributeType } from '../../../attribute';
 import { NodeName } from '../../../node';
 import { TableMap } from '../class';
-import { getTableNodeTypes } from '../node';
-import { TableProblem, TableRole } from '../type';
+import { getTableNodeTypes, isTableNode } from '../node';
+import { TableProblem } from '../type';
 import { updateTableNodeAttributes, removeColumnSpans } from '../util';
 
 
@@ -30,13 +30,13 @@ const fixTablesKey = new PluginKey('fix-tables');
   let tr: Transaction | undefined = undefined/*default*/;
 
   const check = (node: ProseMirrorNode, pos: number) =>  {
-    if(node.type.spec.tableRole === TableRole.Table) {
+    if(isTableNode(node)) {
       tr = fixTable(newState, node, pos, tr);
       if(tr) {
         tr.setMeta(HISTORY_META, false/*do not add to history*/);
       } /* else -- Transaction was not modified */
 
-    } /* else -- not a Node with a TableRole, ignore */
+    } /* else -- not a Table Node, ignore */
   };
 
   if(!oldState) {
@@ -114,7 +114,7 @@ const fixTablesKey = new PluginKey('fix-tables');
     if(amountOfCellsToAdd > 0) {
       let typeToAdd = NodeName.CELL/*default*/;
       if(row.firstChild) {
-        typeToAdd = row.firstChild.type.spec.tableRole;
+        typeToAdd = row.firstChild.type.name as NodeName/*by definition*/;
       } /* else -- not the first child fo the row */
 
       const addedCells: ProseMirrorNode[] = [/*default empty*/];

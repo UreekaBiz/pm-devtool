@@ -4,7 +4,6 @@ import { noNodeOrMarkSpecAttributeDefaultValue, AttributeType, AttributesTypeFro
 import { NodeRendererSpec } from '../../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../../node/type';
 import { NotebookSchemaType } from '../../../schema';
-import { TableRole } from '../type';
 
 // ********************************************************************************
 // == Attribute ===================================================================
@@ -22,7 +21,6 @@ export type CellAttributes = AttributesTypeFromNodeSpecAttributes<typeof CellAtt
 export const CellNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `${NodeGroup.BLOCK}+`,
-  tableRole: TableRole.Cell,
 
   // .. Attribute .................................................................
   attrs: CellAttributeSpec,

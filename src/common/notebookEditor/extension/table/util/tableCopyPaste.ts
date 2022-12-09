@@ -6,9 +6,11 @@ import { DispatchType } from '../../../command/type';
 import { AttributeType } from '../../../attribute';
 import { NodeName } from '../../../node';
 import { CellSelection, TableMap, TableRect } from '../class';
-import { getTableNodeTypes } from '../node/table';
-import { TableRole } from '../type';
-import { removeColumnSpans, updateTableNodeAttributes } from '.';
+import { isCellNode } from '../node/cell';
+import { isHeaderCellNode } from '../node/headerCell';
+import { isRowNode } from '../node/row';
+import { getTableNodeTypes, isTableNode } from '../node/table';
+import { removeColumnSpans, updateTableNodeAttributes } from './util';
 
 // ********************************************************************************
 // NOTE: these are inspired by https://github.com/ProseMirror/prosemirror-tables/blob/master/src/copypaste.js
@@ -33,7 +35,7 @@ export const pastedCells = (slice: Slice): PastedCellsReturnType => {
   if(!slice.size) return null/*empty slice, nothing to do*/;
 
   let { content, openStart, openEnd } = slice;
-  while(content.childCount === 1 && content.firstChild && ((openStart > 0 && openEnd > 0) || content.firstChild.type.spec.tableRole === TableRole.Table)) {
+  while(content.childCount === 1 && content.firstChild && ((openStart > 0 && openEnd > 0) || isTableNode(content.firstChild))) {
     openStart--;
     openEnd--;
     content = content.firstChild.content;
@@ -42,11 +44,10 @@ export const pastedCells = (slice: Slice): PastedCellsReturnType => {
   const firstChild = content.firstChild;
   if(!firstChild) throw new Error('content.firstChild is null when it was not expected to be');
 
-  const firstChildRole = firstChild.type.spec.tableRole;
   const schema = firstChild.type.schema;
   const pastedRows = [/*default empty*/];
 
-  if(firstChildRole === TableRole.Row) {
+  if(isRowNode(firstChild)) {
     for(let i = 0; i < content.childCount; i++) {
       let pastedCells = content.child(i).content;
       const sliceOpenStart = i ? 0/*default*/ : Math.max(0, openStart - 1);
@@ -57,7 +58,7 @@ export const pastedCells = (slice: Slice): PastedCellsReturnType => {
 
       pastedRows.push(pastedCells);
     }
-  } else if(firstChildRole === TableRole.Cell || firstChildRole === TableRole.HeaderCell) {
+  } else if(isCellNode(firstChild) || isHeaderCellNode(firstChild)) {
     pastedRows.push(openStart || openEnd ? fitSlice(getTableNodeTypes(schema)[NodeName.ROW], new Slice(content, openStart, openEnd)).content : content);
   } else {
     return null/*nothing to do*/;

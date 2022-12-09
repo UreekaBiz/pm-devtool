@@ -3,7 +3,6 @@ import { Mark as ProseMirrorMark, Node as ProseMirrorNode, NodeSpec } from 'pros
 import { JSONNode, NodeName, ProseMirrorNodeContent } from '../../../node/type';
 import { NodeRendererSpec } from '../../../htmlRenderer/type';
 import { NotebookSchemaType } from '../../../schema';
-import { TableRole } from '../type';
 
 // ********************************************************************************
 // == Attribute ===================================================================
@@ -14,7 +13,6 @@ type RowAttributes = {/*currently none*/};
 export const RowNodeSpec: NodeSpec = {
   // .. Definition ................................................................
   content: `(${NodeName.CELL} | ${NodeName.HEADER_CELL})*`,
-  tableRole: TableRole.Row,
 };
 
 // -- Render Spec -----------------------------------------------------------------
