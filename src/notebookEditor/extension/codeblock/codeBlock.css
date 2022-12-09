@@ -7,9 +7,14 @@
   gap: 10px;
 }
 
+/* -- Line Number Container ---------------------------------------------------- */
+[data-node-type="codeBlock"] > .codeBlockLineNumbersContainer {
+  display: flex;
+  flex-direction: column;
+}
+
 /* -- Inner Container ---------------------------------------------------------- */
 [data-node-type="codeBlock"] > .codeBlockInnerContainer {
-  display: flex;
   flex-basis: 95%;
   padding: 5px;
   min-height: 1.5em;

@@ -113,6 +113,9 @@ export const getCodeBlockFontStyles = (type: CodeBlockType) => type === CodeBloc
 // to the right of the CodeBlock (SEE: index.css)
 export const DATA_VISUAL_ID = 'data-visualid';
 
+// class of the div that holds the line numbers of the CodeBlock
+export const CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS = 'codeBlockLineNumbersContainer';
+
 // class of the div that holds the content of the CodeBlock
 export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
 

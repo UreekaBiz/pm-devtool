@@ -1,4 +1,4 @@
-import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
+import { createNodeDataAttribute, getCodeBlockFontStyles, getPosType, getWrapStyles, AttributeType, CodeBlockType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -9,6 +9,9 @@ import { CodeBlockStorage } from './storage';
 // ********************************************************************************
 // == Class =======================================================================
 export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlockStorage, CodeBlockModel> {
+  /** the div that holds the line numbers of the CodeBlock */
+  public readonly lineNumberContainer: HTMLDivElement;
+
   /** the div that holds the content plus the visualId container of the CodeBlock */
   private innerContainer: HTMLDivElement;
 
@@ -24,6 +27,10 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
 
     // -- UI ----------------------------------------------------------------------
     // Create DOM elements and append it to the outer container (dom)
+    this.lineNumberContainer = document.createElement('div');
+    this.lineNumberContainer.classList.add(CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS);
+    this.dom.appendChild(this.lineNumberContainer);
+
     const innerContainer = document.createElement('div');
     this.innerContainer = innerContainer;
     this.innerContainer.classList.add(CODEBLOCK_INNER_CONTAINER_CLASS);
@@ -64,10 +71,20 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
     this.dom.setAttribute(createNodeDataAttribute(AttributeType.Type), type);
     this.dom.style.whiteSpace = getWrapStyles(wrap);
 
-    // update Inner Container
+    // update lineNumberContainer
+    this.lineNumberContainer.innerHTML = '';
+    const lines = this.node.textContent.split('\n');
+    lines.forEach((line, lineIndex) => {
+      const lineNum = document.createElement('div');
+            lineNum.style.color = '#aaa';
+            lineNum.textContent = lineIndex.toString();
+      this.lineNumberContainer.appendChild(lineNum);
+    });
+
+    // update innerContainer
     this.innerContainer.style.fontFamily = getCodeBlockFontStyles(type as CodeBlockType/*by definition*/);
 
-    // update VisualId Container
+    // update visualIdContainer
     this.visualIdContainer.innerHTML = visualId;
   }
 }

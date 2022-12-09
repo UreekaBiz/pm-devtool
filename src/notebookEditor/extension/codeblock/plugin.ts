@@ -29,6 +29,7 @@ export class CodeBlockPluginState {
       });
     });
 
+    // compute the new syntax Decorations
     for(let i=0; i < newStateRanges.length; i++) {
       const codeBlockNodePositions: NodePosition[] = [];
       newEditorState.doc.nodesBetween(newStateRanges[i].from, newStateRanges[i].to, (node, position) => {
@@ -40,16 +41,9 @@ export class CodeBlockPluginState {
         const { position, node } = codeBlockNodePositions[i];
         if(!isCodeBlockNode(node)) continue/*does not exist anymore*/;
 
-        // compute the new line number Decorations
-        const lineNumberDecoration = getLineNumberDecoration(position, node);
-        this.decorationSet = this.decorationSet.add(newEditorState.doc, [lineNumberDecoration]);
-
-        // compute the new syntax Decorations
         const syntaxDecorations = getSyntaxDecorations(position, node);
-        if(syntaxDecorations?.length) {
-          this.decorationSet = this.decorationSet.add(newEditorState.doc, [...syntaxDecorations]);
-        } /* else -- no syntax decorations */
-
+        if(!syntaxDecorations?.length) continue/*no decorations to add*/;
+        this.decorationSet = this.decorationSet.add(newEditorState.doc, [...syntaxDecorations]);
       }
     }
 
@@ -84,26 +78,6 @@ export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
 });
 
 // == Util ========================================================================
-const getLineNumberDecoration = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
-  const lines = codeBlock.textContent.split('\n');
-
-  return Decoration.widget(codeBlockPos+1/*inside the CodeBlock*/, () => {
-    const lineContainer = document.createElement('div');
-          lineContainer.style.display = 'flex';
-          lineContainer.style.flexDirection = 'column';
-
-    lines.forEach((line, lineIndex) => {
-    const lineNum = document.createElement('div');
-          lineNum.style.color = '#aaa';
-          lineNum.textContent = lineIndex.toString();
-
-      lineContainer.appendChild(lineNum);
-    });
-
-    return lineContainer;
-  }, { side: -1/*left*/, stopEvent: (event: Event) => true/*stop all Events that bubble from the decoration*/, ignoreSelection: true/*ignore Selection changes in the widget*/ });
-};
-
 const getSyntaxDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
   const decorations: Decoration[] = [/*default empty*/];
   const { [AttributeType.Language]: language } = codeBlock.attrs;
