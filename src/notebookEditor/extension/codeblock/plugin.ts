@@ -1,24 +1,46 @@
 import Prism from 'prismjs';
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { isCodeBlockNode, AttributeType } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
-import { NoPluginState } from 'notebookEditor/model';
 
 import { getCodeBlockViewStorage, CodeBlockController } from './nodeView';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
 
+// == Constant ====================================================================
+export const codeBlockPluginKey = new PluginKey<CodeBlockPluginState>('codeBlockPluginKey');
+
+// == Class =======================================================================
+export class CodeBlockPluginState {
+  constructor() {/*nothing additional*/}
+
+  // produce a new Plugin state
+  public apply = (tr: Transaction, thisPluginState: CodeBlockPluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
+    return this/*state updated*/;
+  };
+}
+
 // == Plugin ======================================================================
-export const codeBlockPlugin = (editor: Editor) =>
-  new Plugin<NoPluginState>({
-    // -- Definition --------------------------------------------------------------
-    key: new PluginKey<NoPluginState>('codeBlockPluginKey'),
+export const codeBlockPlugin = (editor: Editor) => new Plugin<CodeBlockPluginState>({
+    // -- Setup -------------------------------------------------------------------
+    key: codeBlockPluginKey,
+
+    // -- State -------------------------------------------------------------------
+    state: {
+      // initialize the plugin state
+      init: (_, state) => new CodeBlockPluginState(),
+
+      // apply changes to the plugin state from a view transaction
+      apply: (transaction, thisPluginState, oldState, newState) => thisPluginState.apply(transaction, thisPluginState, oldState, newState),
+    },
 
     // -- Props -------------------------------------------------------------------
+    // TODO: redefine as a Transaction Listener instead of a View Plugin, so that
+    //       the state is always the latest
     props: {
       decorations: (state) => {
         const codeBlockControllers: CodeBlockController[] = [/*default empty*/];
@@ -61,7 +83,7 @@ const getDecorations = (codeBlockController: CodeBlockController) => {
             to = absolutePos + tokenOrString.content.length;
       decorations.push(Decoration.inline(from, to, { class: `token` }));
       absolutePos += tokenOrString.content.length;
-    } else /*found a Token*/ {
+    } else /*found a non-Token string*/ {
       absolutePos += tokenOrString.length;
     }
   }
