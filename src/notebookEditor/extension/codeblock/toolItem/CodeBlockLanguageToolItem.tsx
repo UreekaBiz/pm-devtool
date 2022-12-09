@@ -1,6 +1,5 @@
-import { isCodeBlockNode, AttributeType, NodeName, UpdateSingleNodeAttributesDocumentUpdate, SetTextSelectionDocumentUpdate, CodeBlockLanguage } from 'common';
+import { isCodeBlockNode, AttributeType, NodeName, CodeBlockLanguage, updateAttributesCommand } from 'common';
 
-import { applyDocumentUpdates } from 'notebookEditor/command/update';
 import { DropdownTool, DropdownToolItemType } from 'notebookEditor/extension/shared/component/DropdownToolItem/DropdownTool';
 import { InputToolItemContainer } from 'notebookEditor/extension/shared/component/InputToolItemContainer';
 import { EditorToolComponentProps } from 'notebookEditor/toolbar/type';
@@ -17,7 +16,7 @@ interface Props extends EditorToolComponentProps {/*no additional*/}
 
 // == Component ===================================================================
 export const CodeBlockLanguageToolItem: React.FC<Props> = ({ editor }) => {
-  const { $anchor, anchor } = editor.view.state.selection;
+  const { $anchor } = editor.view.state.selection;
   const parentNode = $anchor.parent;
   if(!isCodeBlockNode(parentNode)) throw new Error('Invalid CodeBlock WrapTool Render');
 
@@ -25,10 +24,10 @@ export const CodeBlockLanguageToolItem: React.FC<Props> = ({ editor }) => {
 
   // -- Handler -------------------------------------------------------------------
   const handleChange = (language: string) => {
-    applyDocumentUpdates(editor, [
-      new UpdateSingleNodeAttributesDocumentUpdate(NodeName.CODEBLOCK, anchor - $anchor.parentOffset - 1/*the CodeBlock itself*/, { [AttributeType.Language]: language }),
-      new SetTextSelectionDocumentUpdate({ from: anchor, to: anchor }),
-    ]);
+    // NOTE: not using SingleAttributesDocumentUpdate since a new affected
+    //       CodeBlock range change must be triggered (SEE: ../plugin.ts)
+    updateAttributesCommand(NodeName.CODEBLOCK, { [AttributeType.Language]: language })(editor.view.state, editor.view.dispatch);
+    editor.view.focus();
   };
 
   // -- UI ------------------------------------------------------------------------
