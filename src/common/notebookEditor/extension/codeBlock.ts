@@ -119,9 +119,6 @@ export const CODEBLOCK_LINE_NUMBERS_CONTAINER_CLASS = 'codeBlockLineNumbersConta
 // class of the div that holds the content of the CodeBlock
 export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
 
-// class of span tags of a CodeBlock
-export const CODEBLOCK_TOKEN_CLASS = 'codeBlockToken';
-
 // class of the div that holds the visualId of the CodeBlock
 export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';
 

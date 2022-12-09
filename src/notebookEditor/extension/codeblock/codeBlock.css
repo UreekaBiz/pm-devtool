@@ -24,70 +24,13 @@
   border-radius: 4px;
   overflow: auto;
   font-size: 1.25em;
+
+  tab-size: 2;
 	-webkit-hyphens: none;
 	-moz-hyphens: none;
 	-ms-hyphens: none;
 	hyphens: none;
 }
-
-/* .. CodeBlockToken ........................................................... */
-/* NOTE: this is inspired by https://github.com/PrismJS/prism-themes/blob/master/themes/prism-one-light.css */
-.codeBlockToken-comment,
-.codeBlockToken-prolog,
-.codeBlockToken-cdata {
-	color: hsl(230, 4%, 64%);
-}
-
-.codeBlockToken-doctype,
-.codeBlockToken-punctuation,
-.codeBlockToken-entity {
-	color: hsl(230, 8%, 24%);
-}
-
-.codeBlockToken-attr-name,
-.codeBlockToken-class-name,
-.codeBlockToken-boolean,
-.codeBlockToken-constant,
-.codeBlockToken-number,
-.codeBlockToken-atrule {
-	color: hsl(35, 99%, 36%);
-}
-
-.codeBlockToken-keyword {
-	color: hsl(301, 63%, 40%);
-}
-
-.codeBlockToken-property,
-.codeBlockToken-tag,
-.codeBlockToken-symbol,
-.codeBlockToken-deleted,
-.codeBlockToken-important {
-	color: hsl(5, 74%, 59%);
-}
-
-.codeBlockToken-selector,
-.codeBlockToken-string,
-.codeBlockToken-char,
-.codeBlockToken-builtin,
-.codeBlockToken-inserted,
-.codeBlockToken-regex,
-.codeBlockToken-attr-value,
-.codeBlockToken-attr-value > .codeBlockToken-punctuation {
-	color: hsl(119, 34%, 47%);
-}
-
-.codeBlockToken-variable,
-.codeBlockToken-operator,
-.codeBlockToken-function {
-	color: hsl(221, 87%, 60%);
-}
-
-.codeBlockToken-url { color: hsl(198, 99%, 37%); }
-.codeBlockToken-bold { font-weight: bold; }
-.codeBlockToken-comment,
-.codeBlockToken-italic { font-style: italic; }
-.codeBlockToken-entity { cursor: help; }
-.codeBlockToken-namespace { opacity: 0.8; }
 
 /* -- VisualId Container ------------------------------------------------------- */
 [data-node-type="codeBlock"] > .codeBlockVisualIdContainer {

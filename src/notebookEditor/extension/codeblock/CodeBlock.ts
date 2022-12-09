@@ -13,6 +13,7 @@ import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
+import 'highlight.js/styles/github.css';
 import { CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
 import { codeBlockPlugin } from './plugin';

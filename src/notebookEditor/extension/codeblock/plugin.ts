@@ -1,19 +1,28 @@
-import Prism from 'prismjs';
+import css from 'highlight.js/lib/languages/css';
+import javascript from 'highlight.js/lib/languages/javascript';
+import ts from 'highlight.js/lib/languages/typescript'
+import html from 'highlight.js/lib/languages/xml';
+import { lowlight } from 'lowlight';
+import { Span, Text } from 'lowlight/lib/core';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange, CODEBLOCK_TOKEN_CLASS } from 'common';
+import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange } from 'common';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
 
 // == Constant ====================================================================
-const REGULAR_STRING = 'regular string';
+export const languageLowlight = lowlight;
+             languageLowlight.registerLanguage('html', html);
+             languageLowlight.registerLanguage('css', css);
+             languageLowlight.registerLanguage('javascript', javascript);
+             languageLowlight.registerLanguage('ts', ts);
 const codeBlockPluginKey = new PluginKey<CodeBlockPluginState>('codeBlockPluginKey');
 
 // == Class =======================================================================
 export class CodeBlockPluginState {
-  constructor(public decorationSet: DecorationSet) {/*nothing additional*/}
+  constructor(public decorationSet: DecorationSet) {/*nothing additional*/ }
 
   // produce a new Plugin state
   public apply = (tr: Transaction, thisPluginState: CodeBlockPluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
@@ -25,21 +34,21 @@ export class CodeBlockPluginState {
     tr.mapping.maps.forEach((stepMap, stepMapIndex) => {
       stepMap.forEach((from, to) => {
         const newStart = tr.mapping.slice(stepMapIndex).map(from, -1/*associate to the left*/),
-              newEnd = tr.mapping.slice(stepMapIndex).map(to);
+          newEnd = tr.mapping.slice(stepMapIndex).map(to);
         newStateRanges.push({ from: newStart, to: newEnd });
       });
     });
 
     // compute the new syntax Decorations
-    for(let i=0; i < newStateRanges.length; i++) {
+    for(let i = 0; i < newStateRanges.length; i++) {
       const codeBlockNodePositions: NodePosition[] = [];
       newEditorState.doc.nodesBetween(newStateRanges[i].from, newStateRanges[i].to, (node, position) => {
         if(!isCodeBlockNode(node)) return/*ignore Node*/;
         codeBlockNodePositions.push({ node, position });
       });
 
-      for(let i = 0; i < codeBlockNodePositions.length; i++) {
-        const { position, node } = codeBlockNodePositions[i];
+      for(let j = 0; j < codeBlockNodePositions.length; j++) {
+        const { position, node } = codeBlockNodePositions[j];
         if(!isCodeBlockNode(node)) continue/*does not exist anymore*/;
 
         this.decorationSet = this.decorationSet.remove(this.decorationSet.find(position, position + node.nodeSize));
@@ -95,50 +104,40 @@ export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
 
 // == Util ========================================================================
 const getSyntaxDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
+
   const decorations: Decoration[] = [/*default empty*/];
   const { [AttributeType.Language]: language } = codeBlock.attrs;
   if(!language) return/*no language set in the CodeBlock*/;
 
-  const prismGrammar = Prism.languages[language];
-  if(!prismGrammar) return/*no prismGrammar exists for given language*/;
+  const treeRoot = languageLowlight.highlight(language, codeBlock.textContent),
+        flattenedChildren = flattenTreeChildren(treeRoot.children);
 
-  const parsedTokens = parseTokens(Prism.tokenize(codeBlock.textContent, prismGrammar));
   let absolutePos = codeBlockPos + 1/*skip the CodeBlock node itself*/;
-  for(let i = 0; i < parsedTokens.length; i++) {
-    const parsedToken = parsedTokens[i];
-    const { text, type } = parsedToken;
-
-    if(type !== REGULAR_STRING) {
-      const from = absolutePos,
-            to = absolutePos + text.length;
-      decorations.push(Decoration.inline(from, to, { class: `${CODEBLOCK_TOKEN_CLASS}-${type}` }));
-      absolutePos += text.length;
-    } else /*found a non-Token string*/ {
-      absolutePos += text.length;
+  for(let i = 0; i < flattenedChildren.length; i++) {
+    const child = flattenedChildren[i],
+          { childValue, childClasses } = child;
+    if(!childClasses.length) {
+      absolutePos += childValue.length;
+      continue/*no Decorations to add*/;
+    } else {
+      const decorationStart = absolutePos,
+            decorationEnd = absolutePos + childValue.length;
+      decorations.push(Decoration.inline(decorationStart, decorationEnd, { class: childClasses.join(' ') }));
+      absolutePos += childValue.length;
     }
   }
 
   return decorations;
 };
 
-const parseTokens = (tokens:  (string | Prism.Token)[]) => {
-  const parsed: { text: string; type: string; }[] = [/*default empty*/];
-  for(let i=0; i<tokens.length; i++) {
-    const tokenOrString = tokens[i];
-    if(typeof tokenOrString === 'string') {
-      parsed.push({ text: tokenOrString, type: REGULAR_STRING });
-    } else /*a Token*/ {
-      const { content } = tokenOrString;
-      if(typeof content === 'string') {
-        parsed.push({ text: content, type: tokenOrString.type });
-      } else {
-        const parsedContent = Array.isArray(content)
-          ? parseTokens(content)
-          : parseTokens([content]/*is a Token*/);
+const flattenTreeChildren = (children: (Span | Text)[], currentClasses: string[] = []): { childValue: string; childClasses: string[]; }[] => children.map((child) => {
+  const classes = [...currentClasses, ...isLowLightSpan(child) ? child.properties.className : [/*no classes*/]];
+  if(isLowLightSpan(child)) {
+    return flattenTreeChildren(child.children, classes);
+  } /* else -- a regular Text Node */
 
-        parsed.push(...parsedContent);
-      }
-    }
-  }
-  return parsed;
-};
+  return { childValue: child.value, childClasses: classes };
+}).flat();
+
+// == Type Guard ==================================================================
+const isLowLightSpan = (node: Span | Text): node is Span => 'properties' in node;
