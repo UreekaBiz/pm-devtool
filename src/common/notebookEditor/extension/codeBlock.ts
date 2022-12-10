@@ -85,6 +85,7 @@ export enum CodeBlockLanguage {
   CSS = 'css',
   HTML = 'html',
   JavaScript = 'javascript',
+  TypeScript = 'typescript',
 }
 
 // -- CSS -------------------------------------------------------------------------

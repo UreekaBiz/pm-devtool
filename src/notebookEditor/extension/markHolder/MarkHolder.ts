@@ -5,6 +5,7 @@ import { ExtensionPriority } from 'notebookEditor/model';
 import { createExtensionParseRules } from '../type/Extension/util';
 import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { MarkHolderAttrs } from './attribute';
+import './markHolder.css';
 import { markHolderPlugin } from './plugin';
 
 // ********************************************************************************

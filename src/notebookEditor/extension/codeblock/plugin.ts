@@ -1,6 +1,6 @@
 import css from 'highlight.js/lib/languages/css';
 import javascript from 'highlight.js/lib/languages/javascript';
-import ts from 'highlight.js/lib/languages/typescript'
+import typescript from 'highlight.js/lib/languages/typescript';
 import html from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight';
 import { Span, Text } from 'lowlight/lib/core';
@@ -18,7 +18,7 @@ export const languageLowlight = lowlight;
              languageLowlight.registerLanguage('html', html);
              languageLowlight.registerLanguage('css', css);
              languageLowlight.registerLanguage('javascript', javascript);
-             languageLowlight.registerLanguage('ts', ts);
+             languageLowlight.registerLanguage('typescript', typescript);
 const codeBlockPluginKey = new PluginKey<CodeBlockPluginState>('codeBlockPluginKey');
 
 // == Class =======================================================================
