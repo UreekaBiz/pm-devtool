@@ -4,10 +4,11 @@ import ts from 'highlight.js/lib/languages/typescript'
 import html from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight';
 import { Span, Text } from 'lowlight/lib/core';
+import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, AttributeType, CodeBlockNodeType, NodePosition, SelectionRange } from 'common';
+import { isCodeBlockNode, NodePosition, SelectionRange, CodeBlockLanguage, AttributeType } from 'common';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
@@ -28,8 +29,6 @@ export class CodeBlockPluginState {
   public apply = (tr: Transaction, thisPluginState: CodeBlockPluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
     // map current DecorationSet (will delete removed Decorations automatically)
     this.decorationSet = this.decorationSet.map(tr.mapping, tr.doc);
-
-    // get the updated Ranges
     const newStateRanges: SelectionRange[] = [/*default empty*/];
     tr.mapping.maps.forEach((stepMap, stepMapIndex) => {
       stepMap.forEach((from, to) => {
@@ -39,24 +38,44 @@ export class CodeBlockPluginState {
       });
     });
 
-    // compute the new syntax Decorations
-    for(let i = 0; i < newStateRanges.length; i++) {
-      const codeBlockNodePositions: NodePosition[] = [];
-      newEditorState.doc.nodesBetween(newStateRanges[i].from, newStateRanges[i].to, (node, position) => {
-        if(!isCodeBlockNode(node)) return/*ignore Node*/;
-        codeBlockNodePositions.push({ node, position });
-      });
+    // get a single Range spanning all the Ranges
+    const totalRange = newStateRanges.reduce<{ from: number; to: number; }>((acc, curr) => {
+      acc.from = Math.min(acc.from, curr.from);
+      acc.to = Math.max(acc.to, curr.to);
+      return acc;
+    }, { from: tr.doc.nodeSize, to: 0 });
 
-      for(let j = 0; j < codeBlockNodePositions.length; j++) {
-        const { position, node } = codeBlockNodePositions[j];
-        if(!isCodeBlockNode(node)) continue/*does not exist anymore*/;
+    // get the affected CodeBlocks and TextBlocks in the Range
+    const affectedTextBlocksInRange: ProseMirrorNode[] = [];
+    const codeBlockNodePositionsInRange: NodePosition[] = [];
+    newEditorState.doc.nodesBetween(totalRange.from, totalRange.to, (node, position) => {
+      if(node.isTextblock) {
+        affectedTextBlocksInRange.push(node);
+      } /* else -- not a textBlock */
 
-        this.decorationSet = this.decorationSet.remove(this.decorationSet.find(position, position + node.nodeSize));
-        const syntaxDecorations = getSyntaxDecorations(position, node);
-        if(!syntaxDecorations?.length) continue/*no decorations to add*/;
+      if(!isCodeBlockNode(node)) return/*ignore Node*/;
+      codeBlockNodePositionsInRange.push({ node, position });
+    });
+
+    // for each CodeBlock, update the syntax found in the child
+    for(let i=0; i<codeBlockNodePositionsInRange.length; i++) {
+      const codeBlock = codeBlockNodePositionsInRange[i].node;
+      const { [AttributeType.Language]: language } = codeBlock.attrs;
+      if(!language) continue/*CodeBlock has no valid language set*/;
+
+      codeBlock.content.forEach((child, offsetIntoParent) => {
+        // if the child is not in the affected Range,
+        // no need to update its Decorations
+        if(!affectedTextBlocksInRange.includes(child)) return/*ignore Node*/;
+
+        const childPos = codeBlockNodePositionsInRange[i].position + offsetIntoParent;
+        this.decorationSet = this.decorationSet.remove(this.decorationSet.find(childPos, childPos + child.nodeSize));
+
+        const syntaxDecorations = getSyntaxDecorations(language as CodeBlockLanguage/*by contract*/, childPos, child);
         this.decorationSet = this.decorationSet.add(newEditorState.doc, [...syntaxDecorations]);
-      }
+      });
     }
+
     return this/*state updated*/;
   };
 }
@@ -103,16 +122,12 @@ export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
 });
 
 // == Util ========================================================================
-const getSyntaxDecorations = (codeBlockPos: number, codeBlock: CodeBlockNodeType) => {
-
+const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChildPos: number, codeBlockChild: ProseMirrorNode) => {
   const decorations: Decoration[] = [/*default empty*/];
-  const { [AttributeType.Language]: language } = codeBlock.attrs;
-  if(!language) return/*no language set in the CodeBlock*/;
-
-  const treeRoot = languageLowlight.highlight(language, codeBlock.textContent),
+  const treeRoot = languageLowlight.highlight(codeBlockLanguage, codeBlockChild.textContent),
         flattenedChildren = flattenTreeChildren(treeRoot.children);
 
-  let absolutePos = codeBlockPos + 1/*skip the CodeBlock node itself*/;
+  let absolutePos = codeBlockChildPos + 2/*account for start of parent CodeBlock and start of parent TextBlock*/;
   for(let i = 0; i < flattenedChildren.length; i++) {
     const child = flattenedChildren[i],
           { childValue, childClasses } = child;

@@ -16,11 +16,11 @@ interface Props extends EditorToolComponentProps {/*no additional*/}
 
 // == Component ===================================================================
 export const CodeBlockLanguageToolItem: React.FC<Props> = ({ editor }) => {
-  const { $anchor } = editor.view.state.selection;
-  const parentNode = $anchor.parent;
-  if(!isCodeBlockNode(parentNode)) throw new Error('Invalid CodeBlock WrapTool Render');
+  const { $from } = editor.view.state.selection;
+  const codeBlock = $from.node(-1/*grandParent*/);
+  if(!isCodeBlockNode(codeBlock)) throw new Error('Invalid CodeBlock WrapTool Render');
 
-  const language = parentNode.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript/*default*/;
+  const language = codeBlock.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript/*default*/;
 
   // -- Handler -------------------------------------------------------------------
   const handleChange = (language: string) => {

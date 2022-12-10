@@ -1,6 +1,6 @@
 import { BiCodeAlt } from 'react-icons/bi';
 
-import { generateNodeId, getParentNode, isCodeBlockNode, AttributeType, NodeName, isNodeActive } from 'common';
+import { generateNodeId, isCodeBlockNode, AttributeType, NodeName, isNodeActive } from 'common';
 
 import { toggleBlock } from 'notebookEditor/command/node';
 import { ToolItem } from 'notebookEditor/toolbar/type';
@@ -31,5 +31,5 @@ export const codeBlockLanguageToolItem: ToolItem = {
   name: 'codeBlockLanguageToolItem',
 
   component: CodeBlockLanguageToolItem,
-  shouldShow: (editor) => isCodeBlockNode(getParentNode(editor.view.state.selection)),
+  shouldShow: (editor) => isCodeBlockNode(editor.view.state.selection.$from.node(-1/*grandParent*/)),
 };

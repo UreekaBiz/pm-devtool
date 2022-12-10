@@ -25,7 +25,7 @@
 
 [data-node-type="codeBlock"] > .codeBlockInnerContainer > [data-node-type="paragraph"]::before {
   counter-increment: div;
-  content: counter(div)" ";
+  content: counter(div)"  ";
   font-size: 1em;
   color: #AAA;
 }
