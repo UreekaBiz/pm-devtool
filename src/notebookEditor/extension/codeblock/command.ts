@@ -1,11 +1,39 @@
 import { GapCursor } from 'prosemirror-gapcursor';
-import { Command, EditorState, Transaction } from 'prosemirror-state';
+import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { AbstractDocumentUpdate, isCodeBlockNode, isNotNullOrUndefined } from 'common';
+import { isCodeBlockNode, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
 
 // ********************************************************************************
-// == Arrow =======================================================================
+// == Selection ===================================================================
+export const selectAllInsideCodeBlockCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new SelectAllInsideCodeBlockDocumentUpdate(), state, dispatch);
+export class SelectAllInsideCodeBlockDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/}
+
+  /**
+   */
+  public update(editorState: EditorState, tr: Transaction) {
+    const { selection } = tr,
+          { $from } = selection;
+    const codeBlock = $from.node(-1/*grandParent*/);
+    if(!codeBlock || !isCodeBlockNode(codeBlock)) return false/*not inside a CodeBlock*/;
+
+    const { from, to } = selection;
+
+    const blockRange = $from.blockRange();
+    if(!blockRange) return false/*no blockRange to select*/;
+
+    const { start, end } = blockRange;
+    if(!(from === start+1/*inside the parent*/ && to === end-1/*inside the parent*/)) return false/*not all the content of the parent selected yet*/;
+
+    const codeBlockPos = $from.before(-1/*grandParent depth*/);
+    tr.setSelection(TextSelection.create(tr.doc, codeBlockPos+2/*inside the CodeBlock, inside the firstChild*/, codeBlockPos+codeBlock.nodeSize-2/*inside the CodeBlock, inside the lastChild*/));
+    return tr/*updated*/;
+  }
+}
+
+// .. Arrow .......................................................................
 /** set a GapCursor if needed while traversing a CodeBlock */
 export const codeBlockArrowCommand = (direction: 'up' | 'left' | 'down' | 'right'): Command => (state, dispatch) =>
   AbstractDocumentUpdate.execute(new CodeBlockArrowDocumentUpdate(direction), state, dispatch);

@@ -11,7 +11,7 @@ import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
-import { codeBlockArrowCommand, splitAndLiftOutOfCodeBlockCommand } from './command';
+import { codeBlockArrowCommand, selectAllInsideCodeBlockCommand, splitAndLiftOutOfCodeBlockCommand } from './command';
 import 'highlight.js/styles/github.css';
 import { CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
@@ -65,6 +65,9 @@ export const CodeBlock = new NodeExtension({
 
       // split and lift out of CodeBlock
       'Shift-Enter': () => shortcutCommandWrapper(editor, splitAndLiftOutOfCodeBlockCommand),
+
+      'Cmd-a': () => shortcutCommandWrapper(editor, selectAllInsideCodeBlockCommand),
+      'Cmd-A': () => shortcutCommandWrapper(editor, selectAllInsideCodeBlockCommand),
 
       // set GapCursor if necessary
       'ArrowUp': () => shortcutCommandWrapper(editor, codeBlockArrowCommand('up')),

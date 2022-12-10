@@ -104,20 +104,6 @@ export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
 
       return thisPluginState.decorationSet;
     },
-
-    // ensure paste into a CodeBlock is always just text
-    handlePaste: (view, event, slice) => {
-      const { selection } = view.state;
-      if(!selection.empty) return false/*let PM handle the event*/;
-
-      const { $from } = selection;
-      if(!isCodeBlockNode($from.parent)) return false/*let PM handle the event*/;
-
-      const text = slice.content.textBetween(0, slice.content.size, '\n');
-
-      view.dispatch(view.state.tr.insertText(text));
-      return true/*handled*/;
-    },
   },
 });
 
