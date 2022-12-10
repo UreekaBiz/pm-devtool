@@ -1,7 +1,7 @@
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
-import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, toggleWrapCommand, AttributeType, CodeBlockNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
+import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, splitBlockKeepMarksCommand, toggleWrapCommand, AttributeType, CodeBlockNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model';
@@ -11,7 +11,7 @@ import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
-import { splitAndLiftOutOfCodeBlock } from './command';
+import { codeBlockArrowCommand, splitAndLiftOutOfCodeBlockCommand } from './command';
 import 'highlight.js/styles/github.css';
 import { CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
@@ -56,12 +56,21 @@ export const CodeBlock = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
+      // Insert a new TextBlock
+      'Enter': () => shortcutCommandWrapper(editor, splitBlockKeepMarksCommand),
+
       // Toggle CodeBlock
       'Mod-Shift-c': () => shortcutCommandWrapper(editor, toggleWrapCommand(getCodeBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() })),
       'Mod-Shift-C': () => shortcutCommandWrapper(editor, toggleWrapCommand(getCodeBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() })),
 
       // split and lift out of CodeBlock
-      'Shift-Enter': () => shortcutCommandWrapper(editor, splitAndLiftOutOfCodeBlock),
+      'Shift-Enter': () => shortcutCommandWrapper(editor, splitAndLiftOutOfCodeBlockCommand),
+
+      // set GapCursor if necessary
+      'ArrowUp': () => shortcutCommandWrapper(editor, codeBlockArrowCommand('up')),
+      'ArrowLeft': () => shortcutCommandWrapper(editor, codeBlockArrowCommand('left')),
+      'ArrowDown': () => shortcutCommandWrapper(editor, codeBlockArrowCommand('down')),
+      'ArrowRight': () => shortcutCommandWrapper(editor, codeBlockArrowCommand('right')),
     }),
 
     codeBlockPlugin(),
