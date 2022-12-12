@@ -1,13 +1,13 @@
-import { Fragment, NodeType } from 'prosemirror-model';
+import { NodeType } from 'prosemirror-model';
 import { Command, EditorState, Selection, Transaction } from 'prosemirror-state';
-import { canSplit, findWrapping, liftTarget } from 'prosemirror-transform';
+import { findWrapping, liftTarget } from 'prosemirror-transform';
 
 import { isBlank, isNotNullOrUndefined } from '../../../util';
 import { Attributes } from '../../attribute';
 import { isMarkHolderNode } from '../../extension/markHolder';
 import { isTextNode } from '../../extension/text';
 import { isNodeActive, NodeName } from '../../node';
-import { isGapCursorSelection, isNodeSelection, isTextSelection, AncestorDepth } from '../../selection';
+import { isGapCursorSelection, AncestorDepth } from '../../selection';
 import { AbstractDocumentUpdate } from '../type';
 import { getDefaultBlockFromContentMatch } from '../util';
 
@@ -131,118 +131,6 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
       .scrollIntoView();
 
     return tr/*updated*/;
-  }
-}
-
-// -- Split -----------------------------------------------------------------------
-// split the Block at the Selection
-export const splitBlockCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SplitBlockDocumentUpdate(), state, dispatch);
-export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
-
-  // NOTE: this is inspired by https://github.com/ProseMirror/prosemirror-commands/blob/master/src/commands.ts#L295
-  /**
-   * modify the given Transaction such that the Block at
-   * the current Selection is split
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    const { $from, $to } = editorState.selection;
-
-    if(isNodeSelection(editorState.selection) && editorState.selection.node.isBlock) {
-      if(!$from.parentOffset || !canSplit(editorState.doc, $from.pos)) {
-        return false/*cannot split*/;
-      } /* else -- no offset into $from's parent or can split Node */
-
-      tr.split($from.pos).scrollIntoView();
-      return tr/*updated*/;
-    } /* else -- not splitting a Block Node Selection */
-
-    if(!$from.parent.isBlock) {
-      return false/*cannot split a non- Block Node*/;
-    } /* else -- try to split */
-
-    // create a default Block if no content in the parent or when at the end of the parent
-    let needToCreateDefaultBlock = false/*default*/;
-    if($from.parent.type === editorState.doc.type.contentMatch.defaultType) {
-      if(!$from.parent.textContent) {
-        needToCreateDefaultBlock = true;
-      } /* else -- the parent has content, do not change default */
-    } else {
-      if($to.parentOffset === $to.parent.content.size/*at the end of the parent's content*/) {
-        needToCreateDefaultBlock = true;
-      } /* else -- not at the end of the parent's content, no need to create */
-    }
-
-    if(isTextSelection(editorState.selection)) {
-      tr.deleteSelection();
-    } /* else -- not a TextSelection, no need to delete anything */
-
-    let defaultTypeAtDepth = undefined/*default*/;
-    if($from.depth !== AncestorDepth.Document) {
-      defaultTypeAtDepth = $from.node(AncestorDepth.GrandParent).contentMatchAt($from.indexAfter(-1/*grand parent depth*/)).defaultType;
-    } /* else -- pointing directly at the root node */
-
-    let typesAfterSplit = undefined/*default*/;
-    if(needToCreateDefaultBlock && defaultTypeAtDepth) {
-      typesAfterSplit = [{ type: defaultTypeAtDepth }];
-    } /* else -- keep default */
-
-    // check if canSplit with the types from above
-    let canPerformSplit = canSplit(tr.doc, tr.mapping.map($from.pos), 1/*direct child of Doc depth*/, typesAfterSplit);
-
-    // check if canSplit with defaultTypeAtDepth
-    if(!typesAfterSplit /*could not split with the types from above*/
-        && !canPerformSplit /*could not split with the types from above*/
-        && defaultTypeAtDepth /*there exist a default type at this depth*/
-        && canSplit(tr.doc, tr.mapping.map($from.pos), 1/*direct child of Doc depth*/, [{ type: defaultTypeAtDepth }]) /*can perform split*/
-      ) {
-      typesAfterSplit = [{ type: defaultTypeAtDepth }];
-      canPerformSplit = true;
-    }
-
-    if(canPerformSplit && defaultTypeAtDepth) {
-      tr.split(tr.mapping.map($from.pos), 1/*depth*/, typesAfterSplit);
-
-      if(!needToCreateDefaultBlock
-        && !$from.parentOffset/*parent has no content*/
-        && $from.parent.type !== defaultTypeAtDepth
-        && $from.node(AncestorDepth.GrandParent).canReplace($from.index(AncestorDepth.GrandParent), $from.indexAfter(AncestorDepth.GrandParent), Fragment.from(defaultTypeAtDepth.create()))
-      ) {
-        tr.setNodeMarkup(tr.mapping.map($from.before()), defaultTypeAtDepth);
-      }
-    } /* else -- cannot perform split or there is no default type at depth */
-
-    tr.scrollIntoView();
-    return tr/*updated*/;
-  }
-}
-
-/** split the Block at the Selection keeping active Marks */
-export const splitBlockKeepMarksCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new SplitBlockKeepMarksDocumentUpdate(), state, dispatch);
-export class SplitBlockKeepMarksDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
-
-  /**
-   * modify the given Transaction such that the Block at
-   * the current Selection is split and the Marks are kept
-   */
-  public update(editorState: EditorState, tr: Transaction) {
-    const { selection } = editorState;
-    if(isGapCursorSelection(selection)) return false/*do not allow, enforce typing to create new block of default type*/;
-
-    const startingMarks = editorState.storedMarks || (editorState.selection.$to.parentOffset && editorState.selection.$from.marks());
-    const updatedTr = new SplitBlockDocumentUpdate().update(editorState, tr);
-
-    if(updatedTr) {
-      if(startingMarks) {
-        updatedTr.ensureMarks(startingMarks);
-      } /* else -- there were no Marks before splitting the block */
-      return updatedTr;
-    } /* else -- return default */
-
-    return false/*default*/;
   }
 }
 

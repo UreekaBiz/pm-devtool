@@ -106,7 +106,7 @@ export enum ExtensionPriority {
    * they should run before other Plugins that also do so, but after
    * other TextBlock Nodes
    */
-  LIST_ITEM = 107,
+  LIST_ITEM = 108,
 
   /**
    * the BasicKeymap contains Commands that represent
