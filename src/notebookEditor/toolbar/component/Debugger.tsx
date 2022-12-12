@@ -60,7 +60,7 @@ const stringifyDocWithPositions = (editor: Editor) => {
     node.attrs['startPos'] = pos;
 
     // @ts-ignore
-    node.attrs['index()'] = doc.resolve(pos).index();
+    node.attrs['index()'] = getIndexAtResolvedPos(doc.resolve(pos));
   });
   return JSON.stringify(doc, null/*no replacer*/, 2/*T&E indentation*/);
 };

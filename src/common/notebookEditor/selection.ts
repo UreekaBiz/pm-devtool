@@ -1,4 +1,4 @@
-import { Node as ProseMirrorNode } from 'prosemirror-model';
+import { Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
 import { AllSelection, EditorState, NodeSelection, Selection, TextSelection } from 'prosemirror-state';
 
 import { CellSelection } from './extension/table/class';
@@ -76,6 +76,11 @@ export const getEndOfDocPosition = (doc: ProseMirrorNode) =>
 
   return ascendants;
 };
+
+// == Index =======================================================================
+// REF: https://discuss.prosemirror.net/t/what-does-index-and-indexafter-on-resolvedpos-exactly-means/1999
+/** Gets the index of the child at the given {@link ResolvedPos} */
+export const getIndexAtResolvedPos = ($pos: ResolvedPos) => $pos.index(/*current index*/);
 
 // == Range =======================================================================
 /**

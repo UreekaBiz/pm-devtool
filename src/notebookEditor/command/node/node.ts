@@ -3,7 +3,7 @@ import { ParseOptions } from 'prosemirror-model';
 import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 
-import { isGapCursorSelection, AbstractDocumentUpdate, AncestorDepth, Attributes, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, SelectionRange } from 'common';
+import { getIndexAtResolvedPos, isGapCursorSelection, AbstractDocumentUpdate, AncestorDepth, Attributes, CreateBlockNodeDocumentUpdate, JSONNode, NodeName, SelectionRange } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { SetParagraphDocumentUpdate } from 'notebookEditor/extension/paragraph/command';
@@ -145,7 +145,7 @@ export class BlockBackspaceDocumentUpdate implements AbstractDocumentUpdate {
 
     const isAtStartOfDoc = from === 1/*at the start of the Doc*/;
     if(isAtStartOfDoc || !$from.parent.textContent.length/*empty*/) {
-      const { defaultType: defaultBlockType  } = $from.node(AncestorDepth.GrandParent).contentMatchAt($from.index(/*current index*/));
+      const { defaultType: defaultBlockType  } = $from.node(AncestorDepth.GrandParent).contentMatchAt(getIndexAtResolvedPos($from));
       if(!defaultBlockType) return false/*cannot replace with default block at this position*/;
 
       return tr.setBlockType($from.before(), $from.after(), defaultBlockType/*default Block*/);

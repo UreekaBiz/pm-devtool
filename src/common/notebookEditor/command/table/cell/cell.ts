@@ -2,7 +2,7 @@ import { Fragment, Node as ProseMirrorNode, NodeType, ResolvedPos } from 'prosem
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { isCellSelection, AncestorDepth } from '../../../../notebookEditor/selection';
+import { getIndexAtResolvedPos, isCellSelection, AncestorDepth } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
@@ -255,7 +255,7 @@ const findCellAtDirection = ($cell: ResolvedPos, direction: 'previous' | 'next')
     }
 
   } else {
-    if($cell.index() < $cell.parent.childCount - 1 && $cell.nodeAfter) {
+    if(getIndexAtResolvedPos($cell) < $cell.parent.childCount - 1 && $cell.nodeAfter) {
       return $cell.pos + $cell.nodeAfter.nodeSize;
     } /* else -- $cell index is less than the childCount of $cell's parent, or $cell has no nodeAfter */
 

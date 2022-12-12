@@ -207,7 +207,7 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
       if(!needToCreateDefaultBlock
         && !$from.parentOffset/*parent has no content*/
         && $from.parent.type !== defaultTypeAtDepth
-        && $from.node(AncestorDepth.GrandParent).canReplace($from.index(-1), $from.indexAfter(-1), Fragment.from(defaultTypeAtDepth.create()))
+        && $from.node(AncestorDepth.GrandParent).canReplace($from.index(AncestorDepth.GrandParent), $from.indexAfter(AncestorDepth.GrandParent), Fragment.from(defaultTypeAtDepth.create()))
       ) {
         tr.setNodeMarkup(tr.mapping.map($from.before()), defaultTypeAtDepth);
       }

@@ -7,7 +7,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { AttributeType } from '../../../attribute';
 import { isCellNode, isHeaderCellNode, isRowNode, isTableNode } from '../node';
-import { isNodeSelection, isTextSelection, AncestorDepth } from '../../../selection';
+import { getIndexAtResolvedPos, isNodeSelection, isTextSelection, AncestorDepth } from '../../../selection';
 import { isTableTypeNode } from '../type';
 import { areResolvedPositionsInTable, isResolvedPosPointingAtCell, updateTableNodeAttributes, removeColumnSpans } from '../util';
 import { TableMap } from './TableMap';
@@ -210,8 +210,8 @@ export class CellSelection extends Selection {
    * top to the bottom of the Table
    */
   public isColSelection() {
-    const anchorTopIndex = this.$anchorCell.index(-1/*grandParent depth*/),
-          headTopIndex = this.$headCell.index(-1/*grandParent depth*/);
+    const anchorTopIndex = this.$anchorCell.index(AncestorDepth.GrandParent),
+          headTopIndex = this.$headCell.index(AncestorDepth.GrandParent);
 
     if(Math.min(anchorTopIndex, headTopIndex) > 0) return false/*by definition*/;
 
@@ -351,8 +351,8 @@ class CellBookmark implements SelectionBookmark {
 
     if(isRowNode($anchorCell.parent)
       && isRowNode($headCell.parent)
-      && $anchorCell.index() < $anchorCell.parent.childCount
-      && $headCell.index() < $headCell.parent.childCount
+      && getIndexAtResolvedPos($anchorCell) < $anchorCell.parent.childCount
+      && getIndexAtResolvedPos($headCell) < $headCell.parent.childCount
       && areResolvedPositionsInTable($anchorCell, $headCell)
     ) {
       return new CellSelection($anchorCell, $headCell);

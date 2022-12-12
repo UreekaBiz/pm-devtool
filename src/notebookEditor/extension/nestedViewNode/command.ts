@@ -3,7 +3,7 @@ import { Fragment, NodeType } from 'prosemirror-model';
 import { Command, EditorState, NodeSelection, TextSelection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isNodeSelection, isNestedViewNode, isTextSelection, Attributes, AbstractDocumentUpdate, CreateBlockNodeDocumentUpdate, NodeName, ProseMirrorNodeContent } from 'common';
+import { getIndexAtResolvedPos, isNodeSelection, isNestedViewNode, isTextSelection, Attributes, AbstractDocumentUpdate, CreateBlockNodeDocumentUpdate, NodeName, ProseMirrorNodeContent } from 'common';
 
 // ********************************************************************************
 // == Insertion ===================================================================
@@ -21,7 +21,7 @@ export class InsertNestedViewNodeDocumentUpdate implements AbstractDocumentUpdat
     const { $from, from, to, empty } = editorState.selection;
     if(!empty && this.nodeType.isBlock) return false/*do not allow*/;
 
-    const fromIndex = $from.index();
+    const fromIndex = getIndexAtResolvedPos($from);
     if(this.nodeType.isInline) {
       const text = editorState.doc.textBetween(from, to);
       let textContent: ProseMirrorNodeContent = Fragment.empty/*default*/;
