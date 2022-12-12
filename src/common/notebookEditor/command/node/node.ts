@@ -7,7 +7,7 @@ import { Attributes } from '../../attribute';
 import { isMarkHolderNode } from '../../extension/markHolder';
 import { isTextNode } from '../../extension/text';
 import { isNodeActive, NodeName } from '../../node';
-import { isGapCursorSelection, isNodeSelection, isTextSelection } from '../../selection';
+import { isGapCursorSelection, isNodeSelection, isTextSelection, AncestorDepth } from '../../selection';
 import { AbstractDocumentUpdate } from '../type';
 import { getDefaultBlockFromContentMatch } from '../util';
 
@@ -58,9 +58,9 @@ export class CreateBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
       return tr/*nothing left to do*/;
     } /* else -- not the same parent (multiple Selection) or content not empty, insert Block below */
 
-    const above = $head.node(-1/*grandParent*/),
-          after = $head.indexAfter(-1/*grandParent depth*/);
-    if(!blockNodeType || !above.canReplaceWith(after, after, blockNodeType)) return false/*cannot replace Node above*/;
+    const nodeAbove = $head.node(AncestorDepth.GrandParent),
+          indexAfter = $head.indexAfter(AncestorDepth.GrandParent);
+    if(!blockNodeType || !nodeAbove.canReplaceWith(indexAfter, indexAfter, blockNodeType)) return false/*cannot replace Node above*/;
 
     const creationPos = $head.after();
     const newBlockNode = blockNodeType.createAndFill(this.attributes);
@@ -115,12 +115,12 @@ export class LeaveBlockNodeDocumentUpdate implements AbstractDocumentUpdate {
     if(!$head.sameParent($anchor)) return false/*Selection spans multiple Blocks*/;
     if(!($head.parent.type.name === this.nodeName)) return false/*this Node should not handle the call*/;
 
-    const grandParentOfHead = $head.node(-1/*grandParent*/),
-          indexAfterGrandParentOfHead = $head.indexAfter(-1/*grandParent depth*/);
-    const defaultBlockType = getDefaultBlockFromContentMatch(grandParentOfHead.contentMatchAt(indexAfterGrandParentOfHead));
+    const grandParent = $head.node(AncestorDepth.GrandParent),
+          indexAfterGrandParent = $head.indexAfter(AncestorDepth.GrandParent);
+    const defaultBlockType = getDefaultBlockFromContentMatch(grandParent.contentMatchAt(indexAfterGrandParent));
 
     if(!defaultBlockType) return false/*no valid type was found*/;
-    if(!grandParentOfHead.canReplaceWith(indexAfterGrandParentOfHead, indexAfterGrandParentOfHead, defaultBlockType)) return false/*invalid replacement*/;
+    if(!grandParent.canReplaceWith(indexAfterGrandParent, indexAfterGrandParent, defaultBlockType)) return false/*invalid replacement*/;
 
     const newBlockNode = defaultBlockType.createAndFill();
     if(!newBlockNode) return false/*no valid wrapping was found*/;
@@ -179,8 +179,8 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
     } /* else -- not a TextSelection, no need to delete anything */
 
     let defaultTypeAtDepth = undefined/*default*/;
-    if($from.depth !== 0/*not pointing directly at the root node*/) {
-      defaultTypeAtDepth = $from.node(-1/*grand parent*/).contentMatchAt($from.indexAfter(-1/*grand parent depth*/)).defaultType;
+    if($from.depth !== AncestorDepth.Document) {
+      defaultTypeAtDepth = $from.node(AncestorDepth.GrandParent).contentMatchAt($from.indexAfter(-1/*grand parent depth*/)).defaultType;
     } /* else -- pointing directly at the root node */
 
     let typesAfterSplit = undefined/*default*/;
@@ -207,7 +207,7 @@ export class SplitBlockDocumentUpdate implements AbstractDocumentUpdate {
       if(!needToCreateDefaultBlock
         && !$from.parentOffset/*parent has no content*/
         && $from.parent.type !== defaultTypeAtDepth
-        && $from.node(-1/*grandParent*/).canReplace($from.index(-1), $from.indexAfter(-1), Fragment.from(defaultTypeAtDepth.create()))
+        && $from.node(AncestorDepth.GrandParent).canReplace($from.index(-1), $from.indexAfter(-1), Fragment.from(defaultTypeAtDepth.create()))
       ) {
         tr.setNodeMarkup(tr.mapping.map($from.before()), defaultTypeAtDepth);
       }

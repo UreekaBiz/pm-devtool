@@ -2,7 +2,7 @@ import { Attrs, Node as ProseMirrorNode, ResolvedPos } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 
 import { Attributes, AttributeType } from '../../../attribute';
-import { isCellSelection, isNodeSelection } from '../../../selection';
+import { isCellSelection, isNodeSelection, AncestorDepth } from '../../../selection';
 import { TableMap, TableRect } from '../class';
 import { isCellNode } from '../node/cell';
 import { getHeaderCellNodeType, isHeaderCellNode } from '../node/headerCell';
@@ -32,8 +32,8 @@ export const areResolvedPositionsInTable = ($a: ResolvedPos, $b: ResolvedPos) =>
 // == Column ======================================================================
   /** get the amount of columns that lie before the Cell at the given {@link ResolvedPos} */
 export const getColumnAmountBeforeResolvedPos = ($pos: ResolvedPos) => {
-  const tableMap = TableMap.getTableMap($pos.node(-1));
-  return tableMap.getColumnAmountBeforePos($pos.pos - $pos.start(-1));
+  const tableMap = TableMap.getTableMap($pos.node(AncestorDepth.GrandParent));
+  return tableMap.getColumnAmountBeforePos($pos.pos - $pos.start(AncestorDepth.GrandParent));
 };
 
 /**
@@ -87,9 +87,9 @@ export const isColumnHeader = (table: ProseMirrorNode, tableMap: TableMap, colum
  * the given {@link ResolvedPos}
  */
 export const getResolvedCellPosAroundResolvedPos = ($pos: ResolvedPos) => {
-  for(let depth = $pos.depth - 1/*start 1 above*/; depth > 0/*while not reaching the Doc depth*/; depth--) {
+  for(let depth = $pos.depth - 1/*start 1 above*/; depth > AncestorDepth.Document; depth--) {
     if(isRowNode($pos.node(depth))) {
-      return $pos.node(0/*the document*/).resolve($pos.before(depth + 1/*Cell depth*/));
+      return $pos.node(AncestorDepth.Document).resolve($pos.before(depth + 1/*Cell depth*/));
     } /* else -- Node is not a Row node */
   }
 
@@ -151,14 +151,14 @@ const getResolvedCellPosNearResolvedPos = ($pos: ResolvedPos) => {
 export const isResolvedPosPointingAtCell = ($pos: ResolvedPos) => isRowNode($pos.parent) && $pos.nodeAfter/*there is a Cell*/;
 
 /** return a {@link ResolvedPos} that points past its nodeAfter */
-export const moveResolvedCellPosForward = ($pos: ResolvedPos) => $pos.nodeAfter && $pos.node(0/*the document*/).resolve($pos.pos + $pos.nodeAfter.nodeSize);
+export const moveResolvedCellPosForward = ($pos: ResolvedPos) => $pos.nodeAfter && $pos.node(AncestorDepth.Document).resolve($pos.pos + $pos.nodeAfter.nodeSize);
 
 /**
  * get the {@link TableRect} of the Cell at the given {@link ResolvedPos}
  */
 export const getCellTableRect = ($pos: ResolvedPos) => {
-  const tableMap = TableMap.getTableMap($pos.node(-1));
-  return tableMap.getCellTableRect($pos.pos - $pos.start(-1));
+  const tableMap = TableMap.getTableMap($pos.node(AncestorDepth.GrandParent));
+  return tableMap.getCellTableRect($pos.pos - $pos.start(AncestorDepth.GrandParent));
 };
 
 /**
@@ -166,11 +166,11 @@ export const getCellTableRect = ($pos: ResolvedPos) => {
  * after moving it
  */
 export const getMovedCellResolvedPos = ($pos: ResolvedPos, axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/bottom*/) => {
-  const tableMap = TableMap.getTableMap($pos.node(-1/*grandParent*/)),
+  const tableMap = TableMap.getTableMap($pos.node(AncestorDepth.GrandParent)),
         tableStart = $pos.start(-1/*grandParent depth*/);
 
   const movedPosition = tableMap.getNextCellPos($pos.pos - tableStart, axis, direction);
-  return movedPosition === null ? null : $pos.node(0/*the doc*/).resolve(tableStart + movedPosition);
+  return movedPosition === null ? null : $pos.node(AncestorDepth.Document).resolve(tableStart + movedPosition);
 };
 
 // == TableRect ===================================================================
@@ -183,8 +183,8 @@ export const getMovedCellResolvedPos = ($pos: ResolvedPos, axis: 'horizontal' | 
   const cellPos = getResolvedCellPos(state);
   if(!cellPos) return null/*selection not in a Cell*/;
 
-  const table = cellPos.node(-1/*grandParent*/),
-        tableStart = cellPos.start(-1/*grandParent depth*/),
+  const table = cellPos.node(AncestorDepth.GrandParent),
+        tableStart = cellPos.start(AncestorDepth.GrandParent),
         tableMap = TableMap.getTableMap(table);
 
   let tableRect: TableRect;

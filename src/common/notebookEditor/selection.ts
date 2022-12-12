@@ -11,6 +11,14 @@ import { CellSelection } from './extension/table/class';
 // * `selection.depth` is the parent Node
 export type SelectionDepth = number | undefined/*current Node*/;
 
+/** the depth of an ancestor Node */
+export enum AncestorDepth {
+  Document = 0,
+  GrandParent = -1,
+  GreatGrandParent = -2,
+  GreatGreatGrandParent = -3,
+}
+
 // .. Position ....................................................................
 // type of the function that is used to compute the position of a NodeView in the
 // current Document
@@ -36,7 +44,8 @@ export const isNodeSelection = (selection: Selection): selection is NodeSelectio
 export const isGapCursorSelection = (selection: Selection) => selection.toJSON().type === 'gapcursor';
 
 // == Node ========================================================================
-/** @returns currently selected Node. The Node selection is based on the depth of
+/**
+ * @returns currently selected Node. The Node selection is based on the depth of
  *           the selection */
  export const getSelectedNode = (state: EditorState, depth?: SelectionDepth) => {
   // if depth is provided then an ancestor is returned

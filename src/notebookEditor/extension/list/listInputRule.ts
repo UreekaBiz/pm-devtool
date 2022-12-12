@@ -1,7 +1,7 @@
 import { InputRule } from 'prosemirror-inputrules';
 import { findWrapping, canJoin } from 'prosemirror-transform';
 
-import { AttributeType, isListNode, NodeName } from 'common';
+import { isListNode, AncestorDepth, AttributeType, NodeName } from 'common';
 
 // ********************************************************************************
 // == RegEx =======================================================================
@@ -23,7 +23,7 @@ export const createListWrapInputRule = (nodeName: NodeName.UNORDERED_LIST | Node
     const { tr } = state;
 
     // this is the specific check to be performed
-    const maybeList = tr.selection.$from.node(-2/*ancestor depth, may be a List*/);
+    const maybeList = tr.selection.$from.node(AncestorDepth.GreatGrandParent);
     if(maybeList && isListNode(maybeList)) return null/*do not allow inside a List*/;
 
     tr.delete(start, end);

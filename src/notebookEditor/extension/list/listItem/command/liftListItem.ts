@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isListItemNode, isListNode, isGapCursorSelection, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
+import { isListItemNode, isListNode, isGapCursorSelection, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 import { getListItemPositions } from './util';
 
@@ -66,7 +66,7 @@ const liftListItem = (tr: Transaction, listItemPos: number) => {
   let liftBlockRange: NodeRange | null = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth);
 
   const $insideListItemPos = tr.doc.resolve($listItemEndPos.pos-2/*inside the ListItem, inside its lastChild*/),
-        listContainer = $insideListItemPos.node(-3/*Node holding the List*/);
+        listContainer = $insideListItemPos.node(AncestorDepth.GreatGreatGrandParent);
   let liftListItemContents = false/*default*/;
   if(listContainer && (listContainer.isBlock && !listContainer.isTextblock) && !isListNode(listContainer)) {
     liftListItemContents = true;

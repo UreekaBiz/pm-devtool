@@ -1,7 +1,7 @@
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet, EditorView } from 'prosemirror-view';
 
-import { getResolvedCellPosAroundResolvedPos, isNotNullOrUndefined, isTableNode, isResolvedPosPointingAtCell, updateTableNodeAttributes, AttributeType, TableMap, PM_CLASS, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
+import { getResolvedCellPosAroundResolvedPos, isNotNullOrUndefined, isTableNode, isResolvedPosPointingAtCell, updateTableNodeAttributes, AncestorDepth, AttributeType, TableMap, PM_CLASS, TABLE_NODENAME, TD_NODENAME, TH_NODENAME } from 'common';
 
 import { isValidHTMLElement } from 'notebookEditor/extension/util';
 
@@ -209,9 +209,9 @@ const handleMouseMove = (view: EditorView, event: MouseEvent, handleWidth: numbe
       if(!lastColumnResizable && cellPos !== -1) {
         const $cellPos = view.state.doc.resolve(cellPos);
 
-        const table = $cellPos.node(-1/*grandParent*/),
+        const table = $cellPos.node(AncestorDepth.GrandParent),
               tableMap = TableMap.getTableMap(table),
-              tableStart = $cellPos.start(-1/*grandParentDepth*/);
+              tableStart = $cellPos.start(AncestorDepth.GrandParent);
 
         const columnCount = tableMap.getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
         if(columnCount === tableMap.width - 1) {
@@ -245,11 +245,11 @@ export const handleColumnResizingDecorations = (state: EditorState, cellPos: num
   const decorations = [/*default empty*/];
   const $cellPos = state.doc.resolve(cellPos);
 
-  const table = $cellPos.node(-1/*grandParent*/);
+  const table = $cellPos.node(AncestorDepth.GrandParent);
   if(!table) return DecorationSet.empty/*no Decorations*/;
 
   const tableMap = TableMap.getTableMap(table),
-        tableStart = $cellPos.start(-1/*grandParent depth*/);
+        tableStart = $cellPos.start(AncestorDepth.GrandParent);
 
   const columnCount = tableMap.getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan];
   for(let row = 0; row < tableMap.height; row++) {
@@ -298,8 +298,8 @@ const getCellEdge = (view: EditorView, event: MouseEvent, side: 'right' | 'left'
 
   if(side === 'right') return $cellPos.pos;
 
-  const tableMap = TableMap.getTableMap($cellPos.node(-1/*grandParent*/)),
-        tableStart = $cellPos.start(-1/*grandParent depth*/);
+  const tableMap = TableMap.getTableMap($cellPos.node(AncestorDepth.GrandParent)),
+        tableStart = $cellPos.start(AncestorDepth.GrandParent);
 
   const cellPosTableMapIndex = tableMap.map.indexOf($cellPos.pos - tableStart);
   if(cellPosTableMapIndex % tableMap.width === 0) { return -1/*default*/; }
@@ -345,7 +345,7 @@ const getCurrentColumnWidth = (view: EditorView, cellPos: number, colSpan: numbe
 const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => {
   const $cellPos = view.state.doc.resolve(cellPos);
 
-  const table = $cellPos.node(-1/*grandParent*/),
+  const table = $cellPos.node(AncestorDepth.GrandParent),
         tableMap = TableMap.getTableMap(table),
         tableStart = $cellPos.start(-1/*grandParent depth*/);
 
@@ -379,7 +379,7 @@ const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => 
 const displayColumnWidth = (view: EditorView, cellPos: number, width: number, cellMinWidth: number) => {
   const $cellPos = view.state.doc.resolve(cellPos);
 
-  const tableNode = $cellPos.node(-1/*grandParent*/);
+  const tableNode = $cellPos.node(AncestorDepth.GrandParent);
   if(!tableNode || !isTableNode(tableNode)) throw new Error('expected Table Node to exist');
 
   const tableStart = $cellPos.start(-1/*grandParent depth*/);

@@ -1,7 +1,7 @@
 import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isListNode, isListItemNode, isHeadingNode, isParagraphNode, AbstractDocumentUpdate } from 'common';
+import { isListNode, isListItemNode, isHeadingNode, isParagraphNode, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 // ********************************************************** **********************
 export const joinForwardToStartOfClosestListItemCommand: Command = (state, dispatch) =>
@@ -17,7 +17,7 @@ export class JoinForwardToStartOfClosestListItemDocumentUpdate implements Abstra
     if(!$from.parent.isTextblock) return false/*parent is not a TextBlock, nothing to do*/;
     if($from.end() !== from) return false/*Selection is not at the end of the parent TextBlock*/;
 
-    const grandParent = $from.node(-1/*grandParent depth*/),
+    const grandParent = $from.node(AncestorDepth.GrandParent),
           insideList = grandParent && isListItemNode(grandParent),
           nodeAfterEndPos = $from.end() + (insideList ? 2/*account for nested-ness*/ : 1/*no need to account*/),
           nodeAfterEnd = doc.nodeAt(nodeAfterEndPos);

@@ -4,7 +4,7 @@ import { Command, EditorState, Selection, Transaction } from 'prosemirror-state'
 import { AttributeType } from '../../../../notebookEditor/attribute';
 import { NodeName } from '../../../../notebookEditor/node';
 import { findParentNodeClosestToPos } from '../../../../notebookEditor/node/util';
-import { isAllBlockNodeRangeSelected, isCellSelection } from '../../../../notebookEditor/selection';
+import { isAllBlockNodeRangeSelected, isCellSelection, AncestorDepth } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap } from '../../../extension/table/class';
 import { isCellNode } from '../../..//extension/table/node/cell';
@@ -127,7 +127,7 @@ export class SelectAllInsideTableDocumentUpdate implements AbstractDocumentUpdat
 }
 /* select the whole Table if it is not currently selected */
 const selectAllTable = (editorState: EditorState, tr: Transaction, $currentCellPos: ResolvedPos) => {
-  const table = $currentCellPos.node(-1/*grandParent*/);
+  const table = $currentCellPos.node(AncestorDepth.GrandParent);
   if(!table || !isTableNode(table)) return false/*no Table to select*/;
   const tableMap = TableMap.getTableMap(table),
         tableStart = $currentCellPos.start(-1/*grandParent depth*/);

@@ -2,7 +2,7 @@ import { GapCursor } from 'prosemirror-gapcursor';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isCodeBlockNode, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
+import { isCodeBlockNode, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 // ********************************************************************************
 // == Selection ===================================================================
@@ -16,7 +16,7 @@ export class SelectAllInsideCodeBlockDocumentUpdate implements AbstractDocumentU
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = tr,
           { $from } = selection;
-    const codeBlock = $from.node(-1/*grandParent*/);
+    const codeBlock = $from.node(AncestorDepth.GrandParent);
     if(!codeBlock || !isCodeBlockNode(codeBlock)) return false/*not inside a CodeBlock*/;
 
     const { from, to } = selection;
@@ -48,7 +48,7 @@ export class CodeBlockArrowDocumentUpdate implements AbstractDocumentUpdate {
     if(!tr.selection.empty) return false/*do not handle if not empty*/;
 
     const { $from } = tr.selection;
-    const codeBlock = $from.node(-1/*grandParent*/);
+    const codeBlock = $from.node(AncestorDepth.GrandParent);
     if(!codeBlock || !isCodeBlockNode(codeBlock)) return false/*not inside a CodeBlock*/;
 
     const { firstChild, lastChild } = codeBlock;
@@ -85,7 +85,7 @@ export class SplitAndLiftOutOfCodeBlockDocumentUpdate implements AbstractDocumen
     const { selection } = tr,
           { $from } = selection;
 
-    const codeBlock = $from.node(-1/*grandParent*/);
+    const codeBlock = $from.node(AncestorDepth.GrandParent);
     if(!isCodeBlockNode(codeBlock)) return false/*nothing to do*/;
     if(!($from.parent === codeBlock.child(codeBlock.childCount-1/*account for 0 indexing*/))) return false/*not at the end of the codeblock*/;
 

@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Selection, Transaction } from 'prosemirror-state';
 import { canJoin } from 'prosemirror-transform';
 
-import { isListItemNode, SelectionRange } from 'common';
+import { isListItemNode, AncestorDepth, SelectionRange } from 'common';
 
 // ********************************************************************************
 /**
@@ -31,8 +31,8 @@ export const getListItemPositions = (doc: ProseMirrorNode, selectionRange: Selec
 /** check the given Selection to see if its from or its to are inside a ListItem */
 export const fromOrToInListItem = (selection: Selection) => {
   const { $from, $to } = selection,
-        fromGrandParent = $from.node(-1/*grandParent ListItem*/),
-        toGrandParent = $to.node(-1/*grandParent ListItem*/);
+        fromGrandParent = $from.node(AncestorDepth.GrandParent),
+        toGrandParent = $to.node(AncestorDepth.GrandParent);
   if(!fromGrandParent || !toGrandParent) return false/*Selection not inside a ListItem*/;
 
   if(!isListItemNode(fromGrandParent) || !isListItemNode(toGrandParent)) return false/*no part of the given Selection is inside a ListItem*/;

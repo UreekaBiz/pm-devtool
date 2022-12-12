@@ -2,7 +2,7 @@ import { Fragment, Node as ProseMirrorNode, NodeType, ResolvedPos } from 'prosem
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 
 import { AttributeType } from '../../../../notebookEditor/attribute';
-import { isCellSelection } from '../../../../notebookEditor/selection';
+import { isCellSelection, AncestorDepth } from '../../../../notebookEditor/selection';
 import { isNotNullOrUndefined } from '../../../../util/object';
 import { CellSelection, TableMap, TableRect } from '../../../extension/table/class';
 import { getTableNodeTypes } from '../../../extension/table/node/table';
@@ -245,8 +245,8 @@ const findCellAtDirection = ($cell: ResolvedPos, direction: 'previous' | 'next')
       return $cell.pos - nodeBefore.nodeSize;
     } /* else -- no nodeBefore */
 
-    for(let row = $cell.index(-1/*grandParent*/) - 1, rowEnd = $cell.before(); row >= 0; row--) {
-      const rowNode = $cell.node(-1/*grandParent*/).child(row);
+    for(let row = $cell.index(AncestorDepth.GrandParent) - 1, rowEnd = $cell.before(); row >= 0; row--) {
+      const rowNode = $cell.node(AncestorDepth.GrandParent).child(row);
       if(rowNode.childCount && rowNode.lastChild) {
         return rowEnd - 1 - rowNode.lastChild.nodeSize;
       } /* else -- rowNode has no children or no lastChild */
@@ -259,8 +259,8 @@ const findCellAtDirection = ($cell: ResolvedPos, direction: 'previous' | 'next')
       return $cell.pos + $cell.nodeAfter.nodeSize;
     } /* else -- $cell index is less than the childCount of $cell's parent, or $cell has no nodeAfter */
 
-    const tableNode = $cell.node(-1/*grandParent*/);
-    for(let row = $cell.indexAfter(-1/*grandParent depth*/), rowStart = $cell.after(); row < tableNode.childCount; row++) {
+    const tableNode = $cell.node(AncestorDepth.GrandParent);
+    for(let row = $cell.indexAfter(AncestorDepth.GrandParent), rowStart = $cell.after(); row < tableNode.childCount; row++) {
       const rowNode = tableNode.child(row);
       if(rowNode.childCount) {
         return rowStart + 1;

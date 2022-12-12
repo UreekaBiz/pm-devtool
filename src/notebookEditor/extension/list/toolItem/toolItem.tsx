@@ -1,7 +1,7 @@
 import { MdFormatListBulleted } from 'react-icons/md';
 import { RiListOrdered } from 'react-icons/ri';
 
-import { isNodeSelection, AttributeType, NodeName, ORDERED_LIST_DEFAULT_START } from 'common';
+import { isNodeSelection, AncestorDepth, AttributeType, NodeName, ORDERED_LIST_DEFAULT_START } from 'common';
 
 import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { Editor } from 'notebookEditor/editor/Editor';
@@ -44,6 +44,6 @@ export const unorderedListToolItem: ToolItem = {
 // -- Util ------------------------------------------------------------------------
 const isListToolItemActive = (editor: Editor, nodeName: NodeName) => {
   const { $from } = editor.view.state.selection;
-  const grandParent = $from.node(-2/*expected to be a List*/);
+  const grandParent = $from.node(AncestorDepth.GreatGrandParent);
   return grandParent && grandParent.type.name === nodeName;
 };

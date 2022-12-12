@@ -1,4 +1,4 @@
-import { isCodeBlockNode, AttributeType, NodeName, CodeBlockLanguage, updateAttributesCommand } from 'common';
+import { isCodeBlockNode, updateAttributesCommand, AttributeType, AncestorDepth, NodeName, CodeBlockLanguage } from 'common';
 
 import { DropdownTool, DropdownToolItemType } from 'notebookEditor/extension/shared/component/DropdownToolItem/DropdownTool';
 import { InputToolItemContainer } from 'notebookEditor/extension/shared/component/InputToolItemContainer';
@@ -17,7 +17,7 @@ interface Props extends EditorToolComponentProps {/*no additional*/}
 // == Component ===================================================================
 export const CodeBlockLanguageToolItem: React.FC<Props> = ({ editor }) => {
   const { $from } = editor.view.state.selection;
-  const codeBlock = $from.node(-1/*grandParent*/);
+  const codeBlock = $from.node(AncestorDepth.GrandParent);
   if(!isCodeBlockNode(codeBlock)) throw new Error('Invalid CodeBlock WrapTool Render');
 
   const language = codeBlock.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript/*default*/;
