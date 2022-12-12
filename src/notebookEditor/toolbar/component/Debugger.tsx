@@ -1,5 +1,7 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
 
+import { getIndexAtResolvedPos } from 'common';
+
 import { Editor } from 'notebookEditor/editor/Editor';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
