@@ -4,6 +4,7 @@ import { findParentNodeClosestToPos, isListItemNode, AbstractDocumentUpdate, Att
 
 import { LiftListItemDocumentUpdate } from '../listItem/command';
 import { isListBeforeCurrentBlockRange } from './util';
+import { NodeType } from 'prosemirror-model';
 
 // ********************************************************************************
 // toggle the type of a List
@@ -21,12 +22,12 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
     const listItemType = editorState.schema.nodes[NodeName.LIST_ITEM],
           listType = editorState.schema.nodes[this.listTypeName];
 
-    // -- Toggle ------------------------------------------------------------------
     let listItemRange = $from.blockRange($to);
     if(!listItemRange) return false/*no blockRange exists, nothing to do*/;
     const { depth: blockRangeDepth } = listItemRange;
-    const closestParentList = findParentNodeClosestToPos(listItemRange.$from, (node, depth) => isListBeforeCurrentBlockRange(blockRangeDepth, node, depth));
 
+    // -- Toggle ------------------------------------------------------------------
+    const closestParentList = findParentNodeClosestToPos(listItemRange.$from, (node, depth) => isListBeforeCurrentBlockRange(blockRangeDepth, node, depth));
     if(closestParentList) {
       if(canUntoggleNestedList(closestParentList.depth, listItemRange.depth) && closestParentList.node.type === listType) return new LiftListItemDocumentUpdate('Shift-Tab'/*dedent*/).update(editorState, tr);
       else /*change type*/ return tr.setNodeMarkup(closestParentList.pos, listType, this.attrs)/*updated*/;
@@ -36,28 +37,32 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
     const nearestBlockParent = findParentNodeClosestToPos(listItemRange.$from, isNonTextBlockBlock)?.node ?? tr.doc/*default parent*/;
     const nearestBlockChildrenPositions: number[] = [/*default empty*/];
     tr.doc.nodesBetween(from, to, (node, pos, parent, index) => {
-      if(parent && parent === nearestBlockParent) {
-        nearestBlockChildrenPositions.push(pos+1/*inside the Child*/);
-      } /* else -- ignore */
+      if(!parent || parent !== nearestBlockParent) return/*ignore Node*/;
+      nearestBlockChildrenPositions.push(pos+1/*inside the Child*/);
     });
 
-    // nearestBlockChildrenPositions.forEach(child => wrapChild(child));
-    for(let i=0; i<nearestBlockChildrenPositions.length; i++) {
-      const $pos = tr.doc.resolve(tr.mapping.map(nearestBlockChildrenPositions[i])),
-            nodeAtPos = tr.doc.nodeAt($pos.pos);
-
-      // prevent wrapping an already wrapped ListItem
-      if(nodeAtPos && isListItemNode(nodeAtPos)) continue/*already wrapped*/;
-
-      const blockRange = $pos.blockRange();
-      if(!blockRange) continue/*no range to wrap*/;
-      tr.wrap(blockRange, [{ type: listType, attrs: this.attrs }, { type: listItemType }]);
-    }
+    nearestBlockChildrenPositions.forEach(childPosition => wrapChildInList(tr, childPosition, listType, listItemType, this.attrs));
     return tr/*updated*/;
   }
 }
 
 // == Util ========================================================================
+/**
+ * wrap the Node at the given childPosition in the given listItemType and then
+ * in a List of the given listType
+ */
+const wrapChildInList = (tr: Transaction, childPosition: number, listType: NodeType, listItemType: NodeType, attrs: Partial<Attributes>) => {
+  const $pos = tr.doc.resolve(tr.mapping.map(childPosition)),
+        nodeAtPos = tr.doc.nodeAt($pos.pos);
+
+  // prevent wrapping an already wrapped ListItem
+  if(nodeAtPos && isListItemNode(nodeAtPos)) return/*already wrapped*/;
+
+  const blockRange = $pos.blockRange();
+  if(!blockRange) return/*no range to wrap*/;
+  tr.wrap(blockRange, [{ type: listType, attrs: attrs }, { type: listItemType }]);
+};
+
 /**
  * check whether the depths of a List and the range of a ListItem
  * are such that the List can be untoggled, and hence the ListItem lifted
