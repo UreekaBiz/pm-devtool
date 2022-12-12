@@ -8,8 +8,8 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { ExtensionPriority } from 'notebookEditor/model';
 
 import { liftListItemCommand, LiftListOperation } from '../command/listItem/lift/liftListItem';
-import { joinBackwardToEndOfClosestListItemCommand } from '../command/listItem/join/joinBackward';
-import { joinForwardToStartOfClosestListItemCommand } from '../command/listItem/join/joinForward';
+import { joinListItemBackwardCommand } from '../command/listItem/join/backward/joinListItemBackward';
+import { joinForwardToStartOfClosestListItemCommand } from '../command/listItem/join/forward/joinForward';
 import { sinkListItemCommand } from '../command/listItem/sink/sinkListItem';
 import { splitListItemKeepMarksCommand } from '../command/listItem/split/splitListItem';
 import { listItemPlugin } from './plugin';
@@ -58,4 +58,4 @@ export const ListItem = new NodeExtension({
 });
 
 // == Util ========================================================================
-const listItemBackSpaceBehavior = chainCommands(liftListItemCommand(LiftListOperation.Remove), joinBackwardToEndOfClosestListItemCommand);
+const listItemBackSpaceBehavior = chainCommands(liftListItemCommand(LiftListOperation.Remove), joinListItemBackwardCommand);
