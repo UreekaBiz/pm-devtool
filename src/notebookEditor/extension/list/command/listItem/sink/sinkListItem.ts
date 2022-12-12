@@ -1,7 +1,7 @@
 import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { findParentNodeClosestToPos, isListNode, isListItemNode, isGapCursorSelection, AbstractDocumentUpdate } from 'common';
+import { findParentNodeClosestToPos, isListNode, isListItemNode, isGapCursorSelection, AbstractDocumentUpdate, ListItemNodeType } from 'common';
 
 import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from '../util';
 
@@ -53,7 +53,22 @@ const sinkListItem = (tr: Transaction, listItemPos: number) => {
   if(!closestListObj) return/*no list to take type from*/;
 
   tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
-  checkAndMergeListAtPos(tr, mappedListItemPos);
 
+  checkForListMergeAroundPos(tr, listItem, mappedListItemPos);
   return tr/*modified*/;
+};
+
+// NOTE: this specifically ensures that
+//            1. hello                 1. hello
+//  1. world             turns into    2. world
+//            1. foo                   3. foo
+// after a sink operation
+/**
+ * check if a List can be merged before, at or after
+ * the given listItemPosition
+ */
+const checkForListMergeAroundPos = (tr: Transaction, listItem: ListItemNodeType, listItemPos: number) => {
+  checkAndMergeListAtPos(tr, listItemPos-1/*before the ListItem*/);
+  checkAndMergeListAtPos(tr, listItemPos/*at the ListItem*/);
+  checkAndMergeListAtPos(tr, listItemPos+ listItem.nodeSize+1/*at the next ListItem if it exists*/);
 };
