@@ -71,9 +71,9 @@ export const fromOrToInListItem = (selection: Selection) => {
   } /* else -- there is no Node before the pos at posBefore */
 
   if(nodeBeforeResolvedPosBefore
-    && nodeAfterResolvedPosBefore
-    && nodeBeforeResolvedPosBefore.type === nodeAfterResolvedPosBefore.type
-    && canJoin(tr.doc, posBefore)
+    && (nodeAfterResolvedPosBefore)
+    && (nodeBeforeResolvedPosBefore.type === nodeAfterResolvedPosBefore.type)
+    && (canJoin(tr.doc, posBefore))
   ) {
     tr.join(posBefore);
     const nodeBefore = tr.doc.nodeAt(beforeNodePos);
@@ -88,9 +88,9 @@ export const fromOrToInListItem = (selection: Selection) => {
         nodeAfterResolvedPosAfter = $resolvedPosAfter.nodeAfter;
 
   if(nodeBeforeResolvedPosAfter
-    && nodeAfterResolvedPosAfter
-    && nodeBeforeResolvedPosAfter.type === nodeAfterResolvedPosAfter.type
-    && canJoin(tr.doc, posAfter)
+    && (nodeAfterResolvedPosAfter)
+    && (nodeBeforeResolvedPosAfter.type === nodeAfterResolvedPosAfter.type)
+    && (canJoin(tr.doc, posAfter))
   ) {
     tr.join(posAfter);
     checkedAndMergedList = true;
