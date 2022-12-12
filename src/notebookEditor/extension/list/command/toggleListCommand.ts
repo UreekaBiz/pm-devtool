@@ -43,12 +43,11 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
 
     // nearestBlockChildrenPositions.forEach(child => wrapChild(child));
     for(let i=0; i<nearestBlockChildrenPositions.length; i++) {
-      const $pos = tr.doc.resolve(tr.mapping.map(nearestBlockChildrenPositions[i]));
-      const nodeAtPos = tr.doc.nodeAt($pos.pos);
-      if(nodeAtPos && isListItemNode(nodeAtPos)) {
-        console.log('already wrapped', nodeAtPos.type.name, nodeAtPos.attrs);
-        continue/*already wrapped*/;
-      }
+      const $pos = tr.doc.resolve(tr.mapping.map(nearestBlockChildrenPositions[i])),
+            nodeAtPos = tr.doc.nodeAt($pos.pos);
+
+      // prevent wrapping an already wrapped ListItem
+      if(nodeAtPos && isListItemNode(nodeAtPos)) continue/*already wrapped*/;
 
       const blockRange = $pos.blockRange();
       if(!blockRange) continue/*no range to wrap*/;
@@ -64,4 +63,4 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
  * are such that the List can be untoggled, and hence the ListItem lifted
  */
 const canUntoggleNestedList = (parentListDepth: number, listItemRangeDepth: number) =>
-  (listItemRangeDepth - parentListDepth >= 1/*can perform a lift*/) && (listItemRangeDepth >= 1/*listItem is nested*/);
+  (listItemRangeDepth - parentListDepth <= 1/*can perform a lift*/) && (listItemRangeDepth >= 1/*listItem is nested*/);
