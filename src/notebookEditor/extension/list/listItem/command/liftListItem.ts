@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isListItemNode, isListNode, isGapCursorSelection, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth } from 'common';
+import { isListItemNode, isListNode, isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 import { getListItemPositions } from './util';
 
@@ -44,7 +44,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
 
       if(this.operation === LiftListOperation.Untoggle) {
-        if($from.parent.textContent.length > 0/*not empty*/) return false/*only allow lift on Enter if parent is empty*/;
+        if(!isNodeEmpty($from.parent)) return false/*only allow lift on Enter if parent is empty*/;
       } /* else -- do not check enter-specific case */
     } /* else -- backspace / enter checks done */
 

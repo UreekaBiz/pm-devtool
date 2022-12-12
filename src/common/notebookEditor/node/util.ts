@@ -199,6 +199,9 @@ const getNodesBetween = (rootNode: ProseMirrorNode, from: number, to: number, no
   return finalRange >= selectionRange;
 };
 
+/** check if a Node has no content */
+export const isNodeEmpty = (node: ProseMirrorNode) => !node.content.size;
+
 // -- Creation --------------------------------------------------------------------
 /** Creates a {@link Fragment} with the content of the input Node plus the given {@link appendedNode} */
 export const createFragmentWithAppendedContent = (node: ProseMirrorNode, appendedNode: ProseMirrorNode) =>
