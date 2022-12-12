@@ -47,11 +47,11 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
 
 // == Util ========================================================================
 // NOTE: only take into account ListItems whose depth is greater than or equal to
-//       blockRangeDepth - 1 (before the current BlockRange), so that for example:
+//       blockRangeDepth - 1, so that for example:
 //       ul(li(blockquote(p('hello')))) will not return the top level UL
 //       and will instead wrap the paragraph
 const isListBeforeCurrentBlockRange = (blockRangeDepth: number, node: ProseMirrorNode, nodeDepth: number) =>
-  isListNode(node) && (nodeDepth >= blockRangeDepth - 1);
+  isListNode(node) && (nodeDepth >= blockRangeDepth - 1/*direct ancestor of blockRange*/);
 
 /**
  * wrap the Node at the given childPosition in the given listItemType and then
