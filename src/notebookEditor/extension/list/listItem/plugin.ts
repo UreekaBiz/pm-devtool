@@ -5,7 +5,7 @@ import { isListNode } from 'common';
 
 import { NoPluginState } from 'notebookEditor/model/type';
 
-import { checkAndMergeListAtPos } from './command/util';
+import { checkAndMergeListAtPos } from '../command/listItem/util';
 
 // ********************************************************************************
 // == Plugin ======================================================================
