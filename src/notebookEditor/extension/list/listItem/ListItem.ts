@@ -42,11 +42,11 @@ export const ListItem = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-      'Enter': chainCommands(liftListItemCommand(LiftListOperation.Untoggle), splitListItemKeepMarksCommand),
+      'Enter': liftOrSplit,
       'Shift-Tab': liftListItemCommand(LiftListOperation.Dedent),
       'Tab': sinkListItemCommand,
-      'Backspace': listItemBackSpaceBehavior,
-      'Mod-Backspace': listItemBackSpaceBehavior,
+      'Backspace': liftOrJoinBackward,
+      'Mod-Backspace': liftOrJoinBackward,
       'Delete': joinListItemForwardCommand,
     }),
 
@@ -57,5 +57,6 @@ export const ListItem = new NodeExtension({
   ],
 });
 
-// == Util ========================================================================
-const listItemBackSpaceBehavior = chainCommands(liftListItemCommand(LiftListOperation.Remove), joinListItemBackwardCommand);
+// == Composed Command ============================================================
+const liftOrSplit = chainCommands(liftListItemCommand(LiftListOperation.Untoggle), splitListItemKeepMarksCommand);
+const liftOrJoinBackward = chainCommands(liftListItemCommand(LiftListOperation.Remove), joinListItemBackwardCommand);
