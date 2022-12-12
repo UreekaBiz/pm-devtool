@@ -2,7 +2,7 @@ import { splitBlockKeepMarks } from 'prosemirror-commands';
 import { textblockTypeInputRule } from 'prosemirror-inputrules';
 import { keymap } from 'prosemirror-keymap';
 
-import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, toggleWrapCommand, AttributeType, CodeBlockNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
+import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, toggleWrapCommand, AttributeType, CodeBlockNodeSpec, NodeName, DATA_NODE_TYPE, AncestorDepth } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model';
@@ -58,7 +58,11 @@ export const CodeBlock = new NodeExtension({
   addProseMirrorPlugins: (editor) => [
     keymap({
       // Insert a new TextBlock
-      'Enter': splitBlockKeepMarks,
+      'Enter': () => {
+        // TODO: move into a wrapper function
+        if(!isCodeBlockNode(editor.view.state.selection.$from.node(AncestorDepth.GreatGrandParent))) return false/*do not handle*/;
+        return splitBlockKeepMarks(editor.view.state, editor.view.dispatch, editor.view);
+      },
 
       // Toggle CodeBlock
       'Mod-Shift-c': () => shortcutCommandWrapper(editor, toggleWrapCommand(getCodeBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() })),
