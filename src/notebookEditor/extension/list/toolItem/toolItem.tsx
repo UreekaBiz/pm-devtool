@@ -8,7 +8,7 @@ import { Editor } from 'notebookEditor/editor/Editor';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
-import { toggleListCommand } from '../command/toggleListCommand';
+import { toggleListCommand } from '../command/list/toggle/toggleListCommand';
 
 // ********************************************************************************
 // -- Ordered List ----------------------------------------------------------------

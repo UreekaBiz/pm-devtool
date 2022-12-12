@@ -3,7 +3,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { findParentNodeClosestToPos, isListNode, isListItemNode, isGapCursorSelection, AbstractDocumentUpdate } from 'common';
 
-import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from '../util';
+import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from '../../listItem/command/util';
 
 // ********************************************************************************
 // == Sink ========================================================================

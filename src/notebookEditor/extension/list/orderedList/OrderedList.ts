@@ -6,7 +6,7 @@ import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extens
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
-import { toggleListCommand } from '../command/toggleListCommand';
+import { toggleListCommand } from '../command/list/toggle/toggleListCommand';
 import { createListWrapInputRule } from '../listInputRule';
 import { OrderedListAttrs } from './attribute';
 

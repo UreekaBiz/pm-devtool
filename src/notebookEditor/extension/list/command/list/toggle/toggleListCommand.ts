@@ -3,7 +3,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { findParentNodeClosestToPos, isListItemNode, AbstractDocumentUpdate, Attributes, NodeName, isNonTextBlockBlock, isListNode } from 'common';
 
-import { LiftListItemDocumentUpdate, LiftListOperation } from '../listItem/command';
+import { LiftListItemDocumentUpdate, LiftListOperation } from '../../listItem/command';
 
 // ********************************************************************************
 // toggle the type of a List

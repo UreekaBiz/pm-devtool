@@ -4,7 +4,7 @@ import { liftTarget } from 'prosemirror-transform';
 
 import { isListItemNode, isListNode, isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
-import { getListItemPositions } from '../util';
+import { getListItemPositions } from '../../listItem/command/util';
 
 // ********************************************************************************
 // == Constant ====================================================================
