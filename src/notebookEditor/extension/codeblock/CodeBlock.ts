@@ -4,6 +4,7 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getCodeBlockNodeType, generateNodeId, getNodeOutputSpec, isCodeBlockNode, toggleWrapCommand, AttributeType, CodeBlockNodeSpec, NodeName, DATA_NODE_TYPE, AncestorDepth } from 'common';
 
+import { Editor } from 'notebookEditor/editor/Editor';
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { ExtensionPriority } from 'notebookEditor/model';
 
@@ -57,13 +58,8 @@ export const CodeBlock = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-      // Insert a new TextBlock
-      'Enter': () => {
-        // TODO: move into a wrapper function
-        const ancestor = editor.view.state.selection.$from.node(AncestorDepth.GrandParent);
-        if(!ancestor || !isCodeBlockNode(ancestor)) return false/*do not handle*/;
-        return splitBlockKeepMarks(editor.view.state, editor.view.dispatch, editor.view);
-      },
+      // split the current TextBlock
+      'Enter': () => splitBlockInsideCodeBlock(editor),
 
       // Toggle CodeBlock
       'Mod-Shift-c': () => shortcutCommandWrapper(editor, toggleWrapCommand(getCodeBlockNodeType(editor.view.state.schema), { [AttributeType.Id]: generateNodeId() })),
@@ -85,3 +81,13 @@ export const CodeBlock = new NodeExtension({
     codeBlockPlugin(),
   ],
 });
+
+// == Util ========================================================================
+// NOTE: not a Command since this needs to call a PM-Command
+const splitBlockInsideCodeBlock = (editor: Editor) => {
+  const { selection } = editor.view.state,
+        { $from } = selection;
+  const grandParent = $from.node(AncestorDepth.GrandParent);
+  if(!grandParent || !isCodeBlockNode(grandParent)) return false/*do not handle*/;
+  return splitBlockKeepMarks(editor.view.state, editor.view.dispatch, editor.view);
+};
