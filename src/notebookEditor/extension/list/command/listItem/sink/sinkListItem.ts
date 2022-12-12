@@ -3,7 +3,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { findParentNodeClosestToPos, isListNode, isListItemNode, isGapCursorSelection, AbstractDocumentUpdate } from 'common';
 
-import { fromOrToInListItem, getListItemPositions } from '../util';
+import { checkAndMergeListAtPos, fromOrToInListItem, getListItemPositions } from '../util';
 
 // ********************************************************************************
 // == Sink ========================================================================
@@ -53,6 +53,7 @@ const sinkListItem = (tr: Transaction, listItemPos: number) => {
   if(!closestListObj) return/*no list to take type from*/;
 
   tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
+  checkAndMergeListAtPos(tr, mappedListItemPos);
 
   return tr/*modified*/;
 };
