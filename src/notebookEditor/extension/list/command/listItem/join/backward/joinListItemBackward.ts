@@ -24,8 +24,11 @@ export class JoinListItemBackwardDocumentUpdate implements AbstractDocumentUpdat
     if($from.before() + 1/*inside the TextBlock*/ !== from) return false/*Selection is not at the start of the parent TextBlock*/;
 
     // -- Join --------------------------------------------------------------------
+    // TODO: this can be done in terms of joiningBackward several times
+    // effectively perform the action of joining to the right place by finding
+    // the nearest Selection above and deleting the Nodes in between
     const newSelection = (Selection.near(tr.doc.resolve($from.before()), -1/*look backwards*/));
-    if(!(parent.type === newSelection.$from.parent.type)) return false/*cannot be merged*/;
+    if(!(parent.type === newSelection.$from.parent.type)) return false/*cannot be joined*/;
 
     return tr.delete(newSelection.$from.pos, from);
   }
