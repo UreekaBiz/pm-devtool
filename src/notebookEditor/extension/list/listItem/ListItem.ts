@@ -7,7 +7,11 @@ import { createExtensionParseRules, getExtensionAttributesObject } from 'noteboo
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority } from 'notebookEditor/model';
 
-import { joinBackwardToEndOfClosestListItemCommand, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand, LiftListOperation } from './command';
+import { liftListItemCommand, LiftListOperation } from '../command/listItem/lift/liftListItem';
+import { joinBackwardToEndOfClosestListItemCommand } from '../command/listItem/join/joinBackward';
+import { joinForwardToStartOfClosestListItemCommand } from '../command/listItem/join/joinForward';
+import { sinkListItemCommand } from '../command/listItem/sink/sinkListItem';
+import { splitListItemKeepMarksCommand } from '../command/listItem/split/splitListItem';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************

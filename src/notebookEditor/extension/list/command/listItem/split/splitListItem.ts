@@ -3,7 +3,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { getListItemNodeType, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 import { LiftListItemDocumentUpdate, LiftListOperation } from '../lift/liftListItem';
-import { fromOrToInListItem } from '../../listItem/command/util';
+import { fromOrToInListItem } from '../util';
 
 // == Split =======================================================================
 // split the ListItem at the current Selection while maintaining active Marks
