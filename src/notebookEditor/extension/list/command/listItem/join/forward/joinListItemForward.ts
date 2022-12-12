@@ -28,7 +28,8 @@ export class JoinListItemForwardsDocumentUpdate implements AbstractDocumentUpdat
           nextNodeIsListItem = isListItemNode(nodeAfterEnd);
     if(!nextNodeIsList && !nextNodeIsListItem) return false/*do not handle*/;
 
-    // -- Join ------------------------------------------------------------------..
+    // -- Join --------------------------------------------------------------------
+    // TODO: this is effectively joining forward a given amount of times
     if(isNodeEmpty($from.parent)) {
       // if the current parent is empty, delete it up to the point where
       // the next List or ListItem starts
