@@ -347,7 +347,7 @@ const updateColumnWidth = (view: EditorView, cellPos: number, width: number) => 
 
   const table = $cellPos.node(AncestorDepth.GrandParent),
         tableMap = TableMap.getTableMap(table),
-        tableStart = $cellPos.start(-1/*grandParent depth*/);
+        tableStart = $cellPos.start(AncestorDepth.GrandParent);
 
   const columnCount = tableMap.getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
   const { tr } = view.state;
@@ -382,10 +382,10 @@ const displayColumnWidth = (view: EditorView, cellPos: number, width: number, ce
   const tableNode = $cellPos.node(AncestorDepth.GrandParent);
   if(!tableNode || !isTableNode(tableNode)) throw new Error('expected Table Node to exist');
 
-  const tableStart = $cellPos.start(-1/*grandParent depth*/);
+  const tableStart = $cellPos.start(AncestorDepth.GrandParent);
 
   const columnCount = TableMap.getTableMap(tableNode).getColumnAmountBeforePos($cellPos.pos - tableStart) + $cellPos.nodeAfter?.attrs[AttributeType.ColSpan] - 1;
-  let domNode = view.domAtPos($cellPos.start(-1/*grandParent depth*/)).node;
+  let domNode = view.domAtPos($cellPos.start(AncestorDepth.GrandParent)).node;
   while(domNode.parentNode && domNode.nodeName !== TABLE_NODENAME) {
     domNode = domNode.parentNode;
   }

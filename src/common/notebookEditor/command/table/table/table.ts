@@ -130,7 +130,7 @@ const selectAllTable = (editorState: EditorState, tr: Transaction, $currentCellP
   const table = $currentCellPos.node(AncestorDepth.GrandParent);
   if(!table || !isTableNode(table)) return false/*no Table to select*/;
   const tableMap = TableMap.getTableMap(table),
-        tableStart = $currentCellPos.start(-1/*grandParent depth*/);
+        tableStart = $currentCellPos.start(AncestorDepth.GrandParent);
 
   const firstCellPos = tableStart + tableMap.map[0/*first cell*/],
         lastCellPos = tableStart + tableMap.map[tableMap.map.length-1/*the last Cell*/];

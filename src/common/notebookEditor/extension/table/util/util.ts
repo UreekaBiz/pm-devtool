@@ -25,9 +25,8 @@ export const isSelectionHeadInRow = (state: EditorState) => {
 };
 
 /** check if the two given {@link ResolvedPos} objs are in the same Table Node */
-export const areResolvedPositionsInTable = ($a: ResolvedPos, $b: ResolvedPos) => {
-  return $a.depth == $b.depth && $a.pos >= $b.start(-1) && $a.pos <= $b.end(-1);
-};
+export const areResolvedPositionsInTable = ($pos1: ResolvedPos, $pos2: ResolvedPos) =>
+  $pos1.depth == $pos2.depth && $pos1.pos >= $pos2.start(AncestorDepth.GrandParent) && $pos1.pos <= $pos2.end(AncestorDepth.GrandParent);
 
 // == Column ======================================================================
   /** get the amount of columns that lie before the Cell at the given {@link ResolvedPos} */
@@ -167,7 +166,7 @@ export const getCellTableRect = ($pos: ResolvedPos) => {
  */
 export const getMovedCellResolvedPos = ($pos: ResolvedPos, axis: 'horizontal' | 'vertical', direction: -1/*left/up*/ | 1/*right/bottom*/) => {
   const tableMap = TableMap.getTableMap($pos.node(AncestorDepth.GrandParent)),
-        tableStart = $pos.start(-1/*grandParent depth*/);
+        tableStart = $pos.start(AncestorDepth.GrandParent);
 
   const movedPosition = tableMap.getNextCellPos($pos.pos - tableStart, axis, direction);
   return movedPosition === null ? null : $pos.node(AncestorDepth.Document).resolve(tableStart + movedPosition);

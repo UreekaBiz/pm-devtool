@@ -227,7 +227,7 @@ export class CellSelection extends Selection {
    */
   static createColumnSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
     const tableMap = TableMap.getTableMap($anchorCell.node(AncestorDepth.GrandParent)),
-          tableStart = $anchorCell.start(-1/*grandParent depth*/);
+          tableStart = $anchorCell.start(AncestorDepth.GrandParent);
 
     const anchorTableRect = tableMap.getCellTableRect($anchorCell.pos - tableStart),
           headTableRect = tableMap.getCellTableRect($headCell.pos - tableStart);
@@ -284,7 +284,7 @@ export class CellSelection extends Selection {
    */
   public static createRowSelection($anchorCell: ResolvedPos, $headCell = $anchorCell) {
     const tableMap = TableMap.getTableMap($anchorCell.node(AncestorDepth.GrandParent)),
-          tableStart = $anchorCell.start(-1/*grandParent depth*/);
+          tableStart = $anchorCell.start(AncestorDepth.GrandParent);
 
     const anchorTableRect = tableMap.getCellTableRect($anchorCell.pos - tableStart),
           headTableRect = tableMap.getCellTableRect($headCell.pos - tableStart);
