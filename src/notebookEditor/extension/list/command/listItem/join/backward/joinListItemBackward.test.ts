@@ -24,4 +24,15 @@ describe('joinListItemBackwardsCommand', () => {
 
     wrapTest(startState, joinListItemBackwardCommand, expectedEndState);
   });
+
+  it('joins to the nearest listItem above with deep indentation', () => {
+    const startState =
+    doc(ul(li(ul(li(ul(li(p(`foo`)))))),
+        p(`<${A}>bar`))),
+
+    expectedEndState =
+      doc(ul(li(ul(li(ul(li(p(`foobar`))))))));
+
+    wrapTest(startState, joinListItemBackwardCommand, expectedEndState);
+  });
 });
