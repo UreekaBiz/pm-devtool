@@ -1,16 +1,17 @@
 import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isListNode, isListItemNode, isHeadingNode, isParagraphNode, AbstractDocumentUpdate, AncestorDepth } from 'common';
+import { isListNode, isListItemNode, isHeadingNode, isNodeEmpty, isParagraphNode, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 // ********************************************************** **********************
-export const joinForwardToStartOfClosestListItemCommand: Command = (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new JoinForwardToStartOfClosestListItemDocumentUpdate(), state, dispatch);
+export const joinListItemForwardsCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new JoinListItemForwardsDocumentUpdate(), state, dispatch);
 
-export class JoinForwardToStartOfClosestListItemDocumentUpdate implements AbstractDocumentUpdate {
+export class JoinListItemForwardsDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/ }
 
   public update(editorState: EditorState, tr: Transaction, view: EditorView | undefined/*not given*/) {
+    // -- Checks ------------------------------------------------------------------
     const { doc, selection } = editorState,
           { empty, $from, from } = selection;
     if(!empty) return false/*do not allow if Selection is not empty*/;
@@ -27,7 +28,8 @@ export class JoinForwardToStartOfClosestListItemDocumentUpdate implements Abstra
           nextNodeIsListItem = isListItemNode(nodeAfterEnd);
     if(!nextNodeIsList && !nextNodeIsListItem) return false/*do not handle*/;
 
-    if($from.parent.content.size < 1/*empty*/) {
+    // -- Join ------------------------------------------------------------------..
+    if(isNodeEmpty($from.parent)) {
       // if the current parent is empty, delete it up to the point where
       // the next List or ListItem starts
       const nextPosToRight = Selection.near(tr.doc.resolve(tr.selection.$from.end()+1), 1/*bias to the right*/);

@@ -9,7 +9,7 @@ import { ExtensionPriority } from 'notebookEditor/model';
 
 import { liftListItemCommand, LiftListOperation } from '../command/listItem/lift/liftListItem';
 import { joinListItemBackwardCommand } from '../command/listItem/join/backward/joinListItemBackward';
-import { joinForwardToStartOfClosestListItemCommand } from '../command/listItem/join/forward/joinForward';
+import { joinListItemForwardsCommand } from '../command/listItem/join/forward/joinListItemForward';
 import { sinkListItemCommand } from '../command/listItem/sink/sinkListItem';
 import { splitListItemKeepMarksCommand } from '../command/listItem/split/splitListItem';
 import { listItemPlugin } from './plugin';
@@ -47,7 +47,7 @@ export const ListItem = new NodeExtension({
       'Tab': sinkListItemCommand,
       'Backspace': listItemBackSpaceBehavior,
       'Mod-Backspace': listItemBackSpaceBehavior,
-      'Delete': joinForwardToStartOfClosestListItemCommand,
+      'Delete': joinListItemForwardsCommand,
     }),
 
     // NOTE: this plugin should be below the keymap from above, since its Commands
