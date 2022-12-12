@@ -60,8 +60,8 @@ export const CodeBlock = new NodeExtension({
       // Insert a new TextBlock
       'Enter': () => {
         // TODO: move into a wrapper function
-        const ancestor = editor.view.state.selection.$from.node(AncestorDepth.GreatGrandParent);
-        if(!ancestor || isCodeBlockNode(ancestor)) return false/*do not handle*/;
+        const ancestor = editor.view.state.selection.$from.node(AncestorDepth.GrandParent);
+        if(!ancestor || !isCodeBlockNode(ancestor)) return false/*do not handle*/;
         return splitBlockKeepMarks(editor.view.state, editor.view.dispatch, editor.view);
       },
 
