@@ -1,10 +1,9 @@
+import { Node as ProseMirrorNode, NodeType } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { findParentNodeClosestToPos, isListItemNode, AbstractDocumentUpdate, Attributes, NodeName, isNonTextBlockBlock } from 'common';
+import { findParentNodeClosestToPos, isListItemNode, AbstractDocumentUpdate, Attributes, NodeName, isNonTextBlockBlock, isListNode } from 'common';
 
 import { LiftListItemDocumentUpdate, LiftListOperation } from '../listItem/command';
-import { isListBeforeCurrentBlockRange } from './util';
-import { NodeType } from 'prosemirror-model';
 
 // ********************************************************************************
 // toggle the type of a List
@@ -47,6 +46,13 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
 }
 
 // == Util ========================================================================
+// NOTE: only take into account ListItems whose depth is greater than or equal to
+//       blockRangeDepth - 1 (before the current BlockRange), so that for example:
+//       ul(li(blockquote(p('hello')))) will not return the top level UL
+//       and will instead wrap the paragraph
+const isListBeforeCurrentBlockRange = (blockRangeDepth: number, node: ProseMirrorNode, nodeDepth: number) =>
+  isListNode(node) && (nodeDepth >= blockRangeDepth - 1);
+
 /**
  * wrap the Node at the given childPosition in the given listItemType and then
  * in a List of the given listType
