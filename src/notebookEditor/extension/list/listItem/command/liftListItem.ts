@@ -7,12 +7,30 @@ import { isListItemNode, isListNode, isGapCursorSelection, isNotNullOrUndefined,
 import { getListItemPositions } from './util';
 
 // ********************************************************************************
+// == Constant ====================================================================
+export enum LiftListOperation {
+  // the Untoggle operation is associated with Enter, whenever a ListItem is empty,
+  // there is no Selection, and the cursor is at the start of the TextBlock inside
+  // the ListItem
+  Untoggle = 'Untoggle',
+
+  // the Dedent operation is associated with Shift-Tab, regardless of whether or
+  // not the ListItem TextBlock is empty, since the User just wants to decrease
+  // the indentation of the selected ListItems
+  Dedent = 'dedent',
+
+  // the Remove operation is associated with Backspace, since the User wants to
+  // decrease the indentation of the selected ListItem. It has the
+  // same restrictions as the Untoggle operation
+  Remove = 'remove',
+}
+
 // == Lift ========================================================================
 // lift a ListItem
-export const liftListItemCommand = (triggerKey: 'Enter' | 'Shift-Tab' | 'Backspace'): Command => (state, dispatch) =>
-  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate(triggerKey), state, dispatch);
+export const liftListItemCommand = (operation: LiftListOperation): Command => (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new LiftListItemDocumentUpdate(operation), state, dispatch);
 export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly triggerKey: 'Enter' | 'Shift-Tab' | 'Backspace') {/*nothing additional*/}
+  public constructor(private readonly operation: LiftListOperation) {/*nothing additional*/}
 
   /** modify the given Transaction such that a ListItem is lifted */
   public update(editorState: EditorState, tr: Transaction) {
@@ -21,11 +39,11 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(isGapCursorSelection(selection)) return false/*do not allow*/;
 
     const { empty, $from, from, $to, to } = selection;
-    if(this.triggerKey === 'Backspace' || this.triggerKey === 'Enter') {
-      if(!empty) return false/*do not allow if Selection not empty when Back*/;
+    if(this.operation === LiftListOperation.Untoggle || this.operation === LiftListOperation.Remove) {
+      if(!empty) return false/*do not allow if Selection not empty*/;
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
 
-      if(this.triggerKey === 'Enter') {
+      if(this.operation === LiftListOperation.Untoggle) {
         if($from.parent.textContent.length > 0/*not empty*/) return false/*only allow lift on Enter if parent is empty*/;
       } /* else -- do not check enter-specific case */
     } /* else -- backspace / enter checks done */
@@ -53,6 +71,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
   }
 }
 
+// == Util ========================================================================
 // perform the required modifications to a Transaction such that
 // the ListItem at the given position is lifted
 const liftListItem = (tr: Transaction, listItemPos: number) => {

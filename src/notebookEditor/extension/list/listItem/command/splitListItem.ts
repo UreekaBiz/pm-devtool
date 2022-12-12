@@ -2,7 +2,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { getListItemNodeType, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
-import { LiftListItemDocumentUpdate } from './liftListItem';
+import { LiftListItemDocumentUpdate, LiftListOperation } from './liftListItem';
 import { fromOrToInListItem } from './util';
 
 // == Split =======================================================================
@@ -25,7 +25,7 @@ export class SplitListItemKeepMarksDocumentUpdate implements AbstractDocumentUpd
     // check if lifting must be done
     const { $from, $to } = selection;
     if($from.parent.content.size < 1/*empty*/) {
-      const updatedTr = new LiftListItemDocumentUpdate('Enter').update(editorState, tr);
+      const updatedTr = new LiftListItemDocumentUpdate(LiftListOperation.Untoggle).update(editorState, tr);
       return updatedTr/*updated*/;
     } /* else -- parent of from is has content, split */
 

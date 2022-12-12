@@ -1,6 +1,6 @@
 import { getNotebookSchemaNodeBuilders, wrapTest, NodeName, A, B } from 'common';
 
-import { liftListItemCommand } from './liftListItem';
+import { liftListItemCommand, LiftListOperation } from './liftListItem';
 import { sinkListItemCommand } from './sinkListItem';
 import { splitListItemKeepMarksCommand } from './splitListItem';
 
@@ -77,7 +77,7 @@ describe('liftListItemCommand', () => {
              li(p('two')),
              li(p('three'))));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 
   it('can lift two items from a nested List', () => {
@@ -91,7 +91,7 @@ describe('liftListItemCommand', () => {
              li(p('one')),
              li(p('two'))));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 
   it('can lift two items from a nested three-item List', () => {
@@ -107,7 +107,7 @@ describe('liftListItemCommand', () => {
              li(p('two')),
           ul(li(p('three')))));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 
   it('can lift an item out of a list', () => {
@@ -121,7 +121,7 @@ describe('liftListItemCommand', () => {
           p('b'),
           p('c'));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 
   it('can lift two items out of a list', () => {
@@ -137,7 +137,7 @@ describe('liftListItemCommand', () => {
           p('c'),
           p('d'));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 
   it('can lift three items from the middle of a List', () => {
@@ -155,7 +155,7 @@ describe('liftListItemCommand', () => {
           p('d'),
           ul(li(p('e'))));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 
   it('can lift the first item from a list', () => {
@@ -169,7 +169,7 @@ describe('liftListItemCommand', () => {
           ul(li(p('b')),
              li(p('c'))));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 
 
@@ -184,7 +184,7 @@ describe('liftListItemCommand', () => {
              li(p('b'))),
           p('c'));
 
-    wrapTest(startState, liftListItemCommand('Shift-Tab'), expectedEndState);
+    wrapTest(startState, liftListItemCommand(LiftListOperation.Dedent), expectedEndState);
   });
 });
 

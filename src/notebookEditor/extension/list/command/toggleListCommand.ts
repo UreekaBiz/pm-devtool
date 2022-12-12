@@ -2,7 +2,7 @@ import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { findParentNodeClosestToPos, isListItemNode, AbstractDocumentUpdate, Attributes, NodeName, isNonTextBlockBlock } from 'common';
 
-import { LiftListItemDocumentUpdate } from '../listItem/command';
+import { LiftListItemDocumentUpdate, LiftListOperation } from '../listItem/command';
 import { isListBeforeCurrentBlockRange } from './util';
 import { NodeType } from 'prosemirror-model';
 
@@ -29,7 +29,7 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
     // -- Toggle ------------------------------------------------------------------
     const closestParentList = findParentNodeClosestToPos(listItemRange.$from, (node, depth) => isListBeforeCurrentBlockRange(blockRangeDepth, node, depth));
     if(closestParentList) {
-      if(canUntoggleNestedList(closestParentList.depth, listItemRange.depth) && closestParentList.node.type === listType) return new LiftListItemDocumentUpdate('Shift-Tab'/*dedent*/).update(editorState, tr);
+      if(canUntoggleNestedList(closestParentList.depth, listItemRange.depth) && closestParentList.node.type === listType) return new LiftListItemDocumentUpdate(LiftListOperation.Dedent).update(editorState, tr);
       else /*change type*/ return tr.setNodeMarkup(closestParentList.pos, listType, this.attrs)/*updated*/;
     } /* else -- wrap */
 

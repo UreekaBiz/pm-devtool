@@ -8,7 +8,7 @@ import { createExtensionParseRules, getExtensionAttributesObject } from 'noteboo
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority } from 'notebookEditor/model';
 
-import { joinBackwardToEndOfClosestListItemCommand, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand } from './command';
+import { joinBackwardToEndOfClosestListItemCommand, joinForwardToStartOfClosestListItemCommand, liftListItemCommand, sinkListItemCommand, splitListItemKeepMarksCommand, LiftListOperation } from './command';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
@@ -39,8 +39,8 @@ export const ListItem = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
-      'Enter': chainCommands(liftListItemCommand('Enter'), splitListItemKeepMarksCommand),
-      'Shift-Tab': liftListItemCommand('Shift-Tab'),
+      'Enter': chainCommands(liftListItemCommand(LiftListOperation.Untoggle), splitListItemKeepMarksCommand),
+      'Shift-Tab': liftListItemCommand(LiftListOperation.Dedent),
       'Tab': sinkListItemCommand,
       'Backspace': () => listItemBackSpaceBehavior(editor),
       'Mod-Backspace': () => listItemBackSpaceBehavior(editor),
@@ -56,7 +56,7 @@ export const ListItem = new NodeExtension({
 
 // == Util ========================================================================
 const listItemBackSpaceBehavior = (editor: Editor) => {
-  const liftResult = liftListItemCommand('Backspace')(editor.view.state, editor.view.dispatch);
+  const liftResult = liftListItemCommand(LiftListOperation.Remove)(editor.view.state, editor.view.dispatch);
   if(liftResult) return liftResult/* else -- could not Lift */;
 
   return joinBackwardToEndOfClosestListItemCommand(editor.view.state, editor.view.dispatch);
