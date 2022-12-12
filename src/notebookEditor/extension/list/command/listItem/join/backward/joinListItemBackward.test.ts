@@ -35,4 +35,17 @@ describe('joinListItemBackwardsCommand', () => {
 
     wrapTest(startState, joinListItemBackwardCommand, expectedEndState);
   });
+
+  it('joins to the nearest listItem above even when its empty', () => {
+    const startState =
+      doc(ul(li(p('foo')),
+          ul(li(p('')),
+          p(`<${A}>bar`)))),
+
+    expectedEndState =
+      doc(ul(li(p('foo')),
+          ul(li(p('bar')))));
+
+    wrapTest(startState, joinListItemBackwardCommand, expectedEndState);
+  });
 });
