@@ -53,32 +53,22 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(!blockRange) return false/*no range in which to lift ListItems*/;
     const { depth: blockRangeDepth } = blockRange;
 
-    // NOTE: only take into account ListItems whose depth is greater than or equal to
-    //       blockRangeDepth - 1, so that for example:
-    //       ul(li(blockquote(li(p('hello'))))) will not lift the first ListItem, and
-    //       just lifts the inner most one
-    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
+    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*depth of blockRange wrapper*/);
+          listItemPositions.forEach(listItemPosition => liftListItem(tr, listItemPosition));
 
-    for(let i=0; i<listItemPositions.length; i++) {
-      const updatedTr = liftListItem(tr, listItemPositions[i]);
-      if(updatedTr) {
-        tr = updatedTr;
-      } /* else -- do not lift that ListItem */
-    }
-
-    if(tr.docChanged) { return tr/*updated*/; }
-    else { return false/*no changes were made to the doc*/; }
+    if(tr.docChanged) return tr/*updated*/;
+    else return false/*no changes were made to the doc*/;
   }
 }
 
-// == Util ========================================================================
+// ================================================================================
 // perform the required modifications to a Transaction such that
 // the ListItem at the given position is lifted
 const liftListItem = (tr: Transaction, listItemPos: number) => {
   const mappedListItemPos = tr.mapping.map(listItemPos),
         listItem = tr.doc.nodeAt(mappedListItemPos),
         $listItemPos = tr.doc.resolve(mappedListItemPos);
-  if(!listItem || !isListItemNode(listItem)) return false/*cannot lift item, do not modify Transaction*/;
+  if(!listItem || !isListItemNode(listItem)) return/*cannot lift item, do not modify Transaction*/;
 
   const listItemEndPos = mappedListItemPos + listItem.nodeSize,
         $listItemEndPos = tr.doc.resolve(listItemEndPos);

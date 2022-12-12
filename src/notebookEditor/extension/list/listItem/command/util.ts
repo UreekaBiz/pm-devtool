@@ -5,12 +5,16 @@ import { canJoin } from 'prosemirror-transform';
 import { isListItemNode, AncestorDepth, SelectionRange } from 'common';
 
 // ********************************************************************************
+// NOTE: only take into account ListItems whose depth is greater than or equal to
+//       the given maxDepth, so that for example:
+//       ul(li(blockquote(li(p('hello'))))) will not return the first ListItem,
+//       only inner most one
 /**
  * get the position inside each ListItem present in the given Range.
- * If maxDepth is given, only the ListItems that have a depth greater
- * than or equal to it will be returned
+ * only the ListItems that have a depth greater than or equal to maxDepth
+ * will be returned (SEE: NOTE above)
  */
-export const getListItemPositions = (doc: ProseMirrorNode, selectionRange: SelectionRange, maxDepth?: number) => {
+export const getListItemPositions = (doc: ProseMirrorNode, selectionRange: SelectionRange, maxDepth: number) => {
   const { from, to } = selectionRange;
   const listItemPositions: number[] = [/*default empty*/];
 

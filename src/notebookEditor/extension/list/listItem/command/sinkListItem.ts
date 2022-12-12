@@ -28,36 +28,29 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(!blockRange) return false/*no range in which to lift ListItems*/;
     const { depth: blockRangeDepth } = blockRange;
 
-    // NOTE: only take into account ListItems whose depth is greater than or equal to
-    //       blockRangeDepth - 1, so that for example:
-    //       ul(li(blockquote(li(p('hello'))))) will not sink the first ListItem, and
-    //       just sinks the inner most one
-    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*(SEE: NOTE above)*/);
-    for(let i = 0; i < listItemPositions.length; i++) {
-      const updatedTr = sinkListItem(tr, listItemPositions[i]);
-      if(updatedTr) { tr = updatedTr; }
-      else { return false/*could not sink at least one of the listItems*/; }
-    }
+    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*depth of blockRange wrapper*/);
+          listItemPositions.forEach(listItemPosition => sinkListItem(tr, listItemPosition));
 
-    if(tr.docChanged) { return tr/*updated*/; }
-    else { return false/*no changes were made to the doc*/; }
+    if(tr.docChanged) return tr/*updated*/;
+    else return false/*no changes were made to the doc*/;
   }
 }
 
+// ================================================================================
 // perform the required modifications to a Transaction such that
 // the ListItem at the given position increases its depth
 const sinkListItem = (tr: Transaction, listItemPos: number) => {
   const mappedListItemPos = tr.mapping.map(listItemPos),
         $listItemPos = tr.doc.resolve(mappedListItemPos),
         listItem = tr.doc.nodeAt(mappedListItemPos);
-  if(!listItem || !isListItemNode(listItem)) return false/*not a ListItem at the expected position */;
+  if(!listItem || !isListItemNode(listItem)) return/*not a ListItem at the expected position */;
 
   const listItemEndPos = mappedListItemPos + listItem.nodeSize,
         $listItemEndPos = tr.doc.resolve(listItemEndPos);
   const sinkBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
 
   const closestListObj = findParentNodeClosestToPos($listItemPos, isListNode);
-  if(!closestListObj) return false/*no list to take type from*/;
+  if(!closestListObj) return/*no list to take type from*/;
 
   tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
   checkAndMergeListAtPos(tr, mappedListItemPos);
