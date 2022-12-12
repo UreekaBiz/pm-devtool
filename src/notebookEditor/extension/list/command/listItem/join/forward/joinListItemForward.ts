@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view';
 import { isListNode, isListItemNode, isHeadingNode, isNodeEmpty, isParagraphNode, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 // ********************************************************** **********************
-export const joinListItemForwardsCommand: Command = (state, dispatch) =>
+export const joinListItemForwardCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new JoinListItemForwardsDocumentUpdate(), state, dispatch);
 
 export class JoinListItemForwardsDocumentUpdate implements AbstractDocumentUpdate {
