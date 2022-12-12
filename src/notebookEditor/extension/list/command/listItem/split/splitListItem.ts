@@ -1,6 +1,6 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { getListItemNodeType, AbstractDocumentUpdate, AncestorDepth } from 'common';
+import { getListItemNodeType, isNodeEmpty, AbstractDocumentUpdate, AncestorDepth } from 'common';
 
 import { LiftListItemDocumentUpdate, LiftListOperation } from '../lift/liftListItem';
 import { fromOrToInListItem } from '../util';
@@ -18,17 +18,18 @@ export class SplitListItemKeepMarksDocumentUpdate implements AbstractDocumentUpd
    * split and the new one maintains the active Marks
    */
   public update(editorState: EditorState, tr: Transaction) {
+    // -- Checks ------------------------------------------------------------------
     const { selection } = editorState;
     const listItemType = getListItemNodeType(editorState.schema);
     if(!fromOrToInListItem(selection)) return false/*Selection not inside a ListItem*/;
 
-    // check if lifting must be done
+    // -- Lift --------------------------------------------------------------------
     const { $from, $to } = selection;
-    if($from.parent.content.size < 1/*empty*/) {
-      const updatedTr = new LiftListItemDocumentUpdate(LiftListOperation.Untoggle).update(editorState, tr);
-      return updatedTr/*updated*/;
+    if(isNodeEmpty($from.parent)) {
+      return  new LiftListItemDocumentUpdate(LiftListOperation.Untoggle).update(editorState, tr);
     } /* else -- parent of from is has content, split */
 
+    // -- Split -------------------------------------------------------------------
     tr.delete($from.pos, $to.pos);
     const { attrs: listItemAttrs } = $from.node(AncestorDepth.GrandParent);
     tr.split($from.pos, 2/*maintain current child of ListItem (e.g. a Paragraph), and the ListItem type after split*/, [ { type: listItemType, attrs: listItemAttrs } ]).scrollIntoView();
