@@ -3,7 +3,6 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { Editor } from 'notebookEditor/editor/Editor';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 import { ExtensionPriority } from 'notebookEditor/model';
@@ -42,8 +41,8 @@ export const ListItem = new NodeExtension({
       'Enter': chainCommands(liftListItemCommand(LiftListOperation.Untoggle), splitListItemKeepMarksCommand),
       'Shift-Tab': liftListItemCommand(LiftListOperation.Dedent),
       'Tab': sinkListItemCommand,
-      'Backspace': () => listItemBackSpaceBehavior(editor),
-      'Mod-Backspace': () => listItemBackSpaceBehavior(editor),
+      'Backspace': listItemBackSpaceBehavior,
+      'Mod-Backspace': listItemBackSpaceBehavior,
       'Delete': joinForwardToStartOfClosestListItemCommand,
     }),
 
@@ -55,9 +54,4 @@ export const ListItem = new NodeExtension({
 });
 
 // == Util ========================================================================
-const listItemBackSpaceBehavior = (editor: Editor) => {
-  const liftResult = liftListItemCommand(LiftListOperation.Remove)(editor.view.state, editor.view.dispatch);
-  if(liftResult) return liftResult/* else -- could not Lift */;
-
-  return joinBackwardToEndOfClosestListItemCommand(editor.view.state, editor.view.dispatch);
-};
+const listItemBackSpaceBehavior = chainCommands(liftListItemCommand(LiftListOperation.Remove), joinBackwardToEndOfClosestListItemCommand);
