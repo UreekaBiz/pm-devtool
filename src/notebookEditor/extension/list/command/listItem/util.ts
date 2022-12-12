@@ -2,7 +2,7 @@ import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { Selection, Transaction } from 'prosemirror-state';
 import { canJoin } from 'prosemirror-transform';
 
-import { isListItemNode, AncestorDepth, SelectionRange } from 'common';
+import { isListItemNode, AncestorDepth, SelectionRange, isNotNullOrUndefined } from 'common';
 
 // ********************************************************************************
 // NOTE: only take into account ListItems whose depth is greater than or equal to
@@ -19,14 +19,12 @@ export const getListItemPositions = (doc: ProseMirrorNode, selectionRange: Selec
   const listItemPositions: number[] = [/*default empty*/];
 
   doc.nodesBetween(from, to, (node, pos) => {
-    if(isListItemNode(node)) {
-      const $listItemPos = doc.resolve(pos);
-      if(!maxDepth/*not given or equal to 0, the Doc depth*/ || $listItemPos.depth >= maxDepth) {
-        listItemPositions.push(pos);
-      } /* else -- maxDepth was specified and the ListItem position's depth is not greater than or equal to it */
-    } /* else -- not an item of the specified type, ignore */
+    if(!isListItemNode(node)) return/*ignore Node*/;
 
-    return !node.isLeaf/*keep descending if node is not a Leaf*/;
+    const $listItemPos = doc.resolve(pos);
+    if(!($listItemPos.depth >= maxDepth)) return/*depth is not greater than or equal to maxDepth*/;
+
+    listItemPositions.push(pos);
   });
 
   return listItemPositions;
@@ -50,9 +48,9 @@ export const fromOrToInListItem = (selection: Selection) => {
  * separate Lists into a single one)
  */
  export const checkAndMergeListAtPos = (tr: Transaction, posToCheck: number) => {
-  let checkedAndMergedList = false/*default*/;
-  if(!fromOrToInListItem(tr.selection)) return checkedAndMergedList/*Selection not inside a ListItem*/;
+  if(!fromOrToInListItem(tr.selection)) return false/*Selection not inside a ListItem*/;
 
+  const startingDoc = tr.doc.copy(tr.doc.content);
   const $pos = tr.doc.resolve(posToCheck);
   let posBefore = posToCheck/*default*/,
       posAfter = posToCheck/*default*/;
@@ -61,40 +59,52 @@ export const fromOrToInListItem = (selection: Selection) => {
     posAfter = $pos.after();
   } /* else -- pos it at top level */
 
-  const $resolvedPosBefore = tr.doc.resolve(posBefore),
-        nodeBeforeResolvedPosBefore = $resolvedPosBefore.nodeBefore,
-        nodeAfterResolvedPosBefore = $resolvedPosBefore.nodeAfter;
 
-  let beforeNodePos = 0/*default*/;
-  if(nodeBeforeResolvedPosBefore) {
-    beforeNodePos = posBefore - nodeBeforeResolvedPosBefore.nodeSize;
-  } /* else -- there is no Node before the pos at posBefore */
+  const newPosAfter = checkForJoinAtPosBefore(tr, posBefore);
+  if(isNotNullOrUndefined<number>(newPosAfter)) {
+    posAfter = newPosAfter;
+  } /* else -- do not modify posAfter */
+  checkForJoinAtPosAfter(tr, posAfter);
 
-  if(nodeBeforeResolvedPosBefore
-    && (nodeAfterResolvedPosBefore)
-    && (nodeBeforeResolvedPosBefore.type === nodeAfterResolvedPosBefore.type)
-    && (canJoin(tr.doc, posBefore))
-  ) {
-    tr.join(posBefore);
-    const nodeBefore = tr.doc.nodeAt(beforeNodePos);
-    if(nodeBefore) {
-      posAfter = beforeNodePos + nodeBefore.nodeSize;
-    } /* else -- there is no Node before beforeNodePos */
-    checkedAndMergedList = true;
-  } /* else -- no nodeBeforeResolvedPosBefore, no nodeAfterResolvedPosBefore, different types or cannot join */
-
-  const $resolvedPosAfter = tr.doc.resolve(posAfter),
-        nodeBeforeResolvedPosAfter = $resolvedPosAfter.nodeBefore,
-        nodeAfterResolvedPosAfter = $resolvedPosAfter.nodeAfter;
-
-  if(nodeBeforeResolvedPosAfter
-    && (nodeAfterResolvedPosAfter)
-    && (nodeBeforeResolvedPosAfter.type === nodeAfterResolvedPosAfter.type)
-    && (canJoin(tr.doc, posAfter))
-  ) {
-    tr.join(posAfter);
-    checkedAndMergedList = true;
-  } /* else -- no nodeBeforeResolvedPosAfter, no nodeAfterResolvedPosAfter, different types or cannot join */
-
-  return checkedAndMergedList;
+  if(startingDoc.eq(tr.doc)) return false/*the Doc did not change*/;
+  else return true/*the Doc changed*/;
 };
+
+// == Util ========================================================================
+/** check if a join can occur at the given posBefore */
+const checkForJoinAtPosBefore = (tr: Transaction, posBefore: number) => {
+  const $posBefore = tr.doc.resolve(posBefore),
+      { nodeBefore, nodeAfter } = $posBefore;
+
+  let posBeforeNodeBefore = 0/*default*/;
+  if(nodeBefore) {
+    posBeforeNodeBefore = posBefore - nodeBefore.nodeSize;
+  } /* else -- there is no Node before the pos at posBefore */
+  if(!nodesAreOfSameTypeAndCanBeJoinedAtPos(tr, nodeBefore, nodeAfter, posBefore)) return/*cannot join*/;
+
+  tr.join(posBefore);
+
+  const nodeAtPosBeforeNodeBefore = tr.doc.nodeAt(posBeforeNodeBefore);
+  if(nodeAtPosBeforeNodeBefore) {
+    const newPosAfter = posBeforeNodeBefore + nodeAtPosBeforeNodeBefore.nodeSize;
+    return newPosAfter;
+  } /* else -- there is no Node before beforeNodePos */
+
+  return undefined;
+};
+
+/** check if a join can occur at the given posAfter */
+const checkForJoinAtPosAfter = (tr: Transaction, posAfter: number) => {
+  const $posAfter = tr.doc.resolve(posAfter),
+        { nodeBefore, nodeAfter } = $posAfter;
+  if(!nodesAreOfSameTypeAndCanBeJoinedAtPos(tr, nodeBefore, nodeAfter, posAfter)) return/*cannot join*/;
+
+  tr.join(posAfter);
+};
+
+/**
+ * check if the two given ProseMirrorNodes exist, have the same type,
+ * and a join can occur at the given position
+ */
+const nodesAreOfSameTypeAndCanBeJoinedAtPos = (tr: Transaction, nodeBefore: ProseMirrorNode | null, nodeAfter: ProseMirrorNode | null, joinPosition: number) =>
+  nodeBefore && nodeAfter && nodeBefore.type === nodeAfter.type && canJoin(tr.doc, joinPosition);
