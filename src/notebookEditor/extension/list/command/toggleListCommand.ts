@@ -22,19 +22,19 @@ export class ToggleListDocumentUpdate implements AbstractDocumentUpdate {
     const listItemType = editorState.schema.nodes[NodeName.LIST_ITEM],
           listType = editorState.schema.nodes[this.listTypeName];
 
-    let listItemRange = $from.blockRange($to);
-    if(!listItemRange) return false/*no blockRange exists, nothing to do*/;
-    const { depth: blockRangeDepth } = listItemRange;
+    let blockRange = $from.blockRange($to);
+    if(!blockRange) return false/*no blockRange exists, nothing to do*/;
+    const { depth: blockRangeDepth } = blockRange;
 
     // -- Toggle ------------------------------------------------------------------
-    const closestParentList = findParentNodeClosestToPos(listItemRange.$from, (node, depth) => isListBeforeCurrentBlockRange(blockRangeDepth, node, depth));
+    const closestParentList = findParentNodeClosestToPos(blockRange.$from, (node, depth) => isListBeforeCurrentBlockRange(blockRangeDepth, node, depth));
     if(closestParentList) {
-      if(canUntoggleNestedList(closestParentList.depth, listItemRange.depth) && closestParentList.node.type === listType) return new LiftListItemDocumentUpdate(LiftListOperation.Dedent).update(editorState, tr);
+      if(canUntoggleNestedList(closestParentList.depth, blockRange.depth) && closestParentList.node.type === listType) return new LiftListItemDocumentUpdate(LiftListOperation.Dedent).update(editorState, tr);
       else /*change type*/ return tr.setNodeMarkup(closestParentList.pos, listType, this.attrs)/*updated*/;
     } /* else -- wrap */
 
     // -- Wrap --------------------------------------------------------------------
-    const nearestBlockParent = findParentNodeClosestToPos(listItemRange.$from, isNonTextBlockBlock)?.node ?? tr.doc/*default parent*/;
+    const nearestBlockParent = findParentNodeClosestToPos(blockRange.$from, isNonTextBlockBlock)?.node ?? tr.doc/*default parent*/;
     const nearestBlockChildrenPositions: number[] = [/*default empty*/];
     tr.doc.nodesBetween(from, to, (node, pos, parent, index) => {
       if(!parent || parent !== nearestBlockParent) return/*ignore Node*/;
