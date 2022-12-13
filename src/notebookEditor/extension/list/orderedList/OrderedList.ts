@@ -1,4 +1,5 @@
 import { keymap } from 'prosemirror-keymap';
+import { wrappingInputRule } from 'prosemirror-inputrules';
 import { wrapInList } from 'prosemirror-schema-list';
 
 import { getNodeOutputSpec, getOrderedListNodeType, AttributeType, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE, ORDERED_LIST_DEFAULT_START } from 'common';
@@ -7,10 +8,12 @@ import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extens
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
-import { createListWrapInputRule } from '../listInputRule';
 import { OrderedListAttrs } from './attribute';
 
 // ********************************************************************************
+// == RegEx =======================================================================
+const orderedListRegEx = /^(\d+)\.\s$/;
+
 // == Node ========================================================================
 export const OrderedList = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
@@ -30,11 +33,19 @@ export const OrderedList = new NodeExtension({
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [createListWrapInputRule(NodeName.ORDERED_LIST)],
+  inputRules: (editor) => [wrappingInputRule(orderedListRegEx, getOrderedListNodeType(editor.view.state.schema))],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-7': wrapInList(getOrderedListNodeType(editor.view.state.schema), { [AttributeType.StartValue]: ORDERED_LIST_DEFAULT_START } ) })],
+  addProseMirrorPlugins: (editor) => [
+    keymap({
+      'Mod-Shift-7': () => {
+        const x = wrapInList(getOrderedListNodeType(editor.view.state.schema), { [AttributeType.StartValue]: ORDERED_LIST_DEFAULT_START } )(editor.view.state, editor.view.dispatch);
+        console.log(x);
+        return x;
+      },
+    }),
+  ],
 });

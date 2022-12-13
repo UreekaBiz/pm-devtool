@@ -1,4 +1,5 @@
 import { keymap } from 'prosemirror-keymap';
+import { wrappingInputRule } from 'prosemirror-inputrules';
 import { wrapInList } from 'prosemirror-schema-list';
 
 import { getNodeOutputSpec, getUnorderedListNodeType, NodeName, UnorderedListNodeSpec, DATA_NODE_TYPE } from 'common';
@@ -7,9 +8,9 @@ import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extens
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
-import { createListWrapInputRule } from '../listInputRule';
-
 // ********************************************************************************
+// == RegEx =======================================================================
+const unorderedListRegEx = /^\s*([-+*])\s$/;
 
 // == Node ========================================================================
 export const UnorderedList = new NodeExtension({
@@ -31,7 +32,7 @@ export const UnorderedList = new NodeExtension({
   }),
 
   // -- Input ---------------------------------------------------------------------
-  inputRules: (editor) => [createListWrapInputRule(NodeName.UNORDERED_LIST)],
+  inputRules: (editor) => [wrappingInputRule(unorderedListRegEx, getUnorderedListNodeType(editor.view.state.schema))],
 
   // -- Paste ---------------------------------------------------------------------
   pasteRules: (editor) => [/*none*/],
