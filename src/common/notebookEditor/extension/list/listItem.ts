@@ -52,6 +52,5 @@ export type ListItemJSONNodeType = JSONNode<ListItemAttributes> & { type: NodeNa
 export const isListItemJSONNode = (node: JSONNode): node is ListItemJSONNodeType => node.type === NodeName.LIST_ITEM;
 
 // ================================================================================
-export const LIST_ITEM_DEFAULT_MARGIN_LEFT = `0pt`;
-export const LIST_ITEM_DEFAULT_MARGIN_INCREASE = 12/*pt*/;
-
+export const LIST_ITEM_DEFAULT_MARGIN_LEFT = '0pt';
+export const LIST_ITEM_DEFAULT_MARGIN_INCREASE = 24/*pt, T&E*/;

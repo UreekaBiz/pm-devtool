@@ -41,7 +41,7 @@ export const ListItem = new NodeExtension({
     keymap({
       'Enter': splitListItem(getListItemNodeType(editor.view.state.schema)),
       'Tab': chainCommands(sinkListItem(getListItemNodeType(editor.view.state.schema)), changeListItemMarginCommand('increase')),
-      'Shift-Tab': chainCommands(liftListItem(getListItemNodeType(editor.view.state.schema)), changeListItemMarginCommand('decrease')),
+      'Shift-Tab': chainCommands(changeListItemMarginCommand('decrease'), liftListItem(getListItemNodeType(editor.view.state.schema))),
     }),
   ],
 });

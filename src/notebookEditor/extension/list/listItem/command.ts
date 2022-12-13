@@ -31,7 +31,9 @@ export class IncreaseListItemMarginDocumentUpdate implements AbstractDocumentUpd
 
       const [value, unit] = separateUnitFromString(currentMargin);
       const newValue = this.changeType === 'increase' ? Number(value) + LIST_ITEM_DEFAULT_MARGIN_INCREASE : Number(value) - LIST_ITEM_DEFAULT_MARGIN_INCREASE;
+
       const newMargin = `${Math.max(0, newValue)}${unit}`;
+      if(newMargin === currentMargin) return/*no change*/;
 
       tr.setNodeMarkup(listItemPos, undefined/*maintain type*/, { [AttributeType.MarginLeft]: newMargin });
     });

@@ -5,7 +5,6 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 import { isCodeBlockNode, NodePosition, SelectionRange, CodeBlockLanguage, AttributeType } from 'common';
 import { highlightCodeBlockChild } from './language';
 
-
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
 
