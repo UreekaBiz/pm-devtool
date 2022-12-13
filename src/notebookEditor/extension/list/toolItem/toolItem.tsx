@@ -1,14 +1,11 @@
 import { MdFormatListBulleted } from 'react-icons/md';
 import { RiListOrdered } from 'react-icons/ri';
 
-import { isNodeSelection, AncestorDepth, AttributeType, NodeName, ORDERED_LIST_DEFAULT_START } from 'common';
+import { isNodeSelection, AncestorDepth, NodeName } from 'common';
 
-import { toolItemCommandWrapper } from 'notebookEditor/command/util';
 import { Editor } from 'notebookEditor/editor/Editor';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
-
-import { toggleListCommand } from '../command/list/toggle/toggleListCommand';
 
 // ********************************************************************************
 // -- Ordered List ----------------------------------------------------------------
@@ -23,7 +20,7 @@ export const orderedListToolItem: ToolItem = {
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
   shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => isListToolItemActive(editor, NodeName.ORDERED_LIST),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleListCommand(NodeName.ORDERED_LIST, { [AttributeType.StartValue]: ORDERED_LIST_DEFAULT_START })),
+  onClick: (editor, depth) => {},
 };
 
 // -- Unordered List --------------------------------------------------------------
@@ -38,7 +35,7 @@ export const unorderedListToolItem: ToolItem = {
   shouldBeDisabled: (editor) => isNodeSelection(editor.view.state.selection),
   shouldShow: (editor, depth) => shouldShowToolItem(editor, depth),
   isActive: (editor) => isListToolItemActive(editor, NodeName.UNORDERED_LIST),
-  onClick: (editor, depth) => toolItemCommandWrapper(editor, depth, toggleListCommand(NodeName.UNORDERED_LIST, {/*no attrs*/})),
+  onClick: (editor, depth) => {},
 };
 
 // -- Util ------------------------------------------------------------------------
