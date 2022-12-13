@@ -16,8 +16,8 @@ export type ListItemAttributes = AttributesTypeFromNodeSpecAttributes<typeof Lis
 export const ListItemNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `${NodeName.PARAGRAPH} ${NodeGroup.BLOCK}*`,
-
   defining: true,
+  group: NodeGroup.BLOCK,
 
   // .. Attribute .................................................................
   attrs: ListItemAttributeSpec,

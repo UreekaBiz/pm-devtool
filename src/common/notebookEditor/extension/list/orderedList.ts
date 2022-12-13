@@ -2,7 +2,7 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributesTypeFromNodeSpecAttributes, AttributeType } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
-import { JSONNode, NodeName, ProseMirrorNodeContent } from '../../node';
+import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
 
 // ********************************************************************************
@@ -19,6 +19,7 @@ export type OrderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeof 
 export const OrderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `${NodeName.LIST_ITEM}+`,
+  group: NodeGroup.BLOCK,
 
   // .. Attribute .................................................................
   attrs: OrderedListAttributeSpec,

@@ -2,7 +2,7 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { AttributesTypeFromNodeSpecAttributes } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
-import { JSONNode, NodeName, ProseMirrorNodeContent } from '../../node';
+import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
 
 // ********************************************************************************
@@ -16,6 +16,7 @@ export type UnorderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeo
 export const UnorderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
   content: `${NodeName.LIST_ITEM}+`,
+  group: NodeGroup.BLOCK,
 
   // .. Attribute .................................................................
   attrs: UnorderedListAttributeSpec,
