@@ -1,8 +1,7 @@
 import { keymap } from 'prosemirror-keymap';
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { wrapInList } from 'prosemirror-schema-list';
 
-import { getNodeOutputSpec, getOrderedListNodeType, AttributeType, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE, ORDERED_LIST_DEFAULT_START } from 'common';
+import { getNodeOutputSpec, getOrderedListNodeType, NodeName, OrderedListNodeSpec, DATA_NODE_TYPE } from 'common';
 
 import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
@@ -39,5 +38,5 @@ export const OrderedList = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-7': wrapInList(getOrderedListNodeType(editor.view.state.schema), { [AttributeType.StartValue]: ORDERED_LIST_DEFAULT_START }) })],
+  addProseMirrorPlugins: (editor) => [keymap({})],
 });

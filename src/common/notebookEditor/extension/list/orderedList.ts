@@ -18,7 +18,7 @@ export type OrderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeof 
 // -- Node Spec -------------------------------------------------------------------
 export const OrderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  content: `${NodeName.LIST_ITEM}{1}`,
+  content: `${NodeName.LIST_ITEM}+`,
   group: NodeGroup.BLOCK,
 
   // .. Attribute .................................................................

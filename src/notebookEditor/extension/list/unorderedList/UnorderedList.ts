@@ -1,6 +1,5 @@
 import { keymap } from 'prosemirror-keymap';
 import { wrappingInputRule } from 'prosemirror-inputrules';
-import { wrapInList } from 'prosemirror-schema-list';
 
 import { getNodeOutputSpec, getUnorderedListNodeType, NodeName, UnorderedListNodeSpec, DATA_NODE_TYPE } from 'common';
 
@@ -38,5 +37,5 @@ export const UnorderedList = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-8': wrapInList(getUnorderedListNodeType(editor.view.state.schema), undefined/*no attrs*/) })],
+  addProseMirrorPlugins: (editor) => [keymap({})],
 });
