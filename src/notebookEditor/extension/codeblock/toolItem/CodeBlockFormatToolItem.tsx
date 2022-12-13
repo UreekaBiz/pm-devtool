@@ -12,6 +12,7 @@ import { formatCodeBlockCommand } from '../command';
 interface Props extends EditorToolComponentProps {/*no additional*/ }
 
 // == Component ===================================================================
+// NOTE: currently in a ToolItem to give feedback to user through Tooltip
 export const CodeBlockFormatToolItem: React.FC<Props> = ({ editor, depth }) => {
   const toast = useToast();
 
@@ -24,7 +25,7 @@ export const CodeBlockFormatToolItem: React.FC<Props> = ({ editor, depth }) => {
     try {
       toolItemCommandWrapper(editor, depth, formatCodeBlockCommand);
     } catch(error) {
-      toast({ title: (error as SyntaxError/*by contract*/).message, status: 'error', duration: 3000/*ms*/ });
+      toast({ title: (error as SyntaxError/*by contract*/).message, status: 'error', duration: 8000/*ms, T&E*/ });
     }
   };
 

@@ -1,8 +1,9 @@
 import { GapCursor } from 'prosemirror-gapcursor';
-import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
+import { Fragment } from 'prosemirror-model';
+import { Command, EditorState, Selection, TextSelection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isCodeBlockNode, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth, AttributeType, CodeBlockLanguage } from 'common';
+import { getCodeBlockNodeType, getParagraphNodeType, isCodeBlockNode, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth, AttributeType, CodeBlockLanguage } from 'common';
 
 import { formatCodeBlockChild } from './language';
 
@@ -86,22 +87,34 @@ export class FormatCodeBlockDocumentUpdate implements AbstractDocumentUpdate {
   /** modify the given Transaction such that a CodeBlock is formatted */
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = tr,
-          { empty, $from } = selection;
+          { empty, $from } = selection,
+          startPos = $from.pos;
     const codeBlock = $from.node(AncestorDepth.GrandParent);
     if(!empty || !codeBlock || !isCodeBlockNode(codeBlock)) return false/*not empty or not inside a CodeBlock*/;
 
     const language = codeBlock.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript;
+    const codeBlockStart = $from.before(AncestorDepth.GrandParent),
+          codeBlockEnd = codeBlockStart + codeBlock.nodeSize;
+    const textContent = tr.doc.textBetween(codeBlockStart, codeBlockEnd, '\n');
 
-    for(let i=0; i<codeBlock.childCount; i++) {
-      const child = codeBlock.child(i);
-      const formattedTextContent = formatCodeBlockChild(language as CodeBlockLanguage/*by definition*/, child.textContent);
-      console.log(formattedTextContent);
+    const formattedTextContent = formatCodeBlockChild(language as CodeBlockLanguage/*by definition*/, textContent);
+
+    const lines = formattedTextContent.split('\n');
+    let newCodeBlockContent = Fragment.empty/*default*/;
+    for(let i=0; i<lines.length; i++) {
+      const lineText = lines[i];
+      if(!lineText.length) continue/*skip empty lines*/;
+
+      const paragraph = getParagraphNodeType(editorState.schema).create(undefined/*no attrs*/, editorState.schema.text(lineText));
+      newCodeBlockContent = newCodeBlockContent.addToEnd(paragraph);
     }
 
+    const newCodeBlock = getCodeBlockNodeType(editorState.schema).create(codeBlock.attrs, newCodeBlockContent);
+    tr.replaceWith(codeBlockStart, codeBlockEnd, newCodeBlock)
+      .setSelection(Selection.near(tr.doc.resolve(tr.mapping.map(startPos)), -1/*look backwards first*/));
     return tr;
   }
 }
-
 
 // == Split and Lift ==============================================================
 /** split the TextBlock in the CodeBlock and lift it out of it */
