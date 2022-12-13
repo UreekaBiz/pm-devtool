@@ -7,6 +7,7 @@ import { createExtensionParseRules, getExtensionAttributesObject } from 'noteboo
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
 import { ListItemAttrs } from './attribute';
+import { sinkListItemCommand } from './command';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -35,6 +36,8 @@ export const ListItem = new NodeExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
-    keymap({}),
+    keymap({
+      'Tab': sinkListItemCommand,
+    }),
   ],
 });
