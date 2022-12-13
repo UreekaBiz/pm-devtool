@@ -4,9 +4,9 @@ import { AbstractDocumentUpdate, AttributeType, getListItemNodeType, isListItemN
 import { separateUnitFromString } from 'notebookEditor/theme';
 
 // ********************************************************************************
-export const increaseListItemMarginCommand: Command = (state, dispatch) => AbstractDocumentUpdate.execute(new IncreaseListItemMarginDocumentUpdate(), state, dispatch);
+export const changeListItemMarginCommand = (changeType: 'increase' | 'decrease'): Command => (state, dispatch) => AbstractDocumentUpdate.execute(new IncreaseListItemMarginDocumentUpdate(changeType), state, dispatch);
 export class IncreaseListItemMarginDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor() {/*nothing additional*/}
+  public constructor(private readonly changeType: 'increase' | 'decrease') {/*nothing additional*/}
 
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = tr,
@@ -22,7 +22,8 @@ export class IncreaseListItemMarginDocumentUpdate implements AbstractDocumentUpd
       } /* else -- no need to increase */
 
       const [value, unit] = separateUnitFromString(currentMargin);
-      const newMargin = `${Number(value) + LIST_ITEM_DEFAULT_MARGIN_INCREASE}${unit}`;
+      const newValue = this.changeType === 'increase' ? Number(value) + LIST_ITEM_DEFAULT_MARGIN_INCREASE : Number(value) - LIST_ITEM_DEFAULT_MARGIN_INCREASE;
+      const newMargin = `${Math.max(0, newValue)}${unit}`;
 
       tr.setNodeMarkup(nodePos, listItemNodeType, { [AttributeType.MarginLeft]: newMargin });
     });

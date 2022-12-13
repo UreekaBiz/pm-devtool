@@ -9,7 +9,7 @@ import { createExtensionParseRules, getExtensionAttributesObject } from 'noteboo
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
 import { ListItemAttrs } from './attribute';
-import { increaseListItemMarginCommand } from './command';
+import { changeListItemMarginCommand } from './command';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -40,8 +40,8 @@ export const ListItem = new NodeExtension({
   addProseMirrorPlugins: (editor) => [
     keymap({
       'Enter': splitListItem(getListItemNodeType(editor.view.state.schema)),
-      'Shift-Tab': liftListItem(getListItemNodeType(editor.view.state.schema)),
-      'Tab': chainCommands(increaseListItemMarginCommand, sinkListItem(getListItemNodeType(editor.view.state.schema))),
+      'Tab': chainCommands(changeListItemMarginCommand('increase'), sinkListItem(getListItemNodeType(editor.view.state.schema))),
+      'Shift-Tab': chainCommands(changeListItemMarginCommand('decrease'), liftListItem(getListItemNodeType(editor.view.state.schema))),
     }),
   ],
 });
