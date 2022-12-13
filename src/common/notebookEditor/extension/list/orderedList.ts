@@ -2,7 +2,7 @@ import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
 import { noNodeOrMarkSpecAttributeDefaultValue, AttributesTypeFromNodeSpecAttributes, AttributeType } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
-import { JSONNode, NodeName, NodeGroup, ProseMirrorNodeContent } from '../../node';
+import { JSONNode, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
 
 // ********************************************************************************
@@ -18,14 +18,7 @@ export type OrderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeof 
 // -- Node Spec -------------------------------------------------------------------
 export const OrderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  // NOTE: explicitly only allowing Lists and ListItems
-   content: `${NodeGroup.LIST}+`,
-
-  // NOTE: preserve the OrderedList parent when pasting if possible, OrderedList is
-  //       an important parent during replace operations
-  //       (SEE: ListItem.ts) (SEE: listItemPlugin.ts)
-  defining: true/*(SEE: NOTE above)*/,
-  group: `${NodeGroup.BLOCK} ${NodeGroup.LIST}`,
+  content: `${NodeName.LIST_ITEM}+`,
 
   // .. Attribute .................................................................
   attrs: OrderedListAttributeSpec,
