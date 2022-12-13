@@ -1,15 +1,12 @@
-import { chainCommands } from 'prosemirror-commands';
 import { keymap } from 'prosemirror-keymap';
-import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-list';
 
-import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE, getListItemNodeType } from 'common';
+import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { ExtensionPriority } from 'notebookEditor/model';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
 import { ListItemAttrs } from './attribute';
-import { changeListItemMarginCommand } from './command';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -38,10 +35,6 @@ export const ListItem = new NodeExtension({
 
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
-    keymap({
-      'Enter': splitListItem(getListItemNodeType(editor.view.state.schema)),
-      'Tab': chainCommands(sinkListItem(getListItemNodeType(editor.view.state.schema)), changeListItemMarginCommand('increase')),
-      'Shift-Tab': chainCommands(changeListItemMarginCommand('decrease'), liftListItem(getListItemNodeType(editor.view.state.schema))),
-    }),
+    keymap({}),
   ],
 });

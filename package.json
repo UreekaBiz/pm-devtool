@@ -49,7 +49,6 @@
     "prosemirror-inputrules": "1.2.0",
     "prosemirror-keymap": "1.2.0",
     "prosemirror-model": "1.18.3",
-    "prosemirror-schema-list": "1.2.2",
     "prosemirror-state": "1.4.2",
     "prosemirror-test-builder": "1.1.0",
     "prosemirror-transform": "1.7.0",

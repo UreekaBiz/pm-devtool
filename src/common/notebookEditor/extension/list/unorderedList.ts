@@ -15,7 +15,7 @@ export type UnorderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeo
 // -- Node Spec -------------------------------------------------------------------
 export const UnorderedListNodeSpec: Readonly<NodeSpec> = {
   // .. Definition ................................................................
-  content: `${NodeName.LIST_ITEM}+`,
+  content: `${NodeName.LIST_ITEM}{1}`,
   group: NodeGroup.BLOCK,
 
   // .. Attribute .................................................................
