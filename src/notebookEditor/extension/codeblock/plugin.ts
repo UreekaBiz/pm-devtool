@@ -1,24 +1,15 @@
-import css from 'highlight.js/lib/languages/css';
-import javascript from 'highlight.js/lib/languages/javascript';
-import typescript from 'highlight.js/lib/languages/typescript';
-import html from 'highlight.js/lib/languages/xml';
-import { lowlight } from 'lowlight';
-import { Span, Text } from 'lowlight/lib/core';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { isCodeBlockNode, NodePosition, SelectionRange, CodeBlockLanguage, AttributeType } from 'common';
+import { highlightCodeBlockChild } from './language';
+
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
 
 // == Constant ====================================================================
-export const languageLowlight = lowlight;
-             languageLowlight.registerLanguage('html', html);
-             languageLowlight.registerLanguage('css', css);
-             languageLowlight.registerLanguage('javascript', javascript);
-             languageLowlight.registerLanguage('typescript', typescript);
 const codeBlockPluginKey = new PluginKey<CodeBlockPluginState>('codeBlockPluginKey');
 
 // == Class =======================================================================
@@ -110,12 +101,11 @@ export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
 // == Util ========================================================================
 const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChildPos: number, codeBlockChild: ProseMirrorNode) => {
   const decorations: Decoration[] = [/*default empty*/];
-  const treeRoot = languageLowlight.highlight(codeBlockLanguage, codeBlockChild.textContent),
-        flattenedChildren = flattenTreeChildren(treeRoot.children);
+  const highlightedChildren = highlightCodeBlockChild(codeBlockLanguage, codeBlockChild.textContent);
 
   let absolutePos = codeBlockChildPos + 2/*account for start of parent CodeBlock and start of parent TextBlock*/;
-  for(let i = 0; i < flattenedChildren.length; i++) {
-    const child = flattenedChildren[i],
+  for(let i = 0; i < highlightedChildren.length; i++) {
+    const child = highlightedChildren[i],
           { childValue, childClasses } = child;
     if(!childClasses.length) {
       absolutePos += childValue.length;
@@ -131,14 +121,3 @@ const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChi
   return decorations;
 };
 
-const flattenTreeChildren = (children: (Span | Text)[], currentClasses: string[] = []): { childValue: string; childClasses: string[]; }[] => children.map((child) => {
-  const classes = [...currentClasses, ...isLowLightSpan(child) ? child.properties.className : [/*no classes*/]];
-  if(isLowLightSpan(child)) {
-    return flattenTreeChildren(child.children, classes);
-  } /* else -- a regular Text Node */
-
-  return { childValue: child.value, childClasses: classes };
-}).flat();
-
-// == Type Guard ==================================================================
-const isLowLightSpan = (node: Span | Text): node is Span => 'properties' in node;
