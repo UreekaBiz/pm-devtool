@@ -6,7 +6,6 @@ import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extens
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
-import { toggleListCommand } from '../command/list/toggle/toggleListCommand';
 import { createListWrapInputRule } from '../listInputRule';
 import { OrderedListAttrs } from './attribute';
 
@@ -36,5 +35,5 @@ export const OrderedList = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-7': toggleListCommand(NodeName.ORDERED_LIST, {/*no attrs*/}) })],
+  addProseMirrorPlugins: (editor) => [keymap({ })],
 });
