@@ -13,7 +13,7 @@ import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
-import { codeBlockArrowCommand, formatCodeBlockCommand, selectAllInsideCodeBlockCommand, splitAndLiftOutOfCodeBlockCommand } from './command';
+import { codeBlockArrowCommand, selectAllInsideCodeBlockCommand, splitAndLiftOutOfCodeBlockCommand } from './command';
 import 'highlight.js/styles/github.css';
 import { CodeBlockStorage, CodeBlockController } from './nodeView';
 import { codeBlockOnTransaction } from './transaction';
@@ -71,10 +71,6 @@ export const CodeBlock = new NodeExtension({
       // select all the content inside the CodeBlock
       'Cmd-a': () => shortcutCommandWrapper(editor, selectAllInsideCodeBlockCommand),
       'Cmd-A': () => shortcutCommandWrapper(editor, selectAllInsideCodeBlockCommand),
-
-      // format the content inside the CodeBlock
-      'Cmd-Shift-f': () => shortcutCommandWrapper(editor, formatCodeBlockCommand),
-      'Cmd-Shift-F': () => shortcutCommandWrapper(editor, formatCodeBlockCommand),
 
       // set GapCursor if necessary
       'ArrowUp': () => shortcutCommandWrapper(editor, codeBlockArrowCommand('up')),

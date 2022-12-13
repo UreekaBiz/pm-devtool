@@ -7,6 +7,7 @@ import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
 import { CodeBlockLanguageToolItem } from './CodeBlockLanguageToolItem';
+import { CodeBlockFormatToolItem } from './CodeBlockFormatToolItem';
 
 //*********************************************************************************
 // === Tool Items =================================================================
@@ -31,5 +32,13 @@ export const codeBlockLanguageToolItem: ToolItem = {
   name: 'codeBlockLanguageToolItem',
 
   component: CodeBlockLanguageToolItem,
+  shouldShow: (editor) => isCodeBlockNode(editor.view.state.selection.$from.node(AncestorDepth.GrandParent)),
+};
+
+export const codeBlockFormatToolItem: ToolItem = {
+  toolType: 'component',
+  name: 'codeBlockFormatToolItem',
+
+  component: CodeBlockFormatToolItem,
   shouldShow: (editor) => isCodeBlockNode(editor.view.state.selection.$from.node(AncestorDepth.GrandParent)),
 };
