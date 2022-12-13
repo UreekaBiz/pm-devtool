@@ -39,5 +39,5 @@ export const OrderedList = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-7':wrapInList(getOrderedListNodeType(editor.view.state.schema), { [AttributeType.StartValue]: ORDERED_LIST_DEFAULT_START }) })],
+  addProseMirrorPlugins: (editor) => [keymap({ 'Mod-Shift-7': wrapInList(getOrderedListNodeType(editor.view.state.schema), { [AttributeType.StartValue]: ORDERED_LIST_DEFAULT_START }) })],
 });
