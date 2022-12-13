@@ -2,16 +2,16 @@ import { keymap } from 'prosemirror-keymap';
 
 import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
+import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
-import { ExtensionPriority } from 'notebookEditor/model';
 
 // ********************************************************************************
 // == Node ========================================================================
 export const ListItem = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.LIST_ITEM,
-  priority: ExtensionPriority.LIST_ITEM,
+  priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => ({/*currently nothing*/}),

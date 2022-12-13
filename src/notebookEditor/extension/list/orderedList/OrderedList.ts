@@ -42,6 +42,7 @@ export const OrderedList = new NodeExtension({
   addProseMirrorPlugins: (editor) => [
     keymap({
       'Mod-Shift-7': () => {
+        console.log(getOrderedListNodeType(editor.view.state.schema));
         const x = wrapInList(getOrderedListNodeType(editor.view.state.schema), { [AttributeType.StartValue]: ORDERED_LIST_DEFAULT_START } )(editor.view.state, editor.view.dispatch);
         console.log(x);
         return x;

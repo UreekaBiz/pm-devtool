@@ -102,13 +102,6 @@ export enum ExtensionPriority {
   NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
 
   /**
-   * since the Commands added by Lists handle Keydown,
-   * they should run before other Plugins that also do so, but after
-   * other TextBlock Nodes
-   */
-  LIST_ITEM = 108,
-
-  /**
    * the BasicKeymap contains Commands that represent
    * default behavior, and hence it should have the default
    * extension priority
