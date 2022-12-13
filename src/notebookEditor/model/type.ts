@@ -101,6 +101,9 @@ export enum ExtensionPriority {
   /** for consistency with EditableInlineNodeWithContent */
   NESTED_VIEW_BLOCK_NODE = 109/*same as EditableInlineNodeWithContent*/,
 
+  /** ensure that ListItem keyboard shortcuts run before the basicKeymap */
+  LIST_ITEM = 108,
+
   /**
    * the BasicKeymap contains Commands that represent
    * default behavior, and hence it should have the default

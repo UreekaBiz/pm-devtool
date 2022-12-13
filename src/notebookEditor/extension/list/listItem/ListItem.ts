@@ -4,7 +4,7 @@ import { liftListItem, sinkListItem, splitListItem } from 'prosemirror-schema-li
 
 import { getNodeOutputSpec, ListItemNodeSpec, NodeName, DATA_NODE_TYPE, getListItemNodeType } from 'common';
 
-import { DEFAULT_EXTENSION_PRIORITY } from 'notebookEditor/extension/type/Extension/type';
+import { ExtensionPriority } from 'notebookEditor/model';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
@@ -16,7 +16,7 @@ import { changeListItemMarginCommand } from './command';
 export const ListItem = new NodeExtension({
   // -- Definition ----------------------------------------------------------------
   name: NodeName.LIST_ITEM,
-  priority: DEFAULT_EXTENSION_PRIORITY,
+  priority: ExtensionPriority.LIST_ITEM,
 
   // -- Attribute -----------------------------------------------------------------
   defineNodeAttributes: (extensionStorage) => (ListItemAttrs),
@@ -40,8 +40,8 @@ export const ListItem = new NodeExtension({
   addProseMirrorPlugins: (editor) => [
     keymap({
       'Enter': splitListItem(getListItemNodeType(editor.view.state.schema)),
-      'Tab': chainCommands(changeListItemMarginCommand('increase'), sinkListItem(getListItemNodeType(editor.view.state.schema))),
-      'Shift-Tab': chainCommands(changeListItemMarginCommand('decrease'), liftListItem(getListItemNodeType(editor.view.state.schema))),
+      'Tab': chainCommands(sinkListItem(getListItemNodeType(editor.view.state.schema)), changeListItemMarginCommand('increase')),
+      'Shift-Tab': chainCommands(liftListItem(getListItemNodeType(editor.view.state.schema)), changeListItemMarginCommand('decrease')),
     }),
   ],
 });
