@@ -1,6 +1,6 @@
 import { Mark, Node as ProseMirrorNode, NodeSpec, NodeType } from 'prosemirror-model';
 
-import { AttributesTypeFromNodeSpecAttributes } from '../../attribute';
+import { AttributesTypeFromNodeSpecAttributes, AttributeType, noNodeOrMarkSpecAttributeDefaultValue } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
@@ -8,7 +8,9 @@ import { NotebookSchemaType } from '../../schema';
 // ********************************************************************************
 // == Attribute ===================================================================
 // NOTE: This values must have matching types the ones defined in the Extension.
-const ListItemAttributeSpec = {/*currently no attrs*/};
+const ListItemAttributeSpec = {
+  [AttributeType.MarginLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+};
 export type ListItemAttributes = AttributesTypeFromNodeSpecAttributes<typeof ListItemAttributeSpec>
 
 // == Spec ========================================================================
@@ -48,3 +50,8 @@ export const createListItemNode = (schema: NotebookSchemaType, attributes?: Part
 // -- JSON Node Type --------------------------------------------------------------
 export type ListItemJSONNodeType = JSONNode<ListItemAttributes> & { type: NodeName.LIST_ITEM; };
 export const isListItemJSONNode = (node: JSONNode): node is ListItemJSONNodeType => node.type === NodeName.LIST_ITEM;
+
+// ================================================================================
+export const LIST_ITEM_DEFAULT_MARGIN_LEFT = `0pt`;
+export const LIST_ITEM_DEFAULT_MARGIN_INCREASE = 12/*pt*/;
+
