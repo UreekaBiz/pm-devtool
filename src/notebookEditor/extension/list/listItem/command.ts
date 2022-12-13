@@ -22,7 +22,7 @@ export class IncreaseListItemMarginDocumentUpdate implements AbstractDocumentUpd
     const listItemPositions = getListItemPositions(tr.doc, { from, to }, blockRangeDepth-1/*depth of blockRange wrapper*/);
     listItemPositions.forEach(listItemPos => {
       const listItem = tr.doc.nodeAt(listItemPos);
-      if(!listItem || isListItemNode(listItem)) return/*ignore node*/;
+      if(!listItem || !isListItemNode(listItem)) return/*ignore node*/;
 
       let currentMargin = listItem.attrs[AttributeType.MarginLeft];
       if(!currentMargin) {
