@@ -2,16 +2,21 @@ import { GapCursor } from 'prosemirror-gapcursor';
 import { Command, EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isCodeBlockNode, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth } from 'common';
+import { isCodeBlockNode, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth, AttributeType, CodeBlockLanguage } from 'common';
+
+import { formatCodeBlockChild } from './language';
 
 // ********************************************************************************
 // == Selection ===================================================================
+/** select all the content inside a CodeBlock */
 export const selectAllInsideCodeBlockCommand: Command = (state, dispatch) =>
   AbstractDocumentUpdate.execute(new SelectAllInsideCodeBlockDocumentUpdate(), state, dispatch);
 export class SelectAllInsideCodeBlockDocumentUpdate implements AbstractDocumentUpdate {
   public constructor() {/*nothing additional*/}
 
   /**
+   * modify the given Transaction such that all the content
+   * inside a CodeBlock is selected
    */
   public update(editorState: EditorState, tr: Transaction) {
     const { selection } = tr,
@@ -70,6 +75,33 @@ export class CodeBlockArrowDocumentUpdate implements AbstractDocumentUpdate {
     }
   }
 }
+
+// == Format ======================================================================
+/** format the CodeBlock with the given language */
+export const formatCodeBlockCommand: Command = (state, dispatch) =>
+  AbstractDocumentUpdate.execute(new FormatCodeBlockDocumentUpdate(), state, dispatch);
+export class FormatCodeBlockDocumentUpdate implements AbstractDocumentUpdate {
+  public constructor() {/*nothing additional*/}
+
+  /** modify the given Transaction such that a CodeBlock is formatted */
+  public update(editorState: EditorState, tr: Transaction) {
+    const { selection } = tr,
+          { empty, $from } = selection;
+    const codeBlock = $from.node(AncestorDepth.GrandParent);
+    if(!empty || !codeBlock || !isCodeBlockNode(codeBlock)) return false/*not empty or not inside a CodeBlock*/;
+
+    const language = codeBlock.attrs[AttributeType.Language] ?? CodeBlockLanguage.JavaScript;
+
+    for(let i=0; i<codeBlock.childCount; i++) {
+      const child = codeBlock.child(i);
+      const formattedTextContent = formatCodeBlockChild(language as CodeBlockLanguage/*by definition*/, child.textContent);
+      console.log(formattedTextContent);
+    }
+
+    return tr;
+  }
+}
+
 
 // == Split and Lift ==============================================================
 /** split the TextBlock in the CodeBlock and lift it out of it */

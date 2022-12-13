@@ -7,7 +7,7 @@ import htmlHighlighter from 'highlight.js/lib/languages/xml';
 import { lowlight } from 'lowlight';
 import prettier from 'prettier';
 import cssFormatter from 'prettier/parser-postcss';
-import javascriptFormatter from 'prettier/parser-babel';
+import babelFormatter from 'prettier/parser-babel';
 import htmlFormatter from 'prettier/parser-html';
 import typeScriptFormatter from 'prettier/parser-typescript';
 
@@ -16,14 +16,28 @@ import { CodeBlockLanguage } from 'common';
 // ********************************************************************************
 // == Formatter ===================================================================
 const formatters = {
-  [CodeBlockLanguage.CSS]: cssFormatter,
-  [CodeBlockLanguage.HTML]: htmlFormatter,
-  [CodeBlockLanguage.JavaScript]: javascriptFormatter,
-  [CodeBlockLanguage.TypeScript]: typeScriptFormatter,
+  [CodeBlockLanguage.CSS]: {
+    parserName: CodeBlockLanguage.CSS,
+    formatter: cssFormatter,
+  },
+
+  [CodeBlockLanguage.HTML]: {
+    parserName: CodeBlockLanguage.HTML,
+    formatter: htmlFormatter,
+  },
+  [CodeBlockLanguage.JavaScript]: {
+    parserName: 'babel',
+    formatter: babelFormatter,
+  },
+
+  [CodeBlockLanguage.TypeScript]: {
+    parserName: CodeBlockLanguage.TypeScript,
+    formatter: typeScriptFormatter,
+  },
 };
 const codeBlockFormatter = prettier;
 export const formatCodeBlockChild = (codeBlockLanguage: CodeBlockLanguage, textContent: string) =>
-  codeBlockFormatter.format(textContent, { parser: formatters[codeBlockLanguage] });
+  codeBlockFormatter.format(textContent, { parser: formatters[codeBlockLanguage].parserName, plugins: [formatters[codeBlockLanguage].formatter] });
 
 // == Highlight ===================================================================
 const codeBlockHighlighter = lowlight;
