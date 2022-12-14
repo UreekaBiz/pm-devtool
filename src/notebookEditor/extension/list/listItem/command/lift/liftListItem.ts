@@ -67,7 +67,7 @@ const liftListItemChild = (tr: Transaction, childPos: number) => {
 
   const childEndPos = mappedChildPos + child.nodeSize,
         $childEndPos = tr.doc.resolve(childEndPos);
-  let liftBlockRange: NodeRange | null = new NodeRange($childPos, $childEndPos, $childPos.depth);
+  const liftBlockRange: NodeRange | null = new NodeRange($childPos, $childEndPos, $childPos.depth);
 
   const targetDepth = liftTarget(liftBlockRange);
   if(!isNotNullOrUndefined<number>(targetDepth)) return/*no target depth to lift child to*/;
