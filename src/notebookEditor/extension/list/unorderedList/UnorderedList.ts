@@ -8,6 +8,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 
 import { toggleListCommand } from '../command/list/toggle/toggleListCommand';
 import { createListWrapInputRule } from '../listInputRule';
+import './unorderedList.css';
 
 // ********************************************************************************
 
@@ -25,7 +26,7 @@ export const UnorderedList = new NodeExtension({
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([{ tag: `ul[${DATA_NODE_TYPE}="${NodeName.UNORDERED_LIST}"]` }, { tag: 'ul' }], {/*currently no attrs*/}),
+    parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.UNORDERED_LIST}"]` }, { tag: 'ul' }], {/*currently no attrs*/}),
 
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, {/*currently no attrs*/})),
   }),

@@ -8,7 +8,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 
 import { toggleListCommand } from '../command/list/toggle/toggleListCommand';
 import { createListWrapInputRule } from '../listInputRule';
-import { OrderedListAttrs } from './attribute';
+import './orderedList.css';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -18,15 +18,15 @@ export const OrderedList = new NodeExtension({
   priority: DEFAULT_EXTENSION_PRIORITY,
 
   // -- Attribute -----------------------------------------------------------------
-  defineNodeAttributes: (extensionStorage) => OrderedListAttrs,
+  defineNodeAttributes: (extensionStorage) => ({/*no attrs*/}),
 
   // -- Spec ----------------------------------------------------------------------
   partialNodeSpec: { ...OrderedListNodeSpec },
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([{ tag: `ol[${DATA_NODE_TYPE}="${NodeName.ORDERED_LIST}"]` }, { tag: 'ol' }], OrderedListAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, OrderedListAttrs)),
+    parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.ORDERED_LIST}"]` }, { tag: 'ol' }], {/*no attrs*/}),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, {/*no attrs*/})),
   }),
 
   // -- Input ---------------------------------------------------------------------

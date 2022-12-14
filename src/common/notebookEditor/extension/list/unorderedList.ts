@@ -30,7 +30,7 @@ export const UnorderedListNodeSpec: Readonly<NodeSpec> = {
 
 // -- Render Spec -----------------------------------------------------------------
 export const UnorderedListNodeRendererSpec: NodeRendererSpec<UnorderedListAttributes> = {
-  tag: 'ul',
+  tag: 'div',
 
   attributes: {/*use the default renderer on all attributes*/},
 };

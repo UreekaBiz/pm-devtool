@@ -1,6 +1,6 @@
 import { Mark, Node as ProseMirrorNode, NodeSpec } from 'prosemirror-model';
 
-import { noNodeOrMarkSpecAttributeDefaultValue, AttributesTypeFromNodeSpecAttributes, AttributeType } from '../../attribute';
+import { AttributesTypeFromNodeSpecAttributes } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
 import { JSONNode, NodeName, NodeGroup, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
@@ -8,10 +8,7 @@ import { NotebookSchemaType } from '../../schema';
 // ********************************************************************************
 // == Attribute ===================================================================
 // NOTE: This values must have matching types the ones defined in the Extension.
-const OrderedListAttributeSpec = {
-  // NOTE: Must be named 'start' since thats the name of the 'ol' HTML tag attribute
-  [AttributeType.StartValue]: noNodeOrMarkSpecAttributeDefaultValue<number>(),
-};
+const OrderedListAttributeSpec = {/*currently no attrs*/};
 export type OrderedListAttributes = AttributesTypeFromNodeSpecAttributes<typeof OrderedListAttributeSpec>
 
 // == Spec ========================================================================
@@ -33,26 +30,9 @@ export const OrderedListNodeSpec: Readonly<NodeSpec> = {
 
 // -- Render Spec -----------------------------------------------------------------
 export const OrderedListNodeRendererSpec: NodeRendererSpec<OrderedListAttributes> = {
-  tag: 'ol',
+  tag: 'div',
 
-  attributes: {
-    [AttributeType.StartValue]: (attributes) => {
-      let startVariable = attributes[AttributeType.StartValue];
-
-      // NOTE: since the OrderedLists get their display behavior from css counters
-      //       to allow for different types of separators on their ListItems, and
-      //       a counter-reset is used for counting, the variable that the counter
-      //       reset uses must ensure that subsequent ListItems increment the
-      //       value correctly (SEE: index.css)
-      if(!startVariable) { startVariable = ORDERED_LIST_DEFAULT_START; }
-      else { startVariable -= 1/*(SEE: NOTE above)*/; }
-
-      return {
-        [AttributeType.StartValue]: (attributes[AttributeType.StartValue] ?? ORDERED_LIST_DEFAULT_START).toString(),
-        style: `--${AttributeType.StartValue}: ${startVariable};`,
-      };
-    },
-  },
+  attributes: {/*use the default renderer on all attributes*/},
 };
 
 // == Type ========================================================================

@@ -1,0 +1,10 @@
+/* == ListItem ================================================================= */
+[data-node-type="unorderedList"] > [data-node-type="listItem"] {
+  display: list-item;
+  list-style-type: disc;
+}
+
+[data-node-type="orderedList"] > [data-node-type="listItem"] {
+  display: list-item;
+  list-style-type: decimal;
+}

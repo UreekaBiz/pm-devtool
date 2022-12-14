@@ -34,11 +34,8 @@ export const ListItemNodeSpec: Readonly<NodeSpec> = {
 
 // -- Render Spec -----------------------------------------------------------------
 export const ListItemNodeRendererSpec: NodeRendererSpec<ListItemAttributes> = {
-  tag: 'li',
+  tag: 'div',
 
-  // NOTE: these attributes are used by the Marker of the li inside the ListItem
-  //       to know how to display it. It only affects ListItems inside an
-  //       OrderedList. (SEE: index.css)
   attributes: {/*use the default renderer on all attributes*/},
 };
 

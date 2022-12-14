@@ -12,6 +12,7 @@ import { joinListItemBackwardCommand } from '../command/listItem/join/backward/j
 import { joinListItemForwardCommand } from '../command/listItem/join/forward/joinListItemForward';
 import { sinkListItemCommand } from '../command/listItem/sink/sinkListItem';
 import { splitListItemKeepMarksCommand } from '../command/listItem/split/splitListItem';
+import './listItem.css';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
@@ -29,7 +30,7 @@ export const ListItem = new NodeExtension({
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([{ tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], {/*currently nothing*/}),
+    parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], {/*currently nothing*/}),
     toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, {/*currently nothing*/})),
   }),
 
