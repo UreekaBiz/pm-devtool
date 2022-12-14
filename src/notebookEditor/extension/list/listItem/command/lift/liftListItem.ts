@@ -2,7 +2,9 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isListItemNode, isListNode, isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, AbstractDocumentUpdate, AncestorDepth, isNonTextBlockBlock } from 'common';
+import { isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
+
+import { getListItemChildrenPositions } from '../../util';
 
 // ********************************************************************************
 export enum LiftListOperation {
@@ -35,7 +37,7 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
     const { doc, selection } = editorState;
     if(isGapCursorSelection(selection)) return false/*do not allow*/;
 
-    const { empty, $from, from, $to, to } = selection;
+    const { empty, $from, from, to } = selection;
     if(this.operation === LiftListOperation.Untoggle || this.operation === LiftListOperation.Remove) {
       if(!empty) return false/*do not allow if Selection not empty*/;
       if(($from.before()+1/*immediately inside the TextBlock*/ !== from)) return false/*Selection is not at the start of the parent TextBlock*/;
@@ -45,13 +47,9 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
       } /* else -- do not check enter-specific case */
     } /* else -- backspace / enter checks done */
 
-    // -- Lift --------------------------------------------------------------------
-    const blockRange = $from.blockRange($to);
-    if(!blockRange) return false/*no range in which to lift ListItems*/;
-    const { depth: blockRangeDepth } = blockRange;
-
-    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*depth of blockRange wrapper*/);
-          listItemPositions.forEach(listItemPosition => liftListItem(tr, listItemPosition));
+    // -- Sink --------------------------------------------------------------------
+    const listItemChildrenPositions = getListItemChildrenPositions(doc, { from, to });
+          listItemChildrenPositions.forEach(childPos => liftListItemChild(tr, childPos));
 
     if(tr.docChanged) return tr/*updated*/;
     else return false/*no changes were made to the doc*/;
@@ -60,32 +58,20 @@ export class LiftListItemDocumentUpdate implements AbstractDocumentUpdate {
 
 // ================================================================================
 // perform the required modifications to a Transaction such that
-// the ListItem at the given position is lifted
-const liftListItem = (tr: Transaction, listItemPos: number) => {
-  const mappedListItemPos = tr.mapping.map(listItemPos),
-        listItem = tr.doc.nodeAt(mappedListItemPos),
-        $listItemPos = tr.doc.resolve(mappedListItemPos);
-  if(!listItem || !isListItemNode(listItem)) return/*cannot lift item, do not modify Transaction*/;
+// the ListItem child at the given position is lifted
+const liftListItemChild = (tr: Transaction, childPos: number) => {
+  const mappedChildPos = tr.mapping.map(childPos),
+        child = tr.doc.nodeAt(mappedChildPos),
+        $childPos = tr.doc.resolve(mappedChildPos);
+  if(!child) return/*cannot lift item, do not modify Transaction*/;
 
-  const listItemEndPos = mappedListItemPos + listItem.nodeSize,
-        $listItemEndPos = tr.doc.resolve(listItemEndPos);
-  let liftBlockRange: NodeRange | null = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth);
+  const childEndPos = mappedChildPos + child.nodeSize,
+        $childEndPos = tr.doc.resolve(childEndPos);
+  let liftBlockRange: NodeRange | null = new NodeRange($childPos, $childEndPos, $childPos.depth);
 
-  const $insideListItemPos = tr.doc.resolve($listItemEndPos.pos-2/*inside the ListItem, inside its lastChild*/),
-        listContainer = $insideListItemPos.node(AncestorDepth.GreatGreatGrandParent);
-  let liftListItemContents = false/*default*/;
-  if(listContainer && (isNonTextBlockBlock(listContainer)) && !isListNode(listContainer)) {
-    liftListItemContents = true;
-  } /* else -- listContainer does not exist, it is not a Node like Doc or Blockquote, or it is a List */
+  const targetDepth = liftTarget(liftBlockRange);
+  if(!isNotNullOrUndefined<number>(targetDepth)) return/*no target depth to lift child to*/;
 
-  if(liftListItemContents) {
-    liftBlockRange = $insideListItemPos.blockRange();
-    const targetDepth = liftBlockRange && liftTarget(liftBlockRange);
-    isNotNullOrUndefined<number>(targetDepth) && tr.lift(liftBlockRange!/*guaranteed by targetDepth being defined*/, targetDepth);
-  } else {
-    const targetDepth = liftTarget(liftBlockRange);
-    tr.lift(liftBlockRange, targetDepth ? targetDepth : liftBlockRange.depth - 1/*decrease depth*/);
-  }
-
+  tr.lift(liftBlockRange, targetDepth);
   return tr;
 };
