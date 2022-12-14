@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, AbstractDocumentUpdate } from 'common';
+import { isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, isListItemNode, AbstractDocumentUpdate } from 'common';
 
 import { getListItemChildrenPositions } from '../../util';
 
@@ -64,6 +64,9 @@ const liftListItemChild = (tr: Transaction, childPos: number) => {
         child = tr.doc.nodeAt(mappedChildPos),
         $childPos = tr.doc.resolve(mappedChildPos);
   if(!child) return/*cannot lift item, do not modify Transaction*/;
+
+  const listItem = $childPos.parent;
+  if(!listItem || !isListItemNode(listItem)) return/*cannot lift item, do not modify Transaction*/;
 
   const childEndPos = mappedChildPos + child.nodeSize,
         $childEndPos = tr.doc.resolve(childEndPos);

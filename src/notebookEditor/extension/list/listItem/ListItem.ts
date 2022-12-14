@@ -7,7 +7,6 @@ import { ExtensionPriority } from 'notebookEditor/model';
 import { createExtensionParseRules, getExtensionAttributesObject } from 'notebookEditor/extension/type/Extension/util';
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
-import { ListItemAttrs } from './attribute';
 import { liftListItemCommand, LiftListOperation } from './command/lift/liftListItem';
 import { sinkListItemCommand } from './command/sink/sinkListItem';
 import { splitListItemCommand } from './command/split/splitListItem';
@@ -20,15 +19,15 @@ export const ListItem = new NodeExtension({
   priority: ExtensionPriority.LIST_ITEM,
 
   // -- Attribute -----------------------------------------------------------------
-  defineNodeAttributes: (extensionStorage) => (ListItemAttrs),
+  defineNodeAttributes: (extensionStorage) => ({/*no attrs*/}),
 
   // -- Spec ----------------------------------------------------------------------
   partialNodeSpec: { ...ListItemNodeSpec },
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([{ tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], ListItemAttrs),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, ListItemAttrs)),
+    parseDOM: createExtensionParseRules([{ tag: `li[${DATA_NODE_TYPE}="${NodeName.LIST_ITEM}"]` }, { tag: 'li' }], {/*no attrs*/}),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, {/*no attrs*/})),
   }),
 
   // -- Input ---------------------------------------------------------------------

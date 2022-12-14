@@ -1,6 +1,6 @@
 import { Mark, Node as ProseMirrorNode, NodeSpec, NodeType } from 'prosemirror-model';
 
-import { AttributesTypeFromNodeSpecAttributes, AttributeType, noNodeOrMarkSpecAttributeDefaultValue } from '../../attribute';
+import { AttributesTypeFromNodeSpecAttributes } from '../../attribute';
 import { NodeRendererSpec } from '../../htmlRenderer/type';
 import { JSONNode, NodeGroup, NodeName, ProseMirrorNodeContent } from '../../node';
 import { NotebookSchemaType } from '../../schema';
@@ -8,9 +8,7 @@ import { NotebookSchemaType } from '../../schema';
 // ********************************************************************************
 // == Attribute ===================================================================
 // NOTE: This values must have matching types the ones defined in the Extension.
-const ListItemAttributeSpec = {
-  [AttributeType.MarginLeft]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-};
+const ListItemAttributeSpec = {/*no attrs*/};
 export type ListItemAttributes = AttributesTypeFromNodeSpecAttributes<typeof ListItemAttributeSpec>
 
 // == Spec ========================================================================
