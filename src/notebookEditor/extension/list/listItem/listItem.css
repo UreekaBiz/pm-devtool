@@ -1,6 +1,7 @@
 /* -- UnorderedList ------------------------------------------------------------ */
 [data-node-type="unorderedList"] { list-style-type: none; }
 
+ /* only show bullets on Nodes preceded by listItems that are not Lists */
 [data-node-type="unorderedList"] > [data-node-type="listItem"] > [data-node-type]:not([data-node-type="unorderedList"]):not([data-node-type="orderedList"])::before {
   content: '•';
   font-size: 1.5em;
@@ -12,5 +13,9 @@
 /* -- OrderedList -------------------------------------------------------------- */
 [data-node-type="orderedList"] { list-style-type: none; }
 [data-node-type="orderedList"] { counter-reset: li; }
+
+ /* only increment counter on Nodes preceded by listItems that are not Lists */
 [data-node-type="orderedList"] > [data-node-type="listItem"] > [data-node-type]:not([data-node-type="unorderedList"]):not([data-node-type="orderedList"]) { counter-increment: li; }
-[data-node-type="orderedList"] > li > [data-node-type]:not([data-node-type="unorderedList"]):not([data-node-type="orderedList"])::before { content: counter(li) ". " }
+
+ /* only show counter on Nodes preceded by listItems that are not Lists */
+[data-node-type="orderedList"] > [data-node-type="listItem"] > [data-node-type]:not([data-node-type="unorderedList"]):not([data-node-type="orderedList"])::before { content: counter(li) ". " }
