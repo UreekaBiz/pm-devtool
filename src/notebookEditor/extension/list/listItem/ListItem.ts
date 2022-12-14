@@ -10,6 +10,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { liftListItemCommand, LiftListOperation } from './command/lift/liftListItem';
 import { sinkListItemCommand } from './command/sink/sinkListItem';
 import { splitListItemCommand } from './command/split/splitListItem';
+import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -45,6 +46,7 @@ export const ListItem = new NodeExtension({
       'Backspace': liftListItemCommand(LiftListOperation.Remove),
       'Mod-Backspace': liftListItemCommand(LiftListOperation.Remove),
     }),
+    listItemPlugin(),
   ],
 });
 
