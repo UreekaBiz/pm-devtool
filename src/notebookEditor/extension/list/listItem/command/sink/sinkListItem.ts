@@ -2,7 +2,7 @@ import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
 import { AbstractDocumentUpdate, isGapCursorSelection, findParentNodeClosestToPos, isListNode, getListItemNodeType } from 'common';
-import { fromOrToInListItem, getListItemChildrenPositions } from './util';
+import { fromOrToInListItem, getListItemChildrenPositions } from '../../util';
 
 // ********************************************************************************
 // == Sink ========================================================================
@@ -50,5 +50,3 @@ const sinkListItemChild = (tr: Transaction, childPos: number) => {
   tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }, { type: getListItemNodeType(closestListObj.node.type.schema), attrs: undefined/*no attrs*/ }]);
   return tr/*modified*/;
 };
-
-

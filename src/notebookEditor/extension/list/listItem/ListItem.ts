@@ -7,7 +7,8 @@ import { createExtensionParseRules, getExtensionAttributesObject } from 'noteboo
 import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeExtension';
 
 import { ListItemAttrs } from './attribute';
-import { sinkListItemCommand } from './command';
+import { sinkListItemCommand } from './command/sink/sinkListItem';
+import { liftListItemCommand, LiftListOperation } from './command/lift/liftListItem';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -37,7 +38,14 @@ export const ListItem = new NodeExtension({
   // -- Plugin --------------------------------------------------------------------
   addProseMirrorPlugins: (editor) => [
     keymap({
+      // 'Enter': splitOrLift,
+      'Shift-Tab': liftListItemCommand(LiftListOperation.Dedent),
       'Tab': sinkListItemCommand,
+      'Backspace': liftListItemCommand(LiftListOperation.Remove),
+      'Mod-Backspace': liftListItemCommand(LiftListOperation.Remove),
     }),
   ],
 });
+
+// == Composed Command ============================================================
+// const splitOrLift = chainCommands(splitListItemKeepMarksCommand, liftListItemCommand(LiftListOperation.Untoggle));
