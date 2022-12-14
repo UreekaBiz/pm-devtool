@@ -1,0 +1,16 @@
+/* -- UnorderedList ------------------------------------------------------------ */
+[data-node-type="unorderedList"] { list-style-type: none; }
+
+[data-node-type="unorderedList"] > [data-node-type="listItem"] > [data-node-type="paragraph"]::before {
+  content: '•';
+  font-size: 1.5em;
+  position: relative;
+  top: 2.5px;
+  margin-right: 5px;
+}
+
+/* -- OrderedList -------------------------------------------------------------- */
+[data-node-type="orderedList"] { list-style-type: none; }
+[data-node-type="orderedList"] { counter-reset: li; }
+[data-node-type="orderedList"] > [data-node-type="listItem"] { counter-increment: li; }
+[data-node-type="orderedList"] > li > [data-node-type="paragraph"]::before { content: counter(li) " ." }

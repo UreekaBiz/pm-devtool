@@ -69,16 +69,11 @@ const liftListItemChild = (tr: Transaction, childPos: number) => {
   if(!listItem || !isListItemNode(listItem)) return/*cannot lift item, do not modify Transaction*/;
 
   // check if the ListItem itself has to be lifted
-  const $listItemPos = tr.doc.resolve($childPos.before()),
-        listItemParent = $listItemPos.parent;
-  if(listItem !== listItemParent.firstChild) {
-    const nearestAncestorList = findParentNodeClosestToPos($listItemPos, (node, depth) => isListNode(node) && depth < $listItemPos.depth);
-
-    if(nearestAncestorList) {
-      return performLift(tr, $listItemPos, tr.doc.resolve($listItemPos.pos + listItem.nodeSize), $listItemPos.depth, nearestAncestorList.depth);
-    } /* else -- no List that has a different depth exists */
-  } /* else -- listItem is the firstChild */
-
+  const $listItemPos = tr.doc.resolve($childPos.before());
+  const nearestAncestorList = findParentNodeClosestToPos($listItemPos, (node, depth) => isListNode(node) && depth < $listItemPos.depth);
+  if(nearestAncestorList) {
+    return performLift(tr, $listItemPos, tr.doc.resolve($listItemPos.pos + listItem.nodeSize), $listItemPos.depth, nearestAncestorList.depth);
+  } /* else -- no List that has a different depth exists */
 
   // lift the child
   return performLift(tr, $childPos, tr.doc.resolve(mappedChildPos + child.nodeSize), $childPos.depth);
@@ -92,5 +87,5 @@ const performLift = (tr: Transaction, $liftRangeStart: ResolvedPos, $liftRangeEn
   if(!isNotNullOrUndefined<number>(liftDepth)) return tr/*no depth to lift target*/;
 
   tr.lift(liftBlockRange, liftDepth);
-  return tr/*updated*/;
+  return tr;
 };

@@ -10,6 +10,7 @@ import { NodeExtension } from 'notebookEditor/extension/type/NodeExtension/NodeE
 import { liftListItemCommand, LiftListOperation } from './command/lift/liftListItem';
 import { sinkListItemCommand } from './command/sink/sinkListItem';
 import { splitListItemCommand } from './command/split/splitListItem';
+import './listItem.css';
 import { listItemPlugin } from './plugin';
 
 // ********************************************************************************
