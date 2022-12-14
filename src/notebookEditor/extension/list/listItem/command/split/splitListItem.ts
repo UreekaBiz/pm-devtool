@@ -26,13 +26,14 @@ export class SplitListItemDocumentUpdate implements AbstractDocumentUpdate {
     if(isNodeEmpty($from.parent)) return false/*do not allow splitting if empty*/;
 
     // -- Split -------------------------------------------------------------------
+    const originalMarks = editorState.storedMarks || tr.storedMarks || ($to.parentOffset && $from.marks());
+
     tr.delete($from.pos, $to.pos);
     const { attrs: listItemAttrs } = $from.node(AncestorDepth.GrandParent);
     tr.split($from.pos, 2/*maintain current child of ListItem (e.g. a Paragraph), and the ListItem type after split*/, [ { type: listItemType, attrs: listItemAttrs } ]).scrollIntoView();
 
-    const marks = editorState.storedMarks || (editorState.selection.$to.parentOffset && editorState.selection.$from.marks());
-    if(marks) {
-      tr.ensureMarks(marks);
+    if(originalMarks) {
+      tr.ensureMarks(originalMarks);
     } /* else -- no marks to preserve after split */
 
     return tr/*updated*/;
