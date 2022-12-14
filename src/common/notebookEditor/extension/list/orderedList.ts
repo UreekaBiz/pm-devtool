@@ -29,24 +29,7 @@ export const OrderedListNodeSpec: Readonly<NodeSpec> = {
 export const OrderedListNodeRendererSpec: NodeRendererSpec<OrderedListAttributes> = {
   tag: 'ol',
 
-  attributes: {
-    [AttributeType.StartValue]: (attributes) => {
-      let startVariable = attributes[AttributeType.StartValue];
-
-      // NOTE: since the OrderedLists get their display behavior from css counters
-      //       to allow for different types of separators on their ListItems, and
-      //       a counter-reset is used for counting, the variable that the counter
-      //       reset uses must ensure that subsequent ListItems increment the
-      //       value correctly (SEE: index.css)
-      if(!startVariable) { startVariable = ORDERED_LIST_DEFAULT_START; }
-      else { startVariable -= 1/*(SEE: NOTE above)*/; }
-
-      return {
-        [AttributeType.StartValue]: (attributes[AttributeType.StartValue] ?? ORDERED_LIST_DEFAULT_START).toString(),
-        style: `--${AttributeType.StartValue}: ${startVariable};`,
-      };
-    },
-  },
+  attributes: {/*use the default renderer on all attributes*/},
 };
 
 // == Type ========================================================================
