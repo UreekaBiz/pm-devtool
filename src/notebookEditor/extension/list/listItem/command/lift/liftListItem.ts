@@ -1,8 +1,8 @@
-import { NodeRange } from 'prosemirror-model';
+import { NodeRange, ResolvedPos } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 import { liftTarget } from 'prosemirror-transform';
 
-import { isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, isListItemNode, AbstractDocumentUpdate } from 'common';
+import { isGapCursorSelection, isNodeEmpty, isNotNullOrUndefined, isListItemNode, findParentNodeClosestToPos, isListNode, AbstractDocumentUpdate } from 'common';
 
 import { getListItemChildrenPositions } from '../../util';
 
@@ -68,13 +68,29 @@ const liftListItemChild = (tr: Transaction, childPos: number) => {
   const listItem = $childPos.parent;
   if(!listItem || !isListItemNode(listItem)) return/*cannot lift item, do not modify Transaction*/;
 
-  const childEndPos = mappedChildPos + child.nodeSize,
-        $childEndPos = tr.doc.resolve(childEndPos);
-  const liftBlockRange: NodeRange | null = new NodeRange($childPos, $childEndPos, $childPos.depth);
+  // check if the ListItem itself has to be lifted
+  const $listItemPos = tr.doc.resolve($childPos.before()),
+        listItemParent = $listItemPos.parent;
+  if(listItem !== listItemParent.firstChild) {
+    const nearestAncestorList = findParentNodeClosestToPos($listItemPos, (node, depth) => isListNode(node) && depth < $listItemPos.depth);
 
-  const targetDepth = liftTarget(liftBlockRange);
-  if(!isNotNullOrUndefined<number>(targetDepth)) return/*no target depth to lift child to*/;
+    if(nearestAncestorList) {
+      return performLift(tr, $listItemPos, tr.doc.resolve($listItemPos.pos + listItem.nodeSize), $listItemPos.depth, nearestAncestorList.depth);
+    } /* else -- no List that has a different depth exists */
+  } /* else -- listItem is the firstChild */
 
-  tr.lift(liftBlockRange, targetDepth);
-  return tr;
+
+  // lift the child
+  return performLift(tr, $childPos, tr.doc.resolve(mappedChildPos + child.nodeSize), $childPos.depth);
+};
+
+/** wrapper around tr.lift that computes a targetDepth if it is not given */
+const performLift = (tr: Transaction, $liftRangeStart: ResolvedPos, $liftRangeEnd: ResolvedPos, rangeDepth: number, targetDepth?: number) => {
+  const liftBlockRange: NodeRange | null = new NodeRange($liftRangeStart, $liftRangeEnd, rangeDepth);
+
+  const liftDepth = targetDepth ?? liftTarget(liftBlockRange);
+  if(!isNotNullOrUndefined<number>(liftDepth)) return tr/*no depth to lift target*/;
+
+  tr.lift(liftBlockRange, liftDepth);
+  return tr/*updated*/;
 };
