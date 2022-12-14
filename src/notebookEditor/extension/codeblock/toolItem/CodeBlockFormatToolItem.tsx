@@ -1,4 +1,5 @@
 import { useToast, Button, Box, Tooltip } from '@chakra-ui/react';
+import { useCallback, useEffect } from 'react';
 
 import { isCodeBlockNode, AncestorDepth } from 'common';
 
@@ -21,13 +22,28 @@ export const CodeBlockFormatToolItem: React.FC<Props> = ({ editor, depth }) => {
   if(!isCodeBlockNode(codeBlock)) throw new Error('Invalid CodeBlock WrapTool Render');
 
   // -- Handler -------------------------------------------------------------------
-  const handleFormat = () => {
+  const handleFormat = useCallback(() => {
     try {
       toolItemCommandWrapper(editor, depth, formatCodeBlockCommand);
     } catch(error) {
       toast({ title: (error as SyntaxError/*by contract*/).message, status: 'error', duration: 8000/*ms, T&E*/ });
     }
+  }, [editor, depth, toast]);
+
+  // -- Effect --------------------------------------------------------------------
+ // add a Listener to format the contents of the CodeBlock
+ useEffect(() => {
+  const handleKeyDown = (event: KeyboardEvent) => {
+    // listen for Cmd + F
+    if(event.metaKey && event.key === 'f') {
+      event.preventDefault();
+      handleFormat();
+    } /* else -- ignore event */
   };
+
+  document.addEventListener('keydown', handleKeyDown);
+  return () => { document.removeEventListener('keydown', handleKeyDown); };
+}, [handleFormat]);
 
   // -- UI ------------------------------------------------------------------------
   return (
