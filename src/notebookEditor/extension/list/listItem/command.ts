@@ -1,8 +1,8 @@
 import { NodeRange } from 'prosemirror-model';
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { isListItemNode, AbstractDocumentUpdate, isGapCursorSelection, findParentNodeClosestToPos, isListNode } from 'common';
-import { fromOrToInListItem, getListItemPositions } from './util';
+import { AbstractDocumentUpdate, isGapCursorSelection, findParentNodeClosestToPos, isListNode, getListItemNodeType } from 'common';
+import { fromOrToInListItem, getListItemChildrenPositions } from './util';
 
 // ********************************************************************************
 // == Sink ========================================================================
@@ -16,19 +16,15 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     // -- Checks ------------------------------------------------------------------
     const { doc, selection } = editorState,
-          { empty, $from, from, $to, to } = selection;
+          { empty, $from, from, to } = selection;
 
     if(isGapCursorSelection(selection)) return false/*do not allow*/;
     if(!fromOrToInListItem(editorState.selection)) return false/*Selection not inside a ListItem*/;
     if(empty && from !== $from.before() + 1/*immediately at the start of the parent Block*/) return false/*do not allow*/;
 
     // -- Sink --------------------------------------------------------------------
-    const blockRange = $from.blockRange($to);
-    if(!blockRange) return false/*no range in which to lift ListItems*/;
-    const { depth: blockRangeDepth } = blockRange;
-
-    const listItemPositions = getListItemPositions(doc, { from, to }, blockRangeDepth-1/*depth of blockRange wrapper*/);
-          listItemPositions.forEach(listItemPosition => sinkListItem(tr, listItemPosition));
+    const listItemChildrenPositions = getListItemChildrenPositions(doc, { from, to });
+          listItemChildrenPositions.forEach(childPos => sinkListItemChild(tr, childPos));
 
     if(tr.docChanged) return tr/*updated*/;
     else return false/*no changes were made to the doc*/;
@@ -38,20 +34,20 @@ export class SinkListItemDocumentUpdate implements AbstractDocumentUpdate {
 // ================================================================================
 // perform the required modifications to a Transaction such that
 // the ListItem at the given position increases its depth
-const sinkListItem = (tr: Transaction, listItemPos: number) => {
-  const mappedListItemPos = tr.mapping.map(listItemPos),
-        $listItemPos = tr.doc.resolve(mappedListItemPos),
-        listItem = tr.doc.nodeAt(mappedListItemPos);
-  if(!listItem || !isListItemNode(listItem)) return/*not a ListItem at the expected position */;
+const sinkListItemChild = (tr: Transaction, childPos: number) => {
+  const mappedChildPos = tr.mapping.map(childPos),
+        $childPos = tr.doc.resolve(mappedChildPos),
+        child = tr.doc.nodeAt(mappedChildPos);
+  if(!child) return/*not a ListItem at the expected position */;
 
-  const listItemEndPos = mappedListItemPos + listItem.nodeSize,
-        $listItemEndPos = tr.doc.resolve(listItemEndPos);
-  const sinkBlockRange = new NodeRange($listItemPos, $listItemEndPos, $listItemPos.depth/*depth*/);
+  const childEndPos = mappedChildPos + child.nodeSize,
+        $childEndPos = tr.doc.resolve(childEndPos);
+  const sinkBlockRange = new NodeRange($childPos, $childEndPos, $childPos.depth/*depth*/);
 
-  const closestListObj = findParentNodeClosestToPos($listItemPos, isListNode);
+  const closestListObj = findParentNodeClosestToPos($childPos, isListNode);
   if(!closestListObj) return/*no list to take type from*/;
 
-  tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }]);
+  tr.wrap(sinkBlockRange, [{ type: closestListObj.node.type, attrs: closestListObj.node.attrs }, { type: getListItemNodeType(closestListObj.node.type.schema), attrs: undefined/*no attrs*/ }]);
   return tr/*modified*/;
 };
 
