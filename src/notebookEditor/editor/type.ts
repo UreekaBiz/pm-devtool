@@ -19,7 +19,7 @@ import { HorizontalRule } from 'notebookEditor/extension/horizontalRule/Horizont
 import { Image } from 'notebookEditor/extension/image/Image';
 import { Italic } from 'notebookEditor/extension/italic/Italic';
 import { Link } from 'notebookEditor/extension/link/Link';
-import { ListItem } from 'notebookEditor/extension/list/listItem/ListItemRename';
+import { ListItem } from 'notebookEditor/extension/list/listItem/ListItem';
 import { OrderedList } from 'notebookEditor/extension/list/orderedList/OrderedList';
 import { MarkHolder } from 'notebookEditor/extension/markHolder/MarkHolder';
 import { EditableInlineNodeWithContent } from 'notebookEditor/extension/nestedViewNode/editableInlineNodeWithContent/EditableInlineNodeWithContent';
