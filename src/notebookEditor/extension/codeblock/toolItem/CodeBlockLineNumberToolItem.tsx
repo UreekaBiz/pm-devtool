@@ -1,6 +1,6 @@
 import { Checkbox } from '@chakra-ui/react';
 
-import { isCodeBlockNode, updateAttributesCommand, AttributeType, NodeName, AncestorDepth, CODEBLOCK_DEFAULT_LINES } from 'common';
+import { isCodeBlockNode, updateSingleNodeAttributesCommand, AttributeType, NodeName, AncestorDepth, CODEBLOCK_DEFAULT_LINES } from 'common';
 import { InputToolItemContainer } from 'notebookEditor/extension/shared/InputToolItemContainer';
 
 import { EditorToolComponentProps, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
@@ -12,14 +12,15 @@ interface Props extends EditorToolComponentProps {/*no additional*/}
 // == Component ===================================================================
 export const CodeBlockLineNumberToolItem: React.FC<Props> = ({ editor  }) => {
   const { $from } = editor.view.state.selection;
-  const codeBlock = $from.node(AncestorDepth.GrandParent);
+  const codeBlock = $from.node(AncestorDepth.GrandParent),
+        codeBlockPos = $from.before(AncestorDepth.GrandParent);
   if(!isCodeBlockNode(codeBlock)) throw new Error('Invalid CodeBlock WrapTool Render');
 
   const showLines = codeBlock.attrs[AttributeType.Lines] ?? CODEBLOCK_DEFAULT_LINES;
 
   // -- Handler -------------------------------------------------------------------
   const handleChange = (showLines: boolean) => {
-    updateAttributesCommand(NodeName.CODEBLOCK, { [AttributeType.Language]: showLines })(editor.view.state, editor.view.dispatch);
+    updateSingleNodeAttributesCommand(NodeName.CODEBLOCK, codeBlockPos, { [AttributeType.Lines]: showLines })(editor.view.state, editor.view.dispatch);
     editor.view.focus();
   };
 
