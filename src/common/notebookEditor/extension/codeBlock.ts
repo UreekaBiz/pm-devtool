@@ -15,6 +15,9 @@ export const CodeBlockAttributesSpec = {
 
   /** the language the CodeBlock contains */
   [AttributeType.Language]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
+
+  /** whether or not the CodeBlock line numbers are shown */
+  [AttributeType.Lines]: noNodeOrMarkSpecAttributeDefaultValue<boolean>(),
 };
 export type CodeBlockAttributes = AttributesTypeFromNodeSpecAttributes<typeof CodeBlockAttributesSpec>;
 export const isCodeBlockAttributes = (attrs: any): attrs is CodeBlockAttributes => attrs.id !== undefined && attrs.wrap !== undefined;
@@ -88,6 +91,8 @@ export enum CodeBlockLanguage {
   TypeScript = 'typescript',
 }
 
+export const CODEBLOCK_DEFAULT_LINES = true/*show CodeBlock line numbers by default*/;
+
 // -- CSS -------------------------------------------------------------------------
 // the attribute that ensures that VisualId for a CodeBlock appears
 // to the right of the CodeBlock (SEE: index.css)
@@ -99,3 +104,5 @@ export const CODEBLOCK_INNER_CONTAINER_CLASS = 'codeBlockInnerContainer';
 // class of the div that holds the visualId of the CodeBlock
 export const CODEBLOCK_VISUAL_ID_CONTAINER_CLASS = 'codeBlockVisualIdContainer';
 
+// class that controls whether or not the CodeBlock line numbers are shown
+export const CODEBLOCK_SHOW_LINES_CLASS = 'showCodeBlockLines';

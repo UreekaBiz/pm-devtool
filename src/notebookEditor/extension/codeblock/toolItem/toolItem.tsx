@@ -3,6 +3,7 @@ import { BiCodeAlt } from 'react-icons/bi';
 import { generateNodeId, isCodeBlockNode, isNodeActive, AncestorDepth, AttributeType, NodeName } from 'common';
 
 import { toggleBlock } from 'notebookEditor/command/node';
+import { CheckBoxToolItem } from 'notebookEditor/extension/shared/component/CheckBoxToolItem';
 import { ToolItem } from 'notebookEditor/toolbar/type';
 import { shouldShowToolItem } from 'notebookEditor/toolbar/util';
 
@@ -40,5 +41,20 @@ export const codeBlockFormatToolItem: ToolItem = {
   name: 'codeBlockFormatToolItem',
 
   component: CodeBlockFormatToolItem,
+  shouldShow: (editor) => isCodeBlockNode(editor.view.state.selection.$from.node(AncestorDepth.GrandParent)),
+};
+
+export const codeBlockLinesToolItem: ToolItem =  {
+  toolType: 'component',
+  name: 'codeBlockLinesToolItem',
+
+  component: (props) =>
+    <CheckBoxToolItem
+      {...props}
+      name='Lines'
+      attributeType={AttributeType.Lines}
+      nodeName={NodeName.CODEBLOCK}
+    />,
+
   shouldShow: (editor) => isCodeBlockNode(editor.view.state.selection.$from.node(AncestorDepth.GrandParent)),
 };

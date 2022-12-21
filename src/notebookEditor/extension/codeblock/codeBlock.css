@@ -23,7 +23,7 @@
   counter-reset: div;
 }
 
-[data-node-type="codeBlock"] > .codeBlockInnerContainer > [data-node-type="paragraph"]::before {
+[data-node-type="codeBlock"].showCodeBlockLines > .codeBlockInnerContainer > [data-node-type="paragraph"]::before {
   counter-increment: div;
   content: counter(div)"  ";
   font-size: 1em;

@@ -61,6 +61,7 @@ export enum AttributeType {
 
   // .. CodeBlock .................................................................
   Language = 'language',
+  Lines = 'lines',
 
   // .. CodeBlockReference ........................................................
   CodeBlockReference = 'codeBlockReference',

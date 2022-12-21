@@ -1,7 +1,7 @@
 import { MarkName, NodeName } from 'common';
 
 import { blockquoteBorderColorToolItem, blockquoteBorderLeftWidthToolItem } from 'notebookEditor/extension/blockquote/toolItem';
-import { codeBlockFormatToolItem, codeBlockLanguageToolItem } from 'notebookEditor/extension/codeblock/toolItem';
+import { codeBlockFormatToolItem, codeBlockLanguageToolItem, codeBlockLinesToolItem } from 'notebookEditor/extension/codeblock/toolItem';
 import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem } from 'notebookEditor/extension/codeBlockReference/toolItem';
 import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, DemoAsyncNodeExecuteButtons } from 'notebookEditor/extension/demoAsyncNode/toolItem';
 import { demoAsyncNode2DelaySlider, demoAsyncNode2ReplaceTextToolItem, DemoAsyncNode2ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode2/toolItem';
@@ -52,6 +52,7 @@ export const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfig
     items: [
       codeBlockLanguageToolItem,
       codeBlockFormatToolItem,
+      codeBlockLinesToolItem,
     ],
   },
   [NodeName.CODEBLOCK_REFERENCE]: {

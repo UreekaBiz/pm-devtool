@@ -1,4 +1,4 @@
-import { getPosType, AttributeType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
+import { getPosType, AttributeType, CodeBlockNodeType, NodeName, CODEBLOCK_INNER_CONTAINER_CLASS, CODEBLOCK_SHOW_LINES_CLASS, CODEBLOCK_VISUAL_ID_CONTAINER_CLASS, DATA_NODE_TYPE, DATA_VISUAL_ID  } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeView } from 'notebookEditor/model/AbstractNodeView';
@@ -59,5 +59,12 @@ export class CodeBlockView extends AbstractNodeView<CodeBlockNodeType, CodeBlock
 
     // update visualIdContainer
     this.visualIdContainer.innerHTML = visualId;
+
+    // show or hide line numbers
+    if(this.node.attrs[AttributeType.Lines]) {
+      this.dom.classList.add(CODEBLOCK_SHOW_LINES_CLASS);
+    } else {
+      this.dom.classList.remove(CODEBLOCK_SHOW_LINES_CLASS);
+    }
   }
 }
