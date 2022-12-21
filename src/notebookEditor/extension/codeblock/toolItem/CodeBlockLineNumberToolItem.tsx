@@ -26,7 +26,7 @@ export const CodeBlockLineNumberToolItem: React.FC<Props> = ({ editor  }) => {
 
   // -- UI ------------------------------------------------------------------------
   return (
-    <InputToolItemContainer name='Line Numbers'>
+    <InputToolItemContainer name=''/*none*/>
       <Checkbox
         isChecked={showLines}
         datatype={TOOL_ITEM_DATA_TYPE/*(SEE: notebookEditor/sidebar/toolbar/type )*/}

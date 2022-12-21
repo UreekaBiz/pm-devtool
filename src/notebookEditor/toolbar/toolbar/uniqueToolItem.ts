@@ -51,8 +51,8 @@ export const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfig
     position: 'start',
     items: [
       codeBlockLanguageToolItem,
-      codeBlockFormatToolItem,
       codeBlockLinesToolItem,
+      codeBlockFormatToolItem,
     ],
   },
   [NodeName.CODEBLOCK_REFERENCE]: {
