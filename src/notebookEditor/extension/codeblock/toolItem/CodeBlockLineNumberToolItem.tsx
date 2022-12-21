@@ -1,8 +1,8 @@
 import { Checkbox } from '@chakra-ui/react';
 
 import { isCodeBlockNode, updateSingleNodeAttributesCommand, AttributeType, NodeName, AncestorDepth, CODEBLOCK_DEFAULT_LINES } from 'common';
-import { InputToolItemContainer } from 'notebookEditor/extension/shared/InputToolItemContainer';
 
+import { InputToolItemContainer } from 'notebookEditor/extension/shared/InputToolItemContainer';
 import { EditorToolComponentProps, TOOL_ITEM_DATA_TYPE } from 'notebookEditor/toolbar/type';
 
 // ********************************************************************************
