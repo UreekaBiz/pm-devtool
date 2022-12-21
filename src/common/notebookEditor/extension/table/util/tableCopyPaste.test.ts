@@ -135,7 +135,6 @@ describe('pastedCells', () => {
 
     executePastedCellsTest(startState, null/*no width*/);
   });
-
 });
 
 describe('clipCells', () => {
