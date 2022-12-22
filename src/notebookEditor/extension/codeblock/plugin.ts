@@ -1,10 +1,11 @@
+import { classHighlighter, highlightTree } from '@lezer/highlight';
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
-import { DecorationSet } from 'prosemirror-view';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, NodePosition, SelectionRange, AttributeType } from 'common';
+import { isCodeBlockNode, NodePosition, SelectionRange, CodeBlockLanguage, AttributeType } from 'common';
 
-import { getCodeBlockChildSyntaxDecorations } from './language';
+import { getCodeBlockChildTree } from './language';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
@@ -104,6 +105,7 @@ const getAffectedNodesInRange = (range: SelectionRange, state: EditorState) => {
 /** update the syntax Decorations for the given CodeBlocks */
 const updateCodeBlockSyntaxDecorations = (editorState: EditorState, affectedTextBlocksInRange: ProseMirrorNode[], codeBlockNodePositions: NodePosition[], decorationSet: DecorationSet) => {
   let newDecorationSet = decorationSet;
+
   for(let i=0; i<codeBlockNodePositions.length; i++) {
     const codeBlock = codeBlockNodePositions[i].node;
     const { [AttributeType.Language]: language } = codeBlock.attrs;
@@ -115,12 +117,26 @@ const updateCodeBlockSyntaxDecorations = (editorState: EditorState, affectedText
       if(!affectedTextBlocksInRange.includes(child)) return/*ignore Node*/;
 
       const childPos = codeBlockNodePositions[i].position + offsetIntoParent;
-      newDecorationSet = decorationSet.remove(decorationSet.find(childPos, childPos + child.nodeSize));
+      newDecorationSet = newDecorationSet.remove(newDecorationSet.find(childPos, childPos + child.nodeSize));
 
-      const syntaxDecorations = getCodeBlockChildSyntaxDecorations(language, child.textContent);
-      decorationSet = decorationSet.add(editorState.doc, [...syntaxDecorations]);
+      const syntaxDecorations = getSyntaxDecorations(language as CodeBlockLanguage/*by contract*/, childPos, child);
+      newDecorationSet = newDecorationSet.add(editorState.doc, [...syntaxDecorations]);
     });
   }
 
   return newDecorationSet;
 };
+
+/** get the Decorations for the syntax inside a CodeBlock child */
+const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChildPos: number, codeBlockChild: ProseMirrorNode) => {
+  const decorations: Decoration[] = [/*default empty*/];
+  const tree = getCodeBlockChildTree(codeBlockLanguage, codeBlockChild.textContent);
+
+  let insideChildPos = codeBlockChildPos + 2/*account for start of parent CodeBlock and start of parent TextBlock*/;
+  highlightTree(tree, classHighlighter, (from, to, classes) => {
+    decorations.push(Decoration.inline(insideChildPos + from, insideChildPos + to, { class: classes  }));
+  });
+
+  return decorations;
+};
+
