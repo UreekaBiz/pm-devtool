@@ -53,7 +53,9 @@ export class CodeBlockArrowDocumentUpdate implements AbstractDocumentUpdate {
   public update(editorState: EditorState, tr: Transaction) {
     if(!tr.selection.empty) return false/*do not handle if not empty*/;
 
-    const { $from } = tr.selection;
+    const { empty, $from, from } = tr.selection;
+    if(!empty) return false/*do not allow if not empty*/;
+
     const codeBlock = $from.node(AncestorDepth.GrandParent);
     if(!codeBlock || !isCodeBlockNode(codeBlock)) return false/*not inside a CodeBlock*/;
 
@@ -64,15 +66,20 @@ export class CodeBlockArrowDocumentUpdate implements AbstractDocumentUpdate {
           beforeCodeBlockPos = Math.max(0/*do not go behind the Doc*/, codeBlockPos-1),
           afterCodeBlockPos = Math.min(tr.doc.nodeSize-2/*do not go past the Doc, account for start and end*/, codeBlockPos + codeBlock.nodeSize + 1/*past the end*/);
 
-    const currentChild = $from.parent;
-    if(firstChild === currentChild && (this.direction === 'up' || this.direction === 'left')) {
+    const currentChild = $from.parent,
+          currentChildStart = $from.start(),
+          currentChildEnd = $from.end();
+    const atStart = from === currentChildStart,
+          atEnd = from === currentChildEnd;
+
+    if((currentChild === firstChild) && atStart && (this.direction === 'up' || this.direction === 'left')) {
       tr.setSelection(new GapCursor(tr.doc.resolve(beforeCodeBlockPos)));
       return tr;
-    } else if(lastChild && (this.direction === 'down' || this.direction === 'right')) {
+    } else if((currentChild === lastChild) && atEnd && (this.direction === 'down' || this.direction === 'right')) {
       tr.setSelection(new GapCursor(tr.doc.resolve(afterCodeBlockPos)));
       return tr;
     } else {
-      return false/*not in the first or the last child of the CodeBlock or wrong direction, nothing to do*/;
+      return false/*not in the first or the last child of the CodeBlock, not at start or end,  or wrong direction, nothing to do*/;
     }
   }
 }
