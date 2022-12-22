@@ -1,10 +1,10 @@
 import { Node as ProseMirrorNode } from 'prosemirror-model';
 import { EditorState, Plugin, PluginKey, Transaction } from 'prosemirror-state';
-import { Decoration, DecorationSet } from 'prosemirror-view';
+import { DecorationSet } from 'prosemirror-view';
 
-import { isCodeBlockNode, NodePosition, SelectionRange, CodeBlockLanguage, AttributeType } from 'common';
-import { highlightCodeBlockChild } from './language';
+import { isCodeBlockNode, NodePosition, SelectionRange, AttributeType } from 'common';
 
+import { getCodeBlockChildSyntaxDecorations } from './language';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
@@ -117,34 +117,10 @@ const updateCodeBlockSyntaxDecorations = (editorState: EditorState, affectedText
       const childPos = codeBlockNodePositions[i].position + offsetIntoParent;
       newDecorationSet = decorationSet.remove(decorationSet.find(childPos, childPos + child.nodeSize));
 
-      const syntaxDecorations = getSyntaxDecorations(language as CodeBlockLanguage/*by contract*/, childPos, child);
+      const syntaxDecorations = getCodeBlockChildSyntaxDecorations(language, child.textContent);
       decorationSet = decorationSet.add(editorState.doc, [...syntaxDecorations]);
     });
   }
 
   return newDecorationSet;
 };
-
-/** get the Decorations for the syntax inside a CodeBlock child */
-const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChildPos: number, codeBlockChild: ProseMirrorNode) => {
-  const decorations: Decoration[] = [/*default empty*/];
-  const highlightedChildren = highlightCodeBlockChild(codeBlockLanguage, codeBlockChild.textContent);
-
-  let absolutePos = codeBlockChildPos + 2/*account for start of parent CodeBlock and start of parent TextBlock*/;
-  for(let i = 0; i < highlightedChildren.length; i++) {
-    const child = highlightedChildren[i],
-          { childValue, childClasses } = child;
-    if(!childClasses.length) {
-      absolutePos += childValue.length;
-      continue/*no Decorations to add*/;
-    } else {
-      const decorationStart = absolutePos,
-            decorationEnd = absolutePos + childValue.length;
-      decorations.push(Decoration.inline(decorationStart, decorationEnd, { class: childClasses.join(' ') }));
-      absolutePos += childValue.length;
-    }
-  }
-
-  return decorations;
-};
-

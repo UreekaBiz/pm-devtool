@@ -22,16 +22,20 @@
 
   counter-reset: div;
 }
-
+/* .. Line Numbers ............................................................. */
 [data-node-type="codeBlock"].showCodeBlockLines > .codeBlockInnerContainer > [data-node-type="paragraph"]::before {
   counter-increment: div;
   content: counter(div)"  ";
   font-size: 1em;
   color: #AAA;
 }
+
+/* .. Content .................................................................. */
 [data-node-type="codeBlock"] > .codeBlockInnerContainer > [data-node-type="paragraph"] {
   background: #EDF2F7;
 }
+
+/* .. Syntax Highlight ......................................................... */
 
 /* -- VisualId Container ------------------------------------------------------- */
 [data-node-type="codeBlock"] > .codeBlockVisualIdContainer {
