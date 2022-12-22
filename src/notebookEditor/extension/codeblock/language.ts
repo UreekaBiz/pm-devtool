@@ -10,6 +10,7 @@ const parsers = {
   [CodeBlockLanguage.CSS]: CSSParser,
   [CodeBlockLanguage.HTML]: HTMLParser,
   [CodeBlockLanguage.JavaScript]: JSParser,
+  [CodeBlockLanguage.TypeScript]: JSParser.configure({ dialect: 'ts' }),
 };
 
 export const formatCodeBlockChild = (codeBlockLanguage: CodeBlockLanguage, textContent: string) => {
