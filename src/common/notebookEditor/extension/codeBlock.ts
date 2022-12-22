@@ -88,7 +88,6 @@ export enum CodeBlockLanguage {
   CSS = 'css',
   HTML = 'html',
   JavaScript = 'javascript',
-  TypeScript = 'typescript',
 }
 
 export const CODEBLOCK_DEFAULT_LINES = true/*show CodeBlock line numbers by default*/;

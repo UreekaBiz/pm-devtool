@@ -19,54 +19,17 @@ export class CodeBlockPluginState {
   // produce a new Plugin state
   public apply = (tr: Transaction, thisPluginState: CodeBlockPluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
     // map current DecorationSet (will delete removed Decorations automatically)
-    this.decorationSet = this.decorationSet.map(tr.mapping, tr.doc);
-    const newStateRanges: SelectionRange[] = [/*default empty*/];
-    tr.mapping.maps.forEach((stepMap, stepMapIndex) => {
-      stepMap.forEach((from, to) => {
-        const newStart = tr.mapping.slice(stepMapIndex).map(from, -1/*associate to the left*/),
-          newEnd = tr.mapping.slice(stepMapIndex).map(to);
-        newStateRanges.push({ from: newStart, to: newEnd });
-      });
-    });
+    const { newDecorationSet, newStateRanges } = mapDecorations(this.decorationSet, tr);
+    this.decorationSet = newDecorationSet;
 
     // get a single Range spanning all the Ranges
-    const totalRange = newStateRanges.reduce<{ from: number; to: number; }>((acc, curr) => {
-      acc.from = Math.min(acc.from, curr.from);
-      acc.to = Math.max(acc.to, curr.to);
-      return acc;
-    }, { from: tr.doc.nodeSize, to: 0 });
+    const totalRange = getTotalRange(tr, newStateRanges);
 
     // get the affected CodeBlocks and TextBlocks in the Range
-    const affectedTextBlocksInRange: ProseMirrorNode[] = [];
-    const codeBlockNodePositionsInRange: NodePosition[] = [];
-    newEditorState.doc.nodesBetween(totalRange.from, totalRange.to, (node, position) => {
-      if(node.isTextblock) {
-        affectedTextBlocksInRange.push(node);
-      } /* else -- not a textBlock */
-
-      if(!isCodeBlockNode(node)) return/*ignore Node*/;
-      codeBlockNodePositionsInRange.push({ node, position });
-    });
+    const { affectedTextBlocksInRange, affectedCodeBlockNodePositions } = getAffectedNodesInRange(totalRange, newEditorState);
 
     // for each CodeBlock, update the syntax found in the child
-    for(let i=0; i<codeBlockNodePositionsInRange.length; i++) {
-      const codeBlock = codeBlockNodePositionsInRange[i].node;
-      const { [AttributeType.Language]: language } = codeBlock.attrs;
-      if(!language) continue/*CodeBlock has no valid language set*/;
-
-      codeBlock.content.forEach((child, offsetIntoParent) => {
-        // if the child is not in the affected Range,
-        // no need to update its Decorations
-        if(!affectedTextBlocksInRange.includes(child)) return/*ignore Node*/;
-
-        const childPos = codeBlockNodePositionsInRange[i].position + offsetIntoParent;
-        this.decorationSet = this.decorationSet.remove(this.decorationSet.find(childPos, childPos + child.nodeSize));
-
-        const syntaxDecorations = getSyntaxDecorations(language as CodeBlockLanguage/*by contract*/, childPos, child);
-        this.decorationSet = this.decorationSet.add(newEditorState.doc, [...syntaxDecorations]);
-      });
-    }
-
+    this.decorationSet =  updateCodeBlockSyntaxDecorations(newEditorState, affectedTextBlocksInRange, affectedCodeBlockNodePositions, this.decorationSet);
     return this/*state updated*/;
   };
 }
@@ -99,6 +62,70 @@ export const codeBlockPlugin = () => new Plugin<CodeBlockPluginState>({
 });
 
 // == Util ========================================================================
+/** map a set of Decorations through a Transaction */
+const mapDecorations = (decorationSet: DecorationSet, tr: Transaction) => {
+  const newDecorationSet = decorationSet.map(tr.mapping, tr.doc);
+  const newStateRanges: SelectionRange[] = [/*default empty*/];
+  tr.mapping.maps.forEach((stepMap, stepMapIndex) => {
+    stepMap.forEach((from, to) => {
+      const newStart = tr.mapping.slice(stepMapIndex).map(from, -1/*associate to the left*/),
+            newEnd = tr.mapping.slice(stepMapIndex).map(to);
+      newStateRanges.push({ from: newStart, to: newEnd });
+    });
+  });
+
+  return { newDecorationSet, newStateRanges };
+};
+
+/** return a single range encompassing all the given ranges */
+const getTotalRange = (tr: Transaction, ranges: SelectionRange[]) =>
+  ranges.reduce<{ from: number; to: number; }>((acc, curr) => {
+    acc.from = Math.min(acc.from, curr.from);
+    acc.to = Math.max(acc.to, curr.to);
+    return acc;
+  }, { from: tr.doc.nodeSize, to: 0 });
+
+const getAffectedNodesInRange = (range: SelectionRange, state: EditorState) => {
+  const affectedTextBlocksInRange: ProseMirrorNode[] = [/*default empty*/],
+        affectedCodeBlockNodePositions: NodePosition[] = [/*default empty*/];
+
+  state.doc.nodesBetween(range.from, range.to, (node, position) => {
+    if(node.isTextblock) {
+      affectedTextBlocksInRange.push(node);
+    } /* else -- not a textBlock */
+
+    if(!isCodeBlockNode(node)) return/*ignore Node*/;
+    affectedCodeBlockNodePositions.push({ node, position });
+  });
+
+  return { affectedTextBlocksInRange, affectedCodeBlockNodePositions  };
+};
+
+/** update the syntax Decorations for the given CodeBlocks */
+const updateCodeBlockSyntaxDecorations = (editorState: EditorState, affectedTextBlocksInRange: ProseMirrorNode[], codeBlockNodePositions: NodePosition[], decorationSet: DecorationSet) => {
+  let newDecorationSet = decorationSet;
+  for(let i=0; i<codeBlockNodePositions.length; i++) {
+    const codeBlock = codeBlockNodePositions[i].node;
+    const { [AttributeType.Language]: language } = codeBlock.attrs;
+    if(!language) continue/*CodeBlock has no valid language set*/;
+
+    codeBlock.content.forEach((child, offsetIntoParent) => {
+      // if the child is not in the affected Range,
+      // no need to update its Decorations
+      if(!affectedTextBlocksInRange.includes(child)) return/*ignore Node*/;
+
+      const childPos = codeBlockNodePositions[i].position + offsetIntoParent;
+      newDecorationSet = decorationSet.remove(decorationSet.find(childPos, childPos + child.nodeSize));
+
+      const syntaxDecorations = getSyntaxDecorations(language as CodeBlockLanguage/*by contract*/, childPos, child);
+      decorationSet = decorationSet.add(editorState.doc, [...syntaxDecorations]);
+    });
+  }
+
+  return newDecorationSet;
+};
+
+/** get the Decorations for the syntax inside a CodeBlock child */
 const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChildPos: number, codeBlockChild: ProseMirrorNode) => {
   const decorations: Decoration[] = [/*default empty*/];
   const highlightedChildren = highlightCodeBlockChild(codeBlockLanguage, codeBlockChild.textContent);
