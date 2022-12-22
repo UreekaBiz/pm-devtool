@@ -20,17 +20,15 @@ export class CodeBlockPluginState {
   // produce a new Plugin state
   public apply = (tr: Transaction, thisPluginState: CodeBlockPluginState, oldEditorState: EditorState, newEditorState: EditorState) => {
     // map current DecorationSet (will delete removed Decorations automatically)
-    const { newDecorationSet, newStateRanges } = mapDecorations(this.decorationSet, tr);
-    this.decorationSet = newDecorationSet;
+    const { newDecorationSet: mappedDecorationSet, newStateRanges } = mapDecorations(this.decorationSet, tr);
+    this.decorationSet = mappedDecorationSet;
 
-    // get a single Range spanning all the Ranges
-    const totalRange = getTotalRange(tr, newStateRanges);
-
-    // get the affected CodeBlocks and TextBlocks in the Range
-    const { affectedTextBlocksInRange, affectedCodeBlockNodePositions } = getAffectedNodesInRange(totalRange, newEditorState);
+    // get the affected CodeBlocks and TextBlocks in the affected Range
+    const { affectedTextBlocksInRange, affectedCodeBlockNodePositions } = getAffectedNodesInRange(getTotalRange(tr, newStateRanges), newEditorState);
 
     // for each CodeBlock, update the syntax found in the child
-    this.decorationSet =  updateCodeBlockSyntaxDecorations(newEditorState, affectedTextBlocksInRange, affectedCodeBlockNodePositions, this.decorationSet);
+    const newSyntaxDecorationSet = updateCodeBlockSyntaxDecorations(newEditorState, affectedTextBlocksInRange, affectedCodeBlockNodePositions, this.decorationSet);
+    this.decorationSet = newSyntaxDecorationSet;
     return this/*state updated*/;
   };
 }
@@ -86,6 +84,10 @@ const getTotalRange = (tr: Transaction, ranges: SelectionRange[]) =>
     return acc;
   }, { from: tr.doc.nodeSize, to: 0 });
 
+/**
+ * return the TextBlocks present in a {@link SelectionRange},
+ * given an {@link EditorState}
+ */
 const getAffectedNodesInRange = (range: SelectionRange, state: EditorState) => {
   const affectedTextBlocksInRange: ProseMirrorNode[] = [/*default empty*/],
         affectedCodeBlockNodePositions: NodePosition[] = [/*default empty*/];
@@ -127,7 +129,7 @@ const updateCodeBlockSyntaxDecorations = (editorState: EditorState, affectedText
   return newDecorationSet;
 };
 
-/** get the Decorations for the syntax inside a CodeBlock child */
+/** compute the Decorations for the syntax inside a CodeBlock child */
 const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChildPos: number, codeBlockChild: ProseMirrorNode) => {
   const decorations: Decoration[] = [/*default empty*/];
 
