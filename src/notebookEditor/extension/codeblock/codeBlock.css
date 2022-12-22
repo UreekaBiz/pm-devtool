@@ -32,6 +32,7 @@
 
 /* .. Content .................................................................. */
 [data-node-type="codeBlock"] > .codeBlockInnerContainer > [data-node-type="paragraph"] {
+  font-family: 'Courier New', Courier, monospace;
   background: #EDF2F7;
 }
 
