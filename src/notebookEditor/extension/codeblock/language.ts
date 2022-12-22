@@ -1,22 +1,42 @@
-import { parser as CSSParser } from '@lezer/css';
-import { parser as HTMLParser } from '@lezer/html';
-import { parser as JSParser } from '@lezer/javascript';
+import { parser as CSSHighlighter } from '@lezer/css';
+import { parser as HTMLHighlighter } from '@lezer/html';
+import { parser as jsHighlighter } from '@lezer/javascript';
+import prettier from 'prettier';
+import cssFormatter from 'prettier/parser-postcss';
+import jsFormatter from 'prettier/parser-babel';
+import htmlFormatter from 'prettier/parser-html';
+import typeScriptFormatter from 'prettier/parser-typescript';
 
 import { CodeBlockLanguage } from 'common';
 
 // ********************************************************************************
-// == Formatter ===================================================================
-const parsers = {
-  [CodeBlockLanguage.CSS]: CSSParser,
-  [CodeBlockLanguage.HTML]: HTMLParser,
-  [CodeBlockLanguage.JavaScript]: JSParser,
-  [CodeBlockLanguage.TypeScript]: JSParser.configure({ dialect: 'ts' }),
-};
+const languageInfo = {
+  [CodeBlockLanguage.CSS]: {
+    formatter: cssFormatter,
+    highlighter: CSSHighlighter,
+    parser: CodeBlockLanguage.CSS,
+  },
 
-export const formatCodeBlockChild = (codeBlockLanguage: CodeBlockLanguage, textContent: string) => {
-  return '';
+  [CodeBlockLanguage.HTML]: {
+    formatter: htmlFormatter,
+    highlighter: HTMLHighlighter,
+    parser: CodeBlockLanguage.HTML,
+  },
+  [CodeBlockLanguage.JavaScript]: {
+    formatter: jsFormatter,
+    highlighter: jsHighlighter,
+    parser: 'babel',
+  },
+
+  [CodeBlockLanguage.TypeScript]: {
+    formatter: typeScriptFormatter,
+    highlighter: jsHighlighter.configure({ dialect: 'ts' }),
+    parser: CodeBlockLanguage.TypeScript,
+  },
 };
+export const formatCodeBlockChild = (codeBlockLanguage: CodeBlockLanguage, textContent: string) =>
+  prettier.format(textContent, { parser: languageInfo[codeBlockLanguage].parser, plugins: [languageInfo[codeBlockLanguage].formatter] });
 
 // == Highlight ===================================================================
-export const getCodeBlockChildTree = (codeBlockLanguage: CodeBlockLanguage, textContent: string) =>
-  parsers[codeBlockLanguage].parse(textContent);
+export const getCodeBlockChildHighlightTree = (codeBlockLanguage: CodeBlockLanguage, textContent: string) =>
+  languageInfo[codeBlockLanguage].highlighter.parse(textContent);

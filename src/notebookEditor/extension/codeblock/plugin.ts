@@ -5,7 +5,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { isCodeBlockNode, NodePosition, SelectionRange, CodeBlockLanguage, AttributeType } from 'common';
 
-import { getCodeBlockChildTree } from './language';
+import { getCodeBlockChildHighlightTree } from './language';
 
 // ********************************************************************************
 /** highlight the content of a CodeBlock given its language */
@@ -130,9 +130,9 @@ const updateCodeBlockSyntaxDecorations = (editorState: EditorState, affectedText
 /** get the Decorations for the syntax inside a CodeBlock child */
 const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChildPos: number, codeBlockChild: ProseMirrorNode) => {
   const decorations: Decoration[] = [/*default empty*/];
-  const tree = getCodeBlockChildTree(codeBlockLanguage, codeBlockChild.textContent);
 
-  let insideChildPos = codeBlockChildPos + 2/*account for start of parent CodeBlock and start of parent TextBlock*/;
+  const tree = getCodeBlockChildHighlightTree(codeBlockLanguage, codeBlockChild.textContent);
+  const insideChildPos = codeBlockChildPos + 2/*account for start of parent CodeBlock and start of parent TextBlock*/;
   highlightTree(tree, classHighlighter, (from, to, classes) => {
     decorations.push(Decoration.inline(insideChildPos + from, insideChildPos + to, { class: classes  }));
   });
