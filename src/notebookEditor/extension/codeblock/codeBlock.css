@@ -36,6 +36,36 @@
 }
 
 /* .. Syntax Highlight ......................................................... */
+/* NOTE: this is inspired by https://github.com/codemirror/language/blob/34481e72218083c0a47025d946407066e5b6661a/src/highlight.ts#L193 */
+.tok-link { text-decoration: underline; }
+.tok-heading {
+  text-decoration: underline;
+  font-weight: bold;
+}
+.tok-emphasis { font-style: italic; }
+.tok-strong { font-weight: bold; }
+.tok-keyword { color: #708; }
+.tok-atom { color: #219; }
+.tok-bool { color: #219; }
+.tok-url { color: #219; }
+.tok-labelName { color: #219; }
+.tok-inserted { color: #164; }
+.tok-deleted { color: #164; }
+.tok-literal { color: #164; }
+.tok-string { color: #a11; }
+.tok-number {/*currently not defined*/}
+.tok-variableName { color: #30a; }
+.tok-variableName.tok-definition { color: #00f }
+.tok-typeName { color: #085; }
+.tok-namespace { color: #085; }
+.tok-className { color: #167; }
+.tok-macroName { color: #256; }
+.tok-propertyName { color: #00c; }
+.tok-operator {/*currently not defined*/}
+.tok-comment { color: #940; }
+.tok-meta { color: #404740; }
+.tok-invalid { color: #f00; }
+.tok-punctuation {/*currently not defined*/}
 
 /* -- VisualId Container ------------------------------------------------------- */
 [data-node-type="codeBlock"] > .codeBlockVisualIdContainer {
