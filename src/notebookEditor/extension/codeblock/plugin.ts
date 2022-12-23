@@ -135,9 +135,7 @@ const getSyntaxDecorations = (codeBlockLanguage: CodeBlockLanguage, codeBlockChi
 
   const tree = getCodeBlockChildHighlightTree(codeBlockLanguage, codeBlockChild.textContent);
   const insideChildPos = codeBlockChildPos + 2/*account for start of parent CodeBlock and start of parent TextBlock*/;
-  highlightTree(tree, classHighlighter, (from, to, classes) => {
-    decorations.push(Decoration.inline(insideChildPos + from, insideChildPos + to, { class: classes  }));
-  });
+  highlightTree(tree, classHighlighter, (from, to, classes) => decorations.push(Decoration.inline(insideChildPos + from, insideChildPos + to, { class: classes })));
 
   return decorations;
 };

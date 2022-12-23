@@ -85,10 +85,10 @@ export const REMOVED_CODEBLOCK_VISUALID = 'Removed';
 export const EMPTY_CODEBLOCK_HASH = 'EmptyString';
 
 export enum CodeBlockLanguage {
-  CSS = 'css',
-  HTML = 'html',
-  JavaScript = 'javascript',
-  TypeScript = 'typescript',
+  CSS = 'CSS',
+  HTML = 'HTML',
+  JavaScript = 'JavaScript',
+  TypeScript = 'TypeScript',
 }
 
 export const CODEBLOCK_DEFAULT_LINES = true/*show CodeBlock line numbers by default*/;
