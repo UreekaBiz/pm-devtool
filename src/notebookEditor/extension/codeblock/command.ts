@@ -117,6 +117,8 @@ export class FormatCodeBlockDocumentUpdate implements AbstractDocumentUpdate {
     }
 
     const newCodeBlock = getCodeBlockNodeType(editorState.schema).create(codeBlock.attrs, newCodeBlockContent);
+    if(newCodeBlock.eq(codeBlock)) return false/*same contents, do not replace*/;
+
     tr.replaceWith(codeBlockStart, codeBlockEnd, newCodeBlock)
       .setSelection(Selection.near(tr.doc.resolve(tr.mapping.map(startPos)), -1/*look backwards first*/));
     return tr;
