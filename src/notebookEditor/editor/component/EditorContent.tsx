@@ -5,7 +5,7 @@ import { Editor } from '../Editor';
 import { ReactRenderer } from './ReactRenderer';
 
 // ********************************************************************************
-// NOTE: this is inspired by https://github.com/UreekaBiz/pm-devtool/blob/framework-full/src/notebookEditor/editor/component/EditorContent.tsx
+// NOTE: this is inspired by https://github.com/ueberdosis/tiptap/blob/main/packages/react/src/EditorContent.tsx
 
 // == Interface ===================================================================
 export interface EditorContentProps extends HTMLProps<HTMLDivElement> { editor: Editor | null; }

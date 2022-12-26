@@ -13,34 +13,34 @@ import { CodeBlockLanguage } from 'common';
 // == Type ========================================================================
 type LanguageInfo = {
   languageSupport: LanguageSupport | null/*not loaded yet*/;
-  prettierPlugin: any/*varies per formatter*/;
   prettierParser: string;
+  prettierPlugin: any/*varies per formatter*/;
 }
 type CodeBlockLanguages = { [key in CodeBlockLanguage]: LanguageInfo; }
 
 // == Constant ====================================================================
 const codeBlockLanguages: CodeBlockLanguages = {
   [CodeBlockLanguage.CSS]: {
-    prettierPlugin: cssFormatter,
-    prettierParser: CodeBlockLanguage.CSS.toLowerCase(),
     languageSupport: null/*default*/,
+    prettierParser: CodeBlockLanguage.CSS.toLowerCase(),
+    prettierPlugin: cssFormatter,
   },
 
   [CodeBlockLanguage.HTML]: {
-    prettierPlugin: htmlFormatter,
-    prettierParser: CodeBlockLanguage.HTML.toLowerCase(),
     languageSupport: null/*default*/,
+    prettierParser: CodeBlockLanguage.HTML.toLowerCase(),
+    prettierPlugin: htmlFormatter,
   },
   [CodeBlockLanguage.JavaScript]: {
-    prettierPlugin: jsFormatter,
-    prettierParser: 'babel',
     languageSupport: null/*default*/,
+    prettierParser: 'babel',
+    prettierPlugin: jsFormatter,
   },
 
   [CodeBlockLanguage.TypeScript]: {
-    prettierPlugin: typeScriptFormatter,
-    prettierParser: CodeBlockLanguage.TypeScript.toLowerCase(),
     languageSupport: null/*default*/,
+    prettierParser: CodeBlockLanguage.TypeScript.toLowerCase(),
+    prettierPlugin: typeScriptFormatter,
   },
 };
 (async () => {
