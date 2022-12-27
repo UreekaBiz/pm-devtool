@@ -7,6 +7,7 @@ export * from './codeBlockReference';
 export * from './demoAsyncNode';
 export * from './demoAsyncNode2';
 export * from './document';
+export * from './excalidraw';
 export * from './heading';
 export * from './horizontalRule';
 export * from './image';

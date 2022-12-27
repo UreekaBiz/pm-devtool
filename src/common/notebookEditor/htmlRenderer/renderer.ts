@@ -10,6 +10,7 @@ import { CodeBlockReferenceNodeRendererSpec } from '../extension/codeBlockRefere
 import { DemoAsyncNodeRendererSpec } from '../extension/demoAsyncNode';
 import { DemoAsyncNode2RendererSpec } from '../extension/demoAsyncNode2';
 import { DocumentNodeRendererSpec } from '../extension/document';
+import { ExcalidrawNodeRendererSpec } from '../extension/excalidraw';
 import { HeadingNodeRendererSpec } from '../extension/heading';
 import { HorizontalRuleNodeRendererSpec } from '../extension/horizontalRule';
 import { ImageNodeRendererSpec } from '../extension/image';
@@ -52,6 +53,7 @@ export const NodeRendererSpecs: Record<NodeName, NodeRendererSpec> = {
   [NodeName.DEMO_ASYNC_NODE]: DemoAsyncNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2RendererSpec as any/*FIXME!!!*/,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeRendererSpec as any/*FIXME!!!*/,
+  [NodeName.EXCALIDRAW]: ExcalidrawNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HEADER_CELL]: HeaderCellNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HEADING]: HeadingNodeRendererSpec as any/*FIXME!!!*/,
   [NodeName.HORIZONTAL_RULE]: HorizontalRuleNodeRendererSpec as any/*FIXME!!!*/,

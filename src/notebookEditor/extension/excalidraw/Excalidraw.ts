@@ -1,6 +1,6 @@
 import { keymap } from 'prosemirror-keymap';
 
-import { getNodeOutputSpec, isCodeBlockReferenceNode, CodeBlockReferenceNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
+import { getNodeOutputSpec, isExcalidrawNode, DemoAsyncNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
 import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
@@ -9,35 +9,34 @@ import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
 import { createExtensionParseRules, getExtensionAttributesObject } from '../type/Extension/util';
 import { NodeExtension } from '../type/NodeExtension/NodeExtension';
 import { defineNodeViewBehavior } from '../type/NodeExtension/util';
-import { getCodeBlockReferenceAttrs } from './attribute';
-import './codeBlockReference.css';
-import { insertAndSelectCodeBlockReferenceCommand } from './command';
-import { CodeBlockReferenceController } from './nodeView/controller';
+import { getExcalidrawAttrs } from './attribute';
+import './excalidraw.css';
+import { ExcalidrawController } from './nodeView/controller';
+import { insertAndSelectExcalidrawCommand } from './command';
 
 // ********************************************************************************
 // == Node ========================================================================
-export const CodeBlockReference = new NodeExtension({
-  name: NodeName.CODEBLOCK_REFERENCE,
+export const Excalidraw = new NodeExtension({
+  name: NodeName.EXCALIDRAW,
   priority: DEFAULT_EXTENSION_PRIORITY,
-  ...CodeBlockReferenceNodeSpec,
 
   // -- Attribute -----------------------------------------------------------------
-  defineNodeAttributes: (extensionStorage) => getCodeBlockReferenceAttrs(extensionStorage),
+  defineNodeAttributes: (extensionStorage) => getExcalidrawAttrs(extensionStorage),
 
   // -- Spec ----------------------------------------------------------------------
-  partialNodeSpec: { ...CodeBlockReferenceNodeSpec },
+  partialNodeSpec: { ...DemoAsyncNodeSpec },
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
-    parseDOM: createExtensionParseRules([{ tag: `span[${DATA_NODE_TYPE}="${NodeName.CODEBLOCK_REFERENCE}"]` }], getCodeBlockReferenceAttrs(extensionStorage)),
-    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, getCodeBlockReferenceAttrs(extensionStorage)), true/*is Leaf*/),
+    parseDOM: createExtensionParseRules([{ tag: `div[${DATA_NODE_TYPE}="${NodeName.EXCALIDRAW}"]` }], getExcalidrawAttrs(extensionStorage)),
+    toDOM: (node) => getNodeOutputSpec(node, getExtensionAttributesObject(node, getExcalidrawAttrs(extensionStorage)), true/*is Leaf*/),
   }),
 
   // -- Storage -------------------------------------------------------------------
-  addStorage: () => new NodeViewStorage<CodeBlockReferenceController>(),
+  addStorage() { return new NodeViewStorage<ExcalidrawController>(); },
 
   // -- View ----------------------------------------------------------------------
-  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<CodeBlockReferenceController>(editor, node, NodeName.CODEBLOCK_REFERENCE, getPos, isCodeBlockReferenceNode, CodeBlockReferenceController),
+  defineNodeView: (editor, node, getPos) => defineNodeViewBehavior<ExcalidrawController>(editor, node, NodeName.EXCALIDRAW, getPos, isExcalidrawNode, ExcalidrawController),
 
   // -- Input ---------------------------------------------------------------------
   inputRules: (editor) => [/*none*/],
@@ -46,12 +45,10 @@ export const CodeBlockReference = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor, extensionStorage) => [
+  addProseMirrorPlugins: (editor) => [
     keymap({
-      // insert and select a CodeBlockReference
-      'Shift-Alt-Mod-c': () => shortcutCommandWrapper(editor, insertAndSelectCodeBlockReferenceCommand),
-      'Shift-Alt-Mod-C': () => shortcutCommandWrapper(editor, insertAndSelectCodeBlockReferenceCommand),
+      'Shift-Mod-a': () => shortcutCommandWrapper(editor, insertAndSelectExcalidrawCommand),
+      'Shift-Mod-A': () => shortcutCommandWrapper(editor, insertAndSelectExcalidrawCommand),
     }),
   ],
 });
-

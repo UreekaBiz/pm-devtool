@@ -20,6 +20,7 @@ export enum NodeName {
   DEMO_ASYNC_NODE_2 = 'demoAsyncNode2',
   DOC = 'document',
   EDITABLE_INLINE_NODE_WITH_CONTENT = 'editableInlineNodeWithContent',
+  EXCALIDRAW = 'excalidraw',
   HEADER_CELL = 'headerCell',
   HEADING = 'heading',
   HORIZONTAL_RULE = 'horizontalRule',

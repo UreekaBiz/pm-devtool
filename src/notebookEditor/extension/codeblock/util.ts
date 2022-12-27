@@ -2,7 +2,8 @@ import { AttributeType, CodeBlockReference, VisualId, REMOVED_CODEBLOCK_VISUALID
 
 import { Editor } from 'notebookEditor/editor/Editor';
 
-import { getCodeBlockViewStorage, CodeBlockController } from './nodeView';
+import { CodeBlockController } from './nodeView/controller';
+import { getCodeBlockViewStorage } from './nodeView/storage';
 
 // ********************************************************************************
 // == Visual Id ===================================================================

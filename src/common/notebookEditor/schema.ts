@@ -9,6 +9,7 @@ import { DemoAsyncNodeSpec } from './extension/demoAsyncNode';
 import { DemoAsyncNode2Spec } from './extension/demoAsyncNode2';
 import { DocumentNodeSpec } from './extension/document';
 import { EditableInlineNodeWithContentNodeSpec } from './extension/nestedViewNode/editableInlineNodeWithContent';
+import { ExcalidrawNodeSpec } from './extension/excalidraw';
 import { HeadingNodeSpec } from './extension/heading';
 import { HorizontalRuleNodeSpec } from './extension/horizontalRule';
 import { ImageNodeSpec } from './extension/image';
@@ -48,6 +49,7 @@ export const NodeSpecs: Record<NodeName, NodeSpec> = {
   [NodeName.DEMO_ASYNC_NODE_2]: DemoAsyncNode2Spec,
   [NodeName.BLOCKQUOTE]: BlockquoteNodeSpec,
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: EditableInlineNodeWithContentNodeSpec,
+  [NodeName.EXCALIDRAW]: ExcalidrawNodeSpec,
   [NodeName.NESTED_VIEW_BLOCK_NODE]: NestedViewBlockNodeSpec,
   [NodeName.LIST_ITEM]: ListItemNodeSpec,
 

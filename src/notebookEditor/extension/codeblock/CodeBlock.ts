@@ -14,7 +14,8 @@ import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getCodeBlockAttrs } from './attribute';
 import './codeBlock.css';
 import { codeBlockArrowCommand, selectAllInsideCodeBlockCommand, splitAndLiftOutOfCodeBlockCommand } from './command';
-import { CodeBlockStorage, CodeBlockController } from './nodeView';
+import { CodeBlockController } from './nodeView/controller';
+import { CodeBlockStorage } from './nodeView/storage';
 import { codeBlockOnTransaction } from './transaction';
 import { codeBlockPlugin } from './plugin';
 

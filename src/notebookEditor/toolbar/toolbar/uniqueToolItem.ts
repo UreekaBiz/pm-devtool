@@ -6,6 +6,7 @@ import { codeBlockReferenceChipSelector, codeBlockReferenceDelimiterToolItem } f
 import { demoAsyncNodeChipToolItem, demoAsyncNodeDelayToolItem, DemoAsyncNodeExecuteButtons } from 'notebookEditor/extension/demoAsyncNode/toolItem';
 import { demoAsyncNode2DelaySlider, demoAsyncNode2ReplaceTextToolItem, DemoAsyncNode2ExecuteButtons } from 'notebookEditor/extension/demoAsyncNode2/toolItem';
 import { previewPublishedNotebookToolItem, setThemeToolItem } from 'notebookEditor/extension/document/toolItem';
+import { excalidrawRectangleToolItem } from 'notebookEditor/extension/excalidraw/toolItem/toolItem';
 import { horizontalRuleColorToolItem, horizontalRuleHeightToolItem } from 'notebookEditor/extension/horizontalRule/toolItem';
 import { imageAltToolItem, imageBorderToolItem, imageHeightToolItem, imageSrcToolItem, imageTitleToolItem, imageWidthToolItem, verticalAlignBottomToolItem, verticalAlignMiddleToolItem, verticalAlignTopToolItem } from 'notebookEditor/extension/image/toolItem';
 import { linkColorToolItem, linkTargetToolItem, linkURLToolItem } from 'notebookEditor/extension/link/toolItem';
@@ -83,6 +84,12 @@ export const UNIQUE_TOOL_ITEMS: Record<NodeName | MarkName, UniqueToolItemConfig
     items: [
       previewPublishedNotebookToolItem,
       setThemeToolItem,
+    ],
+  },
+  [NodeName.EXCALIDRAW]: {
+    position: 'start',
+    items: [
+      excalidrawRectangleToolItem,
     ],
   },
   [NodeName.EDITABLE_INLINE_NODE_WITH_CONTENT]: defaultUniqueToolItemConfiguration,

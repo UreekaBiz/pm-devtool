@@ -11,6 +11,7 @@ import { DemoAsyncNode } from 'notebookEditor/extension/demoAsyncNode/DemoAsyncN
 import { DemoAsyncNode2 } from 'notebookEditor/extension/demoAsyncNode2/DemoAsyncNode2';
 import { Document } from 'notebookEditor/extension/document/Document';
 import { EmojiSuggestion } from 'notebookEditor/extension/emojiSuggestion/EmojiSuggestion';
+import { Excalidraw } from 'notebookEditor/extension/excalidraw/Excalidraw';
 import { GapCursor } from 'notebookEditor/extension/gapcursor/GapCursor';
 import { HeaderCell } from 'notebookEditor/extension/table/node/headerCell/HeaderCell';
 import { Heading } from 'notebookEditor/extension/heading/Heading';
@@ -59,6 +60,7 @@ export const editorDefinition: Extension[] = [
   DefaultInputRules,
   Document,
   EditableInlineNodeWithContent,
+  Excalidraw,
   EmojiSuggestion,
   GapCursor,
   HeaderCell,

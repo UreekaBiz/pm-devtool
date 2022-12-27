@@ -1,8 +1,5 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
 
-import { getIndexAtResolvedPos } from 'common';
-
-import { Editor } from 'notebookEditor/editor/Editor';
 import { useValidatedEditor } from 'notebookEditor/hook/useValidatedEditor';
 
 // ********************************************************************************
@@ -43,26 +40,9 @@ export const Debugger = () => {
           Document
         </Text>
         <Box overflow='auto' fontSize={12}>
-          <pre>{stringifyDocWithPositions(editor)}</pre>
+          <pre>{JSON.stringify(editor.view.state.doc, null/*no replacer*/, 2/*T&E indentation*/)}</pre>
         </Box>
       </Box>
     </>
   );
-};
-
-// == Util ========================================================================
-const stringifyDocWithPositions = (editor: Editor) => {
-  const doc = editor.view.state.doc;
-
-  doc.descendants((node, pos) => {
-    // NOTE: since this is only used for debugging purposes and is not actually
-    //       in the real Document, add the startPos and index of each Node
-    //       to its stringified representation, for debugging purposes
-    // @ts-ignore
-    node.attrs['startPos'] = pos;
-
-    // @ts-ignore
-    node.attrs['index()'] = getIndexAtResolvedPos(doc.resolve(pos));
-  });
-  return JSON.stringify(doc, null/*no replacer*/, 2/*T&E indentation*/);
 };

@@ -6,5 +6,5 @@ import { CodeBlockStorage } from './storage';
 
 // == View ========================================================================
 export class CodeBlockModel extends AbstractNodeModel<CodeBlockNodeType, CodeBlockStorage> {
-  // No need to implement anything here
+  // no need to implement anything here
 }
