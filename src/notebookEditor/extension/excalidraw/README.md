@@ -1,3 +1,3 @@
 # Excalidraw
 
-This extension adds support for an embedded Excalidraw editor
+PoC of an embedded Excalidraw editor inside ProseMirror

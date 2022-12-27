@@ -26,7 +26,10 @@ export class ExcalidrawController extends AbstractNodeController<ExcalidrawNodeT
     const result = super.update(node);
     if(!result) return false;
 
-    this.nodeView.excalidrawRoot.render(createElement(ExcalidrawApp, { node: this.node }));
+    this.nodeView.excalidrawRoot.render(createElement(ExcalidrawApp, {
+      view: this.editor.view,
+      node: this.node,
+    }));
     return result;
   }
 

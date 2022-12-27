@@ -10,6 +10,7 @@ import { horizontalRuleToolItem } from 'notebookEditor/extension/horizontalRule/
 import { markItalic } from 'notebookEditor/extension/italic/toolItem';
 import { orderedListToolItem, unorderedListToolItem } from 'notebookEditor/extension/list/toolItem/toolItem';
 import { editableInlineNodeWithContentToolItem } from 'notebookEditor/extension/nestedViewNode/editableInlineNodeWithContent/toolItem';
+import { excalidrawToolItem } from 'notebookEditor/extension/excalidraw/toolItem';
 import { nestedViewBlockNodeToolItem } from 'notebookEditor/extension/nestedViewNode/nestedViewBlockNode/toolItem';
 import { markSubScript } from 'notebookEditor/extension/subScript/toolItem';
 import { markSuperScript } from 'notebookEditor/extension/superScript/toolItem';
@@ -65,6 +66,7 @@ export const NODE_CREATION_TOOL_ITEMS: ToolItem[] = [
   demoAsyncNodeToolItem,
   demoAsyncNode2ToolItem,
   editableInlineNodeWithContentToolItem,
+  excalidrawToolItem,
   nestedViewBlockNodeToolItem,
 ];
 

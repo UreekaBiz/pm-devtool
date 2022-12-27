@@ -1,8 +1,7 @@
 /* == Excalidraw =============================================================== */
 .excalidrawWrapper {
   display: inline-block;
-  width: 300px;
+  width: 600px;
   height: 600px;
   margin: 50px;
-  /* position: relative; */
 }

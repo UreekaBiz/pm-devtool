@@ -28,7 +28,10 @@ export class ExcalidrawView extends AbstractNodeView<ExcalidrawNodeType, Excalid
     // -- UI ----------------------------------------------------------------------
     this.excalidrawWrapper = this.dom;
     this.excalidrawRoot = createRoot(this.excalidrawWrapper);
-    this.excalidrawRoot.render(createElement(ExcalidrawApp, { node: this.node }));
+    this.excalidrawRoot.render(createElement(ExcalidrawApp, {
+      view: this.editor.view,
+      node: this.node,
+    }));
 
     // sync View with current state
     this.updateView();
@@ -36,8 +39,8 @@ export class ExcalidrawView extends AbstractNodeView<ExcalidrawNodeType, Excalid
 
   // -- Creation ------------------------------------------------------------------
   protected createDomElement(): HTMLElement {
-    const dom = createInlineNodeContainer();
-          dom.setAttribute(DATA_NODE_TYPE, NodeName.EXCALIDRAW);
+     const dom = createInlineNodeContainer();
+           dom.setAttribute(DATA_NODE_TYPE, NodeName.EXCALIDRAW);
     return dom;
   }
 }
