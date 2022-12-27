@@ -53,4 +53,6 @@ export type ExcalidrawJSONNodeType = JSONNode<ExcalidrawAttributes> & { type: No
 export const isExcalidrawJSONNode = (node: JSONNode): node is ExcalidrawJSONNodeType => node.type === NodeName.EXCALIDRAW;
 
 // ================================================================================
+export const defaultExcalidrawElements = JSON.stringify([/*default empty*/]);
+export const defaultExcalidrawAppState = JSON.stringify({ viewBackgroundColor: '#AFEEEE', currentItemFontFamily: 1 });
 export const EXCALIDRAW_WRAPPER_CLASS = 'excalidrawWrapper';
