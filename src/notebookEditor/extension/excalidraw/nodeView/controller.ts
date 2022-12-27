@@ -1,12 +1,13 @@
+import { createElement } from 'react';
+import { Node } from 'prosemirror-model';
+
 import { getPosType, ExcalidrawNodeType } from 'common';
 
 import { Editor } from 'notebookEditor/editor/Editor';
 import { AbstractNodeController } from 'notebookEditor/model';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
-import { Node } from 'prosemirror-model';
-import { createElement } from 'react';
-import { ExcalidrawApp } from './ExcalidrawApp';
 
+import { ExcalidrawApp } from './ExcalidrawApp';
 import { ExcalidrawModel } from './model';
 import { ExcalidrawView } from './view';
 
@@ -26,11 +27,7 @@ export class ExcalidrawController extends AbstractNodeController<ExcalidrawNodeT
     const result = super.update(node);
     if(!result) return false;
 
-    this.nodeView.excalidrawRoot.render(createElement(ExcalidrawApp, {
-      view: this.editor.view,
-      getPos: this.getPos,
-      node: this.node,
-    }));
+    this.nodeView.excalidrawRoot.render(createElement(ExcalidrawApp, { view: this.editor.view, node: this.node }));
     return result;
   }
 

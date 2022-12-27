@@ -76,9 +76,6 @@ export enum AttributeType {
   // .. Demo 2 Async Node .........................................................
   TextToReplace = 'textToReplace',
 
-  // .. Excalidraw ................................................................
-  ExcalidrawElements = 'excalidrawElements',
-
   // .. Heading ...................................................................
   Level = 'level',
 

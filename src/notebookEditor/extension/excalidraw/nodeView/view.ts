@@ -30,7 +30,6 @@ export class ExcalidrawView extends AbstractNodeView<ExcalidrawNodeType, Excalid
     this.excalidrawRoot = createRoot(this.excalidrawWrapper);
     this.excalidrawRoot.render(createElement(ExcalidrawApp, {
       view: this.editor.view,
-      getPos: this.getPos,
       node: this.node,
     }));
 

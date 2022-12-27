@@ -9,10 +9,7 @@ import { NotebookSchemaType } from '../schema';
 // == Attribute ===================================================================
 // NOTE: must be present on the NodeSpec below
 // NOTE: this value must have matching types -- the ones defined in the Extension
-const ExcalidrawAttributeSpec = {
-  [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.ExcalidrawElements]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-};
+const ExcalidrawAttributeSpec = { [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<string>() };
 export type ExcalidrawAttributes = AttributesTypeFromNodeSpecAttributes<typeof ExcalidrawAttributeSpec>;
 
 // == Spec ========================================================================
@@ -56,5 +53,4 @@ export type ExcalidrawJSONNodeType = JSONNode<ExcalidrawAttributes> & { type: No
 export const isExcalidrawJSONNode = (node: JSONNode): node is ExcalidrawJSONNodeType => node.type === NodeName.EXCALIDRAW;
 
 // ================================================================================
-export const defaultExcalidrawElements = JSON.stringify([/*default empty*/]);
 export const EXCALIDRAW_WRAPPER_CLASS = 'excalidrawWrapper';
