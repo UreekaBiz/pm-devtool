@@ -16,12 +16,12 @@ export class InsertAndSelectExcalidrawDocumentUpdate implements AbstractDocument
   public constructor(private readonly attributes: Partial<ExcalidrawAttributes>) {/*nothing additional*/}
 
   /*
-   * modify the given Transaction such that a DemoAsyncNode is inserted
+   * modify the given Transaction such that a Excalidraw is inserted
    * and selected, then return it
    */
   public update(editorState: EditorState, tr: Transaction) {
     const node = getSelectedNode(editorState);
-    if(node && isExcalidrawNode(node)) return tr/*no updates, ignore if selected Node already is a DemoAsyncNode*/;
+    if(node && isExcalidrawNode(node)) return tr/*no updates, ignore if selected Node already is an Excalidraw*/;
 
     const excalidraw = createExcalidrawNode(editorState.schema, { ...this.attributes } );
 

@@ -1,8 +1,5 @@
-import { keymap } from 'prosemirror-keymap';
+import { getNodeOutputSpec, isExcalidrawNode, ExcalidrawNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
 
-import { getNodeOutputSpec, isExcalidrawNode, DemoAsyncNodeSpec, NodeName, DATA_NODE_TYPE } from 'common';
-
-import { shortcutCommandWrapper } from 'notebookEditor/command/util';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 
 import { DEFAULT_EXTENSION_PRIORITY } from '../type/Extension/type';
@@ -12,7 +9,6 @@ import { defineNodeViewBehavior } from '../type/NodeExtension/util';
 import { getExcalidrawAttrs } from './attribute';
 import './excalidraw.css';
 import { ExcalidrawController } from './nodeView/controller';
-import { insertAndSelectExcalidrawCommand } from './command';
 
 // ********************************************************************************
 // == Node ========================================================================
@@ -24,7 +20,7 @@ export const Excalidraw = new NodeExtension({
   defineNodeAttributes: (extensionStorage) => getExcalidrawAttrs(extensionStorage),
 
   // -- Spec ----------------------------------------------------------------------
-  partialNodeSpec: { ...DemoAsyncNodeSpec },
+  partialNodeSpec: { ...ExcalidrawNodeSpec },
 
   // -- DOM -----------------------------------------------------------------------
   defineDOMBehavior: (extensionStorage) => ({
@@ -45,10 +41,5 @@ export const Excalidraw = new NodeExtension({
   pasteRules: (editor) => [/*none*/],
 
   // -- Plugin --------------------------------------------------------------------
-  addProseMirrorPlugins: (editor) => [
-    keymap({
-      'Shift-Mod-a': () => shortcutCommandWrapper(editor, insertAndSelectExcalidrawCommand),
-      'Shift-Mod-A': () => shortcutCommandWrapper(editor, insertAndSelectExcalidrawCommand),
-    }),
-  ],
+  addProseMirrorPlugins: (editor) => [/*none*/],
 });
