@@ -78,7 +78,6 @@ export enum AttributeType {
 
   // .. Excalidraw ................................................................
   ExcalidrawElements = 'excalidrawElements',
-  ExcalidrawState = 'excalidrawState',
 
   // .. Heading ...................................................................
   Level = 'level',

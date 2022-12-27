@@ -5,7 +5,7 @@ import { AbstractNodeController } from 'notebookEditor/model';
 import { NodeViewStorage } from 'notebookEditor/model/NodeViewStorage';
 import { Node } from 'prosemirror-model';
 import { createElement } from 'react';
-import { ExcalidrawApp } from './excalidrawApp';
+import { ExcalidrawApp } from './ExcalidrawApp';
 
 import { ExcalidrawModel } from './model';
 import { ExcalidrawView } from './view';
@@ -28,6 +28,7 @@ export class ExcalidrawController extends AbstractNodeController<ExcalidrawNodeT
 
     this.nodeView.excalidrawRoot.render(createElement(ExcalidrawApp, {
       view: this.editor.view,
+      getPos: this.getPos,
       node: this.node,
     }));
     return result;

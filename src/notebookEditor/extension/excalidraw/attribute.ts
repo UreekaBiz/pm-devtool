@@ -1,4 +1,4 @@
-import { defaultExcalidrawAppState, defaultExcalidrawElements, AttributeType, ExcalidrawAttributes, SetAttributeType } from 'common';
+import { defaultExcalidrawElements, AttributeType, ExcalidrawAttributes, SetAttributeType } from 'common';
 
 import { ExtensionStorageType } from '../type/Extension/type';
 import { NodeExtensionAttributes } from '../type/NodeExtension/type';
@@ -12,5 +12,4 @@ export const getExcalidrawAttrs = (storage: ExtensionStorageType): NodeExtension
   // creates a new Id for the Node when it is created
     [AttributeType.Id]: uniqueIdParsingBehavior(storage),
     [AttributeType.ExcalidrawElements]: setAttributeParsingBehavior(AttributeType.ExcalidrawElements, SetAttributeType.STRING, defaultExcalidrawElements),
-    [AttributeType.ExcalidrawState]: setAttributeParsingBehavior(AttributeType.ExcalidrawState, SetAttributeType.STRING, defaultExcalidrawAppState),
 });

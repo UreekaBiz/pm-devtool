@@ -9,7 +9,7 @@ import { AbstractNodeView } from 'notebookEditor/model';
 
 import { ExcalidrawStorageType } from './controller';
 import { ExcalidrawModel } from './model';
-import { ExcalidrawApp } from './excalidrawApp';
+import { ExcalidrawApp } from './ExcalidrawApp';
 
 // ********************************************************************************
 // == Class =======================================================================
@@ -30,6 +30,7 @@ export class ExcalidrawView extends AbstractNodeView<ExcalidrawNodeType, Excalid
     this.excalidrawRoot = createRoot(this.excalidrawWrapper);
     this.excalidrawRoot.render(createElement(ExcalidrawApp, {
       view: this.editor.view,
+      getPos: this.getPos,
       node: this.node,
     }));
 

@@ -12,7 +12,6 @@ import { NotebookSchemaType } from '../schema';
 const ExcalidrawAttributeSpec = {
   [AttributeType.Id]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
   [AttributeType.ExcalidrawElements]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
-  [AttributeType.ExcalidrawState]: noNodeOrMarkSpecAttributeDefaultValue<string>(),
 };
 export type ExcalidrawAttributes = AttributesTypeFromNodeSpecAttributes<typeof ExcalidrawAttributeSpec>;
 
@@ -58,5 +57,4 @@ export const isExcalidrawJSONNode = (node: JSONNode): node is ExcalidrawJSONNode
 
 // ================================================================================
 export const defaultExcalidrawElements = JSON.stringify([/*default empty*/]);
-export const defaultExcalidrawAppState = JSON.stringify({ viewBackgroundColor: '#AFEEEE', currentItemFontFamily: 1 });
 export const EXCALIDRAW_WRAPPER_CLASS = 'excalidrawWrapper';
