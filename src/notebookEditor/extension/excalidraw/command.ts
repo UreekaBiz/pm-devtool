@@ -1,9 +1,8 @@
 import { Command, EditorState, Transaction } from 'prosemirror-state';
 
-import { createExcalidrawNode, generateNodeId, getSelectedNode, isExcalidrawNode, AbstractDocumentUpdate, DemoAsyncNodeAttributes, ReplaceAndSelectNodeDocumentUpdate } from 'common';
+import { createExcalidrawNode, generateNodeId, getSelectedNode, isExcalidrawNode, AbstractDocumentUpdate, ExcalidrawAttributes, ReplaceAndSelectNodeDocumentUpdate } from 'common';
 
 // ********************************************************************************
-/** insert and select a DemoAsyncNode */
 export const insertAndSelectExcalidrawCommand: Command = (state, dispatch) => {
   const id = generateNodeId();
   const result = AbstractDocumentUpdate.execute(new InsertAndSelectExcalidrawDocumentUpdate({ id }), state, dispatch);
@@ -14,7 +13,7 @@ export const insertAndSelectExcalidrawCommand: Command = (state, dispatch) => {
   return false/*not executed*/;
 };
 export class InsertAndSelectExcalidrawDocumentUpdate implements AbstractDocumentUpdate {
-  public constructor(private readonly attributes: Partial<DemoAsyncNodeAttributes>) {/*nothing additional*/}
+  public constructor(private readonly attributes: Partial<ExcalidrawAttributes>) {/*nothing additional*/}
 
   /*
    * modify the given Transaction such that a DemoAsyncNode is inserted
@@ -22,7 +21,7 @@ export class InsertAndSelectExcalidrawDocumentUpdate implements AbstractDocument
    */
   public update(editorState: EditorState, tr: Transaction) {
     const node = getSelectedNode(editorState);
-    if(node && isExcalidrawNode(node)) return tr/*no updates, ignore if selected Node already is an Excalidraw*/;
+    if(node && isExcalidrawNode(node)) return tr/*no updates, ignore if selected Node already is a DemoAsyncNode*/;
 
     const excalidraw = createExcalidrawNode(editorState.schema, { ...this.attributes } );
 

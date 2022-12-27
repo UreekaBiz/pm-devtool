@@ -20,14 +20,18 @@ export type ExcalidrawAttributes = AttributesTypeFromNodeSpecAttributes<typeof E
 // -- Node Spec -------------------------------------------------------------------
 export const ExcalidrawNodeSpec: NodeSpec = {
   // .. Definition ................................................................
-  group: `${NodeGroup.BLOCK}`,
+  group: `${NodeGroup.INLINE}`,
 
   // .. Attribute .................................................................
   attrs: ExcalidrawAttributeSpec,
 
   // .. Misc ......................................................................
-  atom: true/*this Node should be treated as a single unit in the View*/,
+  atom: true/*node does not have directly editable content*/,
   draggable: false,
+  defining: true/*maintain original node during replace operations if possible*/,
+  inline: true,
+  leaf: true/*node does not have directly editable content*/,
+  selectable: true,
 };
 
 // -- Render Spec -----------------------------------------------------------------
