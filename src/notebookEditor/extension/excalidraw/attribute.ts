@@ -10,5 +10,5 @@ import { uniqueIdParsingBehavior } from '../util';
 //       and added to all ParseRules of the parseDOM property
 export const getExcalidrawAttrs = (storage: ExtensionStorageType): NodeExtensionAttributes<ExcalidrawAttributes> =>  ({
   // creates a new Id for the Node when it is created
-    [AttributeType.Id]: uniqueIdParsingBehavior(storage),
+  [AttributeType.Id]: uniqueIdParsingBehavior(storage),
 });
