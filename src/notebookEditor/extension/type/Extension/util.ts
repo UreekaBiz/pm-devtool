@@ -48,7 +48,7 @@ export const sortExtensionsByPriority = (extensions: Extension[]) =>
 
          const attrsObj = Object.entries(attrs).reduce<{ [attr: string]: string | string[] | boolean | number | number[] | undefined; }>((previousObj, currentEntry) => {
            const [attrName, attrSpecWithParseHTML] = currentEntry;
-           const { parseHTML } =attrSpecWithParseHTML;
+           const { parseHTML } = attrSpecWithParseHTML;
 
            const attrValue = parseHTML(node);
            if(attrValue) {
